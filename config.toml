@@ -2,6 +2,8 @@ baseURL = "/"
 languageCode = "en-GB"
 title = "Tea & Stats"
 theme = "hugo-tea"
+canonifyUrls = true
+relativeUrls = true
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 
 [permalinks]
