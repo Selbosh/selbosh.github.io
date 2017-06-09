@@ -1,6 +1,6 @@
 # Tea & Stats
 
-[![Build Status](https://travis-ci.org/Selbosh/selbosh.github.io.svg?branch=master)](https://travis-ci.org/Selbosh/selbosh.github.io)
+[![Build Status](https://travis-ci.org/Selbosh/selbosh.github.io.svg?branch=source)](https://travis-ci.org/Selbosh/selbosh.github.io)
 
 http://selbydavid.com
 
