@@ -1,0 +1,421 @@
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+@import "//fonts.googleapis.com/css?family=Playfair+Display:400i|Merriweather:400,400i,700|Merriweather+Sans:300,400";
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline; }
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block; }
+
+body {
+  line-height: 1; }
+
+ol, ul {
+  list-style: none; }
+
+blockquote, q {
+  quotes: none; }
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+*, :before, :after {
+  box-sizing: border-box; }
+
+/* Layout */
+/* Choose colours */
+/* Assign colours to generic roles */
+/* Fonts and typefaces */
+html,
+body {
+  margin: 0; }
+
+html {
+  font-family: Merriweather, Georgia, serif;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: normal; }
+  @media (min-width: 38rem) {
+    html {
+      font-size: 20px; } }
+
+body {
+  color: #515151;
+  background-color: #fff;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  padding: 0 1rem; }
+
+table {
+  margin-bottom: 1rem;
+  width: 100%;
+  font-size: 85%;
+  border: 1px solid #e5e5e5;
+  border-collapse: collapse; }
+
+td,
+th {
+  padding: .25rem .5rem;
+  border: 1px solid #e5e5e5; }
+
+th {
+  text-align: left; }
+
+tbody tr:nth-child(odd) td,
+tbody tr:nth-child(odd) th {
+  background-color: #f9f9f9; }
+
+p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin: 1em 0; }
+
+a {
+  color: #418997;
+  text-decoration: none; }
+  a:hover, a:focus {
+    color: #f5c966;
+    border-bottom: none; }
+  a strong {
+    color: inherit; }
+
+strong {
+  font-weight: bold; }
+
+em {
+  font-style: italic; }
+
+h1, h2, h3, h4, h5, h6, article header h2 {
+  font-family: "Merriweather Sans", Helvetica, Arial, sans-serif;
+  color: #515151;
+  font-style: normal;
+  margin: 2em 0 0.5em;
+  font-weight: 400; }
+
+h1 {
+  font-size: 2rem; }
+
+h2 {
+  font-size: 1.75rem; }
+
+h3 {
+  font-size: 1.5rem; }
+
+h4 {
+  font-size: 1.3rem; }
+
+h5 {
+  font-size: 1.15rem; }
+
+h6 {
+  font-size: 1rem; }
+
+a h1,
+a h2,
+a h3,
+a h4,
+a h5,
+a h6 {
+  color: #418997; }
+  a h1:hover, a h1:focus,
+  a h2:hover,
+  a h2:focus,
+  a h3:hover,
+  a h3:focus,
+  a h4:hover,
+  a h4:focus,
+  a h5:hover,
+  a h5:focus,
+  a h6:hover,
+  a h6:focus {
+    color: #f5c966; }
+
+/* Post titles only */
+article header h2 {
+  font-size: 2rem;
+  line-height: 1.2;
+  margin: .4em 0; }
+
+/* Masthead */
+header#masthead h1 {
+  /* 'Name of site' text */
+  font: italic normal 5rem "Playfair Display", Georgia, serif;
+  text-transform: none;
+  letter-spacing: normal; }
+  header#masthead h1 a {
+    border: none;
+    /*&:hover,
+    &:active {
+      color: $colour-link; // Disable overlay highlight for masthead
+    }*/ }
+header#masthead aside {
+  /* Tagline underneath logo */
+  font-size: 1rem;
+  font-style: normal;
+  font-family: "Merriweather Sans", Helvetica, Arial, sans-serif;
+  font-weight: 300;
+  color: #b3b3b3;
+  text-transform: lowercase;
+  letter-spacing: .05em; }
+
+time {
+  color: #b3b3b3;
+  font-family: "Merriweather Sans", Helvetica, Arial, sans-serif;
+  font-weight: 400; }
+
+/* Main navigation menu */
+nav a {
+  font: normal 1.25rem "Merriweather Sans", Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  text-transform: lowercase;
+  border-bottom: 1px dotted #f5c966; }
+  nav a:hover, nav a:focus {
+    border-bottom: none; }
+
+/* Code blocks and teletype */
+code, pre {
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  background-color: #f5f8fa !important;
+  font-size: 1rem; }
+
+pre {
+  margin: 1em 0;
+  padding: 1em;
+  line-height: 1.3;
+  border-left: 0.3rem solid #ccc;
+  overflow-x: auto; }
+
+.hljs {
+  color: #515151; }
+
+p > code {
+  /* In-line code only */
+  letter-spacing: -0.05em;
+  font-size: inherit;
+  /* Space in-line code apart from surrounding words
+     (Inspired by GitHub's CSS) */ }
+  p > code::before, p > code::after {
+    content: "\00a0";
+    /* = non-breaking space */ }
+
+/* Post date info at top of articles */
+article footer {
+  display: inline-block;
+  color: #b3b3b3; }
+
+/* Footer and copyright information */
+footer#footer {
+  color: #b3b3b3;
+  font: normal 0.75rem "Merriweather Sans", Helvetica, Arial, sans-serif;
+  letter-spacing: .1em;
+  text-transform: lowercase;
+  font-weight: 300; }
+
+/* Superscripts and subscripts */
+sup, sub {
+  font-size: smaller;
+  vertical-align: super;
+  line-height: 0;
+  /* Protect line-height of surrounding text */ }
+
+sub {
+  vertical-align: sub; }
+
+/* Lists, lists of lists and lists of lists of lists */
+ol, ul {
+  list-style-position: outside;
+  margin-left: 3rem;
+  font-size: 1.1rem; }
+  ol ol, ol ul, ul ol, ul ul {
+    /* level >=2 */
+    margin-left: 1.5rem; }
+  ol p, ul p {
+    font-size: inherit; }
+
+ol {
+  list-style-type: decimal; }
+  ol li {
+    padding-left: .5rem; }
+  ol ol {
+    list-style-type: lower-alpha; }
+    ol ol ol {
+      list-style-type: lower-roman; }
+
+ul {
+  list-style-type: disc; }
+  ul li {
+    padding-left: .3rem; }
+  ul ul {
+    list-style-type: square; }
+    ul ul ul {
+      list-style-type: circle; }
+
+li {
+  line-height: 1.8; }
+
+/* Footnotes section */
+div.footnotes {
+  padding-top: 1rem; }
+  div.footnotes ol p, div.footnotes ul p {
+    margin: inherit; }
+
+/* Figures and captions */
+.figure .caption {
+  text-align: center; }
+
+/* Booktabs-style tables */
+table {
+  width: auto;
+  margin: 2rem auto;
+  border-top: 1px solid #515151;
+  border-bottom: 1px solid #515151; }
+
+thead {
+  vertical-align: middle; }
+
+th, td {
+  text-align: left;
+  font-size: 1rem;
+  line-height: 1.7; }
+
+th {
+  border-bottom: 1px solid #999;
+  padding: 0.65ex 0.5em 0.4ex 0.5em;
+  font-weight: normal; }
+
+td {
+  padding-left: 0.5em;
+  padding-right: 0.5em; }
+
+tr:first-child td {
+  padding-top: 0.65ex; }
+
+/* Horizontal rules */
+hr {
+  border: dotted #f5c966;
+  border-width: 1px 0 0 0;
+  margin: 2rem 0; }
+
+/* Quotations */
+blockquote:before, blockquote:after {
+  position: absolute;
+  font: bold 4rem Georgia, 'Times New Roman', serif;
+  font-style: normal;
+  line-height: 0;
+  color: #999; }
+
+blockquote {
+  quotes: '\201C' '\201D' '\2018' '\2019';
+  /* " " ' ' */
+  margin: 2rem 0.8rem;
+  font-style: italic;
+  padding: 0.1rem 1rem;
+  border-left: 0.3rem solid #ccc;
+  background-color: #f5f8fa;
+  position: relative;
+  display: block; }
+  blockquote:before {
+    content: open-quote;
+    text-align: left;
+    top: 2.5rem;
+    left: 1rem; }
+  blockquote:after {
+    content: close-quote;
+    bottom: 0.5rem;
+    right: 1rem; }
+  blockquote p {
+    font-style: italic;
+    margin: 0 3rem;
+    padding: 0.5rem 0; }
+
+body {
+  /* Acts as wrapper */
+  margin: 0 auto;
+  max-width: 48rem; }
+
+header#masthead {
+  text-align: center; }
+  header#masthead h1 {
+    margin-top: 0;
+    margin-bottom: 1rem; }
+    header#masthead h1 a:hover,
+    header#masthead h1 a:focus {
+      text-decoration: none; }
+  header#masthead img {
+    width: 7.5rem;
+    margin: 1rem auto 0; }
+
+article header, article footer {
+  text-align: center;
+  display: block; }
+article img {
+  max-width: 100%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto; }
+
+article.single section {
+  margin-top: 3rem; }
+
+nav {
+  text-align: center;
+  margin-top: 2rem;
+  margin-bottom: 5rem; }
+  nav ul {
+    list-style-type: none;
+    margin: 2rem 0 0; }
+  nav li {
+    display: inline-block;
+    margin: 0 .75em; }
+
+main {
+  margin: 2.5rem 0; }
+
+main.archive {
+  /* Post list pages */
+  text-align: center; }
+  main.archive article {
+    margin: 2.5rem 0; }
+
+time {
+  display: block;
+  margin: .5em 0; }
+
+footer#footer {
+  display: block;
+  text-align: center;
+  margin-bottom: 2rem; }
+  footer#footer img {
+    width: 3.75rem;
+    display: block;
+    margin: 0 auto 2rem auto; }
+
+/*# sourceMappingURL=main.css.map */

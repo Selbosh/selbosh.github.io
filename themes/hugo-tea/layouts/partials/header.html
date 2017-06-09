@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="{{ with .Site.LanguageCode }}{{ . }}{{ else }}en-GB{{ end }}">
+  <head>
+    {{ partial "head.html" . }}
+  </head>
+  <body><!--wrapper-->
+      <!--<div id="wrapper">-->
+        <header id="masthead">
+          <img src="{{ print "img/" .Site.Params.logo.url | relURL }}"
+               width="{{ .Site.Params.logo.width }}"
+               height="{{ .Site.Params.logo.height }}"
+               alt="{{ .Site.Params.logo.alt }}">
+          <h1><a href="{{ "/" | relURL }}">{{ .Site.Title }}</a></h1>
+          <aside>{{ .Site.Params.description }}</aside>
+          {{ partial "nav.html" . }}
+        </header>

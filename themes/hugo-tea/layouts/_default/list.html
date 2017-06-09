@@ -1,0 +1,18 @@
+{{ partial "header.html" . }}
+
+<main role="main" class="archive">
+  {{ range where .Paginator.Pages "Section" "post" }}
+    <article>
+      <header>
+        <a href="{{ .RelPermalink }}">
+          <h2>{{ .Title }}</h2>
+        </a>
+      </header>
+      <time datetime="{{ .Date.Format "2006-01-02 15:04:05 -0700" }}">
+        {{ .Date.Format "_2 January 2006" }}
+      </time>
+    </article>
+  {{ end }}
+</main>
+
+{{ partial "footer.html" . }}

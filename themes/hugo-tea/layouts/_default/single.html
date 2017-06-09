@@ -1,0 +1,19 @@
+{{ partial "header.html" . }}
+
+<main role="main">
+  <article class="single">
+    <header><h2>{{ .Title }}</h2></header>
+    {{ if eq .Section "post" }}
+    <footer>
+      <time datetime="{{ .Date.Format "2006-01-02 15:04:05 -0700" }}">
+        {{ .Date.Format "_2 January 2006" }}
+      </time>
+    </footer>
+    {{ end }}
+    <section>
+    {{ .Content }}
+    </section>
+  </article>
+</main>
+
+{{ partial "footer.html" . }}
