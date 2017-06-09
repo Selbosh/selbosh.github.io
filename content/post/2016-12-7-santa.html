@@ -1,0 +1,96 @@
+---
+title: "Secret Santa in R"
+slug: santa
+date: 2016-12-07
+categories: ['R']
+---
+
+
+
+<p>Our office just exchanged presents for <em>Secret Santa</em>, a tradition where each person is randomly assigned someone else to give an anonyous gift. One of the challenges of Secret Santa is keeping the pairs of gift-givers and receivers both random and secret. How can you do this while also taking part yourself? Using R, of course!</p>
+<p>Firstly, recruit people! Write their names down, one per line, in a text file. The order doesn’t matter. For example, we might have a file called <code>santa_names.txt</code>, with contents as follows:</p>
+<pre><code>Tom
+Dick
+Harry
+Jane
+Leslie
+Susan
+Alex
+Sam
+Chris</code></pre>
+<p>Then read these names into R.</p>
+<pre class="r"><code>names &lt;- readLines(&#39;santa_names.txt&#39;)</code></pre>
+<p>We now have a character vector called <code>names</code>.</p>
+<p>The key to a truly random pairing of gift givers and recipients is that it shouldn’t depend on any systematic order, such as the order people signed up, or the alphabetical order of their names.</p>
+<p>Here is one way we might try to do it. First, randomly reorder the <code>names</code>. Then, have every person in this list give to the next person on the list, with the very last person then giving to the first.</p>
+<pre class="r"><code>names2 &lt;- sample(names)
+data.frame(sender = names2,
+           recipient = c(tail(names2, -1), names2[1]))</code></pre>
+<pre><code>##   sender recipient
+## 1   Dick     Susan
+## 2  Susan    Leslie
+## 3 Leslie     Chris
+## 4  Chris      Alex
+## 5   Alex      Jane
+## 6   Jane       Tom
+## 7    Tom       Sam
+## 8    Sam     Harry
+## 9  Harry      Dick</code></pre>
+<p>In R, the <code>sample()</code> function draws randomly from a vector, and by default it does this without replacement, so we don’t have to worry about missing anybody off or somebody appearing twice. We can use it as a quick way to reorder the list of names at random. The <code>tail</code> command with argument <code>-1</code> will select every element in the list except the first.</p>
+<p>This works in the sense that everybody gives and receives one gift and nobody gives to themselves, but is not entirely random or secret. If you find out that Susan gave to Leslie, then you know for a fact that Leslie didn’t give to Susan. With enough of these titbits of information you could reconstruct the entire list. Ideally we want no discernable pattern.</p>
+<p>Why not just randomly sample twice from the <code>names</code> list?</p>
+<pre class="r"><code>data.frame(sender = sample(names),
+           recipient = sample(names))</code></pre>
+<pre><code>##   sender recipient
+## 1  Harry       Tom
+## 2  Chris      Dick
+## 3 Leslie       Sam
+## 4  Susan    Leslie
+## 5   Dick      Alex
+## 6   Jane      Jane
+## 7    Sam     Susan
+## 8   Alex     Harry
+## 9    Tom     Chris</code></pre>
+<p>There’s a problem. Jane has been assigned to herself! That won’t do! The solution is quite straightforward, though: just keep sampling until this doesn’t happen. We can keep the order of senders fixed and vary the order of the recipients until nobody gives to themselves, like so.</p>
+<pre class="r"><code>sender &lt;- sample(names)
+recipient &lt;- sample(names)
+i &lt;- 1
+while (any(sender == recipient)) {
+  i &lt;- i + 1
+  recipient &lt;- sample(names)
+}
+data.frame(sender, recipient)</code></pre>
+<pre><code>##   sender recipient
+## 1  Harry      Jane
+## 2  Chris      Alex
+## 3 Leslie       Sam
+## 4  Susan      Dick
+## 5   Dick     Chris
+## 6   Jane       Tom
+## 7    Sam    Leslie
+## 8   Alex     Harry
+## 9    Tom     Susan</code></pre>
+<p>Success! Everybody gives and receives a gift, nobody gives to themselves and there is no particular pattern. (Unlike the first method, Sam gives to Leslie even though Leslie already gives to Sam.)</p>
+<p>If you’re curious, you can find out how many attempts it took to find a valid set of pairs:</p>
+<pre class="r"><code>i</code></pre>
+<pre><code>## [1] 2</code></pre>
+<p>Now, how do you let everybody know who they have been assigned, without revealing it anybody else? (Including you!) We can write a text file for every person, with the name of the file corresponding to the giver and the contents of the file revealing the recipient.</p>
+<pre class="r"><code>for (i in seq_along(names)) {
+  writeLines(recipient[i], paste0(sender[i], &#39;.txt&#39;))
+}</code></pre>
+<p>If you were feeling really clever, you could automate the e-mail sending from R as well, but it should be easy enough to attach and send the files by hand without peeking.</p>
+<p>Putting it all together:</p>
+<pre class="r"><code>names &lt;- readLines(&#39;santa_names.txt&#39;)
+sender &lt;- sample(names)
+recipient &lt;- sample(names)
+while (any(sender == recipient)) {
+  recipient &lt;- sample(names)
+}
+for (i in seq_along(names)) {
+  writeLines(recipient[i], paste0(sender[i], &#39;.txt&#39;))
+}</code></pre>
+<p><strong>Merry Christmas!</strong></p>
+<div class="figure">
+<img src="/img/2016/santa.jpg" alt="Secret Santa at Warwick" />
+<p class="caption">Secret Santa at Warwick</p>
+</div>

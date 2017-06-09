@@ -1,0 +1,108 @@
+---
+title: "Secret Santa in R"
+slug: santa
+date: 2016-12-07
+categories: ['R']
+---
+
+Our office just exchanged presents for *Secret Santa*, a tradition where each person is randomly assigned someone else to give an anonyous gift. One of the challenges of Secret Santa is keeping the pairs of gift-givers and receivers both random and secret. How can you do this while also taking part yourself? Using R, of course!
+
+Firstly, recruit people! Write their names down, one per line, in a text file. The order doesn't matter. For example, we might have a file called `santa_names.txt`, with contents as follows:
+
+```
+Tom
+Dick
+Harry
+Jane
+Leslie
+Susan
+Alex
+Sam
+Chris
+```
+
+Then read these names into R.
+
+```{r names, eval = FALSE}
+names <- readLines('santa_names.txt')
+```
+
+```{r names2, echo = FALSE}
+# So the blog post doesn't depend on an external file. Same result.
+names <- c('Tom', 'Dick', 'Harry', 'Jane', 'Leslie', 'Susan', 'Alex', 'Sam', 'Chris')
+```
+
+We now have a character vector called `names`.
+
+The key to a truly random pairing of gift givers and recipients is that it shouldn't depend on any systematic order, such as the order people signed up, or the alphabetical order of their names.
+
+Here is one way we might try to do it. First, randomly reorder the `names`. Then, have every person in this list give to the next person on the list, with the very last person then giving to the first.
+
+```{r offset_sample, echo = -1}
+set.seed(2)
+names2 <- sample(names)
+data.frame(sender = names2,
+           recipient = c(tail(names2, -1), names2[1]))
+```
+
+In R, the `sample()` function draws randomly from a vector, and by default it does this without replacement, so we don't have to worry about missing anybody off or somebody appearing twice. We can use it as a quick way to reorder the list of names at random. The `tail` command with argument `-1` will select every element in the list except the first.
+
+This works in the sense that everybody gives and receives one gift and nobody gives to themselves, but is not entirely random or secret. If you find out that Susan gave to Leslie, then you know for a fact that Leslie didn't give to Susan. With enough of these titbits of information you could reconstruct the entire list. Ideally we want no discernable pattern.
+
+Why not just randomly sample twice from the `names` list?
+
+```{r sample_twice, echo = -1}
+set.seed(1)
+data.frame(sender = sample(names),
+           recipient = sample(names))
+```
+
+There's a problem. Jane has been assigned to herself! That won't do! The solution is quite straightforward, though: just keep sampling until this doesn't happen. We can keep the order of senders fixed and vary the order of the recipients until nobody gives to themselves, like so.
+
+```{r sample_loop, echo = -1}
+set.seed(1)
+sender <- sample(names)
+recipient <- sample(names)
+i <- 1
+while (any(sender == recipient)) {
+  i <- i + 1
+  recipient <- sample(names)
+}
+data.frame(sender, recipient)
+```
+
+Success! Everybody gives and receives a gift, nobody gives to themselves and there is no particular pattern. (Unlike the first method, Sam gives to Leslie even though Leslie already gives to Sam.)
+
+If you're curious, you can find out how many attempts it took to find a valid set of pairs:
+
+```{r iterations}
+i
+```
+
+Now, how do you let everybody know who they have been assigned, without revealing it anybody else? (Including you!) We can write a text file for every person, with the name of the file corresponding to the giver and the contents of the file revealing the recipient.
+
+```{r output, eval = F}
+for (i in seq_along(names)) {
+  writeLines(recipient[i], paste0(sender[i], '.txt'))
+}
+```
+
+If you were feeling really clever, you could automate the e-mail sending from R as well, but it should be easy enough to attach and send the files by hand without peeking.
+
+Putting it all together:
+
+```r
+names <- readLines('santa_names.txt')
+sender <- sample(names)
+recipient <- sample(names)
+while (any(sender == recipient)) {
+  recipient <- sample(names)
+}
+for (i in seq_along(names)) {
+  writeLines(recipient[i], paste0(sender[i], '.txt'))
+}
+```
+
+**Merry Christmas!**
+
+![Secret Santa at Warwick](/img/2016/santa.jpg)

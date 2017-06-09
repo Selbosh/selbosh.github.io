@@ -1,0 +1,46 @@
+baseURL = "/"
+relativeurls = true
+languageCode = "en-GB"
+title = "Tea & Stats"
+theme = "hugo-tea"
+ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
+
+[permalinks]
+  post = "/:year/:month/:day/:slug/"
+
+[[menu.main]]
+  name = "About"
+  url = "/about/"
+
+[params]
+  description = "Data science with David Selby"
+
+  # Enable Font Awesome social icons.
+  # Go to http://fontawesome.io/get-started/
+  # and enter the ".js" URL you are sent in the embed code via e-mail
+  fontawesome = "https://use.fontawesome.com/269c7751ba.js"
+
+  twitter = "TeaStats"
+  facebook = "Selbosh"
+  github = "Selbosh"
+  linkedin = "daselby"
+
+  # options for highlight.js (version, additional languages, and theme)
+  highlightjsVersion = "9.11.0"
+  highlightjsCDN = "//cdn.bootcss.com"
+  highlightjsLang = ["r", "yaml"]
+  highlightjsTheme = "github"
+
+  MathJaxCDN = "//cdn.bootcss.com"
+  MathJaxVersion = "2.7.1"
+
+  [params.logo]
+  url = "logo.svg"
+  width = 120
+  height = ""
+  alt = "Tea and Stats"
+
+  [params.footerimage]
+  url = "logo.svg"
+  width = 60
+  height = ""
