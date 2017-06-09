@@ -1,5 +1,4 @@
 baseURL = "/"
-relativeurls = true
 languageCode = "en-GB"
 title = "Tea & Stats"
 theme = "hugo-tea"
