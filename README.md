@@ -2,7 +2,9 @@
 
 [![Build Status](https://travis-ci.org/Selbosh/selbosh.github.io.svg?branch=master)](https://travis-ci.org/Selbosh/selbosh.github.io)
 
-This web site is written using the `blogdown` package by Yihui Xie and rendered using the [Hugo](http://gohugo.io/) static web site generator.
+http://selbydavid.com
+
+This web site is written using the [`blogdown`](https://github.com/rstudio/bookdown) package by Yihui Xie and rendered using the [Hugo](http://gohugo.io/) static web site generator.
 
 It is deployed to GitHub Pages using [Travis Continuous Integration](https://travis-ci.org/).
 This means the (R) Markdown files are rendered into HTML by a cloud server, rather than having to generate them locally and then push them online.
