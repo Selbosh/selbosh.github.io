@@ -3,6 +3,7 @@ languageCode = "en-GB"
 title = "Tea & Stats"
 theme = "hugo-tea"
 canonifyUrls = true
+googleAnalytics = "UA-11136457-6"
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 
 [permalinks]
