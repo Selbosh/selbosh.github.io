@@ -3,6 +3,7 @@ title: "Secret Santa in R"
 slug: santa
 date: 2016-12-07
 categories: ['R']
+images: ['/img/2016/santa.jpg']
 ---
 
 Our office just exchanged presents for *Secret Santa*, a tradition where each person is randomly assigned someone else to give an anonyous gift. One of the challenges of Secret Santa is keeping the pairs of gift-givers and receivers both random and secret. How can you do this while also taking part yourself? Using R, of course!
