@@ -43,7 +43,7 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
   MathJaxVersion = "2.7.1"
 
   [params.logo]
-  url = "logo.svg"
+  url = "logo.png"
   width = 120
   height = ""
   alt = "Tea and Stats"
