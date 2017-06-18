@@ -1,7 +1,6 @@
 ---
 title: Pretty errors, warnings and messages in R Markdown
 slug: rmarkdown-alerts
-draft: true
 date: '2017-06-18T13:15:00+01:00'
 categories: ['R']
 ---
