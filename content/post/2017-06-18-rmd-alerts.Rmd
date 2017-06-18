@@ -3,6 +3,7 @@ title: Pretty errors, warnings and messages in R Markdown
 slug: rmarkdown-alerts
 date: '2017-06-18T13:15:00+01:00'
 categories: ['R']
+images: ['/img/2017/alerts.png']
 ---
 
 When knitting an R Markdown document to HTML output, R chunks can produce warnings, errors or messages.
