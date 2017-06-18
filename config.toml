@@ -12,7 +12,11 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 [[menu.main]]
   name = "About"
   url = "/about/"
-	
+
+[author]
+	name = "David Selby"
+	url = "http://selbydavid.com"
+
 [social]
 	twitter 		= "TeaStats"
 	facebook 		= "Selbosh"
@@ -21,7 +25,6 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
   linkedin 		= "daselby"
 
 [params]
-	name = "David Selby"
   description = "Data science with David Selby"
 
   # Enable Font Awesome social icons.
