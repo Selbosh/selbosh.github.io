@@ -44,6 +44,7 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 
   [params.logo]
   url = "logo.png"
+  rss = "logo.png" # should be png, gif or jpeg
   width = 120
   height = ""
   alt = "Tea and Stats"

@@ -10,7 +10,7 @@
 		{{ if .Site.Params.logo.url }}<image>
 		    <link>{{ .Permalink }}</link>
 		    <title>{{ .Site.Title }}</title>
-		    <url>{{ .Site.Params.logo.url | absURL }}</url>
+		    <url>{{ .Site.Params.logo.rss | absURL }}</url>
 		</image>{{ end }}
     <generator>Hugo -- gohugo.io</generator>{{ with .Site.LanguageCode }}
     <language>{{.}}</language>{{end}}{{ with .Site.Author.email }}
