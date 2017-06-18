@@ -12,22 +12,22 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 [[menu.main]]
   name = "About"
   url = "/about/"
-
-[author]
-	name = "David Selby
+	
+[social]
+	twitter 		= "TeaStats"
+	facebook 		= "Selbosh"
+	googleplus 	= "DavidASelby"
+	github 			= "Selbosh"
+  linkedin 		= "daselby"
 
 [params]
+	name = "David Selby"
   description = "Data science with David Selby"
 
   # Enable Font Awesome social icons.
   # Go to http://fontawesome.io/get-started/
   # and enter the ".js" URL you are sent in the embed code via e-mail
   fontawesome = "https://use.fontawesome.com/269c7751ba.js"
-
-  twitter = "TeaStats"
-  facebook = "Selbosh"
-  github = "Selbosh"
-  linkedin = "daselby"
 
   # options for highlight.js (version, additional languages, and theme)
   highlightjsVersion = "9.11.0"

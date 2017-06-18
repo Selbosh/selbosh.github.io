@@ -4,25 +4,25 @@
       <li><a href="{{ .URL }}">{{ .Name }}</a></li>
     {{ end }}
     {{ $fa := .Site.Params.fontawesome }}
-    {{ with .Site.Params.facebook }}<li>
+    {{ with .Site.Social.facebook }}<li>
       <a href="https://facebook.com/{{ . }}">
         {{ if $fa }}<i class="fa fa-facebook"></i>
         {{ else }} Facebook {{ end }}
       </a>
     </li>{{ end }}
-    {{ with .Site.Params.github }}<li>
+    {{ with .Site.Social.github }}<li>
       <a href="https://github.com/{{ . }}">
         {{ if $fa }}<i class="fa fa-github"></i>
         {{ else }} GitHub {{ end }}
       </a>
     </li>{{ end }}
-    {{ with .Site.Params.linkedin }}<li>
+    {{ with .Site.Social.linkedin }}<li>
       <a href="https://linkedin.com/in/{{ . }}">
         {{ if $fa }}<i class="fa fa-linkedin"></i>
         {{ else }} LinkedIn {{ end }}
       </a>
     </li>{{ end }}
-    {{ with .Site.Params.twitter }}<li>
+    {{ with .Site.Social.twitter }}<li>
       <a href="https://twitter.com/{{ . }}">
         {{ if $fa }}<i class="fa fa-twitter"></i>
         {{ else }} Twitter {{ end }}
