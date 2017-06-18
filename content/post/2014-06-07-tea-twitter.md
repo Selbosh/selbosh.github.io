@@ -1,7 +1,7 @@
 ---
 title: "Data mining: tea is for Twitter"
 slug: "tea-bieber"
-date: 2014-06-07
+date: '2014-06-07T09:00:00+01:00'
 ---
 
 As part of my first foray into data science, I decided to have a go at opinion mining on Twitter. It's common knowledge that everything stops for tea, but how much does the Twittersphere agree? And what else are microbloggers saying about the drink?

@@ -1,7 +1,7 @@
 ---
 title: "Secret Santa in R"
 slug: santa
-date: 2016-12-07
+date: '2016-12-07T09:00:00+00:00'
 categories: ['R']
 images: ['/img/2016/santa.jpg']
 ---

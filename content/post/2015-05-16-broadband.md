@@ -1,7 +1,7 @@
 ---
 title: Edinburgh Broadband Map
 slug: broadband
-date: 2015-05-16
+date: '2015-05-16T09:00:00+01:00'
 ---
 
 Despite living in the capital city of Scotland, my home broadband speeds (especially upload speeds) are painfully slow. There is no fibre-optic offered on my road, while my friend two streets over enjoys super-fast internet. It turns out, through the power of data visualisation, that EH16 is a bit of a broadband speed "notspot" along with a few other slow neighbourhoods throughout Edinburgh. The big empty hole to the east of the city centre is Arthur's Seat and Holyrood Park.
