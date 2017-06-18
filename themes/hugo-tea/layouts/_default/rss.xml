@@ -2,7 +2,7 @@
   <channel>
     <title>{{ if eq  .Title  .Site.Title }}{{ .Site.Title }}{{ else }}{{ with .Title }}{{.}} on {{ end }}{{ .Site.Title }}{{ end }}</title>
     <link>{{ .Permalink }}</link>
-    <description>Recent content {{ if ne  .Title  .Site.Title }}{{ with .Title }}in {{.}} {{ end }}{{ end }}on {{ .Site.Title }}</description>
+    <description>{{ if .Site.Params.description }}{{ .Site.Params.description }}{{ else }}Recent content {{ if ne  .Title  .Site.Title }}{{ with .Title }}in {{.}} {{ end }}{{ end }}on {{ .Site.Title }}{{ end }}</description>
 		{{ with .Site.Author }}<atom:author>
 			{{ with .name }}<atom:name>{{ . }}</atom:name>{{ end }}
 			{{ with .url }}<atom:uri>{{ . }}</atom:uri>{{ end }}

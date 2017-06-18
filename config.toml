@@ -25,7 +25,8 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
   linkedin 		= "daselby"
 
 [params]
-  description = "Data science with David Selby"
+	description = "Tea, statistics and t-statistics: a data science blog by David Selby."
+  tagline = "Data science with David Selby"
 
   # Enable Font Awesome social icons.
   # Go to http://fontawesome.io/get-started/
