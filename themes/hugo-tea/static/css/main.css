@@ -59,12 +59,12 @@ body {
 
 html {
   font-family: Merriweather, Georgia, serif;
-  font-size: 16px;
+  font-size: 13px;
   line-height: 1.5;
   font-weight: normal; }
   @media (min-width: 38rem) {
     html {
-      font-size: 20px; } }
+      font-size: 16px; } }
 
 body {
   color: #515151;

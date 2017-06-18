@@ -13,6 +13,11 @@
     <section>
     {{ .Content }}
     </section>
+    {{ if and .Site.DisqusShortname }}
+			<section class="comments">
+				{{ partial "disqus.html" . }}
+			</section>
+		{{ end }}
   </article>
 </main>
 
