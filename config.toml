@@ -13,6 +13,9 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
   name = "About"
   url = "/about/"
 
+[author]
+	name = "David Selby
+
 [params]
   description = "Data science with David Selby"
 
