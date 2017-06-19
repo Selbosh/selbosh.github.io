@@ -5,6 +5,7 @@ title: About me
 <img src="/img/david.jpg" style="border-radius: 50%; width: 15rem;" />
 
 Hi, my name is David Selby and I am a statistics PhD student at the University of Warwick.
+My research involves social network analysis.
 
 I like to cycle, drink tea and write things in [R Markdown](http://rmarkdown.rstudio.com/).
 I am the organiser of [Warwick R User Group](http://warwick.ac.uk/wrug).
