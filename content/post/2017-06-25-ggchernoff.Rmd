@@ -1,0 +1,159 @@
+---
+title: Chernoff faces in ggplot2
+slug: ggchernoff
+date: '2017-06-25T18:25:00+01:00'
+categories:
+  - R
+---
+
+I am pleased to introduce my first R package for general consumption, [**ggChernoff**](https://github.com/Selbosh/ggChernoff).
+
+Inspiration stems from Leland Wilkinson's book, [*The Grammar of Graphics*](http://www.springer.com/gb/book/9780387245447), whose principles were later implemented as the [layered grammar of graphics](http://vita.had.co.nz/papers/layered-grammar.pdf) in Hadley Wickham's popular R package, [ggplot2](http://ggplot2.org/).
+
+Wilkinson's grammar generalises data visualisation.
+Rather than choosing a types of graph from a list---for example bar plot, pie chart or line graphs---instead we break down graphics into algebra, scales, statistics, geometry, coordinates and aesthetics.
+
+What does that actually mean? Suppose we want to transform the following data,
+```{r datatable, echo = FALSE}
+data.frame(
+  name  = c('a', 'b', 'c'),
+  value = c(37, 21, 42)
+) -> example_data
+example_data$name <- factor(example_data$name, levels = c('c', 'b', 'a'))
+knitr::kable(example_data)
+```
+
+into the following simple visualisation.
+
+```{r lineplot, echo = FALSE, fig.height = 1.5}
+library(ggplot2)
+ggplot(example_data) +
+  aes(x = name, ymin = 0, ymax = value) +
+  geom_linerange(colour = '#418997') +
+  coord_flip() +
+  theme_void() +
+  theme(axis.text.y = element_text(family = 'sans',
+                                   colour = '#418997',
+                                   angle = 0, vjust = .3,
+                                   debug = FALSE)
+        )
+```
+
+In *Grammar of Graphics* terms, we produce the plot using these semantics.
+
+Variables
+: `name`, `value`
+
+Algebra
+: `name` × `value` → (a, 37), (b, 21), (c, 42).
+
+Scales
+: - (37, 21, 42) → (0.88, 0.50, 1.00)
+  - (a, b, c) → (3, 2, 1)
+
+Geometry
+: For each tuple, draw a line between two points.
+
+Coordinates
+: use Cartesian (x, y) coordinates in 2-dimensional space.
+
+Aesthetics
+: - (0, `name`) → (*x*~1~, *y*~1~)
+  - (`value`, `name`) → (*x*~2~, *y*~2~)
+
+Our line plot above is grammatically equivalent to a bar chart---just make the lines thicker!
+Now, what if we swap Cartesian coordinates for polar coordinates, (r, θ)?
+The resulting graphic is still grammatically correct, though perhaps not very useful.
+
+```{r polar, echo = FALSE, fig.height = 3.5, fig.width = 4}
+ggplot(example_data) +
+  aes(x = name, ymin = 0, ymax = value) +
+  geom_linerange(colour = '#418997') +
+  coord_polar(theta = 'y') +
+  theme_void() +
+  theme(axis.text.y = element_text(family = 'sans',
+                                   colour = '#418997',
+                                   angle = 0, vjust = .3,
+                                   debug = FALSE)
+        )
+```
+We can even transpose it to (θ, r) coordinates, for another grammatically-valid data visualisation.
+```{r radial, echo = FALSE, fig.height = 3.5, fig.width = 4}
+ggplot(example_data) +
+  aes(x = name, ymin = 0, ymax = value) +
+  geom_linerange(colour = '#418997') +
+  coord_polar(theta = 'x') +
+  theme_void() +
+  theme(axis.text.x = element_text(family = 'sans',
+                                   colour = '#418997',
+                                   angle = 0, vjust = .3,
+                                   debug = FALSE)
+        )
+```
+
+These plots don't necessarily have names, so you don't have to hunt through a list to find the right tool to create them.
+It is just a matter of knowing how the *Grammar of Graphics* works.
+
+Look at the specifications for our plot again.
+Geometry and aesthetics don't have to be as conventional as lines and boxes of different sizes.
+Let's try something completely different!
+
+A couple of amendments to the specifications...
+
+Geometry
+: For each tuple, draw a face.
+
+Aesthetics
+: - `name` → x
+  - 0 → y
+  - `value` → smile
+
+...and we produce this graph.
+```{r smile, fig.width = 5, fig.height = 1.5, echo = FALSE}
+library(ggChernoff)
+ggplot(example_data) +
+  aes(x = name, y = NA, smile = value) +
+  geom_chernoff(colour = '#418997',
+                size = 50,
+                show.legend = FALSE) +
+  theme_void() +
+  theme(axis.text.x = element_text(family = 'sans',
+                                   colour = '#418997',
+                                   angle = 0, vjust = .3,
+                                   debug = FALSE)
+        )
+```
+
+Using faces for multivariate data visualisation is an idea credited to [Herman Chernoff](https://en.wikipedia.org/wiki/Chernoff_face), and which Wilkinson discusses in some detail in *The Grammar of Graphics*.
+In principle, you can represent data using all kinds of weird and wonderful things, so long as you can clearly define geometry, aesthetics, scales and so on to integrate them into a grammatical workflow.
+
+My R package, [ggChernoff](https://github.com/Selbosh/ggChernoff), extends ggplot2 with a new face geom and aesthetics for its mouth and eyebrows.
+By mapping variables to the right aesthetic you can make your data happy or sad, angry or expressionless.
+
+Here is another set of aesthetic mappings.
+
+Aesthetics
+: - `name` → x
+  - 0 → y
+  - 1 → smile
+  - `value` → eyebrows
+  
+```{r eyebrow, fig.width = 5, fig.height = 1.5, echo = FALSE}
+ggplot(example_data) +
+  aes(x = name, y = NA, brow = value) +
+  geom_chernoff(colour = '#418997',
+                size = 50,
+                show.legend = FALSE) +
+  theme_void() +
+  theme(axis.text.x = element_text(family = 'sans',
+                                   colour = '#418997',
+                                   angle = 0, vjust = .3,
+                                   debug = FALSE)
+        )
+```
+
+This is a nice way to add a bit of personality to your data visualisations.
+Unlike the package [emoGG](https://github.com/dill/emoGG), which involves selecting pre-drawn icons from a list, the faces in ggChernoff are procedurally generated, in the spirit of the grammar of graphics.
+
+More demonstrations are coming in a future post.
+The package ggChernoff is [now available on GitHub](https://github.com/Selbosh/ggChernoff).
