@@ -260,6 +260,20 @@ ol, ul {
   ol p, ul p {
     font-size: inherit; }
 
+dl {
+  font-size: 1.1rem; }
+  dl ol, dl ul, dl dl {
+    margin-left: 1.5rem; }
+  dl p {
+    font-size: inherit; }
+
+dt {
+  font-weight: normal;
+  font-style: italic; }
+
+dd {
+  margin-left: 3rem; }
+
 ol {
   list-style-type: decimal; }
   ol li {
@@ -278,7 +292,7 @@ ul {
     ul ul ul {
       list-style-type: circle; }
 
-li {
+li, dt, dd {
   line-height: 1.8; }
 
 /* Footnotes section */

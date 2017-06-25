@@ -168,6 +168,22 @@ ol, ul {
   p { font-size: inherit; }
 }
 
+dl {
+	font-size: 1.1rem;
+	ol, ul, dl {
+		margin-left: 1.5rem;
+	}
+	p { font-size: inherit; }
+}
+
+dt {
+	font-weight: normal;
+	font-style: italic;
+}
+dd {
+	margin-left: 3rem;
+}
+
 ol {
   list-style-type: decimal;
   li { padding-left: .5rem; }
@@ -186,7 +202,7 @@ ul {
   }
 }
 
-li { line-height: 1.8; }
+li, dt, dd { line-height: 1.8; }
 
 /* Footnotes section */
 div.footnotes {
