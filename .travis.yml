@@ -4,7 +4,7 @@ branches:
     only:
         - source
 r_packages:
-		- tidyverse
+    - tidyverse
 r_github_packages:
     - rstudio/blogdown
 		- Selbosh/ggChernoff
