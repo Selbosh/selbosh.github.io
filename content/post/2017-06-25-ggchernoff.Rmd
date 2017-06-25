@@ -4,7 +4,14 @@ slug: ggchernoff
 date: '2017-06-25T18:25:00+01:00'
 categories:
   - R
+images:
+  - '/img/post/2017-06-25-ggchernoff_files/figure-html/eyebrow-1.png'
+  - '/img/post/2017-06-25-ggchernoff_files/figure-html/smile-1.png'
 ---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(dev.args = list(type = 'cairo'))
+```
 
 I am pleased to introduce my first R package for general consumption, [**ggChernoff**](https://github.com/Selbosh/ggChernoff).
 
