@@ -3,8 +3,11 @@ cache: packages
 branches:
     only:
         - source
+r_packages:
+		- tidyverse
 r_github_packages:
     - rstudio/blogdown
+		- Selbosh/ggChernoff
 
 before_script:
     - Rscript -e 'blogdown::install_hugo(version = "0.20.7")'
