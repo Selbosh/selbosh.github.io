@@ -10,7 +10,7 @@ Originally from North Yorkshire, I aim to maintain a reliable supply of Yorkshir
 I am enthusiastic about [R](https://www.r-project.org/) and help organise [Warwick R User Group](http://warwick.ac.uk/wrug).
 
 <p style="text-align: center;">
-<a href='mai&#108;to&#58;%44&#46;&#37;53&#101;&#108;b&#121;%40&#119;a%&#55;2wi&#99;&#107;&#37;&#50;Eac&#37;&#50;Eu%&#54;B' title="E-mail me">
+<a href='mailto:D.Selby@warwick.ac.uk' title="E-mail me">
   <span class="fa-stack fa-lg">
   <i class="fa fa-circle fa-stack-2x"></i>
   <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
