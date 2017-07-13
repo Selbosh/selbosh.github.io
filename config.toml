@@ -3,6 +3,7 @@ languageCode = "en-GB"
 title = "Tea & Stats"
 theme = "hugo-tea"
 canonifyUrls = true
+Paginate = 20
 googleAnalytics = "UA-11136457-6"
 disqusShortname = "tea-stats"
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
@@ -21,9 +22,9 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 [social]
 	twitter 		= "TeaStats"
 	facebook 		= "Selbosh"
-	googleplus 	= "DavidASelby"
+    googleplus 	    = "DavidASelby"
 	github 			= "Selbosh"
-  linkedin 		= "daselby"
+    linkedin 		= "daselby"
 
 [params]
 	description = "Tea, statistics and t-statistics: a data science blog by David Selby."
