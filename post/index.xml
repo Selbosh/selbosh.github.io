@@ -1,0 +1,1035 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Posts on Tea &amp; Stats</title>
+    <link>http://selbydavid.com/post/</link>
+    <description>Tea, statistics and t-statistics: a data science blog by David Selby.</description>
+		<atom:author>
+			<atom:name>David Selby</atom:name>
+			<atom:uri>http://selbydavid.com</atom:uri>
+		</atom:author>
+		<image>
+		    <link>http://selbydavid.com/post/</link>
+		    <title>Tea &amp; Stats</title>
+		    <url>http://selbydavid.com/logo.png</url>
+		</image>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-GB</language>
+    <lastBuildDate>Fri, 29 Dec 2017 15:00:00 +0000</lastBuildDate>
+    <atom:link href="http://selbydavid.com/post/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Using R on Android</title>
+      <link>http://selbydavid.com/2017/12/29/r-android/</link>
+      <pubDate>Fri, 29 Dec 2017 15:00:00 +0000</pubDate>
+      
+      <guid>http://selbydavid.com/2017/12/29/r-android/</guid>
+      <description>
+
+&lt;p&gt;I just discovered a way to get R running on my smartphone, with full support for packages, graphics and &lt;a href=&#34;http://rmarkdown.rstudio.com/&#34;&gt;R Markdown&lt;/a&gt;, and no need to connect to an external server.
+This is really handy for quickly checking R code, trying out ideas and writing blog posts on the go.
+It works quite well!&lt;/p&gt;
+
+&lt;p&gt;Here I will show you how to do the same on your Android device.
+This post was inspired by &lt;a href=&#34;https://stackoverflow.com/a/45361256&#34;&gt;this answer on StackOverflow&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;initial-setup&#34;&gt;Initial setup&lt;/h2&gt;
+
+&lt;p&gt;Install &lt;a href=&#34;https://play.google.com/store/apps/details?id=com.gnuroot.debian&#34;&gt;GNUroot Debian&lt;/a&gt; from the Google Play Store.
+This application effectively gives you a full Linux environment within Android, without rooting your device.
+It just works.&lt;/p&gt;
+
+&lt;p&gt;GNUroot Debian emulates a command line interface or &amp;ldquo;X Terminal&amp;rdquo; like on a regular desktop PC.
+You can work in multiple windows, and you have access to all the files on your Android system.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2017/gnuroot.png&#34; alt=&#34;GNUroot Debian&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;You can use it not only to run R on your phone, but also Python or any other command-line tools supported by GNU/Linux.&lt;/p&gt;
+
+&lt;h2 id=&#34;installing-r&#34;&gt;Installing R&lt;/h2&gt;
+
+&lt;p&gt;To install R, type the following commands in GNUroot Debian, hitting Enter after each line and waiting for the respective processes to finish.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;apt-get update
+apt-get upgrade
+apt-get install r-base r-base-dev
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now you have R installed on your phone.&lt;/p&gt;
+
+&lt;h2 id=&#34;interactive-r-commands&#34;&gt;Interactive R commands&lt;/h2&gt;
+
+&lt;p&gt;Starting an R session is as simple as typing&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;R
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;into the terminal.&lt;/p&gt;
+
+&lt;p&gt;You will know R is running because the start of the command prompt will change from a hash, &lt;code&gt;#&lt;/code&gt;, to a greater-than sign, &lt;code&gt;&amp;gt;&lt;/code&gt;.
+This is just like the usual interactive R user interface (because it &lt;em&gt;is&lt;/em&gt; the usual interface).
+Run commands and load and install packages to your heart&amp;rsquo;s content.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2017/interactiveR.png&#34; alt=&#34;Interactive R session in GNUroot Debian&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;To quit R and return to the Linux command line, type&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;q()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;and hit Enter.&lt;/p&gt;
+
+&lt;p&gt;You can run quick R one-liners without diving into a full R session, by using the following syntax.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;Rscript -e &amp;quot;rnorm(5)&amp;quot; # five random numbers
+Rscript -e &amp;quot;print(&#39;Hello, world&#39;)&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Be careful about matching quotation marks.&lt;/p&gt;
+
+&lt;p&gt;You can also use the syntax&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;R -e &amp;quot;rnorm(5)&amp;quot;
+R -e &amp;quot;print(&#39;Hello, world&#39;)&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;which does the same thing but prints more verbose output to the console.&lt;/p&gt;
+
+&lt;p&gt;Pressing Up and Down on your keyboard lets you cycle through recently used commands, saving you from needing to retype repeated or very similar commands.
+Usually touch-screen keyboards don&amp;rsquo;t have arrow keys, but you can install the &lt;a href=&#34;https://play.google.com/store/apps/details?id=org.pocketworkstation.pckeyboard&#34;&gt;Hacker&amp;rsquo;s Keyboard&lt;/a&gt; for Android, which does (at least in landscape mode).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2017/hackers-keyboard.png&#34; alt=&#34;Hacker&#39;s Keyboard&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;running-scripts&#34;&gt;Running scripts&lt;/h2&gt;
+
+&lt;p&gt;To write nontrivial programmes and not lose your work, you will want to write and run R scripts from files.
+While you could open a Linux text editor within GNUroot, this is probably more trouble than it&amp;rsquo;s worth.
+Dedicated Android text editors are better optimised for use with a small touch screen and don&amp;rsquo;t need arrow keys or special control commands to work.
+&lt;a href=&#34;https://play.google.com/store/apps/details?id=com.rhmsoft.edit&#34;&gt;QuickEdit&lt;/a&gt; is a free text editor with syntax highlighting for R and Markdown, line numbering and other useful features.&lt;/p&gt;
+
+&lt;p&gt;In your text editor, write a basic R script, like the following.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;x &amp;lt;- &amp;quot;Hello&amp;quot;
+y &amp;lt;- &amp;quot;world!&amp;quot;
+cat(x, y, sep = &#39;, &#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Save the file as &lt;code&gt;test.R&lt;/code&gt; and put it somewhere easy to find, like your &lt;code&gt;Documents&lt;/code&gt; folder.&lt;/p&gt;
+
+&lt;p&gt;Reopen GNUroot Debian. Navigate to the directory where you saved your R script file. In my case, I had saved it to Documents, which I reached using&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;cd sdcard/Documents
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The command &lt;code&gt;cd&lt;/code&gt; means &amp;ldquo;change directory&amp;rdquo;. Type &lt;code&gt;ls&lt;/code&gt; for a list of files and folders in the current directory. If you make a wrong turn, simply type&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;cd ..
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;to go up (back) one folder.&lt;/p&gt;
+
+&lt;p&gt;Once you&amp;rsquo;ve found your R script file, evaluate it with&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;Rscript test.R
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;or&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;R -f test.R
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;for more detailed output.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2017/Rscript.png&#34; alt=&#34;Evaluating an R script on Android&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If you prefer working in R to in a Linux terminal, then you can equivalently do everything within an R session:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;getwd() # show current directory
+list.files() # equivalent to ls
+setwd(&#39;sdcard/Documents&#39;) # equivalent to cd
+source(&#39;test.R&#39;) # run the script
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;saving-output&#34;&gt;Saving output&lt;/h2&gt;
+
+&lt;p&gt;If your scripts produce output, like plots saved as image files or data in csv files, you can open these with ordinary Android apps and share them.
+Just keep track of where the files are saved.&lt;/p&gt;
+
+&lt;p&gt;For example, here is a short script that produces a plot and saves it as a PNG.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;n &amp;lt;- 1000
+g &amp;lt;- 16
+cx &amp;lt;- rep(1:4, each = 4) * n * 2
+cy &amp;lt;- rep(1:4, times = 4) * n * 2
+t &amp;lt;- 1:1000
+x &amp;lt;- rep(t * cos(t), each = g) + cx
+y &amp;lt;- rep(t * sin(t), each = g) + cy
+png(&amp;quot;test.png&amp;quot;, width = 600, height = 600)
+par(mar = rep(0, 4))
+plot(x, y,
+     col = rep(c(2, 4), each = g),
+     asp = 1,
+     axes = FALSE)
+dev.off()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Run the script and use &lt;code&gt;ls&lt;/code&gt; or &lt;code&gt;list.files()&lt;/code&gt; to verify that a new file, &lt;code&gt;test.png&lt;/code&gt; has been created.
+In your Android launcher, go to &lt;strong&gt;Files &amp;gt; Local &amp;gt; Internal storage &amp;gt; Documents&lt;/strong&gt; (the names might vary depending on your device) and you should see your new plot, which you can open and share like any other image.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2017/test.png&#34; alt=&#34;Test R plot&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;r-markdown-on-android&#34;&gt;R Markdown on Android&lt;/h2&gt;
+
+&lt;p&gt;Rendering/knitting R Markdown documents requires the R package &lt;strong&gt;knitr&lt;/strong&gt; and the external application &lt;strong&gt;pandoc&lt;/strong&gt;.
+Install the former using&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;install.packages(&#39;knitr&#39;, dependencies = TRUE)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you accidentally choose a CRAN mirror that doesn&amp;rsquo;t work, you can select another one with&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;chooseCRANmirror()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You also need pandoc.
+Install it from the command line with&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;apt-get install pandoc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;After installing, you might need to restart your terminal to ensure pandoc has been properly added to the PATH (and so can be found by R).&lt;/p&gt;
+
+&lt;p&gt;Write a minimal R Markdown document in your Android text editor, for example&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-markdown&#34;&gt;# Hello, world!
+
+I am an *R Markdown* document.
+A horse has `r 2+2` legs.
+Here is some random noise.
+
+```{r}
+plot(runif(100), runif(100))
+```
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Convert it using&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;Rscript -e &amp;quot;rmarkdown::render(&#39;test.rmd&#39;)&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And using &lt;code&gt;ls&lt;/code&gt; or &lt;code&gt;list.files()&lt;/code&gt; or your Android file explorer, you should see the output Markdown, HTML, Word, or PDF document, which you can open in your Android text editor, browser, word processor or PDF reader, respectively.
+Once again, share or upload it like any other file.&lt;/p&gt;
+
+&lt;p&gt;So there we have it: R and R Markdown running on Android!
+I hope you found this useful.
+This blog post was written on a Huawei Honor 8 smartphone using QuickEdit text editor.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2017/android-r.gif&#34; alt=&#34;R on Android&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>useR! poster: ranking influential communities</title>
+      <link>http://selbydavid.com/2017/06/29/user2017/</link>
+      <pubDate>Thu, 29 Jun 2017 18:30:00 +0100</pubDate>
+      
+      <guid>http://selbydavid.com/2017/06/29/user2017/</guid>
+      <description>&lt;p&gt;Next week I will be presenting a poster at the &lt;a href=&#34;https://user2017.brussels&#34;&gt;useR!2017&lt;/a&gt; conference in Brussels.&lt;/p&gt;
+
+&lt;p&gt;My topic is &lt;strong&gt;Ranking influential communities in networks&lt;/strong&gt;.
+Using a large dataset of citations from the Web of Science, we grouped academic journals into communities based on their citation behaviour.
+These communities closely correspond to recognisable research fields, so I was able to label them.&lt;/p&gt;
+
+&lt;p&gt;We then modelled the flow of influence within and between these communities.
+A journal having a high influence score means it tends to receive more citations than it gives out when interacting with other influential journals.&lt;/p&gt;
+
+&lt;p&gt;Statistics comes second in the inter-field ranking (after economics).
+We all know how cool statistics is, so the model must be right.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2017/user2017.png&#34; alt=&#34;useR!2017 poster&#34; title=&#34;Ranking influential communities in networks&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here is a preview.
+You can download the full PDF on the &lt;a href=&#34;https://user2017.brussels/posters&#34;&gt;conference web site&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The poster is mostly reproducible: the full R source code for the analysis is &lt;a href=&#34;https://github.com/Selbosh/user2017&#34;&gt;available on GitHub&lt;/a&gt;, as is the Scribus file that generated the poster itself.
+I say &amp;lsquo;mostly&amp;rsquo; because the code is open but unfortunately the raw data is not.&lt;/p&gt;
+
+&lt;p&gt;In a maximally reproducible workflow, we could even consider designing the entire poster with Markdown.
+An idea for a future R package, perhaps?&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Chernoff faces in ggplot2</title>
+      <link>http://selbydavid.com/2017/06/25/ggchernoff/</link>
+      <pubDate>Sun, 25 Jun 2017 18:25:00 +0100</pubDate>
+      
+      <guid>http://selbydavid.com/2017/06/25/ggchernoff/</guid>
+      <description>&lt;p&gt;I am pleased to introduce my first R package for general consumption, &lt;a href=&#34;https://github.com/Selbosh/ggChernoff&#34;&gt;&lt;strong&gt;ggChernoff&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Inspiration stems from Leland Wilkinson’s book, &lt;a href=&#34;http://www.springer.com/gb/book/9780387245447&#34;&gt;&lt;em&gt;The Grammar of Graphics&lt;/em&gt;&lt;/a&gt;, whose principles were later implemented as the &lt;a href=&#34;http://vita.had.co.nz/papers/layered-grammar.pdf&#34;&gt;layered grammar of graphics&lt;/a&gt; in Hadley Wickham’s popular R package, &lt;a href=&#34;http://ggplot2.org/&#34;&gt;ggplot2&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Wilkinson’s grammar generalises data visualisation. Rather than choosing a types of graph from a list—for example bar plot, pie chart or line graphs—instead we break down graphics into algebra, scales, statistics, geometry, coordinates and aesthetics.&lt;/p&gt;
+&lt;p&gt;What does that actually mean? Suppose we want to transform the following data,&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;name&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;value&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;a&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;37&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;b&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;21&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;c&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;42&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;into the following simple visualisation.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/lineplot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;In &lt;em&gt;Grammar of Graphics&lt;/em&gt; terms, we produce the plot using these semantics.&lt;/p&gt;
+&lt;dl&gt;
+&lt;dt&gt;Variables&lt;/dt&gt;
+&lt;dd&gt;&lt;code&gt;name&lt;/code&gt;, &lt;code&gt;value&lt;/code&gt;
+&lt;/dd&gt;
+&lt;dt&gt;Algebra&lt;/dt&gt;
+&lt;dd&gt;&lt;code&gt;name&lt;/code&gt; × &lt;code&gt;value&lt;/code&gt; → (a, 37), (b, 21), (c, 42).
+&lt;/dd&gt;
+&lt;dt&gt;Scales&lt;/dt&gt;
+&lt;dd&gt;&lt;ul&gt;
+&lt;li&gt;(37, 21, 42) → (0.88, 0.50, 1.00)&lt;/li&gt;
+&lt;li&gt;(a, b, c) → (3, 2, 1)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/dd&gt;
+&lt;dt&gt;Geometry&lt;/dt&gt;
+&lt;dd&gt;For each tuple, draw a line between two points.
+&lt;/dd&gt;
+&lt;dt&gt;Coordinates&lt;/dt&gt;
+&lt;dd&gt;use Cartesian (x, y) coordinates in 2-dimensional space.
+&lt;/dd&gt;
+&lt;dt&gt;Aesthetics&lt;/dt&gt;
+&lt;dd&gt;&lt;ul&gt;
+&lt;li&gt;(0, &lt;code&gt;name&lt;/code&gt;) → (&lt;em&gt;x&lt;/em&gt;&lt;sub&gt;1&lt;/sub&gt;, &lt;em&gt;y&lt;/em&gt;&lt;sub&gt;1&lt;/sub&gt;)&lt;/li&gt;
+&lt;li&gt;(&lt;code&gt;value&lt;/code&gt;, &lt;code&gt;name&lt;/code&gt;) → (&lt;em&gt;x&lt;/em&gt;&lt;sub&gt;2&lt;/sub&gt;, &lt;em&gt;y&lt;/em&gt;&lt;sub&gt;2&lt;/sub&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;p&gt;Our line plot above is grammatically equivalent to a bar chart—just make the lines thicker! Now, what if we swap Cartesian coordinates for polar coordinates, (r, θ)? The resulting graphic is still grammatically correct, though perhaps not very useful.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/polar-1.png&#34; width=&#34;384&#34; /&gt; We can even transpose it to (θ, r) coordinates, for another grammatically-valid data visualisation. &lt;img src=&#34;http://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/radial-1.png&#34; width=&#34;384&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;These plots don’t necessarily have names, so you don’t have to hunt through a list to find the right tool to create them. It is just a matter of knowing how the &lt;em&gt;Grammar of Graphics&lt;/em&gt; works.&lt;/p&gt;
+&lt;p&gt;Look at the specifications for our plot again. Geometry and aesthetics don’t have to be as conventional as lines and boxes of different sizes. Let’s try something completely different!&lt;/p&gt;
+&lt;p&gt;A couple of amendments to the specifications…&lt;/p&gt;
+&lt;dl&gt;
+&lt;dt&gt;Geometry&lt;/dt&gt;
+&lt;dd&gt;For each tuple, draw a face.
+&lt;/dd&gt;
+&lt;dt&gt;Aesthetics&lt;/dt&gt;
+&lt;dd&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;name&lt;/code&gt; → x&lt;/li&gt;
+&lt;li&gt;0 → y&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;value&lt;/code&gt; → smile&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;p&gt;…and we produce this graph. &lt;img src=&#34;http://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/smile-1.png&#34; width=&#34;480&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Using faces for multivariate data visualisation is an idea credited to &lt;a href=&#34;https://en.wikipedia.org/wiki/Chernoff_face&#34;&gt;Herman Chernoff&lt;/a&gt;, and which Wilkinson discusses in some detail in &lt;em&gt;The Grammar of Graphics&lt;/em&gt;. In principle, you can represent data using all kinds of weird and wonderful things, so long as you can clearly define geometry, aesthetics, scales and so on to integrate them into a grammatical workflow.&lt;/p&gt;
+&lt;p&gt;My R package, &lt;a href=&#34;https://github.com/Selbosh/ggChernoff&#34;&gt;ggChernoff&lt;/a&gt;, extends ggplot2 with a new face geom and aesthetics for its mouth and eyebrows. By mapping variables to the right aesthetic you can make your data happy or sad, angry or expressionless.&lt;/p&gt;
+&lt;p&gt;Here is another set of aesthetic mappings.&lt;/p&gt;
+&lt;dl&gt;
+&lt;dt&gt;Aesthetics&lt;/dt&gt;
+&lt;dd&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;name&lt;/code&gt; → x&lt;/li&gt;
+&lt;li&gt;0 → y&lt;/li&gt;
+&lt;li&gt;1 → smile&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;value&lt;/code&gt; → eyebrows&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/eyebrow-1.png&#34; width=&#34;480&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This is a nice way to add a bit of personality to your data visualisations. Unlike the package &lt;a href=&#34;https://github.com/dill/emoGG&#34;&gt;emoGG&lt;/a&gt;, which involves selecting pre-drawn icons from a list, the faces in ggChernoff are procedurally generated, in the spirit of the grammar of graphics.&lt;/p&gt;
+&lt;p&gt;More demonstrations are coming in a future post. The package ggChernoff is &lt;a href=&#34;https://github.com/Selbosh/ggChernoff&#34;&gt;now available on GitHub&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Publishing from blogdown to GitHub with Travis</title>
+      <link>http://selbydavid.com/2017/06/22/blogdown-travis/</link>
+      <pubDate>Thu, 22 Jun 2017 08:00:00 +0100</pubDate>
+      
+      <guid>http://selbydavid.com/2017/06/22/blogdown-travis/</guid>
+      <description>
+
+&lt;p&gt;Yihui Xie&amp;rsquo;s new &lt;a href=&#34;https://bookdown.org/yihui/blogdown/&#34;&gt;blogdown&lt;/a&gt; package is a brilliantly elegant and simple tool for creating R-themed blogs and web sites.
+Starting your own blog is as simple as one line of R code:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;blogdown::new_site()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;By default, blogdown uses &lt;a href=&#34;http://gohugo.io&#34;&gt;Hugo&lt;/a&gt;, a static web site generator written in Google&amp;rsquo;s Go programming language.
+This has a number of advantages over Jekyll (the site generator that powers GitHub Pages) and from personal experience, everything just seems to work more smoothly.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2017/hugo-lithium.png&#34; alt=&#34;Example blogdown site&#34; title=&#34;Example blogdown site&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Previously I wrote about &lt;a href=&#34;http://selbydavid.com/2017/06/16/rmarkdown-jekyll/&#34;&gt;automatically deploying an R Markdown Jekyll blog with Travis&lt;/a&gt;.
+In this post, I am going to explain how you can use Travis to knit your R Markdown blog posts, then publish them with Hugo/blogdown.&lt;/p&gt;
+
+&lt;p&gt;Why Travis? In the official blogdown documentation, Yihui &lt;a href=&#34;https://bookdown.org/yihui/blogdown/netlify.html&#34;&gt;recommends Netflify&lt;/a&gt;, a rival service, instead.
+However, for the time being at least, Netlify doesn&amp;rsquo;t have R support.
+This means that any R Markdown (vs plain Markdown) posts you write will need to be built locally before pushing them to your Git repository, and therefore you can only maintain R-infused content from a computer with R + blogdown installed.&lt;/p&gt;
+
+&lt;p&gt;In an ideal world, you should be able to create content from any computer (or device) that has a web browser.
+Therefore we will push plain text to Git and have Travis compile all the R chunks for us, then automatically push the built site to GitHub Pages.&lt;/p&gt;
+
+&lt;p&gt;A few weeks ago Neal Richardson published a &lt;a href=&#34;https://nealrichardson.github.io/2017/06/01/building-a-blogdown-site-with-travis-ci/&#34;&gt;post on a similar topic&lt;/a&gt;, but that guide is a bit more complicated than it needs to be, because it doesn&amp;rsquo;t take advantage of Travis&amp;rsquo;s &lt;a href=&#34;https://docs.travis-ci.com/user/deployment/pages/&#34;&gt;native GitHub Pages support&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;You should be able to get up and running extremely quickly, with minimal Git knowledge required.
+Want to see a fully working example?
+Take a look at &lt;a href=&#34;https://github.com/Selbosh/selbosh.github.io&#34;&gt;this site&amp;rsquo;s GitHub repository&lt;/a&gt;.
+For a minimal (non-Travis) blogdown site, see &lt;a href=&#34;https://github.com/Selbosh/wrugdown&#34;&gt;this example site&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;getting-started&#34;&gt;Getting started&lt;/h2&gt;
+
+&lt;p&gt;Install blogdown with&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;devtools::install_github(&#39;rstudio/blogdown&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;then, in an empty folder, create a site.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;blogdown::new_site()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For a crash course in blogdown and Git for beginners, read my post &lt;a href=&#34;http://selbydavid.com/wrugdown/2017/05/10/getting-started-with-blogdown/&#34;&gt;Getting started with blogdown&lt;/a&gt;.
+More complete information is available in the &lt;a href=&#34;https://bookdown.org/yihui/blogdown/&#34;&gt;official blogdown book&lt;/a&gt; as well as the &lt;a href=&#34;http://gohugo.io/overview/introduction/&#34;&gt;online Hugo documentation&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Want a web site that looks like mine? Run&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;blogdown::install_theme(&#39;Selbosh/hugo-tea&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;then switch your &lt;code&gt;theme&lt;/code&gt; to &lt;code&gt;hugo-tea&lt;/code&gt; in your &lt;code&gt;config.toml&lt;/code&gt; file.&lt;/p&gt;
+
+&lt;h2 id=&#34;linking-github-to-travis&#34;&gt;Linking GitHub to Travis&lt;/h2&gt;
+
+&lt;p&gt;This follows my &lt;a href=&#34;http://selbydavid.com/2017/06/16/rmarkdown-jekyll/#linking-github-to-travis&#34;&gt;earlier guide&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Create a &lt;a href=&#34;https://github.com/settings/tokens&#34;&gt;GitHub personal access token&lt;/a&gt;, making sure the &amp;ldquo;repo&amp;rdquo; box is ticked so it has permission to push to repositories. Copy the token to your clipboard.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2017/github-pat.png&#34; alt=&#34;Creating a GitHub PAT&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;On &lt;a href=&#34;https://travis-ci.org/&#34;&gt;Travis&lt;/a&gt;, enable the GitHub repository corresponding to your blogdown site. In Settings, create a new environment variable called &lt;code&gt;GITHUB_PAT&lt;/code&gt; and paste your token into the Value field.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2017/travis-pat.png&#34; alt=&#34;Adding a Travis environment variable&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;configuring-travis&#34;&gt;Configuring Travis&lt;/h2&gt;
+
+&lt;p&gt;In the root of your directory, create a file called &lt;code&gt;.travis.yml&lt;/code&gt; containing the following.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;language: r
+cache: packages
+branches:
+    only:
+        - source
+r_github_packages:
+    - rstudio/blogdown
+
+before_script:
+    - Rscript -e &#39;blogdown::install_hugo(version = &amp;quot;0.20.7&amp;quot;)&#39;
+
+script:
+    - Rscript -e &#39;blogdown::build_site()&#39;
+
+deploy:
+    provider: pages
+    skip_cleanup: true
+    github_token: $GITHUB_PAT
+    on:
+        branch: source
+    local_dir: public
+    target_branch: master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you are hosting your site on &lt;code&gt;username.github.io&lt;/code&gt;&amp;mdash;like &lt;a href=&#34;https://github.com/Selbosh/selbosh.github.io&#34;&gt;my site&lt;/a&gt;&amp;mdash;there is no need to change any of the settings above.
+You push your code to a branch called &lt;code&gt;source&lt;/code&gt; and the compiled site is deployed to &lt;code&gt;master&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;If, instead, you have a &lt;a href=&#34;https://help.github.com/articles/user-organization-and-project-pages/&#34;&gt;Project Page&lt;/a&gt; (i.e. if the repository is called anything other than &lt;code&gt;username.github.io&lt;/code&gt;), you can replace &lt;code&gt;source&lt;/code&gt; with &lt;code&gt;master&lt;/code&gt; and &lt;code&gt;master&lt;/code&gt; with &lt;code&gt;gh-pages&lt;/code&gt;. Or just leave it how it is&amp;mdash;just make sure your repo settings have the &lt;code&gt;target_branch&lt;/code&gt; set as the &amp;ldquo;Source&amp;rdquo; for GitHub Pages.&lt;/p&gt;
+
+&lt;p&gt;Travis&amp;rsquo;s &lt;a href=&#34;https://docs.travis-ci.com/user/languages/r/&#34;&gt;R environment&lt;/a&gt; was originally designed for &lt;a href=&#34;http://r-pkgs.had.co.nz/tests.html&#34;&gt;testing&lt;/a&gt; R packages, not building web sites.
+As a result, Travis will complain if it doesn&amp;rsquo;t find a &lt;code&gt;DESCRIPTION&lt;/code&gt; file&amp;mdash;the minimum requirement of an R package&amp;mdash;in your repository.
+It is enough to add a placeholder &lt;code&gt;DESCRIPTION&lt;/code&gt; file with the following arbitrary contents:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;Package: arbitrary
+Title: Does not matter.
+Version: 0.0.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is enough to convince Travis to proceed.&lt;/p&gt;
+
+&lt;h2 id=&#34;get-publishing&#34;&gt;Get publishing&lt;/h2&gt;
+
+&lt;p&gt;Now, when you push a new commit to the &lt;code&gt;source&lt;/code&gt; branch of your GitHub repository, Travis will clone it, build the site and push it to the &lt;code&gt;master&lt;/code&gt; branch.
+In my experience it takes about two minutes from pushing changes to the updated site being live.&lt;/p&gt;
+
+&lt;p&gt;If you have nothing better to do then you can watch Travis as it tries to deploy your blog. There&amp;rsquo;s no need to monitor it, though: if it fails for any reason, you&amp;rsquo;ll receive an e-mail.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2017/travis-log.png&#34; alt=&#34;Travis log for a successful build&#34; title=&#34;Travis log for a successful build&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Hopefully this guide helps. If you have any questions or feedback, feel free to leave a comment below or &lt;a href=&#34;http://selbydavid.com/about&#34;&gt;contact me&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Cloudy with a chance of engagement</title>
+      <link>http://selbydavid.com/2017/06/20/cloudy/</link>
+      <pubDate>Tue, 20 Jun 2017 12:30:00 +0100</pubDate>
+      
+      <guid>http://selbydavid.com/2017/06/20/cloudy/</guid>
+      <description>&lt;p&gt;Last summer I took part in an internship with the fledgling &lt;a href=&#34;https://www.turing.ac.uk/&#34;&gt;Alan Turing Institute&lt;/a&gt; at the British Library in London.
+My group helped analyse data from &lt;a href=&#34;https://www.cloudywithachanceofpain.com/&#34;&gt;Cloudy with a Chance of Pain&lt;/a&gt;, a citizen science project that uses smartphone app data to model the relationship between weather and joint pain.&lt;/p&gt;
+
+&lt;p&gt;A robust statistical model relies on a steady stream of self-reported pain data from each participant.
+Naturally, the actual data available was nothing like that.
+It looked more like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2017/cloudy-data.png&#34; alt=&#34;Sequences of data entry&#34; title=&#34;Each dot is a day a participant provided data&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Unlike in a traditional epidemiological study, people could join at any time.
+Some reported data every day, some every couple of days, some had one week on, one week off, while others would lose interest after a few months, after a few weeks or even after the first day.&lt;/p&gt;
+
+&lt;p&gt;To avoid selection bias in a subsequent analysis, we needed to understand the behaviour of these participants.
+Why do some people drop out? Why do some people give more data than others?&lt;/p&gt;
+
+&lt;p&gt;Some accepted measures of &amp;lsquo;engagement&amp;rsquo; in longitudinal studies might include counting people who provided data after a particular date, or the proportion of people who used the app on more than &lt;em&gt;x&lt;/em&gt;% of days.
+These thresholds are often arbitrary and can quickly lead us down a &lt;a href=&#34;http://www.stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf&#34;&gt;garden of forking paths&lt;/a&gt;, where we (consciously or subconsciously) choose values that return the result we want.&lt;/p&gt;
+
+&lt;p&gt;Instead, we went for a more automated approach that clustered user data using a mixture of &lt;a href=&#34;https://en.wikipedia.org/wiki/Hidden_Markov_model&#34;&gt;hidden Markov models&lt;/a&gt;.
+At any time, an app user could be in one of three states: high engagement, low engagement or disengagement.
+Each user is clustered according to their probability of switching between these states, allowing us to compare and contrast highly-engaged users with &amp;lsquo;tourists&amp;rsquo;.&lt;/p&gt;
+
+&lt;p&gt;An article I wrote about this project was recently published in &lt;a href=&#34;https://www.significancemagazine.com/&#34;&gt;&lt;em&gt;Significance&lt;/em&gt;&lt;/a&gt;, the magazine of the Royal Statistical Society and American Statistical Association.
+For more details on what we did, &lt;a href=&#34;http://onlinelibrary.wiley.com/doi/10.1111/j.1740-9713.2017.01013.x/abstract&#34;&gt;read the article&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://onlinelibrary.wiley.com/doi/10.1111/j.1740-9713.2017.01013.x/abstract&#34;&gt;&lt;img src=&#34;http://selbydavid.com/img/2017/cloudy.png&#34; alt=&#34;&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Pretty errors, warnings and messages in R Markdown</title>
+      <link>http://selbydavid.com/2017/06/18/rmarkdown-alerts/</link>
+      <pubDate>Sun, 18 Jun 2017 13:15:00 +0100</pubDate>
+      
+      <guid>http://selbydavid.com/2017/06/18/rmarkdown-alerts/</guid>
+      <description>&lt;p&gt;When knitting an R Markdown document to HTML output, R chunks can produce warnings, errors or messages.&lt;/p&gt;
+
+&lt;p&gt;Normally these messages look like any other console output:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2017/alerts2.png&#34; alt=&#34;R Markdown alert messages&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Pretty ugly, and usually something I find myself trying to hide at the earliest opportunity.&lt;/p&gt;
+
+&lt;p&gt;But if you&amp;rsquo;re using R Markdown&amp;rsquo;s default template, which uses &lt;a href=&#34;http://getbootstrap.com/&#34;&gt;Twitter Bootstrap&lt;/a&gt;, you can promote warnings, errors and messages to first-class citizens.&lt;/p&gt;
+
+&lt;p&gt;What if you could have them looking like this?&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2017/alerts.png&#34; alt=&#34;Bootstrap-styled alert messages&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Bootstrap includes &lt;a href=&#34;http://getbootstrap.com/components/#alerts&#34;&gt;dedicated message boxes&lt;/a&gt; for danger, warnings and information.
+If you were writing an ordinary web site, you would generate these using the following HTML markup:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;&amp;lt;div class=&amp;quot;alert alert-danger&amp;quot;
+  &amp;lt;strong&amp;gt;Danger:&amp;lt;/strong&amp;gt; This is a warning!
+&amp;lt;/div&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can achieve this in R Markdown using knitr chunk hooks.
+Just add the following code to a chunk near the start of your &lt;code&gt;.Rmd&lt;/code&gt; file.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;knitr::knit_hooks$set(
+   error = function(x, options) {
+     paste(&#39;\n\n&amp;lt;div class=&amp;quot;alert alert-danger&amp;quot;&amp;gt;&#39;,
+           gsub(&#39;##&#39;, &#39;\n&#39;, gsub(&#39;^##\ Error&#39;, &#39;**Error**&#39;, x)),
+           &#39;&amp;lt;/div&amp;gt;&#39;, sep = &#39;\n&#39;)
+   },
+   warning = function(x, options) {
+     paste(&#39;\n\n&amp;lt;div class=&amp;quot;alert alert-warning&amp;quot;&amp;gt;&#39;,
+           gsub(&#39;##&#39;, &#39;\n&#39;, gsub(&#39;^##\ Warning:&#39;, &#39;**Warning**&#39;, x)),
+           &#39;&amp;lt;/div&amp;gt;&#39;, sep = &#39;\n&#39;)
+   },
+   message = function(x, options) {
+     paste(&#39;\n\n&amp;lt;div class=&amp;quot;alert alert-info&amp;quot;&amp;gt;&#39;,
+           gsub(&#39;##&#39;, &#39;\n&#39;, x),
+           &#39;&amp;lt;/div&amp;gt;&#39;, sep = &#39;\n&#39;)
+   }
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And you&amp;rsquo;re done! For a full demonstration and further details, read &lt;a href=&#34;http://selbydavid.com/vignettes/alerts.html&#34;&gt;this vignette&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Deploying an R Markdown Jekyll site to GitHub Pages</title>
+      <link>http://selbydavid.com/2017/06/16/rmarkdown-jekyll/</link>
+      <pubDate>Fri, 16 Jun 2017 12:00:00 +0100</pubDate>
+      
+      <guid>http://selbydavid.com/2017/06/16/rmarkdown-jekyll/</guid>
+      <description>
+
+&lt;p&gt;GitHub Pages&amp;rsquo; built-in &lt;a href=&#34;https://jekyllrb.com/&#34;&gt;Jekyll&lt;/a&gt; support makes it very easy for techie types to deploy static web sites.
+Simply push your plain text Markdown content to a repository and the server-side Jekyll engine will render it for the web.&lt;/p&gt;
+
+&lt;p&gt;Markdown is good, but &lt;a href=&#34;http://rmarkdown.rstudio.com/&#34;&gt;R Markdown&lt;/a&gt; is even better, assuming we ever want to write anything involving plots or data analysis.
+How can we write and edit blog posts in R Markdown and serve them on GitHub Pages without having to build everything locally?&lt;/p&gt;
+
+&lt;p&gt;In this post I will explain how you can use &lt;a href=&#34;https://travis-ci.org/&#34;&gt;Travis CI&lt;/a&gt; to knit R Markdown posts and deploy them to a GitHub Pages Jekyll site.&lt;/p&gt;
+
+&lt;p&gt;Yihui Xie&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:yx&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:yx&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; has added Jekyll support to the &lt;a href=&#34;https://cran.rstudio.com/web/packages/servr/index.html&#34;&gt;servr&lt;/a&gt; package and published a &lt;a href=&#34;https://jekyll.yihui.name/2014/09/jekyll-with-knitr.html&#34;&gt;blog post&lt;/a&gt; and &lt;a href=&#34;https://github.com/yihui/knitr-jekyll&#34; title=&#34;knitr-jekyll&#34;&gt;GitHub repository&lt;/a&gt; demonstrating how to use &lt;code&gt;servr::jekyll&lt;/code&gt; to serve a Jekyll site locally with R Markdown.&lt;/p&gt;
+
+&lt;p&gt;This is a nice, but incomplete solution, because it means we can only really write and edit posts from computers on which R, servr and Jekyll are installed.
+Jekyll is written in Ruby, which can be a pain to install on Windows and fiddly to configure for GitHub Pages.&lt;/p&gt;
+
+&lt;p&gt;Ideally, we want to be able to maintain our web site from anywhere we have access to a web browser, just as we would a WordPress or Blogger site.&lt;/p&gt;
+
+&lt;p&gt;What we are going to do instead is knit our R Markdown posts in the cloud, which automatically pushes the resulting plain Markdown files and images to GitHub, where they will be served by Jekyll like a regular site.&lt;/p&gt;
+
+&lt;p&gt;For reference, I have created a &lt;a href=&#34;https://github.com/Selbosh/jekyll-rmd&#34;&gt;minimal working repository&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;linking-github-to-travis&#34;&gt;Linking GitHub to Travis&lt;/h2&gt;
+
+&lt;p&gt;If you have not already done so, set up a &lt;a href=&#34;https://help.github.com/articles/about-github-pages-and-jekyll/&#34;&gt;regular GitHub Pages Jekyll site&lt;/a&gt;.
+There are plenty of good guides for this on the web, so I won&amp;rsquo;t go into the details here.&lt;/p&gt;
+
+&lt;p&gt;Once that is all working smoothly, sign up for a free &lt;a href=&#34;https://travis-ci.org/&#34;&gt;Travis CI&lt;/a&gt; account.
+Travis is a service designed to run unit tests on software packages so that bugs are not introduced during development.
+However, rather than running tests on software, we are going to be using Travis&amp;rsquo;s infrastructure to build our web site for us.&lt;/p&gt;
+
+&lt;p&gt;In the Travis &amp;lsquo;Accounts&amp;rsquo; screen, look for your site&amp;rsquo;s repository and switch it on (green tick).
+It doesn&amp;rsquo;t actually do anything just yet, but now Travis knows to watch for future commits to this repo.&lt;/p&gt;
+
+&lt;p&gt;You will also need to &lt;a href=&#34;https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/&#34;&gt;generate a personal access token&lt;/a&gt; on GitHub, which grants Travis permission to push to your branch. Copy it to your clipboard.&lt;/p&gt;
+
+&lt;p&gt;Back on Travis, on the settings page for your branch, create an Environment Variable with name &lt;code&gt;GITHUB_PAT&lt;/code&gt; and paste the personal access token into the Value field.&lt;/p&gt;
+
+&lt;h2 id=&#34;configuring-the-travis-build&#34;&gt;Configuring the Travis build&lt;/h2&gt;
+
+&lt;p&gt;Travis is &lt;a href=&#34;https://docs.travis-ci.com/user/customizing-the-build&#34;&gt;controlled by a file&lt;/a&gt; called &lt;code&gt;.travis.yml&lt;/code&gt; that lives in the root of your Git repository.
+As a baseline, I recommend creating a file that contains the following configuration.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;language: r
+cache: packages
+pandoc_version: 1.17.2
+
+branches:
+  only: source
+
+script:
+  - Rscript -e &#39;servr:::knit_maybe(c(&amp;quot;.&amp;quot;, &amp;quot;_source&amp;quot;, &amp;quot;_posts&amp;quot;), c(&amp;quot;.&amp;quot;, &amp;quot;_posts&amp;quot;, &amp;quot;_posts&amp;quot;), &amp;quot;build.R&amp;quot;, &amp;quot;jekyll&amp;quot;)&#39;
+  
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_PAT
+  on:
+    branch: source
+  target_branch: master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let&amp;rsquo;s walk through this, line by line. The first two lines are:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;language: r
+cache: packages
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Since we will be knitting R Markdown files into Markdown, we want Travis to have a copy of R installed. &lt;a href=&#34;https://docs.travis-ci.com/user/languages/r/&#34;&gt;R is natively supported in Travis&lt;/a&gt; thanks to work by the community.&lt;/p&gt;
+
+&lt;p&gt;A Travis R build comes with pandoc and LaTeX, ostensibly for building R package documentation. To generate standalone R Markdown documents or web sites with Travis, you need to hoodwink the system into thinking it is building a real R package.&lt;/p&gt;
+
+&lt;p&gt;The most minimal R package comprises a single file, called &lt;code&gt;DESCRIPTION&lt;/code&gt;. More on that &lt;a href=&#34;#r-files&#34;&gt;below&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;pandoc_version: 1.17.2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Pandoc is a key piece of software that R Markdown uses to convert documents between various formats.
+By default, Travis seems to use an old version of pandoc (1.15 or so), which can cause unexpected errors when trying to render R Markdown documents.
+At the time of writing 1.17.2 seems to be the recommended version of pandoc for R Markdown, though I expect &lt;a href=&#34;http://pandoc.org/releases.html&#34;&gt;newer releases&lt;/a&gt; should be fine, too.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;branches:
+  only: source
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Choose the branch of your repository to which you will submit your code.
+For a personal site&amp;mdash;i.e. &lt;code&gt;username.github.io&lt;/code&gt;&amp;mdash;GitHub says the final rendered web site files have to be on the &lt;code&gt;master&lt;/code&gt; branch, so we want to push our source code somewhere else.
+I have opted to use a branch called &lt;code&gt;source&lt;/code&gt; but you can use whatever you like.&lt;/p&gt;
+
+&lt;p&gt;Whenever you push commits to the &lt;code&gt;source&lt;/code&gt; branch, Travis will notice and start a build.
+The output will then be deployed to another branch.
+We choose &lt;code&gt;only: source&lt;/code&gt; so that Travis doesn&amp;rsquo;t trigger itself when it pushes your site to the &lt;code&gt;master&lt;/code&gt; branch, otherwise we would get an endless feedback loop.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;script:
+  - Rscript -e &#39;servr:::knit_maybe(c(&amp;quot;.&amp;quot;, &amp;quot;_source&amp;quot;, &amp;quot;_posts&amp;quot;), c(&amp;quot;.&amp;quot;, &amp;quot;_posts&amp;quot;, &amp;quot;_posts&amp;quot;), &amp;quot;build.R&amp;quot;, &amp;quot;jekyll&amp;quot;)&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;When you push a new commit to the repository, the script above looks for &lt;code&gt;.Rmd&lt;/code&gt; files, converts them into &lt;code&gt;.md&lt;/code&gt; files and puts them in the root directory (in the case of R Markdown pages) or the &lt;code&gt;_posts&lt;/code&gt; directory in the case of R Markdown blog posts.&lt;/p&gt;
+
+&lt;p&gt;Why not use &lt;code&gt;servr::jekyll(serve = TRUE)&lt;/code&gt;? Because that command requires Jekyll to be installed&amp;mdash;not available on Travis&amp;rsquo;s R environment&amp;mdash;and we aren&amp;rsquo;t interested in building the whole site with Jekyll on Travis anyway.
+All we want is plain Markdown files and images, which GitHub Pages&amp;rsquo; own Jekyll engine will build into an HTML site for us.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_PAT
+  on:
+    branch: source
+  target_branch: master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once the site is built, it needs to be published or &lt;code&gt;deploy&lt;/code&gt;ed somewhere.
+The line &lt;code&gt;provider: pages&lt;/code&gt; means we take advantage of &lt;a href=&#34;https://docs.travis-ci.com/user/deployment/pages/&#34;&gt;Travis&amp;rsquo;s native GitHub Pages support&lt;/a&gt; and don&amp;rsquo;t have to write our own shell script to run all the complicated git commands.&lt;/p&gt;
+
+&lt;p&gt;Skipping cleanup means Travis doesn&amp;rsquo;t delete everything it builds, which you might want when testing an R package, but not when building a web site.&lt;/p&gt;
+
+&lt;p&gt;The GitHub personal access token gives Travis permission to push to your repository.
+Make sure the variable name (after the &lt;code&gt;$&lt;/code&gt; sign) matches the one you set in Travis settings.&lt;/p&gt;
+
+&lt;p&gt;The last few lines specify Travis should look for your source code (R Markdown and Markdown files) and where to deploy the generated Markdown files.
+If you are working on a &lt;a href=&#34;https://help.github.com/articles/user-organization-and-project-pages/&#34;&gt;Project page rather than a User page&lt;/a&gt;, then you probably want to change the settings to the following.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;  on:
+    branch: master
+  target_branch: gh-pages
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;description-file&#34;&gt;DESCRIPTION file&lt;/h2&gt;
+
+&lt;p&gt;To convince Travis it is building a valid R package, include a &lt;code&gt;DESCRIPTION&lt;/code&gt; file in the root directory of the repository with the following contents.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;Package: placeholder
+Title: Does not matter.
+Version: 0.0.1
+Imports: servr, rmarkdown
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;Package&lt;/code&gt;, &lt;code&gt;Title&lt;/code&gt; and &lt;code&gt;Version&lt;/code&gt; are arbitrary, but &lt;code&gt;Imports&lt;/code&gt; describes which R packages should be installed when building your site.
+You need servr and rmarkdown at least.
+If R code chunks in your blog posts make use of other R packages, you might want to include those here as well.&lt;/p&gt;
+
+&lt;h2 id=&#34;build-r&#34;&gt;build.R&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/Selbosh/jekyll-rmd/blob/master/build.R&#34;&gt;This file&lt;/a&gt; is called on your R Markdown files.
+It knits them to Markdown and makes sure plots get saved to the right directory.&lt;/p&gt;
+
+&lt;h2 id=&#34;push-a-new-post&#34;&gt;Push a new post&lt;/h2&gt;
+
+&lt;p&gt;When you next push a commit to the &lt;code&gt;on&lt;/code&gt; branch of your GitHub repository, Travis will start building and deploying your site. If it fails, you&amp;rsquo;ll receive an email about it and can have a look through the logs to find out why.&lt;/p&gt;
+
+&lt;p&gt;You should now have a system that automagically renders and deploys your R Markdown posts every time you push them to your site&amp;rsquo;s GitHub repository.
+If anything is unclear, have a look at my &lt;a href=&#34;https://github.com/Selbosh/jekyll-rmd&#34;&gt;minimal working repository&lt;/a&gt; or &lt;a href=&#34;https://github.com/Selbosh/old-jekyll&#34;&gt;a real example&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;If you found this helpful or have any comments or questions, feel free to &lt;a href=&#34;http://selbydavid.com/about&#34;&gt;get in touch&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:yx&#34;&gt;Yihui has since turned his attention to the &lt;a href=&#34;https://bookdown.org/yihui/blogdown/&#34;&gt;blogdown&lt;/a&gt; package, which is much more fleshed-out project based on the Hugo static site generator&amp;mdash;a rival to Jekyll. (I will explain how to set up blogdown with Travis in a future post.)
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:yx&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Secret Santa in R</title>
+      <link>http://selbydavid.com/2016/12/07/santa/</link>
+      <pubDate>Wed, 07 Dec 2016 09:00:00 +0000</pubDate>
+      
+      <guid>http://selbydavid.com/2016/12/07/santa/</guid>
+      <description>&lt;p&gt;Our office just exchanged presents for &lt;em&gt;Secret Santa&lt;/em&gt;, a tradition where each person is randomly assigned someone else to give an anonyous gift. One of the challenges of Secret Santa is keeping the pairs of gift-givers and receivers both random and secret. How can you do this while also taking part yourself? Using R, of course!&lt;/p&gt;
+&lt;p&gt;Firstly, recruit people! Write their names down, one per line, in a text file. The order doesn’t matter. For example, we might have a file called &lt;code&gt;santa_names.txt&lt;/code&gt;, with contents as follows:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Tom
+Dick
+Harry
+Jane
+Leslie
+Susan
+Alex
+Sam
+Chris&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then read these names into R.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;names &amp;lt;- readLines(&amp;#39;santa_names.txt&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We now have a character vector called &lt;code&gt;names&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The key to a truly random pairing of gift givers and recipients is that it shouldn’t depend on any systematic order, such as the order people signed up, or the alphabetical order of their names.&lt;/p&gt;
+&lt;p&gt;Here is one way we might try to do it. First, randomly reorder the &lt;code&gt;names&lt;/code&gt;. Then, have every person in this list give to the next person on the list, with the very last person then giving to the first.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;names2 &amp;lt;- sample(names)
+data.frame(sender = names2,
+           recipient = c(tail(names2, -1), names2[1]))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##   sender recipient
+## 1   Dick     Susan
+## 2  Susan    Leslie
+## 3 Leslie     Chris
+## 4  Chris      Alex
+## 5   Alex      Jane
+## 6   Jane       Tom
+## 7    Tom       Sam
+## 8    Sam     Harry
+## 9  Harry      Dick&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In R, the &lt;code&gt;sample()&lt;/code&gt; function draws randomly from a vector, and by default it does this without replacement, so we don’t have to worry about missing anybody off or somebody appearing twice. We can use it as a quick way to reorder the list of names at random. The &lt;code&gt;tail&lt;/code&gt; command with argument &lt;code&gt;-1&lt;/code&gt; will select every element in the list except the first.&lt;/p&gt;
+&lt;p&gt;This works in the sense that everybody gives and receives one gift and nobody gives to themselves, but is not entirely random or secret. If you find out that Susan gave to Leslie, then you know for a fact that Leslie didn’t give to Susan. With enough of these titbits of information you could reconstruct the entire list. Ideally we want no discernable pattern.&lt;/p&gt;
+&lt;p&gt;Why not just randomly sample twice from the &lt;code&gt;names&lt;/code&gt; list?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data.frame(sender = sample(names),
+           recipient = sample(names))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##   sender recipient
+## 1  Harry       Tom
+## 2  Chris      Dick
+## 3 Leslie       Sam
+## 4  Susan    Leslie
+## 5   Dick      Alex
+## 6   Jane      Jane
+## 7    Sam     Susan
+## 8   Alex     Harry
+## 9    Tom     Chris&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There’s a problem. Jane has been assigned to herself! That won’t do! The solution is quite straightforward, though: just keep sampling until this doesn’t happen. We can keep the order of senders fixed and vary the order of the recipients until nobody gives to themselves, like so.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sender &amp;lt;- sample(names)
+recipient &amp;lt;- sample(names)
+i &amp;lt;- 1
+while (any(sender == recipient)) {
+  i &amp;lt;- i + 1
+  recipient &amp;lt;- sample(names)
+}
+data.frame(sender, recipient)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##   sender recipient
+## 1  Harry      Jane
+## 2  Chris      Alex
+## 3 Leslie       Sam
+## 4  Susan      Dick
+## 5   Dick     Chris
+## 6   Jane       Tom
+## 7    Sam    Leslie
+## 8   Alex     Harry
+## 9    Tom     Susan&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Success! Everybody gives and receives a gift, nobody gives to themselves and there is no particular pattern. (Unlike the first method, Sam gives to Leslie even though Leslie already gives to Sam.)&lt;/p&gt;
+&lt;p&gt;If you’re curious, you can find out how many attempts it took to find a valid set of pairs:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;i&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now, how do you let everybody know who they have been assigned, without revealing it anybody else? (Including you!) We can write a text file for every person, with the name of the file corresponding to the giver and the contents of the file revealing the recipient.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;for (i in seq_along(names)) {
+  writeLines(recipient[i], paste0(sender[i], &amp;#39;.txt&amp;#39;))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you were feeling really clever, you could automate the e-mail sending from R as well, but it should be easy enough to attach and send the files by hand without peeking.&lt;/p&gt;
+&lt;p&gt;Putting it all together:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;names &amp;lt;- readLines(&amp;#39;santa_names.txt&amp;#39;)
+sender &amp;lt;- sample(names)
+recipient &amp;lt;- sample(names)
+while (any(sender == recipient)) {
+  recipient &amp;lt;- sample(names)
+}
+for (i in seq_along(names)) {
+  writeLines(recipient[i], paste0(sender[i], &amp;#39;.txt&amp;#39;))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Merry Christmas!&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;http://selbydavid.com/img/2016/santa.jpg&#34; alt=&#34;Secret Santa at Warwick&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Secret Santa at Warwick&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Poster: PageRank and the Bradley–Terry model</title>
+      <link>http://selbydavid.com/2016/12/02/ima-poster/</link>
+      <pubDate>Fri, 02 Dec 2016 09:00:00 +0000</pubDate>
+      
+      <guid>http://selbydavid.com/2016/12/02/ima-poster/</guid>
+      <description>&lt;p&gt;Here is my poster that I presented at the 2nd IMA Conference on the Mathematical Challenges of Big Data in London on 1st&amp;ndash;2nd December 2016. It is entitled &amp;ldquo;PageRank and the Bradley&amp;ndash;Terry model: Measuring influence with the Scroogefactor&amp;rdquo;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2016/ima-poster.png&#34; alt=&#34;Zeeman Building, University of Warwick&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Sent to Coventry</title>
+      <link>http://selbydavid.com/2015/09/30/warwick/</link>
+      <pubDate>Wed, 30 Sep 2015 09:00:00 +0100</pubDate>
+      
+      <guid>http://selbydavid.com/2015/09/30/warwick/</guid>
+      <description>&lt;p&gt;I have just moved to the University of Warwick to start my PhD in Statistics. So far most of the people I have met would regard Coventry as a bit of a downgrade from Edinburgh, but the Warwick campus seems to make up for it.&lt;/p&gt;
+
+&lt;p&gt;The Mathematics and Statistics building comes with resident geese.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2015/zeeman.jpg&#34; alt=&#34;Zeeman Building, University of Warwick&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Edinburgh Broadband Map</title>
+      <link>http://selbydavid.com/2015/05/16/broadband/</link>
+      <pubDate>Sat, 16 May 2015 09:00:00 +0100</pubDate>
+      
+      <guid>http://selbydavid.com/2015/05/16/broadband/</guid>
+      <description>&lt;p&gt;Despite living in the capital city of Scotland, my home broadband speeds (especially upload speeds) are painfully slow. There is no fibre-optic offered on my road, while my friend two streets over enjoys super-fast internet. It turns out, through the power of data visualisation, that EH16 is a bit of a broadband speed &amp;ldquo;notspot&amp;rdquo; along with a few other slow neighbourhoods throughout Edinburgh. The big empty hole to the east of the city centre is Arthur&amp;rsquo;s Seat and Holyrood Park.&lt;/p&gt;
+
+&lt;p&gt;&lt;script type=&#39;text/javascript&#39; src=&#39;https://public.tableau.com/javascripts/api/viz_v1.js&#39;&gt;&lt;/script&gt;&lt;div class=&#39;tableauPlaceholder&#39; style=&#39;width: 100%; height: 400px; margin: 0 auto;&#39;&gt;&lt;noscript&gt;&lt;a href=&#39;#&#39;&gt;&lt;img alt=&#39;Hotspots and Notspots: Edinburgh Home Broadband Speeds &#39; src=&#39;https:&amp;#47;&amp;#47;public.tableau.com&amp;#47;static&amp;#47;images&amp;#47;Ed&amp;#47;EdinburghBroadband&amp;#47;Map&amp;#47;1_rss.png&#39; style=&#39;border: none&#39; /&gt;&lt;/a&gt;&lt;/noscript&gt;&lt;object class=&#39;tableauViz&#39; width=&#39;100%&#39; height=&#39;400px&#39; style=&#39;display:none;&#39;&gt;&lt;param name=&#39;host_url&#39; value=&#39;https%3A%2F%2Fpublic.tableau.com%2F&#39; /&gt; &lt;param name=&#39;site_root&#39; value=&#39;&#39; /&gt;&lt;param name=&#39;name&#39; value=&#39;EdinburghBroadband&amp;#47;Map&#39; /&gt;&lt;param name=&#39;tabs&#39; value=&#39;no&#39; /&gt;&lt;param name=&#39;toolbar&#39; value=&#39;yes&#39; /&gt;&lt;param name=&#39;static_image&#39; value=&#39;https:&amp;#47;&amp;#47;public.tableau.com&amp;#47;static&amp;#47;images&amp;#47;Ed&amp;#47;EdinburghBroadband&amp;#47;Map&amp;#47;1.png&#39; /&gt; &lt;param name=&#39;animate_transition&#39; value=&#39;yes&#39; /&gt;&lt;param name=&#39;display_static_image&#39; value=&#39;yes&#39; /&gt;&lt;param name=&#39;display_spinner&#39; value=&#39;yes&#39; /&gt;&lt;param name=&#39;display_overlay&#39; value=&#39;yes&#39; /&gt;&lt;param name=&#39;display_count&#39; value=&#39;yes&#39; /&gt;&lt;param name=&#39;showVizHome&#39; value=&#39;no&#39; /&gt;&lt;param name=&#39;showTabs&#39; value=&#39;y&#39; /&gt;&lt;param name=&#39;bootstrapWhenNotified&#39; value=&#39;true&#39; /&gt;&lt;/object&gt;&lt;/div&gt;&lt;/p&gt;
+
+&lt;p&gt;Data source: &lt;a href=&#34;http://data.gov.uk/dataset/broadband-coverage/resource/0f6b7671-eb9a-49bd-8913-90d1c07af11d&#34;&gt;Ofcom&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Everything is awesome</title>
+      <link>http://selbydavid.com/2015/02/17/lego/</link>
+      <pubDate>Tue, 17 Feb 2015 09:00:00 +0000</pubDate>
+      
+      <guid>http://selbydavid.com/2015/02/17/lego/</guid>
+      <description>&lt;p&gt;Today I took part in the Lego Calculator Challenge, an event that was run as part of Edinburgh University&amp;rsquo;s Innovative Learning Week. The day included revising the finer points of adding in base 6 and learning about how people managed to do complicated calculations on mechanical computers before Alan Turing invented the Casio &lt;em&gt;fx&lt;/em&gt;-83.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2015/lego/tea.jpg&#34; alt=&#34;Working on the Lego Calculator Challenge&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;With the aid of &lt;a href=&#34;https://vimeo.com/46344551&#34;&gt;this therapeutic video&lt;/a&gt;, Lego expert Alex Allmont showed us some of the clever things that are possible using gears and ratchets. I also learnt the existence of and the inner workings of a car&amp;rsquo;s differential gear in a ten-minute time span, thanks to an excellent &lt;a href=&#34;https://www.youtube.com/watch?v=K4JhruinbWc&#34;&gt;film by Chevrolet from the 1930s&lt;/a&gt;. Using exactly the same kind of differential gear, but in reverse, we built our own &amp;ldquo;differential adders&amp;rdquo;, capable of adding or subtracting numbers up to 20.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2015/lego/differential.jpg&#34; alt=&#34;Stuff&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Selecting two numbers from the top wheels will automatically compute and output their sum on the lower wheel. Conversely, fixing a number on the lower wheel first will let you perform subtraction. Awesome.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Twitter score predictions are not infallible</title>
+      <link>http://selbydavid.com/2014/06/14/world-cup/</link>
+      <pubDate>Sat, 14 Jun 2014 09:00:00 +0100</pubDate>
+      
+      <guid>http://selbydavid.com/2014/06/14/world-cup/</guid>
+      <description>&lt;p&gt;This evening saw the Netherlands face Spain for their first match in the group stage of the 2014 Fifa World Cup. 604 score predictions were made on Twitter in the hour before kick-off. When the final whistle blew, 100% of them had missed the mark.&lt;/p&gt;
+
+&lt;p&gt;The Twittersphere overwhelmingly tipped a 2&amp;ndash;1 victory to Spain, the reigning world champions. A bit of a shame, then, that the Netherlands trounced them 5&amp;ndash;1. Maybe the &lt;a href=&#34;http://www.bbc.co.uk/news/uk-england-27810714&#34; title=&#34;World Cup 2014: Animals &#39;predict&#39; World Cup results - BBC News&#34;&gt;animal pundits&lt;/a&gt; will do better.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2014/twitterscore.png&#34; alt=&#34;Twitter predicted vs. actual score of Group B Netherlands vs. Spain match on 13 June 2014&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Data mining: tea is for Twitter</title>
+      <link>http://selbydavid.com/2014/06/07/tea-bieber/</link>
+      <pubDate>Sat, 07 Jun 2014 09:00:00 +0100</pubDate>
+      
+      <guid>http://selbydavid.com/2014/06/07/tea-bieber/</guid>
+      <description>&lt;p&gt;As part of my first foray into data science, I decided to have a go at opinion mining on Twitter. It&amp;rsquo;s common knowledge that everything stops for tea, but how much does the Twittersphere agree? And what else are microbloggers saying about the drink?&lt;/p&gt;
+
+&lt;p&gt;Using the free R statistical software it is very easy to start data mining on Twitter&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:R&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:R&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;. A short R script quickly retrieved 699 recent tweets containing the tag #tea. The code looks something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(twitteR)
+cred &amp;lt;- OAuthFactory$new(...)
+...
+load(&amp;quot;twitter authentication.Rdata&amp;quot;)
+registerTwitterOAuth(cred)
+require(plyr)
+data&amp;lt;- searchTwitter(&amp;quot;#tea&amp;quot;, n=1500, cainfo=&amp;quot;cacert.pem&amp;quot;)
+text = laply(data, function(t) t$getText())
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Before anything interesting can be gleaned from the dataset, some housework must be done. Text mining&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:tm&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:tm&#34;&gt;2&lt;/a&gt;&lt;/sup&gt; removes irrelevant URLs, punctuation, symbols and &amp;ldquo;stop words&amp;rdquo;, leaving each tweet ready for scrutiny.&lt;/p&gt;
+
+&lt;p&gt;So what are our friends on Twitter saying about tea? Finding out calls for a graph. But not just any graph: a word cloud&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:wc&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:wc&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;, displaying words according to frequency.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2014/tea.png&#34; alt=&#34;Word cloud made from 699 tweets containing the hashtag &#39;#tea&#39;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Obviously every tweet contains &amp;ldquo;tea&amp;rdquo; because that&amp;rsquo;s what was sought. People also like to discuss milk and sugar, as well as coffee (possibly during cataclysmic breakfast drink dilemmas). To the right of centre, &lt;strong&gt;tcot&lt;/strong&gt; stands for &amp;ldquo;top conservatives on Twitter&amp;rdquo;, who enjoy talking about tea &amp;mdash; and tea parties &amp;mdash; as much as anyone. Other notable phrases include &amp;ldquo;freedom&amp;rdquo;, &amp;ldquo;greatness&amp;rdquo;, &amp;ldquo;best&amp;rdquo; and &amp;ldquo;delicious&amp;rdquo;. But we&amp;rsquo;ll do some more objective analysis shortly.&lt;/p&gt;
+
+&lt;p&gt;For variety, I also had a go at mining Twitter&amp;rsquo;s public streaming API for a larger sample, this time using Python. Here&amp;rsquo;s what some ten thousand tweets say about Canadian pop star Justin Bieber:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2014/justin.png&#34; alt=&#34;Word cloud made from 10,000 tweets containing the word &#39;bieber&#39;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;He&amp;rsquo;s racist? &lt;em&gt;And&lt;/em&gt; shirtless. Who knew?&lt;/p&gt;
+
+&lt;p&gt;To assess public opinion more objectively, we can perform sentiment analysis, which involves assigning a mood to each tweet and observing the distribution&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:sent&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:sent&#34;&gt;4&lt;/a&gt;&lt;/sup&gt;. A tweet&amp;rsquo;s mood score derives from comparing each constituent word against a database of &amp;ldquo;positive&amp;rdquo; and &amp;ldquo;negative&amp;rdquo; English words then adding and subtracting 1 respectively. A total less than -2 is very negative, zero is neutral and greater than +2 is very positive.&lt;/p&gt;
+
+&lt;p&gt;For example, this tweet gets a score of +5:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;@justinbieber i&amp;rsquo;m so happy to say : &amp;ldquo;Justin Bieber is my idol and he&amp;rsquo;s perfect&amp;rdquo; because i love you so much you&amp;rsquo;re a very good man&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;whereas this one is assigned a score of -4:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Justin Bieber has serious issues, i wish he&amp;rsquo;d just sort his shit out because I for one am sick of seeing stupid crap about him in the news&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2014/sentiment.png&#34; alt=&#34;Histogram comparison of sentiment scores for tweets about tea and Justin Bieber&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Our #tea dataset has a score distribution that&amp;rsquo;s mostly positive, with a mean sentiment score of +0.15 and a variance of 0.36. Clearly our intuition is correct and people really do like tea. Indeed, nobody really had much of a bad word to say about the beverage; the minimum score given was -2, which could easily have been obtained from a false-negative tweet like &amp;ldquo;I hate people who dislike #tea&amp;rdquo; (though it wasn&amp;rsquo;t).&lt;/p&gt;
+
+&lt;p&gt;On the other hand, the outlook isn&amp;rsquo;t so rosy for our friend Justin. From our dataset of 10,003 tweets, the mean mood score is -0.07, which is slightly negative. He&amp;rsquo;s a divisive topic of discussion, too: the score variance is 0.87, giving a more widely-spread distribution of sentiments.&lt;/p&gt;
+
+&lt;p&gt;So it&amp;rsquo;s official. Twitter likes tea more than it likes Justin Bieber. Probably. Time for a cuppa.&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:R&#34;&gt;Jeff Gentry (2013). &lt;a href=&#34;http://CRAN.R-project.org/package=twitteR&#34;&gt;&lt;em&gt;twitteR: R based Twitter client&lt;/em&gt;&lt;/a&gt;. R package version 1.1.7.
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:R&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:tm&#34;&gt;Ingo Feinerer and Kurt Hornik (2014). &lt;a href=&#34;http://CRAN.R-project.org/package=tm&#34;&gt;&lt;em&gt;tm: Text Mining Package&lt;/em&gt;&lt;/a&gt;. R package version 0.5-10.
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:tm&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:wc&#34;&gt;Ian Fellows (2013). &lt;a href=&#34;http://CRAN.R-project.org/package=wordcloud&#34;&gt;&lt;em&gt;wordcloud: Word Clouds&lt;/em&gt;&lt;/a&gt;. R package version 2.4.
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:wc&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:sent&#34;&gt;Jeffrey Breen (2011). &lt;a href=&#34;http://www.slideshare.net/jeffreybreen/r-by-example-mining-twitter-for&#34;&gt;&lt;em&gt;R by example: mining Twitter for consumer attitudes towards airlines.&lt;/em&gt;&lt;/a&gt;
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:sent&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>T-set mug</title>
+      <link>http://selbydavid.com/2014/06/05/t-set/</link>
+      <pubDate>Thu, 05 Jun 2014 09:00:00 +0100</pubDate>
+      
+      <guid>http://selbydavid.com/2014/06/05/t-set/</guid>
+      <description>&lt;p&gt;The set of all &lt;em&gt;t&lt;/em&gt; makes the perfect tea set for mathematicians and other numerate geeks. A natural accompaniment to your &lt;a href=&#34;http://selbydavid.com/2014/06/04/t-pot/&#34;&gt;Student&amp;rsquo;s t-distribution teapot&lt;/a&gt;, the t-set lets you collect mugs in a mathematical way.&lt;/p&gt;
+
+&lt;p&gt;Get yours now &lt;a href=&#34;http://www.zazzle.co.uk/mathematical_t_set_black_coffee_mugs-168015681676499039&#34; title=&#34;t-set mug&#34;&gt;from Zazzle&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2014/t-set.png&#34; alt=&#34;t-set mug&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Student&#39;s t-distribution teapot</title>
+      <link>http://selbydavid.com/2014/06/04/t-pot/</link>
+      <pubDate>Wed, 04 Jun 2014 09:00:00 +0100</pubDate>
+      
+      <guid>http://selbydavid.com/2014/06/04/t-pot/</guid>
+      <description>&lt;p&gt;Where is a student&amp;rsquo;s tea distributed? Probably in a teapot. Thus the &lt;a href=&#34;http://www.zazzle.co.uk/students_t_distribution_teapot-180267930175357597&#34;&gt;Student&amp;rsquo;s t-distribution teapot&lt;/a&gt; is born.&lt;/p&gt;
+
+&lt;p&gt;Warmly emblazoned across the outside is the probability density function of &lt;a href=&#34;http://en.wikipedia.org/wiki/Student&#39;s_t-distribution&#34;&gt;Student&amp;rsquo;s t-distribution&lt;/a&gt;, in case you need to estimate the mean of a normally distributed population and pour a cup of tea at the same time.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/img/2014/t-pot.png&#34; alt=&#34;Student&#39;s t-distribution teapot&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Lovingly designed for students and academics who take their probability and statistics as seriously as they take a proper brew. You can get one for yourself &lt;a href=&#34;http://www.zazzle.co.uk/students_t_distribution_teapot-180267930175357597&#34;&gt;from Zazzle&lt;/a&gt;. Goes nicely with a &lt;a href=&#34;http://selbydavid.com/2014/06/05/t-set/&#34;&gt;t-set mug&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Contours Magazine</title>
+      <link>http://selbydavid.com/2014/06/04/contours/</link>
+      <pubDate>Wed, 04 Jun 2014 08:00:00 +0100</pubDate>
+      
+      <guid>http://selbydavid.com/2014/06/04/contours/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;http://www.maths.ed.ac.uk/outreach/contours-magazine&#34;&gt;Contours magazine&lt;/a&gt; is a student publication produced by the University of Edinburgh School of Mathematics, featuring interviews with maths lecturers. I was editor and graphic designer for the 2013&amp;ndash;14 edition. &lt;a href=&#34;http://issuu.com/uoemaths/docs/contours_web&#34;&gt;Click here to read it on Issuu&lt;/a&gt;, or pick up a hard copy from the King&amp;rsquo;s Buildings campus.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;What does a mathematician do when they aren&amp;rsquo;t lecturing students? What kind of questions are they thinking about? What inspired them to study their subject and what do they do when they get stuck on a problem? What are the big questions facing mathematicians today?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;div data-configid=&#34;0/8134592&#34; style=&#34;height:456px; margin-left:auto; margin-right:auto;&#34; class=&#34;issuuembed&#34;&gt;&lt;/div&gt;&lt;script type=&#34;text/javascript&#34; src=&#34;//e.issuu.com/embed.js&#34; async=&#34;true&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="author" content="David Selby">
+
+  
+
+
+<title>Using R on Android &middot; Tea &amp; Stats</title>
+<meta property="og:title" content="Using R on Android" />
+<meta property="og:description" content="I just discovered a way to get R running on my smartphone, with full support for packages, graphics and R Markdown, and no need to connect to an external server. This is really handy for quickly checking R code, trying out ideas and writing blog posts on the go. It works quite well!
+Here I will show you how to do the same on your Android device. This post was inspired by this answer on StackOverflow." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://selbydavid.com/2017/12/29/r-android/" />
+
+  <meta property="og:image" content="http://selbydavid.com/img/2017/android-r.gif" />
+
+
+
+<meta property="article:published_time" content="2017-12-29T15:00:00&#43;00:00"/>
+
+<meta property="article:modified_time" content="2017-12-29T15:00:00&#43;00:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="Using R on Android">
+<meta itemprop="description" content="I just discovered a way to get R running on my smartphone, with full support for packages, graphics and R Markdown, and no need to connect to an external server. This is really handy for quickly checking R code, trying out ideas and writing blog posts on the go. It works quite well!
+Here I will show you how to do the same on your Android device. This post was inspired by this answer on StackOverflow.">
+
+
+<meta itemprop="datePublished" content="2017-12-29T15:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2017-12-29T15:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1036">
+
+  <meta itemprop="image" content="http://selbydavid.com/img/2017/android-r.gif">
+
+
+
+<meta itemprop="keywords" content="" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image:src" content="http://selbydavid.com/img/2017/android-r.gif"/>
+<meta name="twitter:title" content="Using R on Android"/>
+<meta name="twitter:description" content="I just discovered a way to get R running on my smartphone, with full support for packages, graphics and R Markdown, and no need to connect to an external server. This is really handy for quickly checking R code, trying out ideas and writing blog posts on the go. It works quite well!
+Here I will show you how to do the same on your Android device. This post was inspired by this answer on StackOverflow."/>
+<meta name="twitter:site" content="@TeaStats"/>
+
+
+
+  
+    <meta property="article:author" content="https://www.facebook.com/Selbosh" />
+    <meta property="article:publisher" content="https://www.facebook.com/Selbosh" />
+  
+  
+    <meta name="twitter:creator" content="@TeaStats"/>
+  
+
+
+<meta name="theme" content="hugo-tea">
+<meta name="generator" content="Hugo 0.32.2" />
+
+
+
+
+
+<link rel="shortcut icon" href="http://selbydavid.com/favicon.ico">
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="http://selbydavid.com/css/main.css" media="all">
+
+<script src="https://use.fontawesome.com/269c7751ba.js"></script>
+
+  </head>
+  <body>
+      
+        <header id="masthead">
+          <img src="http://selbydavid.com/img/logo.svg"
+               width="120"
+               height=""
+               alt="Tea and Stats">
+          <h1><a href="http://selbydavid.com/">Tea &amp; Stats</a></h1>
+          <aside>Data science with David Selby</aside>
+          <nav>
+  <ul>
+    
+      <li><a href="http://selbydavid.com/about/">About</a></li>
+    
+    
+    <li>
+      <a href="https://facebook.com/Selbosh">
+        <i class="fa fa-facebook"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://github.com/Selbosh">
+        <i class="fa fa-github"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://linkedin.com/in/daselby">
+        <i class="fa fa-linkedin"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://twitter.com/TeaStats">
+        <i class="fa fa-twitter"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+
+        </header>
+
+
+<main role="main">
+  <article class="single">
+    <header><h2>Using R on Android</h2></header>
+    
+    <footer>
+      <time datetime="2017-12-29 15:00:00 &#43;0000">
+        29 December 2017
+      </time>
+    </footer>
+    
+    <section>
+    
+
+<p>I just discovered a way to get R running on my smartphone, with full support for packages, graphics and <a href="http://rmarkdown.rstudio.com/">R Markdown</a>, and no need to connect to an external server.
+This is really handy for quickly checking R code, trying out ideas and writing blog posts on the go.
+It works quite well!</p>
+
+<p>Here I will show you how to do the same on your Android device.
+This post was inspired by <a href="https://stackoverflow.com/a/45361256">this answer on StackOverflow</a>.</p>
+
+<h2 id="initial-setup">Initial setup</h2>
+
+<p>Install <a href="https://play.google.com/store/apps/details?id=com.gnuroot.debian">GNUroot Debian</a> from the Google Play Store.
+This application effectively gives you a full Linux environment within Android, without rooting your device.
+It just works.</p>
+
+<p>GNUroot Debian emulates a command line interface or &ldquo;X Terminal&rdquo; like on a regular desktop PC.
+You can work in multiple windows, and you have access to all the files on your Android system.</p>
+
+<p><img src="http://selbydavid.com/img/2017/gnuroot.png" alt="GNUroot Debian" /></p>
+
+<p>You can use it not only to run R on your phone, but also Python or any other command-line tools supported by GNU/Linux.</p>
+
+<h2 id="installing-r">Installing R</h2>
+
+<p>To install R, type the following commands in GNUroot Debian, hitting Enter after each line and waiting for the respective processes to finish.</p>
+
+<pre><code class="language-bash">apt-get update
+apt-get upgrade
+apt-get install r-base r-base-dev
+</code></pre>
+
+<p>Now you have R installed on your phone.</p>
+
+<h2 id="interactive-r-commands">Interactive R commands</h2>
+
+<p>Starting an R session is as simple as typing</p>
+
+<pre><code class="language-bash">R
+</code></pre>
+
+<p>into the terminal.</p>
+
+<p>You will know R is running because the start of the command prompt will change from a hash, <code>#</code>, to a greater-than sign, <code>&gt;</code>.
+This is just like the usual interactive R user interface (because it <em>is</em> the usual interface).
+Run commands and load and install packages to your heart&rsquo;s content.</p>
+
+<p><img src="http://selbydavid.com/img/2017/interactiveR.png" alt="Interactive R session in GNUroot Debian" /></p>
+
+<p>To quit R and return to the Linux command line, type</p>
+
+<pre><code class="language-r">q()
+</code></pre>
+
+<p>and hit Enter.</p>
+
+<p>You can run quick R one-liners without diving into a full R session, by using the following syntax.</p>
+
+<pre><code class="language-bash">Rscript -e &quot;rnorm(5)&quot; # five random numbers
+Rscript -e &quot;print('Hello, world')&quot;
+</code></pre>
+
+<p>Be careful about matching quotation marks.</p>
+
+<p>You can also use the syntax</p>
+
+<pre><code class="language-bash">R -e &quot;rnorm(5)&quot;
+R -e &quot;print('Hello, world')&quot;
+</code></pre>
+
+<p>which does the same thing but prints more verbose output to the console.</p>
+
+<p>Pressing Up and Down on your keyboard lets you cycle through recently used commands, saving you from needing to retype repeated or very similar commands.
+Usually touch-screen keyboards don&rsquo;t have arrow keys, but you can install the <a href="https://play.google.com/store/apps/details?id=org.pocketworkstation.pckeyboard">Hacker&rsquo;s Keyboard</a> for Android, which does (at least in landscape mode).</p>
+
+<p><img src="http://selbydavid.com/img/2017/hackers-keyboard.png" alt="Hacker's Keyboard" /></p>
+
+<h2 id="running-scripts">Running scripts</h2>
+
+<p>To write nontrivial programmes and not lose your work, you will want to write and run R scripts from files.
+While you could open a Linux text editor within GNUroot, this is probably more trouble than it&rsquo;s worth.
+Dedicated Android text editors are better optimised for use with a small touch screen and don&rsquo;t need arrow keys or special control commands to work.
+<a href="https://play.google.com/store/apps/details?id=com.rhmsoft.edit">QuickEdit</a> is a free text editor with syntax highlighting for R and Markdown, line numbering and other useful features.</p>
+
+<p>In your text editor, write a basic R script, like the following.</p>
+
+<pre><code class="language-r">x &lt;- &quot;Hello&quot;
+y &lt;- &quot;world!&quot;
+cat(x, y, sep = ', ')
+</code></pre>
+
+<p>Save the file as <code>test.R</code> and put it somewhere easy to find, like your <code>Documents</code> folder.</p>
+
+<p>Reopen GNUroot Debian. Navigate to the directory where you saved your R script file. In my case, I had saved it to Documents, which I reached using</p>
+
+<pre><code class="language-bash">cd sdcard/Documents
+</code></pre>
+
+<p>The command <code>cd</code> means &ldquo;change directory&rdquo;. Type <code>ls</code> for a list of files and folders in the current directory. If you make a wrong turn, simply type</p>
+
+<pre><code class="language-bash">cd ..
+</code></pre>
+
+<p>to go up (back) one folder.</p>
+
+<p>Once you&rsquo;ve found your R script file, evaluate it with</p>
+
+<pre><code class="language-r">Rscript test.R
+</code></pre>
+
+<p>or</p>
+
+<pre><code class="language-r">R -f test.R
+</code></pre>
+
+<p>for more detailed output.</p>
+
+<p><img src="http://selbydavid.com/img/2017/Rscript.png" alt="Evaluating an R script on Android" /></p>
+
+<p>If you prefer working in R to in a Linux terminal, then you can equivalently do everything within an R session:</p>
+
+<pre><code class="language-r">getwd() # show current directory
+list.files() # equivalent to ls
+setwd('sdcard/Documents') # equivalent to cd
+source('test.R') # run the script
+</code></pre>
+
+<h2 id="saving-output">Saving output</h2>
+
+<p>If your scripts produce output, like plots saved as image files or data in csv files, you can open these with ordinary Android apps and share them.
+Just keep track of where the files are saved.</p>
+
+<p>For example, here is a short script that produces a plot and saves it as a PNG.</p>
+
+<pre><code class="language-r">n &lt;- 1000
+g &lt;- 16
+cx &lt;- rep(1:4, each = 4) * n * 2
+cy &lt;- rep(1:4, times = 4) * n * 2
+t &lt;- 1:1000
+x &lt;- rep(t * cos(t), each = g) + cx
+y &lt;- rep(t * sin(t), each = g) + cy
+png(&quot;test.png&quot;, width = 600, height = 600)
+par(mar = rep(0, 4))
+plot(x, y,
+     col = rep(c(2, 4), each = g),
+     asp = 1,
+     axes = FALSE)
+dev.off()
+</code></pre>
+
+<p>Run the script and use <code>ls</code> or <code>list.files()</code> to verify that a new file, <code>test.png</code> has been created.
+In your Android launcher, go to <strong>Files &gt; Local &gt; Internal storage &gt; Documents</strong> (the names might vary depending on your device) and you should see your new plot, which you can open and share like any other image.</p>
+
+<p><img src="http://selbydavid.com/img/2017/test.png" alt="Test R plot" /></p>
+
+<h2 id="r-markdown-on-android">R Markdown on Android</h2>
+
+<p>Rendering/knitting R Markdown documents requires the R package <strong>knitr</strong> and the external application <strong>pandoc</strong>.
+Install the former using</p>
+
+<pre><code class="language-r">install.packages('knitr', dependencies = TRUE)
+</code></pre>
+
+<p>If you accidentally choose a CRAN mirror that doesn&rsquo;t work, you can select another one with</p>
+
+<pre><code class="language-r">chooseCRANmirror()
+</code></pre>
+
+<p>You also need pandoc.
+Install it from the command line with</p>
+
+<pre><code class="language-bash">apt-get install pandoc
+</code></pre>
+
+<p>After installing, you might need to restart your terminal to ensure pandoc has been properly added to the PATH (and so can be found by R).</p>
+
+<p>Write a minimal R Markdown document in your Android text editor, for example</p>
+
+<pre><code class="language-markdown"># Hello, world!
+
+I am an *R Markdown* document.
+A horse has `r 2+2` legs.
+Here is some random noise.
+
+```{r}
+plot(runif(100), runif(100))
+```
+</code></pre>
+
+<p>Convert it using</p>
+
+<pre><code class="language-bash">Rscript -e &quot;rmarkdown::render('test.rmd')&quot;
+</code></pre>
+
+<p>And using <code>ls</code> or <code>list.files()</code> or your Android file explorer, you should see the output Markdown, HTML, Word, or PDF document, which you can open in your Android text editor, browser, word processor or PDF reader, respectively.
+Once again, share or upload it like any other file.</p>
+
+<p>So there we have it: R and R Markdown running on Android!
+I hope you found this useful.
+This blog post was written on a Huawei Honor 8 smartphone using QuickEdit text editor.</p>
+
+<p><img src="http://selbydavid.com/img/2017/android-r.gif" alt="R on Android" /></p>
+
+    </section>
+    
+			<section class="comments">
+				<div id="disqus_thread"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'tea-stats';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+			</section>
+		
+  </article>
+</main>
+
+      <footer id="footer">
+        
+        <a href="#">
+          <img src="http://selbydavid.com/img/logo.svg"
+               width="60"
+               height=""
+               alt="Return to top"
+               title="Return to top">
+        </a>
+        
+        © 2016–17 David Selby | <a href='https://github.com/Selbosh/hugo-tea'>Hugo Tea Theme</a>
+      </footer>
+    
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+
+    
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-11136457-6', 'auto');
+ga('send', 'pageview');
+</script>
+
+  </body>
+</html>
+
