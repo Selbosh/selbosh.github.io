@@ -380,15 +380,14 @@ NeuralNetwork &amp;lt;- R6Class(&amp;quot;NeuralNetwork&amp;quot;,
 &lt;ul&gt;
 &lt;li&gt;user-selectable activation functions, rather than hard-coded sigmoid&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Regularization_(mathematics)&#34;&gt;regularisation&lt;/a&gt;, and including regularisation loss as part of &lt;code&gt;compute_loss()&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;arbitrary number of hidden layers, to enable deep learning (&lt;span class=&#34;math inline&#34;&gt;\(h&amp;gt;1\)&lt;/span&gt;) or logistic regression &lt;span class=&#34;math inline&#34;&gt;\(h=0\)&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;arbitrary number of hidden layers, to enable deep learning (multiple hidden layers) or logistic regression (no hidden layer)&lt;/li&gt;
 &lt;li&gt;regression as well as classification&lt;/li&gt;
 &lt;li&gt;more intelligent initial weights&lt;/li&gt;
 &lt;li&gt;changing learning rate over time&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;But you might be wondering: can I actually classify pictures of hot dogs with this? Probably not from raw pixels—image analysis is usually a job for a &lt;a href=&#34;https://en.wikipedia.org/wiki/Convolutional_neural_network&#34;&gt;convolutional neural network&lt;/a&gt;, which is a more advanced topic for another day.&lt;/p&gt;
-&lt;p&gt;I hope you found this useful! Let me know if anything is unclear.&lt;/p&gt;
 &lt;p&gt;For further reading, try &lt;a href=&#34;http://www.deeplearningbook.org/&#34;&gt;Chapter 6 of &lt;em&gt;Deep Learning&lt;/em&gt;&lt;/a&gt; (2016) by Goodfellow, Bengio and Courville.&lt;/p&gt;
-&lt;p&gt;Full source code for this post is available &lt;a href=&#34;https://github.com/Selbosh/selbosh.github.io/blob/source/content/post/2018-01-09-neural-network.Rmd&#34;&gt;on GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I hope you found this useful! Let me know if anything is unclear. Full source code for this post is available &lt;a href=&#34;https://github.com/Selbosh/selbosh.github.io/blob/source/content/post/2018-01-09-neural-network.Rmd&#34;&gt;on GitHub&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;

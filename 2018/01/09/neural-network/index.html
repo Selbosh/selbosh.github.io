@@ -46,7 +46,7 @@ This blog post is partly inspired by Denny Britz’s article, Implementing a Neu
 
 <meta itemprop="datePublished" content="2018-01-09T10:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2018-01-09T10:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="3480">
+<meta itemprop="wordCount" content="3484">
 
   <meta itemprop="image" content="http://selbydavid.com/img/2018/hotdog.jpg">
 
@@ -506,15 +506,14 @@ NeuralNetwork &lt;- R6Class(&quot;NeuralNetwork&quot;,
 <ul>
 <li>user-selectable activation functions, rather than hard-coded sigmoid</li>
 <li><a href="https://en.wikipedia.org/wiki/Regularization_(mathematics)">regularisation</a>, and including regularisation loss as part of <code>compute_loss()</code></li>
-<li>arbitrary number of hidden layers, to enable deep learning (<span class="math inline">\(h&gt;1\)</span>) or logistic regression <span class="math inline">\(h=0\)</span></li>
+<li>arbitrary number of hidden layers, to enable deep learning (multiple hidden layers) or logistic regression (no hidden layer)</li>
 <li>regression as well as classification</li>
 <li>more intelligent initial weights</li>
 <li>changing learning rate over time</li>
 </ul>
 <p>But you might be wondering: can I actually classify pictures of hot dogs with this? Probably not from raw pixels—image analysis is usually a job for a <a href="https://en.wikipedia.org/wiki/Convolutional_neural_network">convolutional neural network</a>, which is a more advanced topic for another day.</p>
-<p>I hope you found this useful! Let me know if anything is unclear.</p>
 <p>For further reading, try <a href="http://www.deeplearningbook.org/">Chapter 6 of <em>Deep Learning</em></a> (2016) by Goodfellow, Bengio and Courville.</p>
-<p>Full source code for this post is available <a href="https://github.com/Selbosh/selbosh.github.io/blob/source/content/post/2018-01-09-neural-network.Rmd">on GitHub</a>.</p>
+<p>I hope you found this useful! Let me know if anything is unclear. Full source code for this post is available <a href="https://github.com/Selbosh/selbosh.github.io/blob/source/content/post/2018-01-09-neural-network.Rmd">on GitHub</a>.</p>
 </div>
 <div class="footnotes">
 <hr />
