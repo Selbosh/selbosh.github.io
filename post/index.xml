@@ -15,8 +15,388 @@
 		</image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-GB</language>
-    <lastBuildDate>Fri, 29 Dec 2017 15:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 09 Jan 2018 10:00:00 +0000</lastBuildDate>
     <atom:link href="http://selbydavid.com/post/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Building a neural network from scratch in R</title>
+      <link>http://selbydavid.com/2018/01/09/neural-network/</link>
+      <pubDate>Tue, 09 Jan 2018 10:00:00 +0000</pubDate>
+      
+      <guid>http://selbydavid.com/2018/01/09/neural-network/</guid>
+      <description>&lt;p&gt;Neural networks can seem like a bit of a black box. But in some ways, a neural network is little more than several &lt;a href=&#34;https://en.wikipedia.org/wiki/Logistic_regression&#34;&gt;logistic regression&lt;/a&gt; models chained together.&lt;/p&gt;
+&lt;p&gt;In this post I will show you how to derive a neural network from scratch with just a few lines in R. If you don’t like mathematics, feel free to skip to the code chunks towards the end.&lt;/p&gt;
+&lt;p&gt;This blog post is partly inspired by Denny Britz’s article, &lt;a href=&#34;http://www.wildml.com/2015/09/implementing-a-neural-network-from-scratch/&#34;&gt;Implementing a Neural Network from Scratch in Python&lt;/a&gt;, as well as &lt;a href=&#34;https://www.analyticsvidhya.com/blog/2017/05/neural-network-from-scratch-in-python-and-r/&#34;&gt;this article by Sunil Ray&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;logistic-regression&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Logistic regression&lt;/h2&gt;
+&lt;p&gt;What’s a logistic regression model? Suppose we want to build a machine that classifies objects in two groups, for example &lt;a href=&#34;https://www.youtube.com/watch?v=ACmydtFDTGs&#34;&gt;‘hot dog’ and ‘not hot dog’&lt;/a&gt;. We will say &lt;span class=&#34;math inline&#34;&gt;\(Y_i = 1\)&lt;/span&gt; if object &lt;em&gt;i&lt;/em&gt; is a hot dog, and &lt;span class=&#34;math inline&#34;&gt;\(Y_i = 0\)&lt;/span&gt; otherwise.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=ACmydtFDTGs&#34;&gt;&lt;img src=&#34;http://selbydavid.com/img/2018/hotdog.gif&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;A logistic regression model estimates these odds, &lt;span class=&#34;math display&#34;&gt;\[
+\operatorname{odds}(Y = 1)
+= \frac{\operatorname P(Y = 1)} {\operatorname P(Y = 0)}
+= \frac{\operatorname P(Y = 1)} {\operatorname 1 - \operatorname P(Y = 1)}
+\]&lt;/span&gt; and for mathematical and computational reasons we take the natural logarithm of the same—the log odds. As a &lt;a href=&#34;https://en.wikipedia.org/wiki/Generalized_linear_model&#34;&gt;generalised linear model&lt;/a&gt;, the response (the log odds) is a linear combination of the parameters and the covariates, &lt;span class=&#34;math display&#34;&gt;\[\operatorname{log-odds}(Y = 1) = X \beta,\]&lt;/span&gt; where &lt;span class=&#34;math inline&#34;&gt;\(X\)&lt;/span&gt; is the &lt;a href=&#34;https://en.wikipedia.org/wiki/Design_matrix&#34;&gt;design matrix&lt;/a&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\beta\)&lt;/span&gt; is a vector of parameters to be found.&lt;/p&gt;
+&lt;p&gt;Classical statistical inference involves looking for a parameter estimate, &lt;span class=&#34;math inline&#34;&gt;\(\hat\beta\)&lt;/span&gt;, that &lt;a href=&#34;https://en.wikipedia.org/wiki/Maximum_likelihood_estimation&#34;&gt;maximises the likelihood&lt;/a&gt; of the observations given the parameters. For our hot dog classification problem, the likelihood function is &lt;span class=&#34;math display&#34;&gt;\[\mathcal{L} = \prod_i \operatorname P(Y_i=1)^{y_i} \operatorname P(Y_i = 0)^{1 - y_i}\]&lt;/span&gt; or, taking logs, &lt;span class=&#34;math display&#34;&gt;\[\log \mathcal{L} = \sum_i \Bigl[ y_i \log \operatorname P(Y_i = 1) + (1-y_i) \log \operatorname P(Y_i = 0) \Bigr]. \]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Let’s imagine we have been given some two-dimensional data about a sample of objects, along with their labels. Our sample data set includes 200 observations. Here is a random sample of five:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;x1&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;x2&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;class&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;8.81&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-6.19&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;not hot dog&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;10.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.84&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;not hot dog&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;-1.78&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4.48&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;hot dog&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;6.83&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.02&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;hot dog&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1.71&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-10.29&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;not hot dog&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;And a scatter plot of all of them:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/plot-spirals-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Fitting a logistic regression model in R is easy:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;logreg &amp;lt;- glm(class ~ x1 + x2, family = binomial, data = hotdogs)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;But as the decision boundary can only be linear, it doesn’t work too well at distinguishing our two classes. Logistic regression classifies 134 (67%) of our objects correctly.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/logistic-boundary-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Nonlinearity is where neural networks are useful.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;artificial-neural-networks&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Artificial neural networks&lt;/h2&gt;
+&lt;p&gt;An &lt;a href=&#34;https://en.wikipedia.org/wiki/Artificial_neural_network&#34;&gt;artificial neural network&lt;/a&gt; is so called because once upon a time it was thought to be a good model for how neurons in the brain work. Apparently it isn’t, but the name has stuck.&lt;/p&gt;
+&lt;p&gt;Suppose we have some inputs, &lt;span class=&#34;math inline&#34;&gt;\(\mathbf x\)&lt;/span&gt;, and known outputs &lt;span class=&#34;math inline&#34;&gt;\(\mathbf y\)&lt;/span&gt;. Then the aim of the game is to find a way of estimating &lt;span class=&#34;math inline&#34;&gt;\(\mathbf y\)&lt;/span&gt; based on &lt;span class=&#34;math inline&#34;&gt;\(\mathbf x\)&lt;/span&gt;. In a way, then, a neural network is like any other regression or classification model.&lt;/p&gt;
+&lt;p&gt;Neural networks (for classification, at least) are also known as multi-layer &lt;a href=&#34;https://en.wikipedia.org/wiki/Perceptron&#34;&gt;perceptrons&lt;/a&gt;. Like ogres and onions, they have layers—three to be exact.&lt;/p&gt;
+&lt;p&gt;The output layer is our estimate of the probability that objects belong to each class. The input layer comprises the covariates and an intercept, as before. In the middle, there is a &lt;em&gt;hidden layer&lt;/em&gt;, which is a transformation of the input space into &lt;span class=&#34;math inline&#34;&gt;\(h\)&lt;/span&gt; dimensions, where &lt;span class=&#34;math inline&#34;&gt;\(h\)&lt;/span&gt; is a number chosen by us. We then perform a logistic regression on this transformed space to estimate the classes.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/neural-network-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;It works like this.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Generate &lt;span class=&#34;math inline&#34;&gt;\(h\)&lt;/span&gt; different linear combinations of the input variables.&lt;/li&gt;
+&lt;li&gt;Apply an ‘activation’ function, that for each observation, turns each hidden node ‘on’ or ‘off’.&lt;/li&gt;
+&lt;li&gt;Fit a logistic regression model to these &lt;span class=&#34;math inline&#34;&gt;\(h\)&lt;/span&gt; transformed predictors, plus an intercept.&lt;/li&gt;
+&lt;li&gt;Adjust the parameters of both the input and the output to maximise likelihood.&lt;/li&gt;
+&lt;li&gt;Repeat, &lt;em&gt;ad nauseum&lt;/em&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If &lt;span class=&#34;math inline&#34;&gt;\(h = 1\)&lt;/span&gt; then there is only one linear combination of the predictors, which is effectively the same thing as having no hidden layer at all, i.e. ordinary logistic regression.&lt;/p&gt;
+&lt;p&gt;So we run a kind of logistic regression model on the inputs to generate a transformation of the feature space, then once more to classify our actual objects. Each iteration of the fitting or ‘training’ process adjusts both the transformation and the regression parameters.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;hidden-layers&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Hidden layers&lt;/h2&gt;
+&lt;p&gt;The input layer is a design matrix, &lt;span class=&#34;math inline&#34;&gt;\(\mathbf X = \begin{bmatrix}\mathbf 1 &amp;amp; \mathbf x\end{bmatrix}\)&lt;/span&gt;. The output layer is a vector of estimated probabilities, &lt;span class=&#34;math inline&#34;&gt;\(\hat {\mathbf y}\)&lt;/span&gt;. So far, this is exactly like our logistic regression model above.&lt;/p&gt;
+&lt;p&gt;A neural network adds a hidden layer, which you might think of as an intermediate design matrix between the inputs and the outputs. &lt;a href=&#34;https://en.wikipedia.org/wiki/Deep_learning&#34;&gt;Deep learning&lt;/a&gt; is just a neural network with multiple hidden layers.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:node-diagram&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;http://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/node-diagram-1.svg&#34; alt=&#34;Multi-layer perceptron with five hidden nodes&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1: Multi-layer perceptron with five hidden nodes
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;If there are &lt;span class=&#34;math inline&#34;&gt;\(d\)&lt;/span&gt; input variables then there are &lt;span class=&#34;math inline&#34;&gt;\(d+1\)&lt;/span&gt; input nodes—one for each covariate, plus an intercept, or ‘bias’ (because computer scientists like having separate names for everything).&lt;/p&gt;
+&lt;p&gt;In general there are &lt;span class=&#34;math inline&#34;&gt;\(k-1\)&lt;/span&gt; output nodes, where &lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt; is the number of possible classes. The &lt;span class=&#34;math inline&#34;&gt;\(k^\text{th}\)&lt;/span&gt; node would be the same as ‘none of the above’, so it is redundant. In a binary classification problem like ours, there is just one output node, because &lt;span class=&#34;math inline&#34;&gt;\(\operatorname P(Y=0) = 1 - \operatorname P(Y=1)\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;There are &lt;span class=&#34;math inline&#34;&gt;\(h\)&lt;/span&gt; nodes in the hidden layer, plus an intercept. Each of these is a linear combination of the inputs, passed through an &lt;a href=&#34;https://en.wikipedia.org/wiki/Activation_function&#34;&gt;&lt;em&gt;activation function&lt;/em&gt;&lt;/a&gt;. The intercept does not depend on the nodes in the previous layer&lt;a href=&#34;#fn1&#34; class=&#34;footnoteRef&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The activation function is often (not always) chosen to be the &lt;em&gt;sigmoid function&lt;/em&gt;, another name for the &lt;em&gt;logistic function&lt;/em&gt;, &lt;span class=&#34;math display&#34;&gt;\[\sigma(x) = \frac 1 {1 + e^{-x}},\]&lt;/span&gt; the inverse of the logit &lt;span class=&#34;math display&#34;&gt;\[\operatorname{logit}(x) = \log \left( \frac{x}{1-x} \right).\]&lt;/span&gt; If &lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt; is a probability of an event, then &lt;span class=&#34;math inline&#34;&gt;\(\operatorname{logit}(x)\)&lt;/span&gt; is its log odds.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;forward-propagation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Forward propagation&lt;/h2&gt;
+&lt;p&gt;Starting with the inputs, we &lt;a href=&#34;https://en.wikipedia.org/wiki/Feedforward_neural_network&#34;&gt;feed forward&lt;/a&gt; through the network as follows.&lt;/p&gt;
+&lt;p&gt;Firstly, compute a linear combination of the covariates, using some weight matrix &lt;span class=&#34;math inline&#34;&gt;\(\mathbf W_\text{in} \in \mathbb R^{(d+1) \times h}\)&lt;/span&gt;. &lt;span class=&#34;math display&#34;&gt;\[
+\mathbf z_1
+= \mathbf{XW}_\text{in}
+= \begin{bmatrix}\mathbf 1 &amp;amp; \mathbf x\end{bmatrix} \mathbf W_\text{in}
+\]&lt;/span&gt; Next, apply an activation function to obtain the nodes in the hidden layer. The hidden layer &lt;span class=&#34;math inline&#34;&gt;\(\mathbf H\)&lt;/span&gt; might be thought of as a design matrix containing the output of a logistic regression classifying whether each node is ‘activated’ or not. &lt;span class=&#34;math display&#34;&gt;\[\mathbf h = \sigma(\mathbf z_1)\]&lt;/span&gt; The intercept/bias is always activated, so it is fixed to be a vector of ones. &lt;span class=&#34;math display&#34;&gt;\[\mathbf H = \begin{bmatrix} \mathbf 1 &amp;amp; \mathbf h \end{bmatrix}
+            = \begin{bmatrix} \mathbf 1 &amp;amp; \sigma(\mathbf z_1) \end{bmatrix}
+            = \begin{bmatrix} \mathbf 1 &amp;amp; \sigma(\mathbf {XW}_\text{in}) \end{bmatrix}\]&lt;/span&gt; For the output layer, compute a linear combination of the hidden variables, this time using another weight matrix, &lt;span class=&#34;math inline&#34;&gt;\(\mathbf{W}_\text{out} \in \mathbb R^{(h+1) \times (k-1)}\)&lt;/span&gt;. &lt;span class=&#34;math display&#34;&gt;\[\mathbf z_2
+= \mathbf {HW}_\text{out}
+= \begin{bmatrix} \mathbf 1 &amp;amp; \mathbf h\end{bmatrix} \mathbf W_\text{out}
+\]&lt;/span&gt; Apply one more function to get the output &lt;span class=&#34;math display&#34;&gt;\[\hat {\mathbf y} = \sigma (\mathbf z_2),\]&lt;/span&gt; which is a probability vector, &lt;span class=&#34;math inline&#34;&gt;\(\hat Y_i = \operatorname P(Y_i = 1)\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;Putting it all together, &lt;span class=&#34;math display&#34;&gt;\[\hat {\mathbf y}
+= \sigma \left( \mathbf {H W} _ \text{out} \right)
+= \sigma \bigl( \begin{bmatrix} \mathbf 1 &amp;amp; \sigma ( \mathbf {X W} _ \text{in} ) \end{bmatrix} \mathbf W _ \text{out} \bigr).\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;It is straightforward to write a function to perform the forward propagation process in R. Just do&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;feedforward &amp;lt;- function(x, w1, w2) {
+  z1 &amp;lt;- cbind(1, x) %*% w1
+  h &amp;lt;- sigmoid(z1)
+  z2 &amp;lt;- cbind(1, h) %*% w2
+  list(output = sigmoid(z2), h = h)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;where&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sigmoid &amp;lt;- function(x) 1 / (1 + exp(-x))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Where do we get the weights from? On the first iteration, they can be random. Then we have to make them better.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;back-propagation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Back propagation&lt;/h2&gt;
+&lt;p&gt;So far we have been taking the parameters, or weights, &lt;span class=&#34;math inline&#34;&gt;\(\mathbf W_\text{in}\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\mathbf W_\text{out}\)&lt;/span&gt;, for granted.&lt;/p&gt;
+&lt;p&gt;Like parameters in a linear regression, we need to choose weights that make our model ‘better’ by some criterion. Neural network enthusiasts will say that we will train our multilayer perceptron by minimising the cross entropy loss. That’s a fancy way of saying we fit the model using maximum likelihood.&lt;/p&gt;
+&lt;p&gt;The log-likelihood for a binary classifier is &lt;span class=&#34;math display&#34;&gt;\[\ell = \sum_i \Bigl( y_i \log \hat y_i + (1 - y_i) \log (1 - \hat y_i) \Bigr).\]&lt;/span&gt; We can maximise this via &lt;a href=&#34;https://en.wikipedia.org/wiki/Gradient_descent&#34;&gt;gradient descent&lt;/a&gt;, a general-purpose optimisation algorithm.&lt;/p&gt;
+&lt;p&gt;To minimise &lt;span class=&#34;math inline&#34;&gt;\(\ell = f(\mathbf W)\)&lt;/span&gt; via gradient descent, we iterate using the formula &lt;span class=&#34;math display&#34;&gt;\[\mathbf W_{t+1} = \mathbf W_{t} - \gamma \cdot \nabla f(\mathbf W_{t}),\]&lt;/span&gt; where &lt;span class=&#34;math inline&#34;&gt;\(\mathbf W_t\)&lt;/span&gt; is the weight matrix at time &lt;span class=&#34;math inline&#34;&gt;\(t\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(\nabla f\)&lt;/span&gt; is the gradient of &lt;span class=&#34;math inline&#34;&gt;\(f\)&lt;/span&gt; with respect to &lt;span class=&#34;math inline&#34;&gt;\(\mathbf W\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\gamma\)&lt;/span&gt; is the ‘learning rate’.&lt;/p&gt;
+&lt;p&gt;Choose a learning rate too high and the algorithm will leap around like a dog chasing a squirrel, going straight past the optimum; choose one too low and it will take forever, making mountains out of molehills.&lt;/p&gt;
+&lt;p&gt;Using the &lt;a href=&#34;https://en.wikipedia.org/wiki/Chain_rule&#34;&gt;chain rule&lt;/a&gt;, the gradient of the log-likehood with respect to the output weights is given by &lt;span class=&#34;math display&#34;&gt;\[\frac {\partial\ell} {\partial \mathbf W_\text{out}} =
+\frac{\partial \ell}{\partial \hat {\mathbf y}}
+\frac{\partial \hat {\mathbf y} }{\partial \mathbf W_\text{out}}\]&lt;/span&gt; where &lt;span class=&#34;math display&#34;&gt;\[\begin{aligned}
+\frac{\partial\ell}{\partial \hat{\mathbf y}}
+  &amp;amp;=  \frac{\mathbf y}{\hat{\mathbf y}} - \frac{1 - \mathbf y}{1 - \hat{\mathbf y}}
+  = \frac{\hat{\mathbf y} - \mathbf y}{\hat{\mathbf y}(1 - \hat{\mathbf y})},\\
+\frac{\partial\hat{\mathbf y}}{\partial \mathbf W_\text{out}}
+  &amp;amp;=  \mathbf{H}^T \sigma(\mathbf {HW}_\text{out})\bigl( 1 - \sigma(\mathbf{HW}_\text{out}) \bigr) \\
+  &amp;amp;= \mathbf H^T \hat {\mathbf y} (1 - \hat{\mathbf y}).
+\end{aligned}\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;And the gradient with respect to the input weights is &lt;span class=&#34;math display&#34;&gt;\[
+\frac {\partial\ell} {\partial \mathbf W_\text{in}}
+= \frac{\partial \ell}{\partial \hat {\mathbf y} }
+   \frac{\partial \hat {\mathbf y} }{\partial \mathbf H}
+   \frac{\partial \mathbf H}{\partial \mathbf W_\text{in}}
+\]&lt;/span&gt; where &lt;span class=&#34;math display&#34;&gt;\[
+\begin{aligned}
+\frac{\partial \hat{\mathbf y}}{\partial \mathbf H}
+  &amp;amp;=  \sigma(\mathbf{HW}_\text{out}) \bigl( 1 - \sigma(\mathbf{HW}_\text{out}) \bigr) \mathbf W_\text{out}^T \\
+  &amp;amp;= \hat{\mathbf y} (1 - \hat{\mathbf y}) \mathbf W_\text{out}^T, \\
+\frac{\partial \mathbf H}{\partial \mathbf W_\text{in}}
+  &amp;amp;= \mathbf X^T \begin{bmatrix} \mathbf 0 &amp;amp; \sigma(\mathbf{XW}_\text{in})\bigl( 1 - \sigma(\mathbf{XW}_\text{in}) \bigr) \end{bmatrix}.
+\end{aligned}
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;In the last step, we take for granted that the intercept column of &lt;span class=&#34;math inline&#34;&gt;\(\mathbf H\)&lt;/span&gt; doesn’t depend on &lt;span class=&#34;math inline&#34;&gt;\(\mathbf W_\text{in}\)&lt;/span&gt;, but you could parametrise it differently (&lt;a href=&#34;#fn1&#34;&gt;see footnotes&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;A simple R implementation is as follows.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;backpropagate &amp;lt;- function(x, y, y_hat, w1, w2, h, learn_rate) {
+  dw2 &amp;lt;- t(cbind(1, h)) %*% (y_hat - y)
+  dh  &amp;lt;- (y_hat - y) %*% t(w2[-1, , drop = FALSE])
+  dw1 &amp;lt;- t(cbind(1, x)) %*% (h * (1 - h) * dh)
+  
+  w1 &amp;lt;- w1 - learn_rate * dw1
+  w2 &amp;lt;- w2 - learn_rate * dw2
+  
+  list(w1 = w1, w2 = w2)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;training-the-network&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Training the network&lt;/h2&gt;
+&lt;p&gt;Training is just a matter of initialising the weights, propagating forward to get an output estimate, then propagating the error backwards to update the weights towards a better solution. Then iteratively propagate forwards and backwards until the Earth has been swallowed by the Sun, or some other stopping criterion.&lt;/p&gt;
+&lt;p&gt;Here is a quick implementation using the functions defined above.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;train &amp;lt;- function(x, y, hidden = 5, learn_rate = 1e-2, iterations = 1e4) {
+  d &amp;lt;- ncol(x) + 1
+  w1 &amp;lt;- matrix(rnorm(d * hidden), d, hidden)
+  w2 &amp;lt;- as.matrix(rnorm(hidden + 1))
+  for (i in 1:iterations) {
+    ff &amp;lt;- feedforward(x, w1, w2)
+    bp &amp;lt;- backpropagate(x, y,
+                        y_hat = ff$output,
+                        w1, w2,
+                        h = ff$h,
+                        learn_rate = learn_rate)
+    w1 &amp;lt;- bp$w1; w2 &amp;lt;- bp$w2
+  }
+  list(output = ff$output, w1 = w1, w2 = w2)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let’s &lt;code&gt;train&lt;/code&gt; a neural network with five hidden nodes (like in Figure 1) on the hot dogs data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;x &amp;lt;- data.matrix(hotdogs[, c(&amp;#39;x1&amp;#39;, &amp;#39;x2&amp;#39;)])
+y &amp;lt;- hotdogs$class == &amp;#39;hot dog&amp;#39;
+nnet5 &amp;lt;- train(x, y, hidden = 5, iterations = 1e5)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;On my desktop PC, it takes about 12 seconds for the above code to run the 100,000 iterations. Not too bad for what sounds like a lot of runs, but what are the results like?&lt;/p&gt;
+&lt;p&gt;We can calculate how many objects it classified correctly:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mean((nnet5$output &amp;gt; .5) == y)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0.76&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;That’s 76%, or 152 out of 200 objects in the right class.&lt;/p&gt;
+&lt;p&gt;Let’s draw a picture to see what the decision boundaries look like. To do that, we firstly make a grid of points around the input space:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;grid &amp;lt;- expand.grid(x1 = seq(min(hotdogs$x1) - 1,
+                             max(hotdogs$x1) + 1,
+                             by = .25),
+                    x2 = seq(min(hotdogs$x2) - 1,
+                             max(hotdogs$x2) + 1,
+                             by = .25))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then feed these points forward through our trained neural network.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ff_grid &amp;lt;- feedforward(x = data.matrix(grid[, c(&amp;#39;x1&amp;#39;, &amp;#39;x2&amp;#39;)]),
+                       w1 = nnet5$w1,
+                       w2 = nnet5$w2)
+grid$class &amp;lt;- factor((ff_grid$output &amp;gt; .5) * 1,
+                     labels = levels(hotdogs$class))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then, using &lt;code&gt;ggplot2&lt;/code&gt;, we plot the predicted classes on a grid behind the observed points.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(hotdogs) + aes(x1, x2, colour = class) +
+  geom_point(data = grid, size = .5) +
+  geom_point() +
+  labs(x = expression(x[1]), y = expression(x[2]))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/plot-ad-hoc-1.png&#34; width=&#34;672&#34; /&gt; The regions the neural network has classified into ‘hot dog’ and ‘not hot dog’ can no longer be separated by a single straight line. The more nodes we add to the hidden layer, the more elaborate the decision boundaries can become, improving accuracy at the expense of computation time (as more weights must be calculated) and increased risk of &lt;a href=&#34;https://en.wikipedia.org/wiki/Overfitting&#34;&gt;over-fitting&lt;/a&gt; the data.&lt;/p&gt;
+&lt;p&gt;How about 30 nodes?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;nnet30 &amp;lt;- train(x, y, hidden = 30, iterations = 1e5)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;After 100,000 iterations, accuracy is 100%. The decision boundary looks much smoother:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/plot-30-nodes-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;And for completeness, let’s see what one hidden node (plus an intercept) gives us.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;nnet1 &amp;lt;- train(x, y, hidden = 1, iterations = 1e5)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;http://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/plot-1-node-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Much worse accuracy—68%—and the decision boundary looks linear.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;r6-class-implementation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;R6 class implementation&lt;/h2&gt;
+&lt;p&gt;The above code works, mathematically, but isn’t the most elegant solution from a user interface point of view. It’s a bit ad hoc. One of the annoying things about writing R functions is that, unless you use the global assignment operator (&lt;code&gt;&amp;lt;&amp;lt;-&lt;/code&gt;) then the arguments are &lt;a href=&#34;https://en.wikipedia.org/wiki/Immutable_object&#34;&gt;immutable&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Also, everything defined within the function scope is discarded. You can return the objects in a list, but this can be unwieldy and you have to extract each object one by one to pass into the arguments of the next function. And despite this we still have three functions and various objects cluttering the workspace.&lt;/p&gt;
+&lt;p&gt;Can we do better? A more flexible implementation is object orientated, using &lt;a href=&#34;https://cran.r-project.org/package=R6&#34;&gt;&lt;code&gt;R6&lt;/code&gt; classes&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The following class not only supports binary classification but also &lt;a href=&#34;https://en.wikipedia.org/wiki/Multinomial_logistic_regression&#34;&gt;multinomial logistic regression&lt;/a&gt;, providing a high-level formula interface like that used when fitting an &lt;code&gt;lm&lt;/code&gt; or &lt;code&gt;glm&lt;/code&gt; with the &lt;code&gt;stats&lt;/code&gt; package.&lt;/p&gt;
+&lt;p&gt;The maths for multi-class classification is very similar (partly thanks to the derivative of the &lt;a href=&#34;https://en.wikipedia.org/wiki/Softmax_function&#34;&gt;softmax function&lt;/a&gt;—the multivariate generalisation of sigmoid—cancelling out in the gradient calculation) and most of the modifications are to do with wrangling R factors to and from indicator matrix representation.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(R6)
+NeuralNetwork &amp;lt;- R6Class(&amp;quot;NeuralNetwork&amp;quot;,
+  public = list(
+    X = NULL,  Y = NULL,
+    W1 = NULL, W2 = NULL,
+    output = NULL,
+    initialize = function(formula, hidden, data = list()) {
+      # Model and training data
+      mod &amp;lt;- model.frame(formula, data = data)
+      self$X &amp;lt;- model.matrix(attr(mod, &amp;#39;terms&amp;#39;), data = mod)
+      self$Y &amp;lt;- model.response(mod)
+      
+      # Dimensions
+      D &amp;lt;- ncol(self$X) # input dimensions (+ bias)
+      K &amp;lt;- length(unique(self$Y)) # number of classes
+      H &amp;lt;- hidden # number of hidden nodes (- bias)
+      
+      # Initial weights and bias
+      self$W1 &amp;lt;- .01 * matrix(rnorm(D * H), D, H)
+      self$W2 &amp;lt;- .01 * matrix(rnorm((H + 1) * K), H + 1, K)
+    },
+    fit = function(data = self$X) {
+      h &amp;lt;- self$sigmoid(data %*% self$W1)
+      score &amp;lt;- cbind(1, h) %*% self$W2
+      return(self$softmax(score))
+    },
+    feedforward = function(data = self$X) {
+      self$output &amp;lt;- self$fit(data)
+      invisible(self)
+    },
+    backpropagate = function(lr = 1e-2) {
+      h &amp;lt;- self$sigmoid(self$X %*% self$W1)
+      Yid &amp;lt;- match(self$Y, sort(unique(self$Y)))
+      
+      haty_y &amp;lt;- self$output - (col(self$output) == Yid) # E[y] - y
+      dW2 &amp;lt;- t(cbind(1, h)) %*% haty_y
+      
+      dh &amp;lt;- haty_y %*% t(self$W2[-1, , drop = FALSE])
+      dW1 &amp;lt;- t(self$X) %*% (self$dsigmoid(h) * dh)
+      
+      self$W1 &amp;lt;- self$W1 - lr * dW1
+      self$W2 &amp;lt;- self$W2 - lr * dW2
+      
+      invisible(self)
+    },
+    predict = function(data = self$X) {
+      probs &amp;lt;- self$fit(data)
+      preds &amp;lt;- apply(probs, 1, which.max)
+      levels(self$Y)[preds]
+    },
+    compute_loss = function(probs = self$output) {
+      Yid &amp;lt;- match(self$Y, sort(unique(self$Y)))
+      correct_logprobs &amp;lt;- -log(probs[cbind(seq_along(Yid), Yid)])
+      sum(correct_logprobs)
+    },
+    train = function(iterations = 1e4,
+                     learn_rate = 1e-2,
+                     tolerance = .01,
+                     trace = 100) {
+      for (i in seq_len(iterations)) {
+        self$feedforward()$backpropagate(learn_rate)
+        if (trace &amp;gt; 0 &amp;amp;&amp;amp; i %% trace == 0)
+          message(&amp;#39;Iteration &amp;#39;, i, &amp;#39;\tLoss &amp;#39;, self$compute_loss(),
+                  &amp;#39;\tAccuracy &amp;#39;, self$accuracy())
+        if (self$compute_loss() &amp;lt; tolerance) break
+      }
+      invisible(self)
+    },
+    accuracy = function() {
+      predictions &amp;lt;- apply(self$output, 1, which.max)
+      predictions &amp;lt;- levels(self$Y)[predictions]
+      mean(predictions == self$Y)
+    },
+    sigmoid = function(x) 1 / (1 + exp(-x)),
+    dsigmoid = function(x) x * (1 - x),
+    softmax = function(x) exp(x) / rowSums(exp(x))
+  )
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;What do each of the methods do?&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;initialize&lt;/code&gt; is run every time you make a new network. It initialises the weight matrices to be the correct dimensions, populated with random initial values.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;fit&lt;/code&gt; runs one step of forward propagation but returns the result instead of storing it. Useful for predicting from new test data without changing the model.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;feedforward&lt;/code&gt; runs &lt;code&gt;fit&lt;/code&gt; but saves the results, for training.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;backpropagate&lt;/code&gt; does what you might expect, saving the results for training.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;train&lt;/code&gt; runs forward and back propagation, storing the results and printing the progress to the console every &lt;code&gt;trace&lt;/code&gt; iterations.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;predict&lt;/code&gt; uses argmax to estimate a single discrete class for each observation (whereas &lt;code&gt;fit&lt;/code&gt; only returns probabilities).&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;accuracy&lt;/code&gt; and &lt;code&gt;compute_loss&lt;/code&gt; return the proportion of correct class assignments and the negative log likelihood (‘log loss’), respectively&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sigmoid&lt;/code&gt;, &lt;code&gt;dsigmoid&lt;/code&gt; and &lt;code&gt;softmax&lt;/code&gt; are utility functions.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Let’s see our fancy neural network in action on the famous &lt;a href=&#34;https://en.wikipedia.org/wiki/Iris_flower_data_set&#34;&gt;iris data set&lt;/a&gt;. Firstly, initialise the network by specifying the input and output variables and the number of hidden nodes. (Let’s go for five.)&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;irisnet &amp;lt;- NeuralNetwork$new(Species ~ ., data = iris, hidden = 5)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I have implemented a formula interface so I can regress &lt;code&gt;Species&lt;/code&gt; on the other four variables (&lt;code&gt;Petal.Length&lt;/code&gt;, &lt;code&gt;Petal.Width&lt;/code&gt;, &lt;code&gt;Sepal.Length&lt;/code&gt; and &lt;code&gt;Sepal.Width&lt;/code&gt;) without having to type it out in full.&lt;/p&gt;
+&lt;p&gt;That’s the framework assembled. Now we can train the model. No need to assign any new variables—the R6 object modifies itself in place.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;irisnet$train(9999, trace = 1e3, learn_rate = .0001)
+## Iteration 1000   Loss 151.054969487204   Accuracy 0.68
+## Iteration 2000   Loss 81.6280605667542   Accuracy 0.853333333333333
+## Iteration 3000   Loss 64.5735942975868   Accuracy 0.966666666666667
+## Iteration 4000   Loss 51.0996158369837   Accuracy 0.973333333333333
+## Iteration 5000   Loss 40.105949050699    Accuracy 0.973333333333333
+## Iteration 6000   Loss 32.3280157122779   Accuracy 0.973333333333333
+## Iteration 7000   Loss 27.0449301604686   Accuracy 0.98
+## Iteration 8000   Loss 23.3961690114  Accuracy 0.98
+## Iteration 9000   Loss 20.7875204792586   Accuracy 0.98&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You might notice that the log loss is going down even while accuracy stays the same. This is because the model is becoming more or less confident about each of its predictions, even if the argmax doesn’t change.&lt;/p&gt;
+&lt;p&gt;Everything is stored inside the &lt;code&gt;NeuralNetwork&lt;/code&gt; object.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;irisnet&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## &amp;lt;NeuralNetwork&amp;gt;
+##   Public:
+##     accuracy: function () 
+##     backpropagate: function (lr = 0.01) 
+##     clone: function (deep = FALSE) 
+##     compute_loss: function (probs = self$output) 
+##     dsigmoid: function (x) 
+##     feedforward: function (data = self$X) 
+##     fit: function (data = self$X) 
+##     initialize: function (formula, hidden, data = list()) 
+##     output: 0.968263186096496 0.962577356981835 0.965919909020745 0. ...
+##     predict: function (data = self$X) 
+##     sigmoid: function (x) 
+##     softmax: function (x) 
+##     train: function (iterations = 10000, learn_rate = 0.01, tolerance = 0.01, 
+##     W1: 0.535763605328154 1.04640352732849 1.11188605221437 -1.7 ...
+##     W2: -0.412354248171205 2.04939691705817 -1.70485310730503 -3 ...
+##     X: 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1  ...
+##     Y: setosa setosa setosa setosa setosa setosa setosa setosa  ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;One other nice thing about R6 classes is you can chain methods together where they return &lt;code&gt;self&lt;/code&gt; or &lt;code&gt;invisible(self)&lt;/code&gt;. So if I want to train for 1000 iterations and then predict for some new data, all in one line, it’s as simple as&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;irisnet$train(1000)$predict(newdata)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There are plenty of improvements we could make to the &lt;code&gt;NeuralNetwork&lt;/code&gt; class but most of them are beyond the scope of this article, and left as an exercise to the interested reader. Here are some ideas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;user-selectable activation functions, rather than hard-coded sigmoid&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Regularization_(mathematics)&#34;&gt;regularisation&lt;/a&gt;, and including regularisation loss as part of &lt;code&gt;compute_loss()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;arbitrary number of hidden layers, to enable deep learning (&lt;span class=&#34;math inline&#34;&gt;\(h&amp;gt;1\)&lt;/span&gt;) or logistic regression &lt;span class=&#34;math inline&#34;&gt;\(h=0\)&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;regression as well as classification&lt;/li&gt;
+&lt;li&gt;more intelligent initial weights&lt;/li&gt;
+&lt;li&gt;changing learning rate over time&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;But you might be wondering: can I actually classify pictures of hot dogs with this? Probably not from raw pixels—image analysis is usually a job for a &lt;a href=&#34;https://en.wikipedia.org/wiki/Convolutional_neural_network&#34;&gt;convolutional neural network&lt;/a&gt;, which is a more advanced topic for another day. For further reading, try &lt;a href=&#34;http://www.deeplearningbook.org/&#34;&gt;Chapter 6 of &lt;em&gt;Deep Learning&lt;/em&gt;&lt;/a&gt; (2016) by Goodfellow, Bengio and Courville.&lt;/p&gt;
+&lt;p&gt;Full source code for this post is available &lt;a href=&#34;https://github.com/Selbosh/selbosh.github.io/blob/source/content/post/2018-01-09-neural-network.Rmd&#34;&gt;on GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I hope you found this useful! Let me know if anything is unclear.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;If you wanted to be very general, then you could say the bias &lt;em&gt;does&lt;/em&gt; depend on the previous layer, but the respective weight is fixed at zero. Then the weighted sum would be zero and &lt;span class=&#34;math inline&#34;&gt;\(\sigma(0) = 1\)&lt;/span&gt;, so you get a vector of ones.&lt;a href=&#34;#fnref1&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
     
     <item>
       <title>Using R on Android</title>
