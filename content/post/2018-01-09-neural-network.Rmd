@@ -1,19 +1,15 @@
 ---
 title: Building a neural network from scratch
-date: "2018-01-05T09:00:00+00:00"
+date: "2018-01-09T09:00:00+00:00"
 slug: neural-network
 categories: ['R']
-draft: true
 ---
 
-**Remember to change the date in the filename and the `YAML`**
-
-In this post I will show you how to derive a neural network from scratch in R.
-
-{animated gif of classification}
-
 Neural networks can seem like a bit of a black box.
-In principle, a neural network is little more than several [logistic regression](https://en.wikipedia.org/wiki/Logistic_regression) models chained together.
+But in some ways, a neural network is little more than several [logistic regression](https://en.wikipedia.org/wiki/Logistic_regression) models chained together.
+
+In this post I will show you how to derive a neural network from scratch with just a few lines in R.
+If you don't like mathematics, feel free to skip to the code chunks towards the end.
 
 ## Logistic regression
 
@@ -59,6 +55,7 @@ two_spirals <- function(N = 200,
              x2 = points[, 2],
              class = factor(classes, labels = labels))
 }
+set.seed(42)
 hotdogs <- two_spirals(labels = c('not hot dog', 'hot dog'))
 ```
 
@@ -96,15 +93,15 @@ Logistic regression classifies `r correct` (`r round(100 * correct / nrow(hotdog
 beta <- coef(logreg)
 grid <- expand.grid(x1 = seq(min(hotdogs$x1) - 1,
                              max(hotdogs$x1) + 1,
-                             by = .5),
+                             by = .25),
                     x2 = seq(min(hotdogs$x2) - 1,
                              max(hotdogs$x2) + 1,
-                             by = .5))
+                             by = .25))
 grid$class <- factor((predict(logreg, newdata = grid) > 0) * 1,
                      labels = c('not hot dog', 'hot dog'))
 
 ggplot(hotdogs) + aes(x1, x2, colour = class) +
-  geom_point(data = grid, size = .7) +
+  geom_point(data = grid, size = .5) +
   geom_point() +
   labs(x = expression(x[1]), y = expression(x[2])) +
   geom_abline(intercept = -beta[1]/beta[3],
@@ -280,7 +277,9 @@ We can maximise this via [gradient descent](https://en.wikipedia.org/wiki/Gradie
 
 To minimise \(\ell = f(\mathbf W)\) via gradient descent, we iterate using the formula
 \[\mathbf W_{t+1} = \mathbf W_{t} - \gamma \cdot \nabla f(\mathbf W_{t}),\]
-where \(\mathbf W_t\) is the weight matrix at time \(t\), \(\nabla f\) is the gradient of \(f\) with respect to \(\mathbf W\) and \(\gamma\) is a chosen learning rate parameter.
+where \(\mathbf W_t\) is the weight matrix at time \(t\), \(\nabla f\) is the gradient of \(f\) with respect to \(\mathbf W\) and \(\gamma\) is the 'learning rate'.
+
+Choose a learning rate too high and the algorithm will leap around like a dog chasing a squirrel, going straight past the optimum; choose one too low and it will take forever, making mountains out of molehills.
 
 Using the [chain rule](https://en.wikipedia.org/wiki/Chain_rule), the gradient of the log-likehood with respect to the output weights is given by
 \[\frac {\partial\ell} {\partial \mathbf W_\text{out}} =
@@ -319,10 +318,10 @@ In the last step, we take for granted that the intercept column of \(\mathbf H\)
 A simple R implementation is as follows.
 
 ```{r backprop}
-backpropagate <- function(x, y, y_hat, w1, w2, h, lr) {
+backpropagate <- function(x, y, y_hat, w1, w2, h, learn_rate) {
   dw2 <- t(cbind(1, h)) %*% (y_hat - y)
   dh  <- (y_hat - y) %*% t(w2[-1, , drop = FALSE])
-  dw1 <- t(X) %*% h * (1 - h) * dh
+  dw1 <- t(cbind(1, x)) %*% (h * (1 - h) * dh)
   
   w1 <- w1 - learn_rate * dw1
   w2 <- w2 - learn_rate * dw2
@@ -340,9 +339,9 @@ Here is a quick implementation using the functions defined above.
 
 ```{r train}
 train <- function(x, y, hidden = 5, learn_rate = 1e-2, iterations = 1e4) {
-  d <- ncol(x)
+  d <- ncol(x) + 1
   w1 <- matrix(rnorm(d * hidden), d, hidden)
-  w2 <- rnorm(hidden + 1)
+  w2 <- as.matrix(rnorm(hidden + 1))
   for (i in 1:iterations) {
     ff <- feedforward(x, w1, w2)
     bp <- backpropagate(x, y,
@@ -352,23 +351,108 @@ train <- function(x, y, hidden = 5, learn_rate = 1e-2, iterations = 1e4) {
                         learn_rate = learn_rate)
     w1 <- bp$w1; w2 <- bp$w2
   }
-  list(output = ff$output, w1 = w2, w2 = w2)
+  list(output = ff$output, w1 = w1, w2 = w2)
 }
 ```
 
-This should work, mathematically, but isn't the most elegant solution, programmatically.
+Let's `train` a neural network with five hidden nodes (like in Figure 1) on the hot dogs data.
+```{r test ad-hoc}
+x <- data.matrix(hotdogs[, c('x1', 'x2')])
+y <- hotdogs$class == 'hot dog'
+nnet5 <- train(x, y, hidden = 5, iterations = 1e5)
+```
 
+On my desktop PC, it takes about 12 seconds for the above code to run the 100,000 iterations.
+Not too bad for what sounds like a lot of runs, but what are the results like?
+
+We can calculate how many objects it classified correctly:
+```{r accuracy ad-hoc}
+mean((nnet5$output > .5) == y)
+```
+
+That's `r round(100*mean((nnet5$output > .5) == y))`%, or `r sum((nnet5$output > .5) == y)` out of `r nrow(hotdogs)` objects in the right class.
+
+Let's draw a picture to see what the decision boundaries look like.
+To do that, we firstly make a grid of points around the input space:
+```{r ref.label = 'logistic boundary', echo = 2:7, eval = F}
+```
+Then feed these points forward through our trained neural network.
+```{r grid ad-hoc}
+ff_grid <- feedforward(x = data.matrix(grid[, c('x1', 'x2')]),
+                       w1 = nnet5$w1,
+                       w2 = nnet5$w2)
+grid$class <- factor((ff_grid$output > .5) * 1,
+                     labels = levels(hotdogs$class))
+```
+Then, using `ggplot2`, we plot the predicted classes on a grid behind the observed points.
+```{r plot ad-hoc}
+ggplot(hotdogs) + aes(x1, x2, colour = class) +
+  geom_point(data = grid, size = .5) +
+  geom_point() +
+  labs(x = expression(x[1]), y = expression(x[2]))
+```
+The regions the neural network has classified into 'hot dog' and 'not hot dog' can no longer be separated by a single straight line.
+The more nodes we add to the hidden layer, the more elaborate the decision boundaries can become, improving accuracy at the expense of computation time (as more weights must be calculated) and increased risk of [over-fitting](https://en.wikipedia.org/wiki/Overfitting) the data.
+
+How about 30 nodes?
+
+```{r 30 nodes}
+nnet30 <- train(x, y, hidden = 30, iterations = 1e5)
+```
+
+After 100,000 iterations, accuracy is `r round(100 * mean((nnet30$output > .5) == y))`%.
+The decision boundary looks much smoother:
+
+```{r plot 30 nodes, echo = FALSE}
+ff_grid <- feedforward(x = data.matrix(grid[, c('x1', 'x2')]),
+                       w1 = nnet30$w1,
+                       w2 = nnet30$w2)
+grid$class <- factor((ff_grid$output > .5) * 1,
+                     labels = levels(hotdogs$class))
+
+ggplot(hotdogs) + aes(x1, x2, colour = class) +
+  geom_point(data = grid, size = .5) +
+  geom_point() +
+  labs(x = expression(x[1]), y = expression(x[2]))
+```
+
+And for completeness, let's see what one hidden node (plus an intercept) gives us.
+
+```{r 1 node}
+nnet1 <- train(x, y, hidden = 1, iterations = 1e5)
+```
+
+```{r plot 1 node, echo = FALSE}
+ff_grid <- feedforward(x = data.matrix(grid[, c('x1', 'x2')]),
+                       w1 = nnet1$w1,
+                       w2 = nnet1$w2)
+grid$class <- factor((ff_grid$output > .5) * 1,
+                     labels = levels(hotdogs$class))
+
+ggplot(hotdogs) + aes(x1, x2, colour = class) +
+  geom_point(data = grid, size = .5) +
+  geom_point() +
+  labs(x = expression(x[1]), y = expression(x[2]))
+```
+
+Much worse accuracy---`r round(100 * mean((nnet1$output > .5) == y))`%---and the decision boundary looks linear.
+
+## R6 class implementation
+
+The above code works, mathematically, but isn't the most elegant solution from a user interface point of view.
+It's a bit ad hoc.
 One of the annoying things about writing R functions is that, unless you use the global assignment operator (`<<-`) then the arguments are [immutable](https://en.wikipedia.org/wiki/Immutable_object).
 
 Also, everything defined within the function scope is discarded.
 You can return the objects in a list, but this can be unwieldy and you have to extract each object one by one to pass into the arguments of the next function.
-And despite this we still have three functions cluttering the workspace.
+And despite this we still have three functions and various objects cluttering the workspace.
 
-A more flexible implementation is object orientated, using [R6 classes](https://cran.r-project.org/package=R6).
+Can we do better?
+A more flexible implementation is object orientated, using [`R6` classes](https://cran.r-project.org/package=R6).
 
-## R6 class implementation
+The following class not only supports binary classification but also [multinomial logistic regression](https://en.wikipedia.org/wiki/Multinomial_logistic_regression), providing a high-level formula interface like that used when fitting an `lm` or `glm` with the `stats` package.
 
-The following class not only supports binary classification but also [multinomial logistic regression](https://en.wikipedia.org/wiki/Multinomial_logistic_regression), providing a high-level formula interface like that used when fitting `lm`s and `glm`s with the `stats` package.
+The maths for multi-class classification is very similar (partly thanks to the derivative of the [softmax function](https://en.wikipedia.org/wiki/Softmax_function)---the multivariate generalisation of sigmoid---cancelling out in the gradient calculation) and most of the modifications are to do with wrangling R factors to and from indicator matrix representation.
 
 ```{r r6}
 library(R6)
@@ -384,19 +468,17 @@ NeuralNetwork <- R6Class("NeuralNetwork",
       self$Y <- model.response(mod)
       
       # Dimensions
-      #N <- nrow(self$X) # number of observations
-      D <- ncol(self$X) # input dimensions (inc bias)
-      K <- length(unique(self$Y)) # number of categories
-      H <- hidden # number of hidden nodes (exc bias)
+      D <- ncol(self$X) # input dimensions (+ bias)
+      K <- length(unique(self$Y)) # number of classes
+      H <- hidden # number of hidden nodes (- bias)
       
       # Initial weights and bias
       self$W1 <- .01 * matrix(rnorm(D * H), D, H)
       self$W2 <- .01 * matrix(rnorm((H + 1) * K), H + 1, K)
     },
     fit = function(data = self$X) {
-      hidden_layer <- data %*% self$W1
-      hidden_layer <- self$sigmoid(hidden_layer)
-      score <- cbind(1, hidden_layer) %*% self$W2
+      h <- self$sigmoid(data %*% self$W1)
+      score <- cbind(1, h) %*% self$W2
       return(self$softmax(score))
     },
     feedforward = function(data = self$X) {
@@ -404,14 +486,14 @@ NeuralNetwork <- R6Class("NeuralNetwork",
       invisible(self)
     },
     backpropagate = function(lr = 1e-2) {
-      hidden_layer <- self$sigmoid(self$X %*% self$W1) ## repeated line
+      h <- self$sigmoid(self$X %*% self$W1)
       Yid <- match(self$Y, sort(unique(self$Y)))
       
-      dscores <- self$output - (col(self$output) == Yid) # E[y] - y
-      dW2 <- t(cbind(1, hidden_layer)) %*% dscores
+      haty_y <- self$output - (col(self$output) == Yid) # E[y] - y
+      dW2 <- t(cbind(1, h)) %*% haty_y
       
-      dhidden <- dscores %*% t(self$W2[-1, , drop = FALSE]) # omit bias2
-      dW1 <- t(self$X) %*% (self$dsigmoid(hidden_layer) * dhidden)
+      dh <- haty_y %*% t(self$W2[-1, , drop = FALSE])
+      dW1 <- t(self$X) %*% (self$dsigmoid(h) * dh)
       
       self$W1 <- self$W1 - lr * dW1
       self$W2 <- self$W2 - lr * dW2
@@ -428,8 +510,8 @@ NeuralNetwork <- R6Class("NeuralNetwork",
       correct_logprobs <- -log(probs[cbind(seq_along(Yid), Yid)])
       sum(correct_logprobs)
     },
-    train = function(iterations = 5000,
-                     learn_rate = .001,
+    train = function(iterations = 1e4,
+                     learn_rate = 1e-2,
                      tolerance = .01,
                      trace = 100) {
       for (i in seq_len(iterations)) {
@@ -455,16 +537,52 @@ NeuralNetwork <- R6Class("NeuralNetwork",
 
 What do each of the methods do?
 
-- `predict`
-- `fit`
-- `feedforward`
-- ...
+- `initialize` is run every time you make a new network. It initialises the weight matrices to be the correct dimensions, populated with random initial values.
+- `fit` runs one step of forward propagation but returns the result instead of storing it. Useful for predicting from new test data without changing the model.
+- `feedforward` runs `fit` but saves the results, for training.
+- `backpropagate` does what you might expect, saving the results for training.
+- `train` runs forward and back propagation, storing the results and printing the progress to the console every `trace` iterations.
+- `predict` uses argmax to estimate a single discrete class for each observation (whereas `fit` only returns probabilities).
+- `accuracy` and `compute_loss` return the proportion of correct class assignments and the negative log likelihood ('log loss'), respectively
+- `sigmoid`, `dsigmoid` and `softmax` are utility functions.
 
-## Extensions
+Let's see our fancy neural network in action on the famous [iris data set](https://en.wikipedia.org/wiki/Iris_flower_data_set).
+Firstly, initialise the network by specifying the input and output variables and the number of hidden nodes.
+(Let's go for five.)
+```{r iris}
+irisnet <- NeuralNetwork$new(Species ~ ., data = iris, hidden = 5)
+```
+I have implemented a formula interface so I can regress `Species` on the other four variables (`Petal.Length`, `Petal.Width`, `Sepal.Length` and `Sepal.Width`) without having to type it out in full.
 
-There are plenty of improvements we could make to the `NeuralNetwork` class but most of them are beyond the scope of this article, and left as an exercise.
+That's the framework assembled.
+Now we can train the model.
+No need to assign any new variables---the R6 object modifies itself in place.
+```{r iris train, collapse = TRUE}
+irisnet$train(9999, trace = 1e3, learn_rate = .0001)
+```
+You might notice that the log loss is going down even while accuracy stays the same.
+This is because the model is becoming more or less confident about each of its predictions, even if the argmax doesn't change.
+
+Everything is stored inside the `NeuralNetwork` object.
+```{r obj}
+irisnet
+```
+
+One other nice thing about R6 classes is you can chain methods together where they return `self` or `invisible(self)`.
+So if I want to train for 1000 iterations and then predict for some new data, all in one line, it's as simple as
+```r
+irisnet$train(1000)$predict(newdata)
+```
+
+There are plenty of improvements we could make to the `NeuralNetwork` class but most of them are beyond the scope of this article, and left as an exercise to the interested reader.
+Here are some ideas:
 
 - user-selectable activation functions, rather than hard-coded sigmoid
-- regularisation during back propagation (and including regularisation loss in `compute_loss`)
+- [regularisation](https://en.wikipedia.org/wiki/Regularization_(mathematics)), and including regularisation loss as part of `compute_loss()`
 - arbitrary number of hidden layers, to enable deep learning (\(h>1\)) or logistic regression \(h=0\)
 - regression as well as classification
+- more intelligent initial weights
+- changing learning rate over time
+
+I hope you found this useful!
+Let me know if anything is unclear.
