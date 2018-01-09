@@ -58,6 +58,7 @@ For more information about my academic work, please visit my [Warwick PhD page](
 - [Nathan Cunningham](http://www.nathancunn.com/)
 - [David Firth](https://statgeek.net/)
 - [Ella Kaye](http://ellakaye.rbind.io/)
+- [Kenneth Lim](http://numbers.sg/)
 - [Matt Moores](https://mattstats.wordpress.com/)
 - [Murray Pollock](http://www.iitypeii.com/)
 - [Christian Robert](https://xianblog.wordpress.com/)
