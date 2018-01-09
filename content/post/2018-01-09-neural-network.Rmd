@@ -1,9 +1,14 @@
 ---
-title: Building a neural network from scratch
-date: "2018-01-09T09:00:00+00:00"
+title: Building a neural network from scratch in R
+date: "2018-01-09T10:00:00+00:00"
 slug: neural-network
 categories: ['R']
+images: ['/img/2018/hotdog.jpg']
 ---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
 
 Neural networks can seem like a bit of a black box.
 But in some ways, a neural network is little more than several [logistic regression](https://en.wikipedia.org/wiki/Logistic_regression) models chained together.
@@ -11,11 +16,15 @@ But in some ways, a neural network is little more than several [logistic regress
 In this post I will show you how to derive a neural network from scratch with just a few lines in R.
 If you don't like mathematics, feel free to skip to the code chunks towards the end.
 
+This blog post is partly inspired by Denny Britz's article, [Implementing a Neural Network from Scratch in Python](http://www.wildml.com/2015/09/implementing-a-neural-network-from-scratch/), as well as [this article by Sunil Ray](https://www.analyticsvidhya.com/blog/2017/05/neural-network-from-scratch-in-python-and-r/).
+
 ## Logistic regression
 
 What's a logistic regression model?
 Suppose we want to build a machine that classifies objects in two groups, for example ['hot dog' and 'not hot dog'](https://www.youtube.com/watch?v=ACmydtFDTGs).
 We will say \(Y_i = 1\) if object *i* is a hot dog, and \(Y_i = 0\) otherwise.
+
+[![](/img/2018/hotdog.gif)](https://www.youtube.com/watch?v=ACmydtFDTGs)
 
 A logistic regression model estimates these odds,
 \[
@@ -69,7 +78,7 @@ knitr::kable(hotdogs[sample(nrow(hotdogs), 5), ], row.names = FALSE, digits = 2)
 
 And a scatter plot of all of them:
 
-```{r plot spirals, echo = FALSE}
+```{r plot-spirals, echo = FALSE}
 library(ggplot2)
 theme_set(theme_classic())
 ggplot(hotdogs) +
@@ -81,7 +90,7 @@ ggplot(hotdogs) +
 
 Fitting a logistic regression model in R is easy:
 
-```{r logistic regression, echo = 1}
+```{r logistic-regression, echo = 1}
 logreg <- glm(class ~ x1 + x2, family = binomial, data = hotdogs)
 correct <- sum((fitted(logreg) > .5) + 1 == as.integer(hotdogs$class))
 ```
@@ -89,7 +98,7 @@ correct <- sum((fitted(logreg) > .5) + 1 == as.integer(hotdogs$class))
 But as the decision boundary can only be linear, it doesn't work too well at distinguishing our two classes.
 Logistic regression classifies `r correct` (`r round(100 * correct / nrow(hotdogs))`%) of our objects correctly.
 
-```{r logistic boundary, echo = FALSE}
+```{r logistic-boundary, echo = FALSE}
 beta <- coef(logreg)
 grid <- expand.grid(x1 = seq(min(hotdogs$x1) - 1,
                              max(hotdogs$x1) + 1,
@@ -126,6 +135,26 @@ The output layer is our estimate of the probability that objects belong to each 
 The input layer comprises the covariates and an intercept, as before.
 In the middle, there is a *hidden layer*, which is a transformation of the input space into \(h\) dimensions, where \(h\) is a number chosen by us.
 We then perform a logistic regression on this transformed space to estimate the classes.
+
+```{r neural-network, echo = FALSE, engine = 'tikz', fig.ext = 'svg'}
+% http://www.texample.net/tikz/examples/neural-network/
+\def\layersep{2.5cm}
+\usetikzlibrary{arrows}
+
+\begin{tikzpicture}[draw, node distance=\layersep, >=latex]
+  \tikzstyle{neuron}=[draw, circle, minimum size=17pt, inner sep=0pt]
+  \tikzstyle{every pin edge}=[<-]
+  \node[neuron] (H) at (0, 0) {$H$};
+  \node[neuron, left of=H, pin=left:Input] (I) at (0, 0) {$X$};
+  \node[neuron, right of=H, pin={[pin edge={->}]right:Output}] (O) {$Y$};
+  \path[draw] (I) -> (H) -> (O);   
+
+  \node[above of=H, node distance = 1cm] (label-h) {Hidden layer};
+  \node[left of=label-h] {Input layer};
+  \node[right of=label-h] {Output layer};
+      
+\end{tikzpicture}
+```
 
 It works like this.
 
@@ -179,11 +208,11 @@ A neural network adds a hidden layer, which you might think of as an intermediat
   % In -> Hidden
   \foreach \src in {0,...,2}
       \foreach \dst in {1,...,5}
-        \path[draw] (I-\src) -- (H-\dst);
+        \path[draw] (I-\src) -> (H-\dst);
       
   % Hidden -> Out
   \foreach \src in {0,...,5}
-      \path[draw] (H-\src) -- (O);
+      \path[draw] (H-\src) -> (O);
       
   % Annotations
   \node[above of=H-0, node distance = 1cm] (label-h) {Hidden layer};
@@ -356,7 +385,7 @@ train <- function(x, y, hidden = 5, learn_rate = 1e-2, iterations = 1e4) {
 ```
 
 Let's `train` a neural network with five hidden nodes (like in Figure 1) on the hot dogs data.
-```{r test ad-hoc}
+```{r test-ad-hoc}
 x <- data.matrix(hotdogs[, c('x1', 'x2')])
 y <- hotdogs$class == 'hot dog'
 nnet5 <- train(x, y, hidden = 5, iterations = 1e5)
@@ -366,7 +395,7 @@ On my desktop PC, it takes about 12 seconds for the above code to run the 100,00
 Not too bad for what sounds like a lot of runs, but what are the results like?
 
 We can calculate how many objects it classified correctly:
-```{r accuracy ad-hoc}
+```{r accuracy-ad-hoc}
 mean((nnet5$output > .5) == y)
 ```
 
@@ -374,10 +403,10 @@ That's `r round(100*mean((nnet5$output > .5) == y))`%, or `r sum((nnet5$output >
 
 Let's draw a picture to see what the decision boundaries look like.
 To do that, we firstly make a grid of points around the input space:
-```{r ref.label = 'logistic boundary', echo = 2:7, eval = F}
+```{r ref.label = 'logistic-boundary', echo = 2:7, eval = F}
 ```
 Then feed these points forward through our trained neural network.
-```{r grid ad-hoc}
+```{r grid-ad-hoc}
 ff_grid <- feedforward(x = data.matrix(grid[, c('x1', 'x2')]),
                        w1 = nnet5$w1,
                        w2 = nnet5$w2)
@@ -385,7 +414,7 @@ grid$class <- factor((ff_grid$output > .5) * 1,
                      labels = levels(hotdogs$class))
 ```
 Then, using `ggplot2`, we plot the predicted classes on a grid behind the observed points.
-```{r plot ad-hoc}
+```{r plot-ad-hoc}
 ggplot(hotdogs) + aes(x1, x2, colour = class) +
   geom_point(data = grid, size = .5) +
   geom_point() +
@@ -396,14 +425,14 @@ The more nodes we add to the hidden layer, the more elaborate the decision bound
 
 How about 30 nodes?
 
-```{r 30 nodes}
+```{r 30-nodes}
 nnet30 <- train(x, y, hidden = 30, iterations = 1e5)
 ```
 
 After 100,000 iterations, accuracy is `r round(100 * mean((nnet30$output > .5) == y))`%.
 The decision boundary looks much smoother:
 
-```{r plot 30 nodes, echo = FALSE}
+```{r plot-30-nodes, echo = FALSE}
 ff_grid <- feedforward(x = data.matrix(grid[, c('x1', 'x2')]),
                        w1 = nnet30$w1,
                        w2 = nnet30$w2)
@@ -418,11 +447,11 @@ ggplot(hotdogs) + aes(x1, x2, colour = class) +
 
 And for completeness, let's see what one hidden node (plus an intercept) gives us.
 
-```{r 1 node}
+```{r 1-node}
 nnet1 <- train(x, y, hidden = 1, iterations = 1e5)
 ```
 
-```{r plot 1 node, echo = FALSE}
+```{r plot-1-node, echo = FALSE}
 ff_grid <- feedforward(x = data.matrix(grid[, c('x1', 'x2')]),
                        w1 = nnet1$w1,
                        w2 = nnet1$w2)
@@ -557,7 +586,7 @@ I have implemented a formula interface so I can regress `Species` on the other f
 That's the framework assembled.
 Now we can train the model.
 No need to assign any new variables---the R6 object modifies itself in place.
-```{r iris train, collapse = TRUE}
+```{r iris-train, collapse = TRUE}
 irisnet$train(9999, trace = 1e3, learn_rate = .0001)
 ```
 You might notice that the log loss is going down even while accuracy stays the same.
@@ -584,5 +613,13 @@ Here are some ideas:
 - more intelligent initial weights
 - changing learning rate over time
 
+But you might be wondering: can I actually classify pictures of hot dogs with this?
+Probably not from raw pixels---image analysis is usually a job for a [convolutional neural network](https://en.wikipedia.org/wiki/Convolutional_neural_network), which is a more advanced topic for another day.
+For further reading, try [Chapter 6 of *Deep Learning*](http://www.deeplearningbook.org/) (2016) by Goodfellow, Bengio and Courville.
+
+Full source code for this post is available [on GitHub](https://github.com/Selbosh/selbosh.github.io/blob/source/content/post/2018-01-09-neural-network.Rmd).
+
 I hope you found this useful!
 Let me know if anything is unclear.
+
+
