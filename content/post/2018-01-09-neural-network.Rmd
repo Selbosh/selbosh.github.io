@@ -615,11 +615,10 @@ Here are some ideas:
 
 But you might be wondering: can I actually classify pictures of hot dogs with this?
 Probably not from raw pixels---image analysis is usually a job for a [convolutional neural network](https://en.wikipedia.org/wiki/Convolutional_neural_network), which is a more advanced topic for another day.
-For further reading, try [Chapter 6 of *Deep Learning*](http://www.deeplearningbook.org/) (2016) by Goodfellow, Bengio and Courville.
-
-Full source code for this post is available [on GitHub](https://github.com/Selbosh/selbosh.github.io/blob/source/content/post/2018-01-09-neural-network.Rmd).
 
 I hope you found this useful!
 Let me know if anything is unclear.
 
+For further reading, try [Chapter 6 of *Deep Learning*](http://www.deeplearningbook.org/) (2016) by Goodfellow, Bengio and Courville.
 
+Full source code for this post is available [on GitHub](https://github.com/Selbosh/selbosh.github.io/blob/source/content/post/2018-01-09-neural-network.Rmd).
