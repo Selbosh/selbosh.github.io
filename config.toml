@@ -1,4 +1,4 @@
-baseURL = "http://selbydavid.com/"
+baseURL = "https://selbydavid.com/"
 languageCode = "en-GB"
 title = "Tea & Stats"
 theme = "hugo-tea"
@@ -17,7 +17,7 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 
 [author]
 	name = "David Selby"
-	url = "http://selbydavid.com"
+	url = "https://selbydavid.com"
 
 [social]
 	twitter 		= "TeaStats"
