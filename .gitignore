@@ -1,2 +1,6 @@
 *.Rproj
 .Rproj.user
+public
+.Rbuildignore
+.Rhistory
+blogdown

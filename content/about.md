@@ -4,7 +4,7 @@ title: About me
 
 <img src="/img/david.jpg" style="border-radius: 50%; width: 15rem;" />
 
-Hello, my name is David Selby and I am a second-year statistics PhD student at the University of Warwick, researching influence in social networks.
+Hello, my name is David Selby and I am a third-year statistics PhD student at the University of Warwick, researching influence in social networks.
 
 Originally from North Yorkshire, I aim to maintain a reliable supply of Yorkshire Tea.
 I am enthusiastic about [R](https://www.r-project.org/) and help organise [Warwick R User Group](http://warwick.ac.uk/wrug).
@@ -58,6 +58,7 @@ For more information about my academic work, please visit my [Warwick PhD page](
 - [Nathan Cunningham](http://www.nathancunn.com/)
 - [David Firth](https://statgeek.net/)
 - [Ella Kaye](http://ellakaye.rbind.io/)
+- [Kenneth Lim](http://numbers.sg/)
 - [Matt Moores](https://mattstats.wordpress.com/)
 - [Murray Pollock](http://www.iitypeii.com/)
 - [Christian Robert](https://xianblog.wordpress.com/)
@@ -66,4 +67,5 @@ For more information about my academic work, please visit my [Warwick PhD page](
 
 - [Lighting Rumours](http://www.lightingrumours.com), a blog I edit about the photography industry
 - [R-bloggers](https://www.r-bloggers.com/), a compendium of R-themed blogs
+- [RWeekly.org](https://rweekly.org), more R-themed blogs
 - [Warwick R User Group](http://warwick.ac.uk/wrug), a local group for talks on R
