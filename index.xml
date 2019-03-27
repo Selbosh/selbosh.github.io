@@ -33,9 +33,9 @@ This was an interesting little challenge set by &lt;a href=&#34;https://twitter.
 &lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
 
 
-&lt;p&gt;In &lt;a href=&#34;https://en.wikipedia.org/wiki/Code_golf&#34;&gt;code golf&lt;/a&gt;, programmers try to write an algorithm using the shortest program possible, often exploiting lesser-known eccentricies of each programming language.&lt;/p&gt;
+&lt;p&gt;In &lt;a href=&#34;https://en.wikipedia.org/wiki/Code_golf&#34;&gt;code golf&lt;/a&gt;, programmers try to write an algorithm using the shortest programme possible, often exploiting lesser-known eccentricies of each programming language.&lt;/p&gt;
 
-&lt;p&gt;This R challenge is less about minimising your golf handicap, however, and more about showing off some features and functions in R that you might not know about.
+&lt;p&gt;This R challenge is less about minimising your golf handicap, however, and more about showing off some features and functions in R that others might not know about.
 Taking the scenic route and learning along the way.
 Crazy code golf, if you like.&lt;/p&gt;
 
@@ -196,8 +196,8 @@ for (i in 1:n)
 
 &lt;h3 id=&#34;the-tidy-way&#34;&gt;The tidy way&lt;/h3&gt;
 
-&lt;p&gt;The tidyverse encourages us to store everything in long data frames, so let&amp;rsquo;s not make an exception here.
-Here is a dataset descibing the positions of all the ones.&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;tidyverse&lt;/strong&gt; encourages us to store everything in long data frames, so let&amp;rsquo;s not make an exception here.
+Here is a dataset describing the positions of all the ones.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;data.frame(value = 1, row_index = 1:n, column_index = 1:n)
 &lt;/code&gt;&lt;/pre&gt;
