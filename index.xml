@@ -216,6 +216,11 @@ The dimnames become no longer relevant so we can remove those while we are at it
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;unname( xtabs(data.frame(1, 1:n, 1:n)) )
 &lt;/code&gt;&lt;/pre&gt;
 
+&lt;p&gt;&lt;em&gt;Edit:&lt;/em&gt; An even simpler version is&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;table(data.frame(1:n, 1:n))
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;h3 id=&#34;the-sparse-way&#34;&gt;The sparse way&lt;/h3&gt;
 
 &lt;p&gt;An identity matrix is the same as a &lt;a href=&#34;https://en.wikipedia.org/wiki/Permutation_matrix&#34;&gt;permutation matrix&lt;/a&gt; where the order of elements is not changed:

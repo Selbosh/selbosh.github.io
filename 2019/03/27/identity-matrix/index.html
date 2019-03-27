@@ -46,7 +46,7 @@ Find as many way you can to create the identity matrix with #rstats. pic.twitter
 
 <meta itemprop="datePublished" content="2019-03-27T15:50:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-03-27T15:50:00&#43;00:00" />
-<meta itemprop="wordCount" content="1434">
+<meta itemprop="wordCount" content="1442">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2019/identity.png">
 
@@ -340,6 +340,11 @@ Here is a dataset describing the positions of all the ones.</p>
 The dimnames become no longer relevant so we can remove those while we are at it.</p>
 
 <pre><code class="language-r">unname( xtabs(data.frame(1, 1:n, 1:n)) )
+</code></pre>
+
+<p><em>Edit:</em> An even simpler version is</p>
+
+<pre><code class="language-r">table(data.frame(1:n, 1:n))
 </code></pre>
 
 <h3 id="the-sparse-way">The sparse way</h3>
