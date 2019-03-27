@@ -16,11 +16,11 @@
 Inspiration stems from Leland Wilkinson’s book, The Grammar of Graphics, whose principles were later implemented as the layered grammar of graphics in Hadley Wickham’s popular R package, ggplot2.
 Wilkinson’s grammar generalises data visualisation. Rather than choosing a types of graph from a list—for example bar plot, pie chart or line graphs—instead we break down graphics into algebra, scales, statistics, geometry, coordinates and aesthetics." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="http://selbydavid.com/2017/06/25/ggchernoff/" />
+<meta property="og:url" content="https://selbydavid.com/2017/06/25/ggchernoff/" />
 
-  <meta property="og:image" content="http://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/eyebrow-1.png" />
+  <meta property="og:image" content="https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/eyebrow-1.png" />
 
-  <meta property="og:image" content="http://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/smile-1.png" />
+  <meta property="og:image" content="https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/smile-1.png" />
 
 
 
@@ -50,16 +50,16 @@ Wilkinson’s grammar generalises data visualisation. Rather than choosing a typ
 <meta itemprop="dateModified" content="2017-06-25T18:25:00&#43;01:00" />
 <meta itemprop="wordCount" content="493">
 
-  <meta itemprop="image" content="http://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/eyebrow-1.png">
+  <meta itemprop="image" content="https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/eyebrow-1.png">
 
-  <meta itemprop="image" content="http://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/smile-1.png">
+  <meta itemprop="image" content="https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/smile-1.png">
 
 
 
 <meta itemprop="keywords" content="" />
 
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image:src" content="http://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/eyebrow-1.png"/>
+<meta name="twitter:image:src" content="https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/eyebrow-1.png"/>
 <meta name="twitter:title" content="Chernoff faces in ggplot2"/>
 <meta name="twitter:description" content="I am pleased to introduce my first R package for general consumption, ggChernoff.
 Inspiration stems from Leland Wilkinson’s book, The Grammar of Graphics, whose principles were later implemented as the layered grammar of graphics in Hadley Wickham’s popular R package, ggplot2.
@@ -84,11 +84,11 @@ Wilkinson’s grammar generalises data visualisation. Rather than choosing a typ
 
 
 
-<link rel="shortcut icon" href="http://selbydavid.com/favicon.ico">
+<link rel="shortcut icon" href="https://selbydavid.com/favicon.ico">
 
 
 
-<link rel="stylesheet" href="http://selbydavid.com/css/main.css" media="all">
+<link rel="stylesheet" href="https://selbydavid.com/css/main.css" media="all">
 
 <script src="https://use.fontawesome.com/269c7751ba.js"></script>
 
@@ -96,16 +96,16 @@ Wilkinson’s grammar generalises data visualisation. Rather than choosing a typ
   <body>
       
         <header id="masthead">
-          <img src="http://selbydavid.com/img/logo.svg"
+          <img src="https://selbydavid.com/img/logo.svg"
                width="120"
                height=""
                alt="Tea and Stats">
-          <h1><a href="http://selbydavid.com/">Tea &amp; Stats</a></h1>
+          <h1><a href="https://selbydavid.com/">Tea &amp; Stats</a></h1>
           <aside>Data science with David Selby</aside>
           <nav>
   <ul>
     
-      <li><a href="http://selbydavid.com/about/">About</a></li>
+      <li><a href="https://selbydavid.com/about/">About</a></li>
     
     
     <li>
@@ -176,7 +176,7 @@ Wilkinson’s grammar generalises data visualisation. Rather than choosing a typ
 </tbody>
 </table>
 <p>into the following simple visualisation.</p>
-<p><img src="http://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/lineplot-1.png" width="672" /></p>
+<p><img src="https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/lineplot-1.png" width="672" /></p>
 <p>In <em>Grammar of Graphics</em> terms, we produce the plot using these semantics.</p>
 <dl>
 <dt>Variables</dt>
@@ -205,7 +205,7 @@ Wilkinson’s grammar generalises data visualisation. Rather than choosing a typ
 </dd>
 </dl>
 <p>Our line plot above is grammatically equivalent to a bar chart—just make the lines thicker! Now, what if we swap Cartesian coordinates for polar coordinates, (r, θ)? The resulting graphic is still grammatically correct, though perhaps not very useful.</p>
-<p><img src="http://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/polar-1.png" width="384" /> We can even transpose it to (θ, r) coordinates, for another grammatically-valid data visualisation. <img src="http://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/radial-1.png" width="384" /></p>
+<p><img src="https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/polar-1.png" width="384" /> We can even transpose it to (θ, r) coordinates, for another grammatically-valid data visualisation. <img src="https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/radial-1.png" width="384" /></p>
 <p>These plots don’t necessarily have names, so you don’t have to hunt through a list to find the right tool to create them. It is just a matter of knowing how the <em>Grammar of Graphics</em> works.</p>
 <p>Look at the specifications for our plot again. Geometry and aesthetics don’t have to be as conventional as lines and boxes of different sizes. Let’s try something completely different!</p>
 <p>A couple of amendments to the specifications…</p>
@@ -221,7 +221,7 @@ Wilkinson’s grammar generalises data visualisation. Rather than choosing a typ
 </ul>
 </dd>
 </dl>
-<p>…and we produce this graph. <img src="http://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/smile-1.png" width="480" /></p>
+<p>…and we produce this graph. <img src="https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/smile-1.png" width="480" /></p>
 <p>Using faces for multivariate data visualisation is an idea credited to <a href="https://en.wikipedia.org/wiki/Chernoff_face">Herman Chernoff</a>, and which Wilkinson discusses in some detail in <em>The Grammar of Graphics</em>. In principle, you can represent data using all kinds of weird and wonderful things, so long as you can clearly define geometry, aesthetics, scales and so on to integrate them into a grammatical workflow.</p>
 <p>My R package, <a href="https://github.com/Selbosh/ggChernoff">ggChernoff</a>, extends ggplot2 with a new face geom and aesthetics for its mouth and eyebrows. By mapping variables to the right aesthetic you can make your data happy or sad, angry or expressionless.</p>
 <p>Here is another set of aesthetic mappings.</p>
@@ -235,7 +235,7 @@ Wilkinson’s grammar generalises data visualisation. Rather than choosing a typ
 </ul>
 </dd>
 </dl>
-<p><img src="http://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/eyebrow-1.png" width="480" /></p>
+<p><img src="https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/eyebrow-1.png" width="480" /></p>
 <p>This is a nice way to add a bit of personality to your data visualisations. Unlike the package <a href="https://github.com/dill/emoGG">emoGG</a>, which involves selecting pre-drawn icons from a list, the faces in ggChernoff are procedurally generated, in the spirit of the grammar of graphics.</p>
 <p>More demonstrations are coming in a future post. The package ggChernoff is <a href="https://github.com/Selbosh/ggChernoff">now available on GitHub</a>.</p>
 
@@ -267,14 +267,14 @@ Wilkinson’s grammar generalises data visualisation. Rather than choosing a typ
       <footer id="footer">
         
         <a href="#">
-          <img src="http://selbydavid.com/img/logo.svg"
+          <img src="https://selbydavid.com/img/logo.svg"
                width="60"
                height=""
                alt="Return to top"
                title="Return to top">
         </a>
         
-        © 2016–18 David Selby | <a href='https://github.com/Selbosh/hugo-tea'>Hugo Tea Theme</a>
+        © 2016–19 David Selby | <a href='https://github.com/Selbosh/hugo-tea'>Hugo Tea Theme</a>
       </footer>
     
     

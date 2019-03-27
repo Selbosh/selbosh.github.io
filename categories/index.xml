@@ -2,20 +2,20 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>Categories on Tea &amp; Stats</title>
-    <link>http://selbydavid.com/categories/</link>
+    <link>https://selbydavid.com/categories/</link>
     <description>Tea, statistics and t-statistics: a data science blog by David Selby.</description>
 		<atom:author>
 			<atom:name>David Selby</atom:name>
-			<atom:uri>http://selbydavid.com</atom:uri>
+			<atom:uri>https://selbydavid.com</atom:uri>
 		</atom:author>
 		<image>
-		    <link>http://selbydavid.com/categories/</link>
+		    <link>https://selbydavid.com/categories/</link>
 		    <title>Tea &amp; Stats</title>
-		    <url>http://selbydavid.com/logo.png</url>
+		    <url>https://selbydavid.com/logo.png</url>
 		</image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-GB</language>
-    <atom:link href="http://selbydavid.com/categories/" rel="self" type="application/rss+xml" />
+    <atom:link href="https://selbydavid.com/categories/" rel="self" type="application/rss+xml" />
     
   </channel>
 </rss>
