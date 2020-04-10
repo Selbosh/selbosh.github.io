@@ -167,30 +167,30 @@ Chris</code></pre>
 data.frame(sender = names2,
            recipient = c(tail(names2, -1), names2[1]))</code></pre>
 <pre><code>##   sender recipient
-## 1   Dick     Susan
-## 2  Susan    Leslie
-## 3 Leslie     Chris
-## 4  Chris      Alex
-## 5   Alex      Jane
-## 6   Jane       Tom
-## 7    Tom       Sam
-## 8    Sam     Harry
-## 9  Harry      Dick</code></pre>
+## 1 Leslie      Alex
+## 2   Alex     Susan
+## 3  Susan       Sam
+## 4    Sam       Tom
+## 5    Tom     Chris
+## 6  Chris      Jane
+## 7   Jane      Dick
+## 8   Dick     Harry
+## 9  Harry    Leslie</code></pre>
 <p>In R, the <code>sample()</code> function draws randomly from a vector, and by default it does this without replacement, so we don’t have to worry about missing anybody off or somebody appearing twice. We can use it as a quick way to reorder the list of names at random. The <code>tail</code> command with argument <code>-1</code> will select every element in the list except the first.</p>
 <p>This works in the sense that everybody gives and receives one gift and nobody gives to themselves, but is not entirely random or secret. If you find out that Susan gave to Leslie, then you know for a fact that Leslie didn’t give to Susan. With enough of these titbits of information you could reconstruct the entire list. Ideally we want no discernable pattern.</p>
 <p>Why not just randomly sample twice from the <code>names</code> list?</p>
 <pre class="r"><code>data.frame(sender = sample(names),
            recipient = sample(names))</code></pre>
 <pre><code>##   sender recipient
-## 1  Harry       Tom
-## 2  Chris      Dick
-## 3 Leslie       Sam
-## 4  Susan    Leslie
-## 5   Dick      Alex
-## 6   Jane      Jane
-## 7    Sam     Susan
-## 8   Alex     Harry
-## 9    Tom     Chris</code></pre>
+## 1  Chris      Dick
+## 2   Jane     Harry
+## 3   Alex       Sam
+## 4    Tom       Tom
+## 5   Dick    Leslie
+## 6  Susan     Susan
+## 7  Harry     Chris
+## 8    Sam      Alex
+## 9 Leslie      Jane</code></pre>
 <p>There’s a problem. Jane has been assigned to herself! That won’t do! The solution is quite straightforward, though: just keep sampling until this doesn’t happen. We can keep the order of senders fixed and vary the order of the recipients until nobody gives to themselves, like so.</p>
 <pre class="r"><code>sender &lt;- sample(names)
 recipient &lt;- sample(names)
@@ -201,15 +201,15 @@ while (any(sender == recipient)) {
 }
 data.frame(sender, recipient)</code></pre>
 <pre><code>##   sender recipient
-## 1  Harry      Jane
-## 2  Chris      Alex
-## 3 Leslie       Sam
-## 4  Susan      Dick
-## 5   Dick     Chris
-## 6   Jane       Tom
-## 7    Sam    Leslie
-## 8   Alex     Harry
-## 9    Tom     Susan</code></pre>
+## 1  Chris      Alex
+## 2   Jane       Tom
+## 3   Alex     Chris
+## 4    Tom    Leslie
+## 5   Dick     Susan
+## 6  Susan       Sam
+## 7  Harry      Jane
+## 8    Sam      Dick
+## 9 Leslie     Harry</code></pre>
 <p>Success! Everybody gives and receives a gift, nobody gives to themselves and there is no particular pattern. (Unlike the first method, Sam gives to Leslie even though Leslie already gives to Sam.)</p>
 <p>If you’re curious, you can find out how many attempts it took to find a valid set of pairs:</p>
 <pre class="r"><code>i</code></pre>
