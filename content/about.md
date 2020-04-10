@@ -4,10 +4,10 @@ title: About me
 
 <img src="/img/david.jpg" style="border-radius: 50%; width: 15rem;" />
 
-Hello, my name is David Selby and I am a third-year statistics PhD student at the University of Warwick, researching influence in social networks.
+Hello, my name is David Selby and research associate in data science at the University of Manchester, having recently completed a PhD in statistics at the University of Warwick.
 
 Originally from North Yorkshire, I aim to maintain a reliable supply of Yorkshire Tea.
-I am enthusiastic about [R](https://www.r-project.org/) and help organise [Warwick R User Group](http://warwick.ac.uk/wrug).
+I am enthusiastic about [R](https://www.r-project.org/) and helped organise [Warwick R User Group](http://warwick.ac.uk/wrug).
 
 <p style="text-align: center;">
 <a href='mailto:D.Selby@warwick.ac.uk' title="E-mail me">
