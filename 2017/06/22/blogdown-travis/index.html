@@ -15,11 +15,11 @@
 <meta property="og:description" content="Yihui Xie&rsquo;s new blogdown package is a brilliantly elegant and simple tool for creating R-themed blogs and web sites. Starting your own blog is as simple as one line of R code:
 blogdown::new_site()  By default, blogdown uses Hugo, a static web site generator written in Google&rsquo;s Go programming language. This has a number of advantages over Jekyll (the site generator that powers GitHub Pages) and from personal experience, everything just seems to work more smoothly." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://selbydavid.com/2017/06/22/blogdown-travis/" />
+<meta property="og:url" content="/2017/06/22/blogdown-travis/" />
 
-  <meta property="og:image" content="https://selbydavid.com/img/2017/travis-log.png" />
+  <meta property="og:image" content="/img/2017/travis-log.png" />
 
-  <meta property="og:image" content="https://selbydavid.com/img/2017/hugo-lithium.png" />
+  <meta property="og:image" content="/img/2017/hugo-lithium.png" />
 
 
 
@@ -48,16 +48,16 @@ blogdown::new_site()  By default, blogdown uses Hugo, a static web site generato
 <meta itemprop="dateModified" content="2017-06-22T08:00:00&#43;01:00" />
 <meta itemprop="wordCount" content="748">
 
-  <meta itemprop="image" content="https://selbydavid.com/img/2017/travis-log.png">
+  <meta itemprop="image" content="/img/2017/travis-log.png">
 
-  <meta itemprop="image" content="https://selbydavid.com/img/2017/hugo-lithium.png">
+  <meta itemprop="image" content="/img/2017/hugo-lithium.png">
 
 
 
 <meta itemprop="keywords" content="" />
 
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image:src" content="https://selbydavid.com/img/2017/travis-log.png"/>
+<meta name="twitter:image:src" content="/img/2017/travis-log.png"/>
 <meta name="twitter:title" content="Publishing from blogdown to GitHub with Travis"/>
 <meta name="twitter:description" content="Yihui Xie&rsquo;s new blogdown package is a brilliantly elegant and simple tool for creating R-themed blogs and web sites. Starting your own blog is as simple as one line of R code:
 blogdown::new_site()  By default, blogdown uses Hugo, a static web site generator written in Google&rsquo;s Go programming language. This has a number of advantages over Jekyll (the site generator that powers GitHub Pages) and from personal experience, everything just seems to work more smoothly."/>
@@ -81,16 +81,16 @@ blogdown::new_site()  By default, blogdown uses Hugo, a static web site generato
 
 
 
-<link rel="shortcut icon" href="https://selbydavid.com/favicon.ico">
+<link rel="shortcut icon" href="/favicon.ico">
 
 
 
 
-<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
 
 
 
-<link rel="stylesheet" href="https://selbydavid.com/css/main.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
 
 <script src="https://use.fontawesome.com/269c7751ba.js"></script>
 
@@ -98,16 +98,16 @@ blogdown::new_site()  By default, blogdown uses Hugo, a static web site generato
   <body>
       
         <header id="masthead">
-          <img src="https://selbydavid.com/img/logo.svg"
+          <img src="/img/logo.svg"
                width="120"
                height=""
                alt="Tea and Stats">
-          <h1><a href="https://selbydavid.com/">Tea &amp; Stats</a></h1>
+          <h1><a href="/">Tea &amp; Stats</a></h1>
           <aside>Data science with David Selby</aside>
           <nav>
   <ul>
     
-      <li><a href="https://selbydavid.com/about/">About</a></li>
+      <li><a href="/about/">About</a></li>
     
     
     <li>
@@ -162,7 +162,7 @@ Starting your own blog is as simple as one line of R code:</p>
 <p>By default, blogdown uses <a href="http://gohugo.io">Hugo</a>, a static web site generator written in Google&rsquo;s Go programming language.
 This has a number of advantages over Jekyll (the site generator that powers GitHub Pages) and from personal experience, everything just seems to work more smoothly.</p>
 
-<p><img src="https://selbydavid.com/img/2017/hugo-lithium.png" alt="Example blogdown site" title="Example blogdown site" /></p>
+<p><img src="/img/2017/hugo-lithium.png" alt="Example blogdown site" title="Example blogdown site" /></p>
 
 <p>Previously I wrote about <a href="http://selbydavid.com/2017/06/16/rmarkdown-jekyll/">automatically deploying an R Markdown Jekyll blog with Travis</a>.
 In this post, I am going to explain how you can use Travis to knit your R Markdown blog posts, then publish them with Hugo/blogdown.</p>
@@ -205,15 +205,15 @@ More complete information is available in the <a href="https://bookdown.org/yihu
 
 <h2 id="linking-github-to-travis">Linking GitHub to Travis</h2>
 
-<p>This follows my <a href="https://selbydavid.com/2017/06/16/rmarkdown-jekyll/#linking-github-to-travis">earlier guide</a>.</p>
+<p>This follows my <a href="/2017/06/16/rmarkdown-jekyll/#linking-github-to-travis">earlier guide</a>.</p>
 
 <p>Create a <a href="https://github.com/settings/tokens">GitHub personal access token</a>, making sure the &ldquo;repo&rdquo; box is ticked so it has permission to push to repositories. Copy the token to your clipboard.</p>
 
-<p><img src="https://selbydavid.com/img/2017/github-pat.png" alt="Creating a GitHub PAT" /></p>
+<p><img src="/img/2017/github-pat.png" alt="Creating a GitHub PAT" /></p>
 
 <p>On <a href="https://travis-ci.org/">Travis</a>, enable the GitHub repository corresponding to your blogdown site. In Settings, create a new environment variable called <code>GITHUB_PAT</code> and paste your token into the Value field.</p>
 
-<p><img src="https://selbydavid.com/img/2017/travis-pat.png" alt="Adding a Travis environment variable" /></p>
+<p><img src="/img/2017/travis-pat.png" alt="Adding a Travis environment variable" /></p>
 
 <h2 id="configuring-travis">Configuring Travis</h2>
 
@@ -266,9 +266,9 @@ In my experience it takes about two minutes from pushing changes to the updated 
 
 <p>If you have nothing better to do then you can watch Travis as it tries to deploy your blog. There&rsquo;s no need to monitor it, though: if it fails for any reason, you&rsquo;ll receive an e-mail.</p>
 
-<p><img src="https://selbydavid.com/img/2017/travis-log.png" alt="Travis log for a successful build" title="Travis log for a successful build" /></p>
+<p><img src="/img/2017/travis-log.png" alt="Travis log for a successful build" title="Travis log for a successful build" /></p>
 
-<p>Hopefully this guide helps. If you have any questions or feedback, feel free to leave a comment below or <a href="https://selbydavid.com/about">contact me</a>.</p>
+<p>Hopefully this guide helps. If you have any questions or feedback, feel free to leave a comment below or <a href="/about">contact me</a>.</p>
 
     </section>
     
@@ -298,41 +298,33 @@ In my experience it takes about two minutes from pushing changes to the updated 
       <footer id="footer">
         
         <a href="#">
-          <img src="https://selbydavid.com/img/logo.svg"
+          <img src="/img/logo.svg"
                width="60"
                height=""
                alt="Return to top"
                title="Return to top">
         </a>
         
-        © 2016–19 David Selby | <a href='https://github.com/Selbosh/hugo-tea'>Hugo Tea Theme</a>
+        © 2016–20 David Selby | <a href='https://github.com/Selbosh/hugo-tea'>Hugo Tea Theme</a>
       </footer>
     
     
 
 
 
-<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 
 
 
-<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
-<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
 <script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
 
 
 
     
-<script src="https://selbydavid.com/js/math-code.js"></script>
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  tex2jax: {
-    inlineMath: [['$','$'], ['\\(','\\)']],
-    processEscapes: true
-  }
-});
-</script>
-<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script src="//yihui.org/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
 
     

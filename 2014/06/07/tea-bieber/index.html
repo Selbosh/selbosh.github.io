@@ -15,7 +15,7 @@
 <meta property="og:description" content="As part of my first foray into data science, I decided to have a go at opinion mining on Twitter. It&rsquo;s common knowledge that everything stops for tea, but how much does the Twittersphere agree? And what else are microbloggers saying about the drink?
 Using the free R statistical software it is very easy to start data mining on Twitter1. A short R script quickly retrieved 699 recent tweets containing the tag #tea." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://selbydavid.com/2014/06/07/tea-bieber/" />
+<meta property="og:url" content="/2014/06/07/tea-bieber/" />
 
 
 
@@ -71,16 +71,16 @@ Using the free R statistical software it is very easy to start data mining on Tw
 
 
 
-<link rel="shortcut icon" href="https://selbydavid.com/favicon.ico">
+<link rel="shortcut icon" href="/favicon.ico">
 
 
 
 
-<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
 
 
 
-<link rel="stylesheet" href="https://selbydavid.com/css/main.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
 
 <script src="https://use.fontawesome.com/269c7751ba.js"></script>
 
@@ -88,16 +88,16 @@ Using the free R statistical software it is very easy to start data mining on Tw
   <body>
       
         <header id="masthead">
-          <img src="https://selbydavid.com/img/logo.svg"
+          <img src="/img/logo.svg"
                width="120"
                height=""
                alt="Tea and Stats">
-          <h1><a href="https://selbydavid.com/">Tea &amp; Stats</a></h1>
+          <h1><a href="/">Tea &amp; Stats</a></h1>
           <aside>Data science with David Selby</aside>
           <nav>
   <ul>
     
-      <li><a href="https://selbydavid.com/about/">About</a></li>
+      <li><a href="/about/">About</a></li>
     
     
     <li>
@@ -159,13 +159,13 @@ text = laply(data, function(t) t$getText())
 
 <p>So what are our friends on Twitter saying about tea? Finding out calls for a graph. But not just any graph: a word cloud<sup class="footnote-ref" id="fnref:wc"><a rel="footnote" href="#fn:wc">3</a></sup>, displaying words according to frequency.</p>
 
-<p><img src="https://selbydavid.com/img/2014/tea.png" alt="Word cloud made from 699 tweets containing the hashtag '#tea'" /></p>
+<p><img src="/img/2014/tea.png" alt="Word cloud made from 699 tweets containing the hashtag '#tea'" /></p>
 
 <p>Obviously every tweet contains &ldquo;tea&rdquo; because that&rsquo;s what was sought. People also like to discuss milk and sugar, as well as coffee (possibly during cataclysmic breakfast drink dilemmas). To the right of centre, <strong>tcot</strong> stands for &ldquo;top conservatives on Twitter&rdquo;, who enjoy talking about tea &mdash; and tea parties &mdash; as much as anyone. Other notable phrases include &ldquo;freedom&rdquo;, &ldquo;greatness&rdquo;, &ldquo;best&rdquo; and &ldquo;delicious&rdquo;. But we&rsquo;ll do some more objective analysis shortly.</p>
 
 <p>For variety, I also had a go at mining Twitter&rsquo;s public streaming API for a larger sample, this time using Python. Here&rsquo;s what some ten thousand tweets say about Canadian pop star Justin Bieber:</p>
 
-<p><img src="https://selbydavid.com/img/2014/justin.png" alt="Word cloud made from 10,000 tweets containing the word 'bieber'" /></p>
+<p><img src="/img/2014/justin.png" alt="Word cloud made from 10,000 tweets containing the word 'bieber'" /></p>
 
 <p>He&rsquo;s racist? <em>And</em> shirtless. Who knew?</p>
 
@@ -183,7 +183,7 @@ text = laply(data, function(t) t$getText())
 <p>Justin Bieber has serious issues, i wish he&rsquo;d just sort his shit out because I for one am sick of seeing stupid crap about him in the news</p>
 </blockquote>
 
-<p><img src="https://selbydavid.com/img/2014/sentiment.png" alt="Histogram comparison of sentiment scores for tweets about tea and Justin Bieber" /></p>
+<p><img src="/img/2014/sentiment.png" alt="Histogram comparison of sentiment scores for tweets about tea and Justin Bieber" /></p>
 
 <p>Our #tea dataset has a score distribution that&rsquo;s mostly positive, with a mean sentiment score of +0.15 and a variance of 0.36. Clearly our intuition is correct and people really do like tea. Indeed, nobody really had much of a bad word to say about the beverage; the minimum score given was -2, which could easily have been obtained from a false-negative tweet like &ldquo;I hate people who dislike #tea&rdquo; (though it wasn&rsquo;t).</p>
 
@@ -234,41 +234,33 @@ text = laply(data, function(t) t$getText())
       <footer id="footer">
         
         <a href="#">
-          <img src="https://selbydavid.com/img/logo.svg"
+          <img src="/img/logo.svg"
                width="60"
                height=""
                alt="Return to top"
                title="Return to top">
         </a>
         
-        © 2016–19 David Selby | <a href='https://github.com/Selbosh/hugo-tea'>Hugo Tea Theme</a>
+        © 2016–20 David Selby | <a href='https://github.com/Selbosh/hugo-tea'>Hugo Tea Theme</a>
       </footer>
     
     
 
 
 
-<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 
 
 
-<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
-<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
 <script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
 
 
 
     
-<script src="https://selbydavid.com/js/math-code.js"></script>
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  tex2jax: {
-    inlineMath: [['$','$'], ['\\(','\\)']],
-    processEscapes: true
-  }
-});
-</script>
-<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script src="//yihui.org/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
 
     
