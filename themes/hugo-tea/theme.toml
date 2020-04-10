@@ -5,11 +5,11 @@ name = "Hugo Tea"
 license = "MIT"
 licenselink = "https://github.com/Selbosh/hugo-tea/blob/master/LICENSE.md"
 description = ""
-homepage = "http://siteforthistheme.com/"
+homepage = "https://github.com/Selbosh/hugo-tea"
 tags = []
 features = [blog, minimal]
 min_version = "0.20.7"
 
 [author]
   name = "David Selby"
-  homepage = "http://selbydavid.com"
+  homepage = "https://selbydavid.com"
