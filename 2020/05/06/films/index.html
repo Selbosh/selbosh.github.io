@@ -184,7 +184,7 @@ So to get a film&rsquo;s page, we can use the web site&rsquo;s search function a
 <p>So in my mind, the workflow was going to be a simple matter of:</p>
 
 <ol>
-<li>Search for the film using an URL like above</li>
+<li>Search for the film using a URL like above</li>
 <li>Scrape the search results page for a link to the film</li>
 <li>Scrape the film page for the rating and synopsis</li>
 </ol>
@@ -297,10 +297,10 @@ Now we just need to scrape the key information from this page:</p>
 For the above four pieces of information, we can select them using</p>
 
 <ul>
-<li><code>title_wrapper h1</code></li>
+<li><code>.title_wrapper h1</code></li>
 <li><code>.imdbRating .ratingValue span</code></li>
 <li><code>.summary_text</code></li>
-<li><code>metacriticScore span</code></li>
+<li><code>.metacriticScore span</code></li>
 </ul>
 
 <p>I wrote the following function to extract the same.

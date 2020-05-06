@@ -61,7 +61,7 @@ So to get a film&amp;rsquo;s page, we can use the web site&amp;rsquo;s search fu
 &lt;p&gt;So in my mind, the workflow was going to be a simple matter of:&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;Search for the film using an URL like above&lt;/li&gt;
+&lt;li&gt;Search for the film using a URL like above&lt;/li&gt;
 &lt;li&gt;Scrape the search results page for a link to the film&lt;/li&gt;
 &lt;li&gt;Scrape the film page for the rating and synopsis&lt;/li&gt;
 &lt;/ol&gt;
@@ -174,10 +174,10 @@ Now we just need to scrape the key information from this page:&lt;/p&gt;
 For the above four pieces of information, we can select them using&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;code&gt;title_wrapper h1&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;.title_wrapper h1&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;.imdbRating .ratingValue span&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;.summary_text&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;metacriticScore span&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;.metacriticScore span&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;I wrote the following function to extract the same.
