@@ -16,9 +16,9 @@
 In this post I will show you how to derive a neural network from scratch with just a few lines in R.If you don’t like mathematics, feel free to skip to the code chunks towards the end.
 This blog post is partly inspired by Denny Britz’s article, Implementing a Neural Network from Scratch in Python, as well as this article by Sunil Ray." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/2018/01/09/neural-network/" />
+<meta property="og:url" content="https://selbydavid.com/2018/01/09/neural-network/" />
 
-  <meta property="og:image" content="/img/2018/hotdog.jpg" />
+  <meta property="og:image" content="https://selbydavid.com/img/2018/hotdog.jpg" />
 
 
 
@@ -48,14 +48,14 @@ This blog post is partly inspired by Denny Britz’s article, Implementing a Neu
 <meta itemprop="dateModified" content="2018-01-09T10:00:00&#43;00:00" />
 <meta itemprop="wordCount" content="3484">
 
-  <meta itemprop="image" content="/img/2018/hotdog.jpg">
+  <meta itemprop="image" content="https://selbydavid.com/img/2018/hotdog.jpg">
 
 
 
 <meta itemprop="keywords" content="" />
 
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image:src" content="/img/2018/hotdog.jpg"/>
+<meta name="twitter:image:src" content="https://selbydavid.com/img/2018/hotdog.jpg"/>
 <meta name="twitter:title" content="Building a neural network from scratch in R"/>
 <meta name="twitter:description" content="Neural networks can seem like a bit of a black box.But in some ways, a neural network is little more than several logistic regression models chained together.
 In this post I will show you how to derive a neural network from scratch with just a few lines in R.If you don’t like mathematics, feel free to skip to the code chunks towards the end.
@@ -80,7 +80,7 @@ This blog post is partly inspired by Denny Britz’s article, Implementing a Neu
 
 
 
-<link rel="shortcut icon" href="/favicon.ico">
+<link rel="shortcut icon" href="https://selbydavid.com/favicon.ico">
 
 
 
@@ -89,7 +89,7 @@ This blog post is partly inspired by Denny Britz’s article, Implementing a Neu
 
 
 
-<link rel="stylesheet" href="/css/main.css" media="all">
+<link rel="stylesheet" href="https://selbydavid.com/css/main.css" media="all">
 
 <script src="https://use.fontawesome.com/269c7751ba.js"></script>
 
@@ -97,16 +97,16 @@ This blog post is partly inspired by Denny Britz’s article, Implementing a Neu
   <body>
       
         <header id="masthead">
-          <img src="/img/logo.svg"
+          <img src="https://selbydavid.com/img/logo.svg"
                width="120"
                height=""
                alt="Tea and Stats">
-          <h1><a href="/">Tea &amp; Stats</a></h1>
+          <h1><a href="https://selbydavid.com/">Tea &amp; Stats</a></h1>
           <aside>Data science with David Selby</aside>
           <nav>
   <ul>
     
-      <li><a href="/about/">About</a></li>
+      <li><a href="https://selbydavid.com/about/">About</a></li>
     
     
     <li>
@@ -150,7 +150,10 @@ This blog post is partly inspired by Denny Britz’s article, Implementing a Neu
     </footer>
     
     <section>
-    <p>Neural networks can seem like a bit of a black box.
+    <script src="https://selbydavid.com/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p>Neural networks can seem like a bit of a black box.
 But in some ways, a neural network is little more than several <a href="https://en.wikipedia.org/wiki/Logistic_regression">logistic regression</a> models chained together.</p>
 <p>In this post I will show you how to derive a neural network from scratch with just a few lines in R.
 If you don’t like mathematics, feel free to skip to the code chunks towards the end.</p>
@@ -160,7 +163,7 @@ If you don’t like mathematics, feel free to skip to the code chunks towards th
 <p>What’s a logistic regression model?
 Suppose we want to build a machine that classifies objects in two groups, for example <a href="https://www.youtube.com/watch?v=ACmydtFDTGs">‘hot dog’ and ‘not hot dog’</a>.
 We will say <span class="math inline">\(Y_i = 1\)</span> if object <em>i</em> is a hot dog, and <span class="math inline">\(Y_i = 0\)</span> otherwise.</p>
-<p><a href="https://www.youtube.com/watch?v=ACmydtFDTGs"><img src="/img/2018/hotdog.gif" /></a></p>
+<p><a href="https://www.youtube.com/watch?v=ACmydtFDTGs"><img src="https://selbydavid.com/img/2018/hotdog.gif" /></a></p>
 <p>A logistic regression model estimates these odds,
 <span class="math display">\[
 \operatorname{odds}(Y = 1)
@@ -216,12 +219,12 @@ Here is a random sample of five:</p>
 </tbody>
 </table>
 <p>And a scatter plot of all of them:</p>
-<p><img src="/post/2018-01-09-neural-network_files/figure-html/plot-spirals-1.png" width="672" /></p>
+<p><img src="https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/plot-spirals-1.png" width="672" /></p>
 <p>Fitting a logistic regression model in R is easy:</p>
 <pre class="r"><code>logreg &lt;- glm(class ~ x1 + x2, family = binomial, data = hotdogs)</code></pre>
 <p>But as the decision boundary can only be linear, it doesn’t work too well at distinguishing our two classes.
 Logistic regression classifies 134 (67%) of our objects correctly.</p>
-<p><img src="/post/2018-01-09-neural-network_files/figure-html/logistic-boundary-1.png" width="672" /></p>
+<p><img src="https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/logistic-boundary-1.png" width="672" /></p>
 <p>Nonlinearity is where neural networks are useful.</p>
 </div>
 <div id="artificial-neural-networks" class="section level2">
@@ -237,7 +240,7 @@ Like ogres and onions, they have layers—three to be exact.</p>
 The input layer comprises the covariates and an intercept, as before.
 In the middle, there is a <em>hidden layer</em>, which is a transformation of the input space into <span class="math inline">\(h\)</span> dimensions, where <span class="math inline">\(h\)</span> is a number chosen by us.
 We then perform a logistic regression on this transformed space to estimate the classes.</p>
-<p><img src="/post/2018-01-09-neural-network_files/figure-html/neural-network-1.svg" width="672" /></p>
+<p><img src="https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/neural-network-1.svg" width="672" /></p>
 <p>It works like this.</p>
 <ol style="list-style-type: decimal">
 <li>Generate <span class="math inline">\(h\)</span> different linear combinations of the input variables.</li>
@@ -258,7 +261,7 @@ So far, this is exactly like our logistic regression model above.</p>
 <p>A neural network adds a hidden layer, which you might think of as an intermediate design matrix between the inputs and the outputs.
 <a href="https://en.wikipedia.org/wiki/Deep_learning">Deep learning</a> is just a neural network with multiple hidden layers.</p>
 <div class="figure"><span id="fig:node-diagram"></span>
-<img src="/post/2018-01-09-neural-network_files/figure-html/node-diagram-1.svg" alt="Multi-layer perceptron with five hidden nodes" width="672" />
+<img src="https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/node-diagram-1.svg" alt="Multi-layer perceptron with five hidden nodes" width="672" />
 <p class="caption">
 Figure 1: Multi-layer perceptron with five hidden nodes
 </p>
@@ -422,17 +425,17 @@ grid$class &lt;- factor((ff_grid$output &gt; .5) * 1,
   geom_point(data = grid, size = .5) +
   geom_point() +
   labs(x = expression(x[1]), y = expression(x[2]))</code></pre>
-<p><img src="/post/2018-01-09-neural-network_files/figure-html/plot-ad-hoc-1.png" width="672" />
+<p><img src="https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/plot-ad-hoc-1.png" width="672" />
 The regions the neural network has classified into ‘hot dog’ and ‘not hot dog’ can no longer be separated by a single straight line.
 The more nodes we add to the hidden layer, the more elaborate the decision boundaries can become, improving accuracy at the expense of computation time (as more weights must be calculated) and increased risk of <a href="https://en.wikipedia.org/wiki/Overfitting">over-fitting</a> the data.</p>
 <p>How about 30 nodes?</p>
 <pre class="r"><code>nnet30 &lt;- train(x, y, hidden = 30, iterations = 1e5)</code></pre>
 <p>After 100,000 iterations, accuracy is 100%.
 The decision boundary looks much smoother:</p>
-<p><img src="/post/2018-01-09-neural-network_files/figure-html/plot-30-nodes-1.png" width="672" /></p>
+<p><img src="https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/plot-30-nodes-1.png" width="672" /></p>
 <p>And for completeness, let’s see what one hidden node (plus an intercept) gives us.</p>
 <pre class="r"><code>nnet1 &lt;- train(x, y, hidden = 1, iterations = 1e5)</code></pre>
-<p><img src="/post/2018-01-09-neural-network_files/figure-html/plot-1-node-1.png" width="672" /></p>
+<p><img src="https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/plot-1-node-1.png" width="672" /></p>
 <p>Much worse accuracy—68%—and the decision boundary looks linear.</p>
 </div>
 <div id="r6-class-implementation" class="section level2">
@@ -600,7 +603,7 @@ Full source code for this post is available <a href="https://github.com/Selbosh/
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>If you wanted to be very general, then you could say the bias <em>does</em> depend on the previous layer, but the respective weight is fixed at zero. Then the weighted sum would be zero and <span class="math inline">\(\sigma(0) = 1\)</span>, so you get a vector of ones.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>If you wanted to be very general, then you could say the bias <em>does</em> depend on the previous layer, but the respective weight is fixed at zero. Then the weighted sum would be zero and <span class="math inline">\(\sigma(0) = 1\)</span>, so you get a vector of ones.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 
@@ -632,7 +635,7 @@ Full source code for this post is available <a href="https://github.com/Selbosh/
       <footer id="footer">
         
         <a href="#">
-          <img src="/img/logo.svg"
+          <img src="https://selbydavid.com/img/logo.svg"
                width="60"
                height=""
                alt="Return to top"
