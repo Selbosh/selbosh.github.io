@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="author" content="David Selby">
+
+  
+
+
+<title>Advent of Code 2020 &middot; Tea &amp; Stats</title>
+<meta property="og:title" content="Advent of Code 2020" />
+<meta property="og:description" content="Advent of Code is a series of programming puzzles you can tackle to hone your coding skills each day in the run-up to Christmas.
+This year I am attempting it using R, which can make some challenges easier or harder depending on whether they are more ‘computer sciencey’ or more ‘data sciencey’. Generally it makes parsing datasets easier but low-level string manipulation more fiddly.
+Here are my solutions so far." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://selbydavid.com/2020/12/06/advent-2020/" />
+
+  <meta property="og:image" content="https://selbydavid.com/img/2018/hotdog.jpg" />
+
+
+
+<meta property="article:published_time" content="2020-12-06T17:00:00&#43;00:00"/>
+
+<meta property="article:modified_time" content="2020-12-06T17:00:00&#43;00:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="Advent of Code 2020">
+<meta itemprop="description" content="Advent of Code is a series of programming puzzles you can tackle to hone your coding skills each day in the run-up to Christmas.
+This year I am attempting it using R, which can make some challenges easier or harder depending on whether they are more ‘computer sciencey’ or more ‘data sciencey’. Generally it makes parsing datasets easier but low-level string manipulation more fiddly.
+Here are my solutions so far.">
+
+
+<meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1662">
+
+  <meta itemprop="image" content="https://selbydavid.com/img/2018/hotdog.jpg">
+
+
+
+<meta itemprop="keywords" content="" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image:src" content="https://selbydavid.com/img/2018/hotdog.jpg"/>
+<meta name="twitter:title" content="Advent of Code 2020"/>
+<meta name="twitter:description" content="Advent of Code is a series of programming puzzles you can tackle to hone your coding skills each day in the run-up to Christmas.
+This year I am attempting it using R, which can make some challenges easier or harder depending on whether they are more ‘computer sciencey’ or more ‘data sciencey’. Generally it makes parsing datasets easier but low-level string manipulation more fiddly.
+Here are my solutions so far."/>
+<meta name="twitter:site" content="@TeaStats"/>
+
+
+
+  
+    <meta property="article:author" content="https://www.facebook.com/Selbosh" />
+    <meta property="article:publisher" content="https://www.facebook.com/Selbosh" />
+  
+  
+    <meta name="twitter:creator" content="@TeaStats"/>
+  
+
+
+<meta name="theme" content="hugo-tea">
+<meta name="generator" content="Hugo 0.32.2" />
+
+
+
+
+
+<link rel="shortcut icon" href="https://selbydavid.com/favicon.ico">
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="https://selbydavid.com/css/main.css" media="all">
+
+<script src="https://use.fontawesome.com/269c7751ba.js"></script>
+
+  </head>
+  <body>
+      
+        <header id="masthead">
+          <img src="https://selbydavid.com/img/logo.svg"
+               width="120"
+               height=""
+               alt="Tea and Stats">
+          <h1><a href="https://selbydavid.com/">Tea &amp; Stats</a></h1>
+          <aside>Data science with David Selby</aside>
+          <nav>
+  <ul>
+    
+      <li><a href="https://selbydavid.com/about/">About</a></li>
+    
+    
+    <li>
+      <a href="https://facebook.com/Selbosh">
+        <i class="fa fa-facebook"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://github.com/Selbosh">
+        <i class="fa fa-github"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://linkedin.com/in/daselby">
+        <i class="fa fa-linkedin"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://twitter.com/TeaStats">
+        <i class="fa fa-twitter"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+
+        </header>
+
+
+<main role="main">
+  <article class="single">
+    <header><h2>Advent of Code 2020</h2></header>
+    
+    <footer>
+      <time datetime="2020-12-06 17:00:00 &#43;0000">
+         6 December 2020
+      </time>
+    </footer>
+    
+    <section>
+    
+
+<p><a href="https://adventofcode.com/">Advent of Code</a> is a series of programming
+puzzles you can tackle to hone your coding skills each day in the run-up
+to Christmas.</p>
+
+<p>This year I am attempting it using R, which can make some challenges
+easier or harder depending on whether they are more ‘computer sciencey’
+or more ‘data sciencey’. Generally it makes parsing datasets easier but
+low-level string manipulation more fiddly.</p>
+
+<p>Here are my solutions so far. Where possible, I’ve tried to strike a
+balance between efficiency and readability, and to try avoid using the
+packages I might usually use (e.g. <code>dplyr</code>) if I think it makes the
+puzzle too easy.</p>
+
+<p>The input data are different for each participant, so your numerical
+results may differ from mine.</p>
+
+<h1 id="day-1-report-repair">Day 1 - Report repair</h1>
+
+<h2 id="two-numbers">Two numbers</h2>
+
+<p>Find the two entries that sum to 2020, then multiply those two numbers
+together.</p>
+
+<p>This can be a one-liner:</p>
+
+<pre><code class="language-r">input &lt;- as.integer(readLines('input01.txt'))
+prod(input[(2020 - input) %in% input])
+</code></pre>
+
+<pre><code>[1] 468051
+</code></pre>
+
+<h2 id="three-numbers">Three numbers</h2>
+
+<p>Find the three entries that sum to 2020, then multiply them together.</p>
+
+<p>It might be tempting to go for a naïve solution like this:</p>
+
+<pre><code class="language-r">prod(combn(input, 3)[, combn(input, 3, sum) == 2020])
+</code></pre>
+
+<pre><code>[1] 272611658
+</code></pre>
+
+<p>It gives the right answer but involves a fair amount of unnecessary
+computation. It takes more than a second to run. If we assume all the
+inputs are non-negative, we can take advantage of this to reduce the
+number of operations.</p>
+
+<pre><code class="language-r">. &lt;- expand.grid(input, input[(2020 - input) &gt; min(input)])
+. &lt;- transform(., Var3 = 2020 - Var1 - Var2)
+. &lt;- subset(., Var3 &gt; min(input))
+prod(.[which.max(.$Var3 %in% input), ])
+</code></pre>
+
+<pre><code>[1] 272611658
+</code></pre>
+
+<p>This is approximately 2000 times faster than the one-liner, and works by
+successively discarding values that could only add up to more than 2020.
+The <code>.</code> notation is just so I can write this without using <code>dplyr</code>.</p>
+
+<h1 id="day-2-password-philosophy">Day 2 - Password philosophy</h1>
+
+<h2 id="number-of-letters">Number of letters</h2>
+
+<p>How many passwords are valid according to the policies?</p>
+
+<pre><code>1-3 a: abcde
+1-3 b: cdefg
+2-9 c: ccccccccc
+</code></pre>
+
+<p>First read in the data. I like data frames and so should you.</p>
+
+<pre><code class="language-r">input &lt;- read.table('input02.txt',
+                    col.names = c('times', 'letter', 'password'))
+library(stringr)
+passwords &lt;- within(input, {
+  letter &lt;- str_remove(letter, '\\:')
+  times &lt;- str_split(times, '-')
+  min &lt;- as.integer(sapply(times, '[[', 1))
+  max &lt;- as.integer(sapply(times, '[[', 2))
+  times &lt;- NULL
+})
+head(passwords)
+</code></pre>
+
+<pre><code>  letter          password max min
+1      v  vdvvvvvsvvvvvfpv  15  14
+2      k  kkqkkfkkvkgfknkx  11   3
+3      j        jjjjjjjjjj  10   6
+4      s nskdmzwrmpmhsrzts  10   5
+5      v   vvvvvvkvvvvjzvv  15  13
+6      h    hhhhhbhhhhdhhh  13  11
+</code></pre>
+
+<p>String operations are a bit of a pain in base R so it’s easier just to
+use a package, like <code>stringi</code> or <code>stringr</code> for this.</p>
+
+<pre><code class="language-r">with(passwords, {
+     n &lt;- stringr::str_count(password, letter)
+     sum(n &gt;= min &amp; n &lt;= max)
+})
+</code></pre>
+
+<pre><code>[1] 625
+</code></pre>
+
+<p>You could also split each password with <code>strsplit</code> and count the letters
+with an <code>sapply</code>-type loop.</p>
+
+<h2 id="position-of-letters">Position of letters</h2>
+
+<p>Now the two digits describe two indices in the password, <em>exactly one</em>
+of which must match the given letter.</p>
+
+<pre><code class="language-r">with(passwords,
+     sum(xor(substr(password, min, min) == letter,
+             substr(password, max, max) == letter))
+)
+</code></pre>
+
+<pre><code>[1] 391
+</code></pre>
+
+<p>Initially I got caught out here, by misreading the question as ‘at least
+one’ and then wondering why an inclusive or (<code>|</code>) was returning the
+incorrect answer.</p>
+
+<h1 id="day-3-toboggan-trajectory">Day 3 - Toboggan trajectory</h1>
+
+<p>The input looks a bit like this:</p>
+
+<pre><code>..##.........##.........##.........##.........##.........##.......  ---&gt;
+#..O#...#..#...#...#..#...#...#..#...#...#..#...#...#..#...#...#..
+.#....X..#..#....#..#..#....#..#..#....#..#..#....#..#..#....#..#.
+..#.#...#O#..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#
+.#...##..#..X...##..#..#...##..#..#...##..#..#...##..#..#...##..#.
+..#.##.......#.X#.......#.##.......#.##.......#.##.......#.##.....  ---&gt;
+.#.#.#....#.#.#.#.O..#.#.#.#....#.#.#.#....#.#.#.#....#.#.#.#....#
+.#........#.#........X.#........#.#........#.#........#.#........#
+#.##...#...#.##...#...#.X#...#...#.##...#...#.##...#...#.##...#...
+#...##....##...##....##...#X....##...##....##...##....##...##....#
+.#..#...#.#.#..#...#.#.#..#...X.#.#..#...#.#.#..#...#.#.#..#...#.#  ---&gt;
+</code></pre>
+
+<h2 id="encountering-trees">Encountering trees</h2>
+
+<p>Starting at the top-left corner of your map and following a slope of
+right 3 and down 1, how many trees would you encounter?</p>
+
+<pre><code class="language-r">input &lt;- readLines('input03.txt')
+</code></pre>
+
+<p>A complicated-sounding problem but the solution is mainly mathematical.</p>
+
+<pre><code class="language-r">positions &lt;- (3 * (seq_along(input) - 1)) %% nchar(input) + 1
+sum(substr(input, positions, positions) == '#')
+</code></pre>
+
+<pre><code>[1] 268
+</code></pre>
+
+<p>The sequence of positions goes 1, 4, 7, …, and when it reaches the edge
+of the map, loops back round to the beginning. Using the modulo operator
+we can use the sequence modulo the width of the input map, then add one
+because R indexes from one rather than from zero.</p>
+
+<h2 id="different-slopes">Different slopes</h2>
+
+<p>Simply wrap the above into a function.</p>
+
+<pre><code class="language-r">trees &lt;- function(right, down = 1) {
+  vertical &lt;- seq(0, length(input) - 1, by = down) + 1
+  horizontal &lt;- (right * (seq_along(input) - 1)) %% nchar(input) + 1
+  horizontal &lt;- head(horizontal, length(vertical))
+  as.double(
+    sum(substr(input[vertical], horizontal, horizontal) == '#')
+  )
+}
+trees(1) * trees(3) * trees(5) * trees(7) * trees(1, 2)
+</code></pre>
+
+<pre><code>[1] 3093068400
+</code></pre>
+
+<p>The <code>as.double</code> bit is necessary only because multiplying large integer
+outputs together can cause an overflow when the product is larger than
+10<sup>9</sup>.</p>
+
+<h1 id="day-4-passport-processing">Day 4 - Passport processing</h1>
+
+<p>The example input is in this ragged format, where keys and values are
+separated by colons and records are separated by double newlines. The
+first step is to parse this unusual data format.</p>
+
+<pre><code>ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
+byr:1937 iyr:2017 cid:147 hgt:183cm
+
+iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884
+hcl:#cfa07d byr:1929
+
+hcl:#ae17e1 iyr:2013
+eyr:2024
+ecl:brn pid:760753108 byr:1931
+hgt:179cm
+
+hcl:#cfa07d eyr:2025 pid:166559648
+iyr:2011 ecl:brn hgt:59in
+</code></pre>
+
+<pre><code class="language-r">input &lt;- strsplit(readLines('input04.txt'), ' ')
+ids = cumsum(!lengths(input))
+pairs &lt;- lapply(strsplit(unlist(input), ':'), setNames, c('key', 'value'))
+passports &lt;- data.frame(id = rep(ids, lengths(input)),
+                        do.call(rbind, pairs))
+</code></pre>
+
+<h2 id="missing-fields">Missing fields</h2>
+
+<p>Now the data are in a standard format, this is a simple
+split-apply-combine operation. I am using the base <code>aggregate</code> but this
+could be done equally well using <code>dplyr</code> or <code>data.table</code>.</p>
+
+<pre><code class="language-r">required &lt;- c('byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid')
+valid &lt;- aggregate(key ~ id, passports,
+                   function(x) !length(setdiff(required, x)))
+head(valid, 10)
+</code></pre>
+
+<pre><code>   id   key
+1   0  TRUE
+2   1  TRUE
+3   2  TRUE
+4   3  TRUE
+5   4  TRUE
+6   5  TRUE
+7   6  TRUE
+8   7 FALSE
+9   8 FALSE
+10  9  TRUE
+</code></pre>
+
+<p>Then the answer is simply</p>
+
+<pre><code class="language-r">sum(valid$key)
+</code></pre>
+
+<pre><code>[1] 190
+</code></pre>
+
+<h2 id="field-validation">Field validation</h2>
+
+<p>Thanks to the way we imported the data, this is quite straightforward.
+The rules are:</p>
+
+<ul>
+<li><code>byr</code> (Birth Year) - four digits; at least 1920 and at most 2002.</li>
+<li><code>iyr</code> (Issue Year) - four digits; at least 2010 and at most 2020.</li>
+<li><code>eyr</code> (Expiration Year) - four digits; at least 2020 and at
+most 2030.</li>
+<li><code>hgt</code> (Height) - a number followed by either cm or in:
+
+<ul>
+<li>If <code>cm</code>, the number must be at least 150 and at most 193.</li>
+<li>If <code>in</code>, the number must be at least 59 and at most 76.</li>
+</ul></li>
+<li><code>hcl</code> (Hair Color) - a # followed by exactly six characters <code>0-9</code>
+or <code>a-f</code>.</li>
+<li><code>ecl</code> (Eye Color) - exactly one of: <code>amb</code> <code>blu</code> <code>brn</code> <code>gry</code> <code>grn</code>
+<code>hzl</code> <code>oth</code>.</li>
+<li><code>pid</code> (Passport ID) - a nine-digit number, including leading zeroes.</li>
+<li><code>cid</code> (Country ID) - ignored, missing or not.</li>
+</ul>
+
+<p>The data are all different types (integer, double and categorical) so
+the first step will be to spread the table to a wider format, with one
+row per passport, and one column for each field.</p>
+
+<p>Here is a <code>dplyr</code> + <code>tidyr</code> solution.</p>
+
+<pre><code class="language-r">library(dplyr)
+library(tidyr)
+passports_wide &lt;- passports %&gt;%
+  pivot_wider(names_from = key, values_from = value) %&gt;%
+  mutate(byr = as.integer(byr),
+         iyr = as.integer(iyr),
+         eyr = as.integer(eyr),
+         hgt_value = as.numeric(gsub('cm|in$', '', hgt)),
+         hgt_unit = gsub('\\d*', '', hgt))
+head(passports_wide)
+</code></pre>
+
+<pre><code># A tibble: 6 x 11
+     id   iyr cid   pid        eyr hcl     ecl      byr hgt   hgt_value hgt_unit
+  &lt;int&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;int&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;   
+1     0  1928 150   4761132~  2039 a5ac0f  #25f8~  2027 190         190 &quot;&quot;      
+2     1  2013 169   9200769~  2026 #fffffd hzl     1929 168cm       168 &quot;cm&quot;    
+3     2  2011 &lt;NA&gt;  3284128~  2023 #6b5442 brn     1948 156cm       156 &quot;cm&quot;    
+4     3  2019 279   6749079~  2020 #602927 amb     1950 189cm       189 &quot;cm&quot;    
+5     4  2015 &lt;NA&gt;  4736300~  2022 #341e13 hzl     1976 178cm       178 &quot;cm&quot;    
+6     5  2020 &lt;NA&gt;  6281139~  2023 #866857 blu     1984 163cm       163 &quot;cm&quot;    
+</code></pre>
+
+<p>From here, we can filter out the invalid entries, using <code>filter</code> or
+<code>subset</code>.</p>
+
+<pre><code class="language-r">passports_wide %&gt;%
+  filter(byr &gt;= 1920, byr &lt;= 2002,
+         iyr &gt;= 2010, iyr &lt;= 2020,
+         eyr &gt;= 2020, eyr &lt;= 2030,
+         hgt_value &gt;= 150 &amp; hgt_value &lt;= 193 &amp; hgt_unit == 'cm' |
+           hgt_value &gt;= 59 &amp; hgt_value &lt;= 76 &amp; hgt_unit == 'in',
+         grepl('^#[0-9a-f]{6}$', hcl),
+         ecl %in% c('amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'),
+         grepl('^\\d{9}$', pid)) -&gt; valid_passports
+nrow(valid_passports)
+</code></pre>
+
+<pre><code>[1] 121
+</code></pre>
+
+<p>You could also use a filtering join, though since most of the fields are
+ranges of integer values, you would want to use a <code>data.table</code>
+<em>non-equi-join</em> rather than a simple <code>semi_join</code>.</p>
+
+<h1 id="day-5-binary-boarding">Day 5 - Binary boarding</h1>
+
+<h2 id="highest-seat-id">Highest seat ID</h2>
+
+<p>This task is easy, as soon as you recognise that it is just converting
+numbers from binary to decimal, where <code>F</code> and <code>L</code> denote ones and <code>B</code>
+and <code>R</code> are zeros. The distinction between rows and columns is a red
+herring, because you can parse the whole sequence at once.</p>
+
+<pre><code class="language-r">input &lt;- readLines('input05.txt')
+binary &lt;- lapply(strsplit(input, ''), grepl, pattern = '[BR]')
+seat_ids &lt;- sapply(binary, function(x) sum(x * 2^(rev(seq_along(x)) - 1)))
+max(seat_ids)
+</code></pre>
+
+<pre><code>[1] 874
+</code></pre>
+
+<h2 id="finding-an-empty-seat">Finding an empty seat</h2>
+
+<p>Get the missing value, which isn’t the minimum or the maximum in the
+list.</p>
+
+<pre><code class="language-r">setdiff(seq(min(seat_ids), max(seat_ids)),
+        seat_ids)
+</code></pre>
+
+<pre><code>[1] 594
+</code></pre>
+
+<h1 id="day-6-custom-customs">Day 6 - Custom customs</h1>
+
+<h2 id="questions-with-any-yes">Questions with any ‘yes’</h2>
+
+<p>Count the number of unique questions answered ‘yes’ in each group of
+people, where a ‘group’ is series of records separated from other groups
+by a blank line. This is a <em>union</em> set operation.</p>
+
+<pre><code class="language-r">input &lt;- readLines('input06.txt')
+group &lt;- cumsum(!nchar(input))
+
+library(dplyr)
+responses &lt;- data.frame(group = group[nchar(input) &gt; 0],
+                        questions = input[nchar(input) &gt; 0])
+union &lt;- aggregate(questions ~ group, responses,
+                    function(x) length(unique(unlist(strsplit(x, '')))))
+sum(union$questions)
+</code></pre>
+
+<pre><code>[1] 6551
+</code></pre>
+
+<h2 id="questions-with-all-yes">Questions with all ‘yes’</h2>
+
+<p>Similar, but now an <em>intersection</em> set operation.</p>
+
+<pre><code class="language-r">intersection &lt;- aggregate(questions ~ group, responses,
+                          function(x) length(Reduce(intersect, strsplit(x, ''))))
+sum(intersection$questions)
+</code></pre>
+
+<pre><code>[1] 3358
+</code></pre>
+
+<p>The solution to the first part could have used <code>Reduce(union, ...)</code>,
+which would achieve the same result as <code>unique(unlist(...))</code>.</p>
+
+<p>Both of these could be made a bit more readable using <code>dplyr</code> or
+<code>data.table</code> instead. In particular, the base function <code>aggregate</code>
+doesn’t like list-columns as inputs, so the <code>strsplit</code> can’t be done
+before the aggregation. This is not a problem with <code>dplyr::summarise</code> or
+<code>data.table</code>:</p>
+
+<pre><code class="language-r">library(dplyr)
+responses %&gt;%
+  mutate(questions = strsplit(questions, '')) %&gt;%
+  group_by(group) %&gt;%
+  summarise(count = Reduce(intersect, questions) %&gt;% length) %&gt;%
+  pull(count) %&gt;% sum
+</code></pre>
+
+<pre><code>[1] 3358
+</code></pre>
+
+<pre><code class="language-r">library(data.table)
+setDT(responses)[, questions := strsplit(questions, '')]
+responses[, .(count = length(Reduce(intersect, questions))),
+          by = group][, sum(count)]
+</code></pre>
+
+<pre><code>[1] 3358
+</code></pre>
+
+<hr />
+
+<p>I will update this post as I complete future puzzles.</p>
+
+    </section>
+    
+			<section class="comments">
+				<div id="disqus_thread"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'tea-stats';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+			</section>
+		
+  </article>
+</main>
+
+      <footer id="footer">
+        
+        <a href="#">
+          <img src="https://selbydavid.com/img/logo.svg"
+               width="60"
+               height=""
+               alt="Return to top"
+               title="Return to top">
+        </a>
+        
+        © 2016–20 David Selby | <a href='https://github.com/Selbosh/hugo-tea'>Hugo Tea Theme</a>
+      </footer>
+    
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="//yihui.org/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-11136457-6', 'auto');
+ga('send', 'pageview');
+</script>
+
+  </body>
+</html>
+

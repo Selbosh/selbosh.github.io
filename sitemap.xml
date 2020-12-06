@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://selbydavid.com/2020/12/06/advent-2020/</loc>
+    <lastmod>2020-12-06T17:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://selbydavid.com/2020/05/06/films/</loc>
     <lastmod>2020-05-06T12:55:00+01:00</lastmod>
   </url>
@@ -134,13 +139,13 @@
   
   <url>
     <loc>https://selbydavid.com/post/</loc>
-    <lastmod>2020-05-06T12:55:00+01:00</lastmod>
+    <lastmod>2020-12-06T17:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://selbydavid.com/categories/r/</loc>
-    <lastmod>2020-05-06T12:55:00+01:00</lastmod>
+    <lastmod>2020-12-06T17:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -151,7 +156,7 @@
   
   <url>
     <loc>https://selbydavid.com/</loc>
-    <lastmod>2020-05-06T12:55:00+01:00</lastmod>
+    <lastmod>2020-12-06T17:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

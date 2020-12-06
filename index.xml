@@ -15,8 +15,443 @@
 		</image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-GB</language>
-    <lastBuildDate>Wed, 06 May 2020 12:55:00 +0100</lastBuildDate>
+    <lastBuildDate>Sun, 06 Dec 2020 17:00:00 +0000</lastBuildDate>
     <atom:link href="https://selbydavid.com/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Advent of Code 2020</title>
+      <link>https://selbydavid.com/2020/12/06/advent-2020/</link>
+      <pubDate>Sun, 06 Dec 2020 17:00:00 +0000</pubDate>
+      
+      <guid>https://selbydavid.com/2020/12/06/advent-2020/</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;https://adventofcode.com/&#34;&gt;Advent of Code&lt;/a&gt; is a series of programming
+puzzles you can tackle to hone your coding skills each day in the run-up
+to Christmas.&lt;/p&gt;
+
+&lt;p&gt;This year I am attempting it using R, which can make some challenges
+easier or harder depending on whether they are more ‘computer sciencey’
+or more ‘data sciencey’. Generally it makes parsing datasets easier but
+low-level string manipulation more fiddly.&lt;/p&gt;
+
+&lt;p&gt;Here are my solutions so far. Where possible, I’ve tried to strike a
+balance between efficiency and readability, and to try avoid using the
+packages I might usually use (e.g. &lt;code&gt;dplyr&lt;/code&gt;) if I think it makes the
+puzzle too easy.&lt;/p&gt;
+
+&lt;p&gt;The input data are different for each participant, so your numerical
+results may differ from mine.&lt;/p&gt;
+
+&lt;h1 id=&#34;day-1-report-repair&#34;&gt;Day 1 - Report repair&lt;/h1&gt;
+
+&lt;h2 id=&#34;two-numbers&#34;&gt;Two numbers&lt;/h2&gt;
+
+&lt;p&gt;Find the two entries that sum to 2020, then multiply those two numbers
+together.&lt;/p&gt;
+
+&lt;p&gt;This can be a one-liner:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- as.integer(readLines(&#39;input01.txt&#39;))
+prod(input[(2020 - input) %in% input])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 468051
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;three-numbers&#34;&gt;Three numbers&lt;/h2&gt;
+
+&lt;p&gt;Find the three entries that sum to 2020, then multiply them together.&lt;/p&gt;
+
+&lt;p&gt;It might be tempting to go for a naïve solution like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;prod(combn(input, 3)[, combn(input, 3, sum) == 2020])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 272611658
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It gives the right answer but involves a fair amount of unnecessary
+computation. It takes more than a second to run. If we assume all the
+inputs are non-negative, we can take advantage of this to reduce the
+number of operations.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;. &amp;lt;- expand.grid(input, input[(2020 - input) &amp;gt; min(input)])
+. &amp;lt;- transform(., Var3 = 2020 - Var1 - Var2)
+. &amp;lt;- subset(., Var3 &amp;gt; min(input))
+prod(.[which.max(.$Var3 %in% input), ])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 272611658
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is approximately 2000 times faster than the one-liner, and works by
+successively discarding values that could only add up to more than 2020.
+The &lt;code&gt;.&lt;/code&gt; notation is just so I can write this without using &lt;code&gt;dplyr&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h1 id=&#34;day-2-password-philosophy&#34;&gt;Day 2 - Password philosophy&lt;/h1&gt;
+
+&lt;h2 id=&#34;number-of-letters&#34;&gt;Number of letters&lt;/h2&gt;
+
+&lt;p&gt;How many passwords are valid according to the policies?&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;1-3 a: abcde
+1-3 b: cdefg
+2-9 c: ccccccccc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;First read in the data. I like data frames and so should you.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- read.table(&#39;input02.txt&#39;,
+                    col.names = c(&#39;times&#39;, &#39;letter&#39;, &#39;password&#39;))
+library(stringr)
+passwords &amp;lt;- within(input, {
+  letter &amp;lt;- str_remove(letter, &#39;\\:&#39;)
+  times &amp;lt;- str_split(times, &#39;-&#39;)
+  min &amp;lt;- as.integer(sapply(times, &#39;[[&#39;, 1))
+  max &amp;lt;- as.integer(sapply(times, &#39;[[&#39;, 2))
+  times &amp;lt;- NULL
+})
+head(passwords)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;  letter          password max min
+1      v  vdvvvvvsvvvvvfpv  15  14
+2      k  kkqkkfkkvkgfknkx  11   3
+3      j        jjjjjjjjjj  10   6
+4      s nskdmzwrmpmhsrzts  10   5
+5      v   vvvvvvkvvvvjzvv  15  13
+6      h    hhhhhbhhhhdhhh  13  11
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;String operations are a bit of a pain in base R so it’s easier just to
+use a package, like &lt;code&gt;stringi&lt;/code&gt; or &lt;code&gt;stringr&lt;/code&gt; for this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;with(passwords, {
+     n &amp;lt;- stringr::str_count(password, letter)
+     sum(n &amp;gt;= min &amp;amp; n &amp;lt;= max)
+})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 625
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You could also split each password with &lt;code&gt;strsplit&lt;/code&gt; and count the letters
+with an &lt;code&gt;sapply&lt;/code&gt;-type loop.&lt;/p&gt;
+
+&lt;h2 id=&#34;position-of-letters&#34;&gt;Position of letters&lt;/h2&gt;
+
+&lt;p&gt;Now the two digits describe two indices in the password, &lt;em&gt;exactly one&lt;/em&gt;
+of which must match the given letter.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;with(passwords,
+     sum(xor(substr(password, min, min) == letter,
+             substr(password, max, max) == letter))
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 391
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Initially I got caught out here, by misreading the question as ‘at least
+one’ and then wondering why an inclusive or (&lt;code&gt;|&lt;/code&gt;) was returning the
+incorrect answer.&lt;/p&gt;
+
+&lt;h1 id=&#34;day-3-toboggan-trajectory&#34;&gt;Day 3 - Toboggan trajectory&lt;/h1&gt;
+
+&lt;p&gt;The input looks a bit like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;..##.........##.........##.........##.........##.........##.......  ---&amp;gt;
+#..O#...#..#...#...#..#...#...#..#...#...#..#...#...#..#...#...#..
+.#....X..#..#....#..#..#....#..#..#....#..#..#....#..#..#....#..#.
+..#.#...#O#..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#
+.#...##..#..X...##..#..#...##..#..#...##..#..#...##..#..#...##..#.
+..#.##.......#.X#.......#.##.......#.##.......#.##.......#.##.....  ---&amp;gt;
+.#.#.#....#.#.#.#.O..#.#.#.#....#.#.#.#....#.#.#.#....#.#.#.#....#
+.#........#.#........X.#........#.#........#.#........#.#........#
+#.##...#...#.##...#...#.X#...#...#.##...#...#.##...#...#.##...#...
+#...##....##...##....##...#X....##...##....##...##....##...##....#
+.#..#...#.#.#..#...#.#.#..#...X.#.#..#...#.#.#..#...#.#.#..#...#.#  ---&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;encountering-trees&#34;&gt;Encountering trees&lt;/h2&gt;
+
+&lt;p&gt;Starting at the top-left corner of your map and following a slope of
+right 3 and down 1, how many trees would you encounter?&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- readLines(&#39;input03.txt&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A complicated-sounding problem but the solution is mainly mathematical.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;positions &amp;lt;- (3 * (seq_along(input) - 1)) %% nchar(input) + 1
+sum(substr(input, positions, positions) == &#39;#&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 268
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The sequence of positions goes 1, 4, 7, …, and when it reaches the edge
+of the map, loops back round to the beginning. Using the modulo operator
+we can use the sequence modulo the width of the input map, then add one
+because R indexes from one rather than from zero.&lt;/p&gt;
+
+&lt;h2 id=&#34;different-slopes&#34;&gt;Different slopes&lt;/h2&gt;
+
+&lt;p&gt;Simply wrap the above into a function.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;trees &amp;lt;- function(right, down = 1) {
+  vertical &amp;lt;- seq(0, length(input) - 1, by = down) + 1
+  horizontal &amp;lt;- (right * (seq_along(input) - 1)) %% nchar(input) + 1
+  horizontal &amp;lt;- head(horizontal, length(vertical))
+  as.double(
+    sum(substr(input[vertical], horizontal, horizontal) == &#39;#&#39;)
+  )
+}
+trees(1) * trees(3) * trees(5) * trees(7) * trees(1, 2)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 3093068400
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;as.double&lt;/code&gt; bit is necessary only because multiplying large integer
+outputs together can cause an overflow when the product is larger than
+10&lt;sup&gt;9&lt;/sup&gt;.&lt;/p&gt;
+
+&lt;h1 id=&#34;day-4-passport-processing&#34;&gt;Day 4 - Passport processing&lt;/h1&gt;
+
+&lt;p&gt;The example input is in this ragged format, where keys and values are
+separated by colons and records are separated by double newlines. The
+first step is to parse this unusual data format.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
+byr:1937 iyr:2017 cid:147 hgt:183cm
+
+iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884
+hcl:#cfa07d byr:1929
+
+hcl:#ae17e1 iyr:2013
+eyr:2024
+ecl:brn pid:760753108 byr:1931
+hgt:179cm
+
+hcl:#cfa07d eyr:2025 pid:166559648
+iyr:2011 ecl:brn hgt:59in
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- strsplit(readLines(&#39;input04.txt&#39;), &#39; &#39;)
+ids = cumsum(!lengths(input))
+pairs &amp;lt;- lapply(strsplit(unlist(input), &#39;:&#39;), setNames, c(&#39;key&#39;, &#39;value&#39;))
+passports &amp;lt;- data.frame(id = rep(ids, lengths(input)),
+                        do.call(rbind, pairs))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;missing-fields&#34;&gt;Missing fields&lt;/h2&gt;
+
+&lt;p&gt;Now the data are in a standard format, this is a simple
+split-apply-combine operation. I am using the base &lt;code&gt;aggregate&lt;/code&gt; but this
+could be done equally well using &lt;code&gt;dplyr&lt;/code&gt; or &lt;code&gt;data.table&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;required &amp;lt;- c(&#39;byr&#39;, &#39;iyr&#39;, &#39;eyr&#39;, &#39;hgt&#39;, &#39;hcl&#39;, &#39;ecl&#39;, &#39;pid&#39;)
+valid &amp;lt;- aggregate(key ~ id, passports,
+                   function(x) !length(setdiff(required, x)))
+head(valid, 10)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;   id   key
+1   0  TRUE
+2   1  TRUE
+3   2  TRUE
+4   3  TRUE
+5   4  TRUE
+6   5  TRUE
+7   6  TRUE
+8   7 FALSE
+9   8 FALSE
+10  9  TRUE
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then the answer is simply&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;sum(valid$key)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 190
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;field-validation&#34;&gt;Field validation&lt;/h2&gt;
+
+&lt;p&gt;Thanks to the way we imported the data, this is quite straightforward.
+The rules are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;byr&lt;/code&gt; (Birth Year) - four digits; at least 1920 and at most 2002.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;iyr&lt;/code&gt; (Issue Year) - four digits; at least 2010 and at most 2020.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;eyr&lt;/code&gt; (Expiration Year) - four digits; at least 2020 and at
+most 2030.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;hgt&lt;/code&gt; (Height) - a number followed by either cm or in:
+
+&lt;ul&gt;
+&lt;li&gt;If &lt;code&gt;cm&lt;/code&gt;, the number must be at least 150 and at most 193.&lt;/li&gt;
+&lt;li&gt;If &lt;code&gt;in&lt;/code&gt;, the number must be at least 59 and at most 76.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;hcl&lt;/code&gt; (Hair Color) - a # followed by exactly six characters &lt;code&gt;0-9&lt;/code&gt;
+or &lt;code&gt;a-f&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ecl&lt;/code&gt; (Eye Color) - exactly one of: &lt;code&gt;amb&lt;/code&gt; &lt;code&gt;blu&lt;/code&gt; &lt;code&gt;brn&lt;/code&gt; &lt;code&gt;gry&lt;/code&gt; &lt;code&gt;grn&lt;/code&gt;
+&lt;code&gt;hzl&lt;/code&gt; &lt;code&gt;oth&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;pid&lt;/code&gt; (Passport ID) - a nine-digit number, including leading zeroes.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;cid&lt;/code&gt; (Country ID) - ignored, missing or not.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The data are all different types (integer, double and categorical) so
+the first step will be to spread the table to a wider format, with one
+row per passport, and one column for each field.&lt;/p&gt;
+
+&lt;p&gt;Here is a &lt;code&gt;dplyr&lt;/code&gt; + &lt;code&gt;tidyr&lt;/code&gt; solution.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(dplyr)
+library(tidyr)
+passports_wide &amp;lt;- passports %&amp;gt;%
+  pivot_wider(names_from = key, values_from = value) %&amp;gt;%
+  mutate(byr = as.integer(byr),
+         iyr = as.integer(iyr),
+         eyr = as.integer(eyr),
+         hgt_value = as.numeric(gsub(&#39;cm|in$&#39;, &#39;&#39;, hgt)),
+         hgt_unit = gsub(&#39;\\d*&#39;, &#39;&#39;, hgt))
+head(passports_wide)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;# A tibble: 6 x 11
+     id   iyr cid   pid        eyr hcl     ecl      byr hgt   hgt_value hgt_unit
+  &amp;lt;int&amp;gt; &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt;    &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;  &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;     &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;   
+1     0  1928 150   4761132~  2039 a5ac0f  #25f8~  2027 190         190 &amp;quot;&amp;quot;      
+2     1  2013 169   9200769~  2026 #fffffd hzl     1929 168cm       168 &amp;quot;cm&amp;quot;    
+3     2  2011 &amp;lt;NA&amp;gt;  3284128~  2023 #6b5442 brn     1948 156cm       156 &amp;quot;cm&amp;quot;    
+4     3  2019 279   6749079~  2020 #602927 amb     1950 189cm       189 &amp;quot;cm&amp;quot;    
+5     4  2015 &amp;lt;NA&amp;gt;  4736300~  2022 #341e13 hzl     1976 178cm       178 &amp;quot;cm&amp;quot;    
+6     5  2020 &amp;lt;NA&amp;gt;  6281139~  2023 #866857 blu     1984 163cm       163 &amp;quot;cm&amp;quot;    
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;From here, we can filter out the invalid entries, using &lt;code&gt;filter&lt;/code&gt; or
+&lt;code&gt;subset&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;passports_wide %&amp;gt;%
+  filter(byr &amp;gt;= 1920, byr &amp;lt;= 2002,
+         iyr &amp;gt;= 2010, iyr &amp;lt;= 2020,
+         eyr &amp;gt;= 2020, eyr &amp;lt;= 2030,
+         hgt_value &amp;gt;= 150 &amp;amp; hgt_value &amp;lt;= 193 &amp;amp; hgt_unit == &#39;cm&#39; |
+           hgt_value &amp;gt;= 59 &amp;amp; hgt_value &amp;lt;= 76 &amp;amp; hgt_unit == &#39;in&#39;,
+         grepl(&#39;^#[0-9a-f]{6}$&#39;, hcl),
+         ecl %in% c(&#39;amb&#39;, &#39;blu&#39;, &#39;brn&#39;, &#39;gry&#39;, &#39;grn&#39;, &#39;hzl&#39;, &#39;oth&#39;),
+         grepl(&#39;^\\d{9}$&#39;, pid)) -&amp;gt; valid_passports
+nrow(valid_passports)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 121
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You could also use a filtering join, though since most of the fields are
+ranges of integer values, you would want to use a &lt;code&gt;data.table&lt;/code&gt;
+&lt;em&gt;non-equi-join&lt;/em&gt; rather than a simple &lt;code&gt;semi_join&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h1 id=&#34;day-5-binary-boarding&#34;&gt;Day 5 - Binary boarding&lt;/h1&gt;
+
+&lt;h2 id=&#34;highest-seat-id&#34;&gt;Highest seat ID&lt;/h2&gt;
+
+&lt;p&gt;This task is easy, as soon as you recognise that it is just converting
+numbers from binary to decimal, where &lt;code&gt;F&lt;/code&gt; and &lt;code&gt;L&lt;/code&gt; denote ones and &lt;code&gt;B&lt;/code&gt;
+and &lt;code&gt;R&lt;/code&gt; are zeros. The distinction between rows and columns is a red
+herring, because you can parse the whole sequence at once.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- readLines(&#39;input05.txt&#39;)
+binary &amp;lt;- lapply(strsplit(input, &#39;&#39;), grepl, pattern = &#39;[BR]&#39;)
+seat_ids &amp;lt;- sapply(binary, function(x) sum(x * 2^(rev(seq_along(x)) - 1)))
+max(seat_ids)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 874
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;finding-an-empty-seat&#34;&gt;Finding an empty seat&lt;/h2&gt;
+
+&lt;p&gt;Get the missing value, which isn’t the minimum or the maximum in the
+list.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;setdiff(seq(min(seat_ids), max(seat_ids)),
+        seat_ids)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 594
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;day-6-custom-customs&#34;&gt;Day 6 - Custom customs&lt;/h1&gt;
+
+&lt;h2 id=&#34;questions-with-any-yes&#34;&gt;Questions with any ‘yes’&lt;/h2&gt;
+
+&lt;p&gt;Count the number of unique questions answered ‘yes’ in each group of
+people, where a ‘group’ is series of records separated from other groups
+by a blank line. This is a &lt;em&gt;union&lt;/em&gt; set operation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- readLines(&#39;input06.txt&#39;)
+group &amp;lt;- cumsum(!nchar(input))
+
+library(dplyr)
+responses &amp;lt;- data.frame(group = group[nchar(input) &amp;gt; 0],
+                        questions = input[nchar(input) &amp;gt; 0])
+union &amp;lt;- aggregate(questions ~ group, responses,
+                    function(x) length(unique(unlist(strsplit(x, &#39;&#39;)))))
+sum(union$questions)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 6551
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;questions-with-all-yes&#34;&gt;Questions with all ‘yes’&lt;/h2&gt;
+
+&lt;p&gt;Similar, but now an &lt;em&gt;intersection&lt;/em&gt; set operation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;intersection &amp;lt;- aggregate(questions ~ group, responses,
+                          function(x) length(Reduce(intersect, strsplit(x, &#39;&#39;))))
+sum(intersection$questions)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 3358
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The solution to the first part could have used &lt;code&gt;Reduce(union, ...)&lt;/code&gt;,
+which would achieve the same result as &lt;code&gt;unique(unlist(...))&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Both of these could be made a bit more readable using &lt;code&gt;dplyr&lt;/code&gt; or
+&lt;code&gt;data.table&lt;/code&gt; instead. In particular, the base function &lt;code&gt;aggregate&lt;/code&gt;
+doesn’t like list-columns as inputs, so the &lt;code&gt;strsplit&lt;/code&gt; can’t be done
+before the aggregation. This is not a problem with &lt;code&gt;dplyr::summarise&lt;/code&gt; or
+&lt;code&gt;data.table&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(dplyr)
+responses %&amp;gt;%
+  mutate(questions = strsplit(questions, &#39;&#39;)) %&amp;gt;%
+  group_by(group) %&amp;gt;%
+  summarise(count = Reduce(intersect, questions) %&amp;gt;% length) %&amp;gt;%
+  pull(count) %&amp;gt;% sum
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 3358
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(data.table)
+setDT(responses)[, questions := strsplit(questions, &#39;&#39;)]
+responses[, .(count = length(Reduce(intersect, questions))),
+          by = group][, sum(count)]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 3358
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;I will update this post as I complete future puzzles.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Which film should I watch during lockdown?</title>
@@ -729,6 +1164,8 @@ Feedback is very welcome!&lt;/p&gt;
       
       <guid>https://selbydavid.com/2018/01/09/neural-network/</guid>
       <description>&lt;script src=&#34;https://selbydavid.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://selbydavid.com/rmarkdown-libs/anchor-sections/anchor-sections.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://selbydavid.com/rmarkdown-libs/anchor-sections/anchor-sections.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;Neural networks can seem like a bit of a black box.
@@ -1435,6 +1872,8 @@ An idea for a future R package, perhaps?&lt;/p&gt;
       
       <guid>https://selbydavid.com/2017/06/25/ggchernoff/</guid>
       <description>&lt;script src=&#34;https://selbydavid.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://selbydavid.com/rmarkdown-libs/anchor-sections/anchor-sections.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://selbydavid.com/rmarkdown-libs/anchor-sections/anchor-sections.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;I am pleased to introduce my first R package for general consumption, &lt;a href=&#34;https://github.com/Selbosh/ggChernoff&#34;&gt;&lt;strong&gt;ggChernoff&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
@@ -1944,6 +2383,8 @@ If anything is unclear, have a look at my &lt;a href=&#34;https://github.com/Sel
       
       <guid>https://selbydavid.com/2016/12/07/santa/</guid>
       <description>&lt;script src=&#34;https://selbydavid.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://selbydavid.com/rmarkdown-libs/anchor-sections/anchor-sections.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://selbydavid.com/rmarkdown-libs/anchor-sections/anchor-sections.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;Our office just exchanged presents for &lt;em&gt;Secret Santa&lt;/em&gt;, a tradition where each person is randomly assigned someone else to give an anonyous gift. One of the challenges of Secret Santa is keeping the pairs of gift-givers and receivers both random and secret. How can you do this while also taking part yourself? Using R, of course!&lt;/p&gt;
@@ -1981,15 +2422,15 @@ data.frame(sender = names2,
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data.frame(sender = sample(names),
            recipient = sample(names))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##   sender recipient
-## 1  Chris      Dick
-## 2   Jane     Harry
-## 3   Alex       Sam
-## 4    Tom       Tom
-## 5   Dick    Leslie
-## 6  Susan     Susan
-## 7  Harry     Chris
-## 8    Sam      Alex
-## 9 Leslie      Jane&lt;/code&gt;&lt;/pre&gt;
+## 1 Leslie     Chris
+## 2   Alex      Dick
+## 3  Susan     Harry
+## 4    Sam       Tom
+## 5    Tom      Alex
+## 6  Chris       Sam
+## 7   Jane      Jane
+## 8   Dick     Susan
+## 9  Harry    Leslie&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;There’s a problem. Jane has been assigned to herself! That won’t do! The solution is quite straightforward, though: just keep sampling until this doesn’t happen. We can keep the order of senders fixed and vary the order of the recipients until nobody gives to themselves, like so.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sender &amp;lt;- sample(names)
 recipient &amp;lt;- sample(names)
