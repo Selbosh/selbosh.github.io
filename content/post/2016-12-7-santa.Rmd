@@ -53,7 +53,7 @@ This works in the sense that everybody gives and receives one gift and nobody gi
 Why not just randomly sample twice from the `names` list?
 
 ```{r sample_twice, echo = -1}
-set.seed(1)
+set.seed(2)
 data.frame(sender = sample(names),
            recipient = sample(names))
 ```
