@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1653">
+<meta itemprop="wordCount" content="1647">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -162,14 +162,14 @@ or more ‘data sciencey’. Generally it makes parsing datasets easier but
 low-level string manipulation more fiddly.</p>
 
 <p>Here are my solutions so far. Where possible, I’ve tried to strike a
-balance between efficiency and readability, and to try avoid using the
+balance between efficiency and readability, and to avoid using the
 packages I might usually use (e.g. <code>dplyr</code>) if I think it makes the
 puzzle too easy.</p>
 
 <p>The input data are different for each participant, so your numerical
 results may differ from mine.</p>
 
-<h1 id="day-1-report-repair">Day 1 - Report repair</h1>
+<h1 id="day-1-report-repair-https-adventofcode-com-2020-day-1">Day 1 - <a href="https://adventofcode.com/2020/day/1">Report repair</a></h1>
 
 <h2 id="two-numbers">Two numbers</h2>
 
@@ -215,7 +215,7 @@ prod(.[which.max(.$Var3 %in% input), ])
 successively discarding values that could only add up to more than 2020.
 The <code>.</code> notation is just so I can write this without using <code>dplyr</code>.</p>
 
-<h1 id="day-2-password-philosophy">Day 2 - Password philosophy</h1>
+<h1 id="day-2-password-philosophy-https-adventofcode-com-2020-day-2">Day 2 - <a href="https://adventofcode.com/2020/day/2">Password philosophy</a></h1>
 
 <h2 id="number-of-letters">Number of letters</h2>
 
@@ -280,21 +280,21 @@ of which must match the given letter.</p>
 one’ and then wondering why an inclusive or (<code>|</code>) was returning the
 incorrect answer.</p>
 
-<h1 id="day-3-toboggan-trajectory">Day 3 - Toboggan trajectory</h1>
+<h1 id="day-3-toboggan-trajectory-https-adventofcode-com-2020-day-3">Day 3 - <a href="https://adventofcode.com/2020/day/3">Toboggan trajectory</a></h1>
 
 <p>The input looks a bit like this:</p>
 
 <pre><code>..##.........##.........##.........##.........##.........##.......  ---&gt;
-#..O#...#..#...#...#..#...#...#..#...#...#..#...#...#..#...#...#..
-.#....X..#..#....#..#..#....#..#..#....#..#..#....#..#..#....#..#.
-..#.#...#O#..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#
-.#...##..#..X...##..#..#...##..#..#...##..#..#...##..#..#...##..#.
-..#.##.......#.X#.......#.##.......#.##.......#.##.......#.##.....  ---&gt;
-.#.#.#....#.#.#.#.O..#.#.#.#....#.#.#.#....#.#.#.#....#.#.#.#....#
-.#........#.#........X.#........#.#........#.#........#.#........#
-#.##...#...#.##...#...#.X#...#...#.##...#...#.##...#...#.##...#...
-#...##....##...##....##...#X....##...##....##...##....##...##....#
-.#..#...#.#.#..#...#.#.#..#...X.#.#..#...#.#.#..#...#.#.#..#...#.#  ---&gt;
+#...#...#..#...#...#..#...#...#..#...#...#..#...#...#..#...#...#..
+.#....#..#..#....#..#..#....#..#..#....#..#..#....#..#..#....#..#.
+..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#
+.#...##..#..#...##..#..#...##..#..#...##..#..#...##..#..#...##..#.
+..#.##.......#.##.......#.##.......#.##.......#.##.......#.##.....  ---&gt;
+.#.#.#....#.#.#.#....#.#.#.#....#.#.#.#....#.#.#.#....#.#.#.#....#
+.#........#.#........#.#........#.#........#.#........#.#........#
+#.##...#...#.##...#...#.##...#...#.##...#...#.##...#...#.##...#...
+#...##....##...##....##...##....##...##....##...##....##...##....#
+.#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#  ---&gt;
 </code></pre>
 
 <h2 id="encountering-trees">Encountering trees</h2>
@@ -341,7 +341,7 @@ trees(1) * trees(3) * trees(5) * trees(7) * trees(1, 2)
 outputs together can cause an overflow when the product is larger than
 10<sup>9</sup>.</p>
 
-<h1 id="day-4-passport-processing">Day 4 - Passport processing</h1>
+<h1 id="day-4-passport-processing-https-adventofcode-com-2020-day-4">Day 4 - <a href="https://adventofcode.com/2020/day/4">Passport processing</a></h1>
 
 <p>The example input is in this ragged format, where keys and values are
 separated by colons and records are separated by double newlines. The
@@ -477,7 +477,7 @@ nrow(valid_passports)
 ranges of integer values, you would want to use a <code>data.table</code>
 <em>non-equi-join</em> rather than a simple <code>semi_join</code>.</p>
 
-<h1 id="day-5-binary-boarding">Day 5 - Binary boarding</h1>
+<h1 id="day-5-binary-boarding-https-adventofcode-com-2020-day-5">Day 5 - <a href="https://adventofcode.com/2020/day/5">Binary boarding</a></h1>
 
 <h2 id="highest-seat-id">Highest seat ID</h2>
 
@@ -507,13 +507,13 @@ list.</p>
 <pre><code>[1] 594
 </code></pre>
 
-<h1 id="day-6-custom-customs">Day 6 - Custom customs</h1>
+<h1 id="day-6-custom-customs-https-adventofcode-com-2020-day-6">Day 6 - <a href="https://adventofcode.com/2020/day/6">Custom customs</a></h1>
 
 <h2 id="questions-with-any-yes">Questions with any ‘yes’</h2>
 
-<p>Count the number of unique questions answered ‘yes’ in each group of
-people, where a ‘group’ is series of records separated from other groups
-by a blank line. This is a <em>union</em> set operation.</p>
+<p>Count the number of unique letters in each group, where a ‘group’ is
+series of strings separated from others by a blank line. This is a
+<em>union</em> set operation.</p>
 
 <pre><code class="language-r">input &lt;- readLines('input06.txt')
 group &lt;- cumsum(!nchar(input))

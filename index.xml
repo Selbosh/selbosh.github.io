@@ -36,14 +36,14 @@ or more ‘data sciencey’. Generally it makes parsing datasets easier but
 low-level string manipulation more fiddly.&lt;/p&gt;
 
 &lt;p&gt;Here are my solutions so far. Where possible, I’ve tried to strike a
-balance between efficiency and readability, and to try avoid using the
+balance between efficiency and readability, and to avoid using the
 packages I might usually use (e.g. &lt;code&gt;dplyr&lt;/code&gt;) if I think it makes the
 puzzle too easy.&lt;/p&gt;
 
 &lt;p&gt;The input data are different for each participant, so your numerical
 results may differ from mine.&lt;/p&gt;
 
-&lt;h1 id=&#34;day-1-report-repair&#34;&gt;Day 1 - Report repair&lt;/h1&gt;
+&lt;h1 id=&#34;day-1-report-repair-https-adventofcode-com-2020-day-1&#34;&gt;Day 1 - &lt;a href=&#34;https://adventofcode.com/2020/day/1&#34;&gt;Report repair&lt;/a&gt;&lt;/h1&gt;
 
 &lt;h2 id=&#34;two-numbers&#34;&gt;Two numbers&lt;/h2&gt;
 
@@ -89,7 +89,7 @@ prod(.[which.max(.$Var3 %in% input), ])
 successively discarding values that could only add up to more than 2020.
 The &lt;code&gt;.&lt;/code&gt; notation is just so I can write this without using &lt;code&gt;dplyr&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h1 id=&#34;day-2-password-philosophy&#34;&gt;Day 2 - Password philosophy&lt;/h1&gt;
+&lt;h1 id=&#34;day-2-password-philosophy-https-adventofcode-com-2020-day-2&#34;&gt;Day 2 - &lt;a href=&#34;https://adventofcode.com/2020/day/2&#34;&gt;Password philosophy&lt;/a&gt;&lt;/h1&gt;
 
 &lt;h2 id=&#34;number-of-letters&#34;&gt;Number of letters&lt;/h2&gt;
 
@@ -154,21 +154,21 @@ of which must match the given letter.&lt;/p&gt;
 one’ and then wondering why an inclusive or (&lt;code&gt;|&lt;/code&gt;) was returning the
 incorrect answer.&lt;/p&gt;
 
-&lt;h1 id=&#34;day-3-toboggan-trajectory&#34;&gt;Day 3 - Toboggan trajectory&lt;/h1&gt;
+&lt;h1 id=&#34;day-3-toboggan-trajectory-https-adventofcode-com-2020-day-3&#34;&gt;Day 3 - &lt;a href=&#34;https://adventofcode.com/2020/day/3&#34;&gt;Toboggan trajectory&lt;/a&gt;&lt;/h1&gt;
 
 &lt;p&gt;The input looks a bit like this:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;..##.........##.........##.........##.........##.........##.......  ---&amp;gt;
-#..O#...#..#...#...#..#...#...#..#...#...#..#...#...#..#...#...#..
-.#....X..#..#....#..#..#....#..#..#....#..#..#....#..#..#....#..#.
-..#.#...#O#..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#
-.#...##..#..X...##..#..#...##..#..#...##..#..#...##..#..#...##..#.
-..#.##.......#.X#.......#.##.......#.##.......#.##.......#.##.....  ---&amp;gt;
-.#.#.#....#.#.#.#.O..#.#.#.#....#.#.#.#....#.#.#.#....#.#.#.#....#
-.#........#.#........X.#........#.#........#.#........#.#........#
-#.##...#...#.##...#...#.X#...#...#.##...#...#.##...#...#.##...#...
-#...##....##...##....##...#X....##...##....##...##....##...##....#
-.#..#...#.#.#..#...#.#.#..#...X.#.#..#...#.#.#..#...#.#.#..#...#.#  ---&amp;gt;
+#...#...#..#...#...#..#...#...#..#...#...#..#...#...#..#...#...#..
+.#....#..#..#....#..#..#....#..#..#....#..#..#....#..#..#....#..#.
+..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#
+.#...##..#..#...##..#..#...##..#..#...##..#..#...##..#..#...##..#.
+..#.##.......#.##.......#.##.......#.##.......#.##.......#.##.....  ---&amp;gt;
+.#.#.#....#.#.#.#....#.#.#.#....#.#.#.#....#.#.#.#....#.#.#.#....#
+.#........#.#........#.#........#.#........#.#........#.#........#
+#.##...#...#.##...#...#.##...#...#.##...#...#.##...#...#.##...#...
+#...##....##...##....##...##....##...##....##...##....##...##....#
+.#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#  ---&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;encountering-trees&#34;&gt;Encountering trees&lt;/h2&gt;
@@ -215,7 +215,7 @@ trees(1) * trees(3) * trees(5) * trees(7) * trees(1, 2)
 outputs together can cause an overflow when the product is larger than
 10&lt;sup&gt;9&lt;/sup&gt;.&lt;/p&gt;
 
-&lt;h1 id=&#34;day-4-passport-processing&#34;&gt;Day 4 - Passport processing&lt;/h1&gt;
+&lt;h1 id=&#34;day-4-passport-processing-https-adventofcode-com-2020-day-4&#34;&gt;Day 4 - &lt;a href=&#34;https://adventofcode.com/2020/day/4&#34;&gt;Passport processing&lt;/a&gt;&lt;/h1&gt;
 
 &lt;p&gt;The example input is in this ragged format, where keys and values are
 separated by colons and records are separated by double newlines. The
@@ -351,7 +351,7 @@ nrow(valid_passports)
 ranges of integer values, you would want to use a &lt;code&gt;data.table&lt;/code&gt;
 &lt;em&gt;non-equi-join&lt;/em&gt; rather than a simple &lt;code&gt;semi_join&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h1 id=&#34;day-5-binary-boarding&#34;&gt;Day 5 - Binary boarding&lt;/h1&gt;
+&lt;h1 id=&#34;day-5-binary-boarding-https-adventofcode-com-2020-day-5&#34;&gt;Day 5 - &lt;a href=&#34;https://adventofcode.com/2020/day/5&#34;&gt;Binary boarding&lt;/a&gt;&lt;/h1&gt;
 
 &lt;h2 id=&#34;highest-seat-id&#34;&gt;Highest seat ID&lt;/h2&gt;
 
@@ -381,13 +381,13 @@ list.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;[1] 594
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h1 id=&#34;day-6-custom-customs&#34;&gt;Day 6 - Custom customs&lt;/h1&gt;
+&lt;h1 id=&#34;day-6-custom-customs-https-adventofcode-com-2020-day-6&#34;&gt;Day 6 - &lt;a href=&#34;https://adventofcode.com/2020/day/6&#34;&gt;Custom customs&lt;/a&gt;&lt;/h1&gt;
 
 &lt;h2 id=&#34;questions-with-any-yes&#34;&gt;Questions with any ‘yes’&lt;/h2&gt;
 
-&lt;p&gt;Count the number of unique questions answered ‘yes’ in each group of
-people, where a ‘group’ is series of records separated from other groups
-by a blank line. This is a &lt;em&gt;union&lt;/em&gt; set operation.&lt;/p&gt;
+&lt;p&gt;Count the number of unique letters in each group, where a ‘group’ is
+series of strings separated from others by a blank line. This is a
+&lt;em&gt;union&lt;/em&gt; set operation.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- readLines(&#39;input06.txt&#39;)
 group &amp;lt;- cumsum(!nchar(input))
