@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1662">
+<meta itemprop="wordCount" content="1653">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -228,26 +228,23 @@ The <code>.</code> notation is just so I can write this without using <code>dply
 
 <p>First read in the data. I like data frames and so should you.</p>
 
-<pre><code class="language-r">input &lt;- read.table('input02.txt',
-                    col.names = c('times', 'letter', 'password'))
-library(stringr)
-passwords &lt;- within(input, {
-  letter &lt;- str_remove(letter, '\\:')
-  times &lt;- str_split(times, '-')
-  min &lt;- as.integer(sapply(times, '[[', 1))
-  max &lt;- as.integer(sapply(times, '[[', 2))
-  times &lt;- NULL
-})
+<pre><code class="language-r">input &lt;- readLines('input02.txt')
+passwords &lt;- do.call(rbind, strsplit(input, '[- ]|\\: '))
+passwords &lt;- setNames(as.data.frame(passwords),
+                      c('min', 'max', 'letter', 'password'))
+passwords &lt;- transform(passwords,
+                       min = as.integer(min),
+                       max = as.integer(max))
 head(passwords)
 </code></pre>
 
-<pre><code>  letter          password max min
-1      v  vdvvvvvsvvvvvfpv  15  14
-2      k  kkqkkfkkvkgfknkx  11   3
-3      j        jjjjjjjjjj  10   6
-4      s nskdmzwrmpmhsrzts  10   5
-5      v   vvvvvvkvvvvjzvv  15  13
-6      h    hhhhhbhhhhdhhh  13  11
+<pre><code>  min max letter          password
+1  14  15      v  vdvvvvvsvvvvvfpv
+2   3  11      k  kkqkkfkkvkgfknkx
+3   6  10      j        jjjjjjjjjj
+4   5  10      s nskdmzwrmpmhsrzts
+5  13  15      v   vvvvvvkvvvvjzvv
+6  11  13      h    hhhhhbhhhhdhhh
 </code></pre>
 
 <p>String operations are a bit of a pain in base R so it’s easier just to

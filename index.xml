@@ -102,26 +102,23 @@ The &lt;code&gt;.&lt;/code&gt; notation is just so I can write this without usin
 
 &lt;p&gt;First read in the data. I like data frames and so should you.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- read.table(&#39;input02.txt&#39;,
-                    col.names = c(&#39;times&#39;, &#39;letter&#39;, &#39;password&#39;))
-library(stringr)
-passwords &amp;lt;- within(input, {
-  letter &amp;lt;- str_remove(letter, &#39;\\:&#39;)
-  times &amp;lt;- str_split(times, &#39;-&#39;)
-  min &amp;lt;- as.integer(sapply(times, &#39;[[&#39;, 1))
-  max &amp;lt;- as.integer(sapply(times, &#39;[[&#39;, 2))
-  times &amp;lt;- NULL
-})
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- readLines(&#39;input02.txt&#39;)
+passwords &amp;lt;- do.call(rbind, strsplit(input, &#39;[- ]|\\: &#39;))
+passwords &amp;lt;- setNames(as.data.frame(passwords),
+                      c(&#39;min&#39;, &#39;max&#39;, &#39;letter&#39;, &#39;password&#39;))
+passwords &amp;lt;- transform(passwords,
+                       min = as.integer(min),
+                       max = as.integer(max))
 head(passwords)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code&gt;  letter          password max min
-1      v  vdvvvvvsvvvvvfpv  15  14
-2      k  kkqkkfkkvkgfknkx  11   3
-3      j        jjjjjjjjjj  10   6
-4      s nskdmzwrmpmhsrzts  10   5
-5      v   vvvvvvkvvvvjzvv  15  13
-6      h    hhhhhbhhhhdhhh  13  11
+&lt;pre&gt;&lt;code&gt;  min max letter          password
+1  14  15      v  vdvvvvvsvvvvvfpv
+2   3  11      k  kkqkkfkkvkgfknkx
+3   6  10      j        jjjjjjjjjj
+4   5  10      s nskdmzwrmpmhsrzts
+5  13  15      v   vvvvvvkvvvvjzvv
+6  11  13      h    hhhhhbhhhhdhhh
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;String operations are a bit of a pain in base R so it’s easier just to
