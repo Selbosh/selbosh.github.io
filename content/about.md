@@ -65,7 +65,7 @@ For more information about my academic work, please visit my [Warwick PhD page](
 
 ### Useful links
 
-- [Lighting Rumours](http://www.lightingrumours.com), a blog I edit about the photography industry
+- [Lighting Rumours](https://www.lightingrumours.com), a blog I edit about the photography industry
 - [R-bloggers](https://www.r-bloggers.com/), a compendium of R-themed blogs
 - [RWeekly.org](https://rweekly.org), more R-themed blogs
 - [Warwick R User Group](http://warwick.ac.uk/wrug), a local group for talks on R
