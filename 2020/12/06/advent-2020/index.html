@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1647">
+<meta itemprop="wordCount" content="2148">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -568,6 +568,121 @@ responses[, .(count = length(Reduce(intersect, questions))),
 </code></pre>
 
 <pre><code>[1] 3358
+</code></pre>
+
+<h1 id="day-7-handy-haversacks-https-adventofcode-com-2020-day-7">Day 7 - <a href="https://adventofcode.com/2020/day/7">Handy haversacks</a></h1>
+
+<h2 id="number-of-bag-colours">Number of bag colours</h2>
+
+<p>Given an input list of rules, how many different colours of bags may
+contain at least one <code>shiny gold</code> bag?</p>
+
+<p>The first step will be to parse the natural language input, which looks
+like this:</p>
+
+<pre><code class="language-r">input &lt;- readLines('input07.txt')
+head(input)
+</code></pre>
+
+<pre><code>[1] &quot;mirrored silver bags contain 4 wavy gray bags.&quot;                                                                
+[2] &quot;clear tan bags contain 5 bright purple bags, 1 pale black bag, 5 muted lime bags.&quot;                             
+[3] &quot;dim crimson bags contain 5 vibrant salmon bags, 2 clear cyan bags, 2 striped lime bags, 5 vibrant violet bags.&quot;
+[4] &quot;mirrored beige bags contain 4 pale gold bags, 1 pale aqua bag.&quot;                                                
+[5] &quot;pale maroon bags contain 2 dotted orange bags.&quot;                                                                
+[6] &quot;dim tan bags contain no other bags.&quot;                                                                           
+</code></pre>
+
+<p>For this first exercise, the numbers of bags within each one are
+irrelevant (but we will need them later for part 2). For now, we just
+want to reduce it to which colours can contain which others.</p>
+
+<p>To start, I
+tidied up the data into a flat data frame. This isn’t strictly
+necessary—a named list would work too—but it’s easy to keep track of
+everything in a flat data structure.</p>
+
+<pre><code class="language-r">library(tidyr)
+rules &lt;- strsplit(input, ' contain ') %&gt;%
+  lapply(gsub, pattern = '\\.| bags?', replacement = '') %&gt;%
+  do.call(rbind, .) %&gt;%
+  as.data.frame %&gt;%
+  setNames(c('container', 'content')) %&gt;%
+  transform(content = strsplit(content, ', ')) %&gt;%
+  unnest_longer(content) %&gt;%
+  extract(content, c('number', 'content'), '(\\d+) (.+)') %&gt;%
+  transform(number = as.numeric(number)) %&gt;%
+  transform(number = replace(number, is.na(number), 0))
+head(rules)
+</code></pre>
+
+<pre><code>        container number        content
+1 mirrored silver      4      wavy gray
+2       clear tan      5  bright purple
+3       clear tan      1     pale black
+4       clear tan      5     muted lime
+5     dim crimson      5 vibrant salmon
+6     dim crimson      2     clear cyan
+</code></pre>
+
+<p>The algorithm is a queue, which works as follows.</p>
+
+<ol>
+<li>Look up which bags can directly contain <code>shiny gold</code></li>
+<li>Look up which bags can directly contain the results of 1.</li>
+<li>Repeat until no more bags can contain the result.</li>
+</ol>
+
+<p>Here’s the loop:</p>
+
+<pre><code class="language-r">bag &lt;- 'shiny gold'
+containers &lt;- NULL
+
+while (TRUE) {
+  contained_in &lt;- subset(rules, content %in% bag)
+  if ( !nrow(contained_in) )
+    break
+  bag &lt;- setdiff(contained_in$container, containers)
+  containers &lt;- union(containers, bag)
+}
+
+length(containers)
+</code></pre>
+
+<pre><code>[1] 259
+</code></pre>
+
+<h2 id="number-of-individual-bags">Number of individual bags</h2>
+
+<p>We ignored the numbers of bags in part 1, but we need them, now. How
+many individual bags fit inside a single <code>shiny gold</code> bag?</p>
+
+<p>To understand recursion, you must first understand recursion. My
+function, <code>count_bag</code>, calls itself. In more loop-friendly languages you
+might use a queue for this second part, but I can’t really think of a
+concise way to do it using R.</p>
+
+<pre><code class="language-r">count_bag &lt;- function(colour, factor = 1) {
+  stopifnot(length(colour) == 1)
+  
+  rule &lt;- subset(rules, container == colour)
+  
+  if (nrow(rule) == 1 &amp; rule$number[1] == 0) {
+    out &lt;- 0
+  } else {
+    # need to work row-wise or you'll come unstuck:
+    out &lt;- mapply(count_bag, rule$content, rule$number)
+  }
+  
+  factor * (1 + sum(out))
+}
+</code></pre>
+
+<p>We remove 1 at the end so as not to include the <code>shiny gold</code> bag itself:</p>
+
+<pre><code class="language-r">count_bag('shiny gold', 1) - 1
+</code></pre>
+
+<pre><code>[1] 45018
 </code></pre>
 
 <hr />

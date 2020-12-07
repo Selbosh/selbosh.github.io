@@ -444,6 +444,121 @@ responses[, .(count = length(Reduce(intersect, questions))),
 &lt;pre&gt;&lt;code&gt;[1] 3358
 &lt;/code&gt;&lt;/pre&gt;
 
+&lt;h1 id=&#34;day-7-handy-haversacks-https-adventofcode-com-2020-day-7&#34;&gt;Day 7 - &lt;a href=&#34;https://adventofcode.com/2020/day/7&#34;&gt;Handy haversacks&lt;/a&gt;&lt;/h1&gt;
+
+&lt;h2 id=&#34;number-of-bag-colours&#34;&gt;Number of bag colours&lt;/h2&gt;
+
+&lt;p&gt;Given an input list of rules, how many different colours of bags may
+contain at least one &lt;code&gt;shiny gold&lt;/code&gt; bag?&lt;/p&gt;
+
+&lt;p&gt;The first step will be to parse the natural language input, which looks
+like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- readLines(&#39;input07.txt&#39;)
+head(input)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] &amp;quot;mirrored silver bags contain 4 wavy gray bags.&amp;quot;                                                                
+[2] &amp;quot;clear tan bags contain 5 bright purple bags, 1 pale black bag, 5 muted lime bags.&amp;quot;                             
+[3] &amp;quot;dim crimson bags contain 5 vibrant salmon bags, 2 clear cyan bags, 2 striped lime bags, 5 vibrant violet bags.&amp;quot;
+[4] &amp;quot;mirrored beige bags contain 4 pale gold bags, 1 pale aqua bag.&amp;quot;                                                
+[5] &amp;quot;pale maroon bags contain 2 dotted orange bags.&amp;quot;                                                                
+[6] &amp;quot;dim tan bags contain no other bags.&amp;quot;                                                                           
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For this first exercise, the numbers of bags within each one are
+irrelevant (but we will need them later for part 2). For now, we just
+want to reduce it to which colours can contain which others.&lt;/p&gt;
+
+&lt;p&gt;To start, I
+tidied up the data into a flat data frame. This isn’t strictly
+necessary—a named list would work too—but it’s easy to keep track of
+everything in a flat data structure.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tidyr)
+rules &amp;lt;- strsplit(input, &#39; contain &#39;) %&amp;gt;%
+  lapply(gsub, pattern = &#39;\\.| bags?&#39;, replacement = &#39;&#39;) %&amp;gt;%
+  do.call(rbind, .) %&amp;gt;%
+  as.data.frame %&amp;gt;%
+  setNames(c(&#39;container&#39;, &#39;content&#39;)) %&amp;gt;%
+  transform(content = strsplit(content, &#39;, &#39;)) %&amp;gt;%
+  unnest_longer(content) %&amp;gt;%
+  extract(content, c(&#39;number&#39;, &#39;content&#39;), &#39;(\\d+) (.+)&#39;) %&amp;gt;%
+  transform(number = as.numeric(number)) %&amp;gt;%
+  transform(number = replace(number, is.na(number), 0))
+head(rules)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;        container number        content
+1 mirrored silver      4      wavy gray
+2       clear tan      5  bright purple
+3       clear tan      1     pale black
+4       clear tan      5     muted lime
+5     dim crimson      5 vibrant salmon
+6     dim crimson      2     clear cyan
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The algorithm is a queue, which works as follows.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Look up which bags can directly contain &lt;code&gt;shiny gold&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Look up which bags can directly contain the results of 1.&lt;/li&gt;
+&lt;li&gt;Repeat until no more bags can contain the result.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Here’s the loop:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;bag &amp;lt;- &#39;shiny gold&#39;
+containers &amp;lt;- NULL
+
+while (TRUE) {
+  contained_in &amp;lt;- subset(rules, content %in% bag)
+  if ( !nrow(contained_in) )
+    break
+  bag &amp;lt;- setdiff(contained_in$container, containers)
+  containers &amp;lt;- union(containers, bag)
+}
+
+length(containers)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 259
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;number-of-individual-bags&#34;&gt;Number of individual bags&lt;/h2&gt;
+
+&lt;p&gt;We ignored the numbers of bags in part 1, but we need them, now. How
+many individual bags fit inside a single &lt;code&gt;shiny gold&lt;/code&gt; bag?&lt;/p&gt;
+
+&lt;p&gt;To understand recursion, you must first understand recursion. My
+function, &lt;code&gt;count_bag&lt;/code&gt;, calls itself. In more loop-friendly languages you
+might use a queue for this second part, but I can’t really think of a
+concise way to do it using R.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;count_bag &amp;lt;- function(colour, factor = 1) {
+  stopifnot(length(colour) == 1)
+  
+  rule &amp;lt;- subset(rules, container == colour)
+  
+  if (nrow(rule) == 1 &amp;amp; rule$number[1] == 0) {
+    out &amp;lt;- 0
+  } else {
+    # need to work row-wise or you&#39;ll come unstuck:
+    out &amp;lt;- mapply(count_bag, rule$content, rule$number)
+  }
+  
+  factor * (1 + sum(out))
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We remove 1 at the end so as not to include the &lt;code&gt;shiny gold&lt;/code&gt; bag itself:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;count_bag(&#39;shiny gold&#39;, 1) - 1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 45018
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;hr /&gt;
 
 &lt;p&gt;I will update this post as I complete future puzzles.&lt;/p&gt;
