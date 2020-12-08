@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="2384">
+<meta itemprop="wordCount" content="2438">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -720,7 +720,7 @@ readability.</p>
 example data you might be tempted to assume that adding the value on
 <code>nop</code> instructions won’t affect the accumulator. But the test input data
 have some non-zero <code>nop</code> values thrown in, that you will surely
-encounter (especially because they are part of the puzzle for part 2):</p>
+encounter:</p>
 
 <pre><code class="language-r">head(subset(input, instr == 'nop' &amp; value != 0 &amp; visited &gt; 0))
 </code></pre>
@@ -736,6 +736,17 @@ encounter (especially because they are part of the puzzle for part 2):</p>
 
 <p>Thus you must only jump or add to the accumulator on instructions that
 are explicitly <code>jmp</code> or <code>acc</code>, respectively.</p>
+
+<h2 id="corrupted-code">Corrupted code</h2>
+
+<p>From part 1, we already have an algorithm for finding the first
+instruction that will lead into an infinite loop. Instead of terminating
+at this point, we can assume that last instruction was corrupted, swap
+it for the other type, then continue until we find another such
+corruption, all the way until the program is able to terminate on its
+own.</p>
+
+<p><em>Coming soon</em></p>
 
 <hr />
 

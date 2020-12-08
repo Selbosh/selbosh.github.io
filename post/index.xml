@@ -594,7 +594,7 @@ readability.&lt;/p&gt;
 example data you might be tempted to assume that adding the value on
 &lt;code&gt;nop&lt;/code&gt; instructions won’t affect the accumulator. But the test input data
 have some non-zero &lt;code&gt;nop&lt;/code&gt; values thrown in, that you will surely
-encounter (especially because they are part of the puzzle for part 2):&lt;/p&gt;
+encounter:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;head(subset(input, instr == &#39;nop&#39; &amp;amp; value != 0 &amp;amp; visited &amp;gt; 0))
 &lt;/code&gt;&lt;/pre&gt;
@@ -610,6 +610,17 @@ encounter (especially because they are part of the puzzle for part 2):&lt;/p&gt;
 
 &lt;p&gt;Thus you must only jump or add to the accumulator on instructions that
 are explicitly &lt;code&gt;jmp&lt;/code&gt; or &lt;code&gt;acc&lt;/code&gt;, respectively.&lt;/p&gt;
+
+&lt;h2 id=&#34;corrupted-code&#34;&gt;Corrupted code&lt;/h2&gt;
+
+&lt;p&gt;From part 1, we already have an algorithm for finding the first
+instruction that will lead into an infinite loop. Instead of terminating
+at this point, we can assume that last instruction was corrupted, swap
+it for the other type, then continue until we find another such
+corruption, all the way until the program is able to terminate on its
+own.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Coming soon&lt;/em&gt;&lt;/p&gt;
 
 &lt;hr /&gt;
 
