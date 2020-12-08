@@ -36,7 +36,7 @@ or more ‘data sciencey’. Generally it makes parsing datasets easier but
 low-level string manipulation more fiddly.&lt;/p&gt;
 
 &lt;p&gt;Here are my solutions so far. Where possible, I’ve tried to strike a
-balance between efficiency and readability, and to avoid using the
+balance between efficiency and readability, and to try avoid using the
 packages I might usually use (e.g. &lt;code&gt;dplyr&lt;/code&gt;) if I think it makes the
 puzzle too easy.&lt;/p&gt;
 
@@ -470,10 +470,9 @@ head(input)
 irrelevant (but we will need them later for part 2). For now, we just
 want to reduce it to which colours can contain which others.&lt;/p&gt;
 
-&lt;p&gt;To start, I
-tidied up the data into a flat data frame. This isn’t strictly
-necessary—a named list would work too—but it’s easy to keep track of
-everything in a flat data structure.&lt;/p&gt;
+&lt;p&gt;To start, I tidied up the data into a flat data frame. This isn’t
+strictly necessary—a named list would work too—but it’s easy to keep
+track of everything in a flat data structure.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tidyr)
 rules &amp;lt;- strsplit(input, &#39; contain &#39;) %&amp;gt;%
@@ -558,6 +557,59 @@ concise way to do it using R.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;[1] 45018
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;day-8-handheld-halting-https-adventofcode-com-2020-day-8&#34;&gt;Day 8 - &lt;a href=&#34;https://adventofcode.com/2020/day/8&#34;&gt;Handheld halting&lt;/a&gt;&lt;/h1&gt;
+
+&lt;h2 id=&#34;infinite-loop&#34;&gt;Infinite loop&lt;/h2&gt;
+
+&lt;p&gt;Just a simple loop that keeps track of all the places it has been so
+far, and terminates the moment it visits a location for the second time.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- read.table(&#39;input08.txt&#39;, col.names = c(&#39;instr&#39;, &#39;value&#39;))
+
+acc &amp;lt;- input$visited &amp;lt;- 0
+i &amp;lt;- 1
+
+while (TRUE) {
+  input$visited[i] &amp;lt;- input$visited[i] + 1
+  
+  if ( any(input$visited &amp;gt; 1) )
+    break
+  
+  acc &amp;lt;- acc + input$value[i] * (input$instr[i] == &#39;acc&#39;)
+  i &amp;lt;- i + (input$instr[i] == &#39;jmp&#39;) * (input$value[i]  - 1) + 1
+}
+
+acc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 1600
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Originally I wrote this with nested &lt;code&gt;if&lt;/code&gt; statements, then changed it to
+binary multiplication, for fewer lines of code, at the expense of
+readability.&lt;/p&gt;
+
+&lt;p&gt;This puzzle is set up to catch you out. From seeing &lt;code&gt;nop +0&lt;/code&gt; in the
+example data you might be tempted to assume that adding the value on
+&lt;code&gt;nop&lt;/code&gt; instructions won’t affect the accumulator. But the test input data
+have some non-zero &lt;code&gt;nop&lt;/code&gt; values thrown in, that you will surely
+encounter (especially because they are part of the puzzle for part 2):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;head(subset(input, instr == &#39;nop&#39; &amp;amp; value != 0 &amp;amp; visited &amp;gt; 0))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;    instr value visited
+2     nop   631       1
+11    nop    83       2
+71    nop   168       1
+73    nop   151       1
+96    nop   -25       1
+123   nop    -9       1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Thus you must only jump or add to the accumulator on instructions that
+are explicitly &lt;code&gt;jmp&lt;/code&gt; or &lt;code&gt;acc&lt;/code&gt;, respectively.&lt;/p&gt;
 
 &lt;hr /&gt;
 

@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="2148">
+<meta itemprop="wordCount" content="2384">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -162,7 +162,7 @@ or more ‘data sciencey’. Generally it makes parsing datasets easier but
 low-level string manipulation more fiddly.</p>
 
 <p>Here are my solutions so far. Where possible, I’ve tried to strike a
-balance between efficiency and readability, and to avoid using the
+balance between efficiency and readability, and to try avoid using the
 packages I might usually use (e.g. <code>dplyr</code>) if I think it makes the
 puzzle too easy.</p>
 
@@ -596,10 +596,9 @@ head(input)
 irrelevant (but we will need them later for part 2). For now, we just
 want to reduce it to which colours can contain which others.</p>
 
-<p>To start, I
-tidied up the data into a flat data frame. This isn’t strictly
-necessary—a named list would work too—but it’s easy to keep track of
-everything in a flat data structure.</p>
+<p>To start, I tidied up the data into a flat data frame. This isn’t
+strictly necessary—a named list would work too—but it’s easy to keep
+track of everything in a flat data structure.</p>
 
 <pre><code class="language-r">library(tidyr)
 rules &lt;- strsplit(input, ' contain ') %&gt;%
@@ -684,6 +683,59 @@ concise way to do it using R.</p>
 
 <pre><code>[1] 45018
 </code></pre>
+
+<h1 id="day-8-handheld-halting-https-adventofcode-com-2020-day-8">Day 8 - <a href="https://adventofcode.com/2020/day/8">Handheld halting</a></h1>
+
+<h2 id="infinite-loop">Infinite loop</h2>
+
+<p>Just a simple loop that keeps track of all the places it has been so
+far, and terminates the moment it visits a location for the second time.</p>
+
+<pre><code class="language-r">input &lt;- read.table('input08.txt', col.names = c('instr', 'value'))
+
+acc &lt;- input$visited &lt;- 0
+i &lt;- 1
+
+while (TRUE) {
+  input$visited[i] &lt;- input$visited[i] + 1
+  
+  if ( any(input$visited &gt; 1) )
+    break
+  
+  acc &lt;- acc + input$value[i] * (input$instr[i] == 'acc')
+  i &lt;- i + (input$instr[i] == 'jmp') * (input$value[i]  - 1) + 1
+}
+
+acc
+</code></pre>
+
+<pre><code>[1] 1600
+</code></pre>
+
+<p>Originally I wrote this with nested <code>if</code> statements, then changed it to
+binary multiplication, for fewer lines of code, at the expense of
+readability.</p>
+
+<p>This puzzle is set up to catch you out. From seeing <code>nop +0</code> in the
+example data you might be tempted to assume that adding the value on
+<code>nop</code> instructions won’t affect the accumulator. But the test input data
+have some non-zero <code>nop</code> values thrown in, that you will surely
+encounter (especially because they are part of the puzzle for part 2):</p>
+
+<pre><code class="language-r">head(subset(input, instr == 'nop' &amp; value != 0 &amp; visited &gt; 0))
+</code></pre>
+
+<pre><code>    instr value visited
+2     nop   631       1
+11    nop    83       2
+71    nop   168       1
+73    nop   151       1
+96    nop   -25       1
+123   nop    -9       1
+</code></pre>
+
+<p>Thus you must only jump or add to the accumulator on instructions that
+are explicitly <code>jmp</code> or <code>acc</code>, respectively.</p>
 
 <hr />
 
