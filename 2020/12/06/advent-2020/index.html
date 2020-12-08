@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="2438">
+<meta itemprop="wordCount" content="2549">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -741,12 +741,44 @@ are explicitly <code>jmp</code> or <code>acc</code>, respectively.</p>
 
 <p>From part 1, we already have an algorithm for finding the first
 instruction that will lead into an infinite loop. Instead of terminating
-at this point, we can assume that last instruction was corrupted, swap
-it for the other type, then continue until we find another such
-corruption, all the way until the program is able to terminate on its
-own.</p>
+at this point, we can assume that one of the previous instructions was corrupted
+and swap them in turn until the program terminates successfully.</p>
 
-<p><em>Coming soon</em></p>
+<p>There&rsquo;s possibly an efficient way of iterating through the possibilities in
+order, but I just decided to &lsquo;brute force&rsquo; it, which appears to
+work quickly enough. One thing worth noting is that you only need to
+look at those indices already visited in part 1.</p>
+
+<pre><code class="language-r">nops_and_jmps &lt;- which(input$instr != 'acc' &amp; input$visited)
+
+brute_force &lt;- function() {
+  for (nj in nops_and_jmps) {
+    modified &lt;- input
+    modified$instr[nj] &lt;- setdiff(c('nop', 'jmp'), input$instr[nj])
+    
+    acc &lt;- modified$visited &lt;- 0
+    i &lt;- 1
+    while (TRUE) {
+      
+      if (i == nrow(input) + 1)
+        return(acc)
+      
+      modified$visited[i] &lt;- modified$visited[i] + 1
+      
+      if ( any(modified$visited &gt; 1) )
+        break
+      
+      acc &lt;- acc + modified$value[i] * (modified$instr[i] == 'acc')
+      i &lt;- i + (modified$instr[i] == 'jmp') * (modified$value[i]  - 1) + 1
+    }
+  }
+}
+
+brute_force()
+</code></pre>
+
+<pre><code>[1] 1543
+</code></pre>
 
 <hr />
 

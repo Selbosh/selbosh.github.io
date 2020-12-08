@@ -615,12 +615,44 @@ are explicitly &lt;code&gt;jmp&lt;/code&gt; or &lt;code&gt;acc&lt;/code&gt;, res
 
 &lt;p&gt;From part 1, we already have an algorithm for finding the first
 instruction that will lead into an infinite loop. Instead of terminating
-at this point, we can assume that last instruction was corrupted, swap
-it for the other type, then continue until we find another such
-corruption, all the way until the program is able to terminate on its
-own.&lt;/p&gt;
+at this point, we can assume that one of the previous instructions was corrupted
+and swap them in turn until the program terminates successfully.&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;Coming soon&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;There&amp;rsquo;s possibly an efficient way of iterating through the possibilities in
+order, but I just decided to &amp;lsquo;brute force&amp;rsquo; it, which appears to
+work quickly enough. One thing worth noting is that you only need to
+look at those indices already visited in part 1.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;nops_and_jmps &amp;lt;- which(input$instr != &#39;acc&#39; &amp;amp; input$visited)
+
+brute_force &amp;lt;- function() {
+  for (nj in nops_and_jmps) {
+    modified &amp;lt;- input
+    modified$instr[nj] &amp;lt;- setdiff(c(&#39;nop&#39;, &#39;jmp&#39;), input$instr[nj])
+    
+    acc &amp;lt;- modified$visited &amp;lt;- 0
+    i &amp;lt;- 1
+    while (TRUE) {
+      
+      if (i == nrow(input) + 1)
+        return(acc)
+      
+      modified$visited[i] &amp;lt;- modified$visited[i] + 1
+      
+      if ( any(modified$visited &amp;gt; 1) )
+        break
+      
+      acc &amp;lt;- acc + modified$value[i] * (modified$instr[i] == &#39;acc&#39;)
+      i &amp;lt;- i + (modified$instr[i] == &#39;jmp&#39;) * (modified$value[i]  - 1) + 1
+    }
+  }
+}
+
+brute_force()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 1543
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;hr /&gt;
 
