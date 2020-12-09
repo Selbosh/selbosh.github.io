@@ -689,9 +689,13 @@ brute_force()
 
 &lt;h1 id=&#34;day-9-encoding-error-https-adventofcode-com-2020-day-9&#34;&gt;Day 9 - &lt;a href=&#34;https://adventofcode.com/2020/day/9&#34;&gt;Encoding error&lt;/a&gt;&lt;/h1&gt;
 
+&lt;p&gt;Here the question is how to calculate the sums of pairs of values in a
+sliding window, ideally without redundantly computing the same sums more
+than once.&lt;/p&gt;
+
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;find_error &amp;lt;- function(series, N = 25) {
-  preamble &amp;lt;- series[1:N]
-  combn(preamble, 2) -&amp;gt;.; addmargins(t(.), 2) -&amp;gt;.; as.data.frame(.) -&amp;gt; pairs
+  preamble &amp;lt;- head(series, N)
+  t(combn(preamble, 2)) -&amp;gt;.; addmargins(., 2) -&amp;gt;.; as.data.frame(.) -&amp;gt; pairs
   for (x in tail(series, -N)) {
     if (!x %in% pairs$Sum)
       return(x)
@@ -715,7 +719,7 @@ verbose.&lt;/p&gt;
 &lt;p&gt;To check our working, run on the example dataset:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;example &amp;lt;- c(35, 20, 15, 25, 47, 40, 62, 55, 65, 95, 102, 117, 150, 182, 127,
-             219, 299, 277,  309,  576)
+             219, 299, 277, 309, 576)
 find_error(example, 5)
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -732,6 +736,8 @@ find_error(input)
 
 &lt;pre&gt;&lt;code&gt;[1] 542529149
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;Part 2 coming soon&lt;/em&gt;&lt;/p&gt;
 
 &lt;hr /&gt;
 

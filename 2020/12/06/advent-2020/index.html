@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="2775">
+<meta itemprop="wordCount" content="2807">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -815,9 +815,13 @@ brute_force()
 
 <h1 id="day-9-encoding-error-https-adventofcode-com-2020-day-9">Day 9 - <a href="https://adventofcode.com/2020/day/9">Encoding error</a></h1>
 
+<p>Here the question is how to calculate the sums of pairs of values in a
+sliding window, ideally without redundantly computing the same sums more
+than once.</p>
+
 <pre><code class="language-r">find_error &lt;- function(series, N = 25) {
-  preamble &lt;- series[1:N]
-  combn(preamble, 2) -&gt;.; addmargins(t(.), 2) -&gt;.; as.data.frame(.) -&gt; pairs
+  preamble &lt;- head(series, N)
+  t(combn(preamble, 2)) -&gt;.; addmargins(., 2) -&gt;.; as.data.frame(.) -&gt; pairs
   for (x in tail(series, -N)) {
     if (!x %in% pairs$Sum)
       return(x)
@@ -841,7 +845,7 @@ verbose.</p>
 <p>To check our working, run on the example dataset:</p>
 
 <pre><code class="language-r">example &lt;- c(35, 20, 15, 25, 47, 40, 62, 55, 65, 95, 102, 117, 150, 182, 127,
-             219, 299, 277,  309,  576)
+             219, 299, 277, 309, 576)
 find_error(example, 5)
 </code></pre>
 
@@ -858,6 +862,8 @@ find_error(input)
 
 <pre><code>[1] 542529149
 </code></pre>
+
+<p><em>Part 2 coming soon</em></p>
 
 <hr />
 
