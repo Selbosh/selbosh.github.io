@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="2549">
+<meta itemprop="wordCount" content="2775">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -169,6 +169,20 @@ puzzle too easy.</p>
 <p>The input data are different for each participant, so your numerical
 results may differ from mine.</p>
 
+<ol>
+<li><a href="#day1">Report repair</a></li>
+<li><a href="#day2">Password philosophy</a></li>
+<li><a href="#day3">Toboggan trajectory</a></li>
+<li><a href="#day4">Passport processing</a></li>
+<li><a href="#day5">Binary boarding</a></li>
+<li><a href="#day6">Custom customs</a></li>
+<li><a href="#day7">Handy haversacks</a></li>
+<li><a href="#day8">Handheld halting</a></li>
+<li><a href="#day9">Encoding error</a></li>
+</ol>
+
+<p><a id='day1'></a></p>
+
 <h1 id="day-1-report-repair-https-adventofcode-com-2020-day-1">Day 1 - <a href="https://adventofcode.com/2020/day/1">Report repair</a></h1>
 
 <h2 id="two-numbers">Two numbers</h2>
@@ -213,7 +227,10 @@ prod(.[which.max(.$Var3 %in% input), ])
 
 <p>This is approximately 2000 times faster than the one-liner, and works by
 successively discarding values that could only add up to more than 2020.
-The <code>.</code> notation is just so I can write this without using <code>dplyr</code>.</p>
+The <code>.</code> notation is just so I can write this without using
+<code>dplyr</code>/<code>magrittr</code>.</p>
+
+<p><a id='day2'></a></p>
 
 <h1 id="day-2-password-philosophy-https-adventofcode-com-2020-day-2">Day 2 - <a href="https://adventofcode.com/2020/day/2">Password philosophy</a></h1>
 
@@ -280,6 +297,8 @@ of which must match the given letter.</p>
 one’ and then wondering why an inclusive or (<code>|</code>) was returning the
 incorrect answer.</p>
 
+<p><a id='day3'></a></p>
+
 <h1 id="day-3-toboggan-trajectory-https-adventofcode-com-2020-day-3">Day 3 - <a href="https://adventofcode.com/2020/day/3">Toboggan trajectory</a></h1>
 
 <p>The input looks a bit like this:</p>
@@ -340,6 +359,8 @@ trees(1) * trees(3) * trees(5) * trees(7) * trees(1, 2)
 <p>The <code>as.double</code> bit is necessary only because multiplying large integer
 outputs together can cause an overflow when the product is larger than
 10<sup>9</sup>.</p>
+
+<p><a id='day4'></a></p>
 
 <h1 id="day-4-passport-processing-https-adventofcode-com-2020-day-4">Day 4 - <a href="https://adventofcode.com/2020/day/4">Passport processing</a></h1>
 
@@ -477,6 +498,8 @@ nrow(valid_passports)
 ranges of integer values, you would want to use a <code>data.table</code>
 <em>non-equi-join</em> rather than a simple <code>semi_join</code>.</p>
 
+<p><a id='day5'></a></p>
+
 <h1 id="day-5-binary-boarding-https-adventofcode-com-2020-day-5">Day 5 - <a href="https://adventofcode.com/2020/day/5">Binary boarding</a></h1>
 
 <h2 id="highest-seat-id">Highest seat ID</h2>
@@ -506,6 +529,8 @@ list.</p>
 
 <pre><code>[1] 594
 </code></pre>
+
+<p><a id='day6'></a></p>
 
 <h1 id="day-6-custom-customs-https-adventofcode-com-2020-day-6">Day 6 - <a href="https://adventofcode.com/2020/day/6">Custom customs</a></h1>
 
@@ -569,6 +594,8 @@ responses[, .(count = length(Reduce(intersect, questions))),
 
 <pre><code>[1] 3358
 </code></pre>
+
+<p><a id='day7'></a></p>
 
 <h1 id="day-7-handy-haversacks-https-adventofcode-com-2020-day-7">Day 7 - <a href="https://adventofcode.com/2020/day/7">Handy haversacks</a></h1>
 
@@ -684,6 +711,8 @@ concise way to do it using R.</p>
 <pre><code>[1] 45018
 </code></pre>
 
+<p><a id='day8'></a></p>
+
 <h1 id="day-8-handheld-halting-https-adventofcode-com-2020-day-8">Day 8 - <a href="https://adventofcode.com/2020/day/8">Handheld halting</a></h1>
 
 <h2 id="infinite-loop">Infinite loop</h2>
@@ -741,11 +770,13 @@ are explicitly <code>jmp</code> or <code>acc</code>, respectively.</p>
 
 <p>From part 1, we already have an algorithm for finding the first
 instruction that will lead into an infinite loop. Instead of terminating
-at this point, we can assume that one of the previous instructions was corrupted
-and swap them in turn until the program terminates successfully.</p>
+at this point, we can assume that last instruction was corrupted, swap
+it for the other type, then continue until we find another such
+corruption, all the way until the program is able to terminate on its
+own.</p>
 
-<p>There&rsquo;s possibly an efficient way of iterating through the possibilities in
-order, but I just decided to &lsquo;brute force&rsquo; it, which appears to
+<p>That <em>was</em> the idea, anyway. Then I got fed up and decided to brute
+force it, instead. Maybe there is a subtler way, but this appears to
 work quickly enough. One thing worth noting is that you only need to
 look at those indices already visited in part 1.</p>
 
@@ -778,6 +809,54 @@ brute_force()
 </code></pre>
 
 <pre><code>[1] 1543
+</code></pre>
+
+<p><a id='day9'></a></p>
+
+<h1 id="day-9-encoding-error-https-adventofcode-com-2020-day-9">Day 9 - <a href="https://adventofcode.com/2020/day/9">Encoding error</a></h1>
+
+<pre><code class="language-r">find_error &lt;- function(series, N = 25) {
+  preamble &lt;- series[1:N]
+  combn(preamble, 2) -&gt;.; addmargins(t(.), 2) -&gt;.; as.data.frame(.) -&gt; pairs
+  for (x in tail(series, -N)) {
+    if (!x %in% pairs$Sum)
+      return(x)
+
+    pairs &lt;- subset(pairs, V1 != preamble[1] &amp; V2 != preamble[1])
+    pairs &lt;- rbind(pairs, data.frame(V1 = x,
+                                     V2 = preamble[-1],
+                                     Sum = x + preamble[-1]))
+    preamble &lt;- c(preamble[-1], x)
+  }
+}
+</code></pre>
+
+<p><a href="https://www.youtube.com/watch?v=tphMSLGXuDE">John Mount recently pointed
+out</a> that there is already
+a ‘pipe’ of sorts in base R, which you can construct using an operator
+of the form <code>-&gt;.;</code>. I use it on the second line of this function just
+because converting <code>combn</code> output into a long data frame format is a bit
+verbose.</p>
+
+<p>To check our working, run on the example dataset:</p>
+
+<pre><code class="language-r">example &lt;- c(35, 20, 15, 25, 47, 40, 62, 55, 65, 95, 102, 117, 150, 182, 127,
+             219, 299, 277,  309,  576)
+find_error(example, 5)
+</code></pre>
+
+<pre><code>[1] 127
+</code></pre>
+
+<p>And now with the real input data. As in earlier exercises, we need
+floating point numbers, rather than integers, because the large numbers
+in the real input can cause an integer overflow.</p>
+
+<pre><code class="language-r">input &lt;- as.double(readLines('input09.txt'))
+find_error(input)
+</code></pre>
+
+<pre><code>[1] 542529149
 </code></pre>
 
 <hr />
