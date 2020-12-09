@@ -689,6 +689,8 @@ brute_force()
 
 &lt;h1 id=&#34;day-9-encoding-error-https-adventofcode-com-2020-day-9&#34;&gt;Day 9 - &lt;a href=&#34;https://adventofcode.com/2020/day/9&#34;&gt;Encoding error&lt;/a&gt;&lt;/h1&gt;
 
+&lt;h2 id=&#34;adding-pairs&#34;&gt;Adding pairs&lt;/h2&gt;
+
 &lt;p&gt;Here the question is how to calculate the sums of pairs of values in a
 sliding window, ideally without redundantly computing the same sums more
 than once.&lt;/p&gt;
@@ -731,13 +733,68 @@ floating point numbers, rather than integers, because the large numbers
 in the real input can cause an integer overflow.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- as.double(readLines(&#39;input09.txt&#39;))
-find_error(input)
+(invalid &amp;lt;- find_error(input))
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;pre&gt;&lt;code&gt;[1] 542529149
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;em&gt;Part 2 coming soon&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;contiguous-set&#34;&gt;Contiguous set&lt;/h2&gt;
+
+&lt;p&gt;To find the longest contiguous set of numbers that add up to the value
+above, we first recognise that the values are non-negative, so we can
+immediately exclude any elements that are after our target invalid
+element.&lt;/p&gt;
+
+&lt;p&gt;My procedure will then go as follows. We first initialize an empty set.
+Then, working &lt;em&gt;backwards&lt;/em&gt; through the series:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Add up all the values in the current set.&lt;/li&gt;
+&lt;li&gt;If the sum is greater than the target and the set has more than two
+elements, delete the last element from the current set.&lt;/li&gt;
+&lt;li&gt;If the sum is equal to the target, and the current set larger than
+our current best set (initially the empty set), save this as our
+best so far.&lt;/li&gt;
+&lt;li&gt;Prepend the current set with the next element in the sequence.&lt;/li&gt;
+&lt;li&gt;Repeat 1–4 until you reach the beginning of the original series.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;In R code form:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;contiguous_set &amp;lt;- function(series, target) {
+  series &amp;lt;- head(series, which.max(series == target) - 1)
+  best_set &amp;lt;- set &amp;lt;- c()
+  for (n in rev(series)) {
+    
+    if (sum(set) == target &amp;amp; length(set) &amp;gt;= length(best_set))
+      best_set &amp;lt;- set
+    
+    if (sum(set) &amp;gt; target)
+      set &amp;lt;- head(set, -1)
+    
+    set &amp;lt;- c(n, set)
+  }
+  
+  sum(range(best_set))
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;On our example dataset we get:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;contiguous_set(example, 127)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 62
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And on the test dataset, using the value stored from part 1:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;contiguous_set(input, invalid)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 75678618
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;hr /&gt;
 
