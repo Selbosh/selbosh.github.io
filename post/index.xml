@@ -747,17 +747,16 @@ immediately exclude any elements that are after our target invalid
 element.&lt;/p&gt;
 
 &lt;p&gt;My procedure will then go as follows. We first initialize an empty set.
-Then, working &lt;em&gt;backwards&lt;/em&gt; through the series:&lt;/p&gt;
+Then, iterating backwards through the series:&lt;/p&gt;
 
 &lt;ol&gt;
 &lt;li&gt;Add up all the values in the current set.&lt;/li&gt;
-&lt;li&gt;If the sum is greater than the target and the set has more than two
-elements, delete the last element from the current set.&lt;/li&gt;
+&lt;li&gt;If the sum is greater than the target, delete the last element.&lt;/li&gt;
 &lt;li&gt;If the sum is equal to the target, and the current set larger than
-our current best set (initially the empty set), save this as our
-best so far.&lt;/li&gt;
+our current best set (initially empty), save this as our best so
+far.&lt;/li&gt;
 &lt;li&gt;Prepend the current set with the next element in the sequence.&lt;/li&gt;
-&lt;li&gt;Repeat 1–4 until you reach the beginning of the original series.&lt;/li&gt;
+&lt;li&gt;Repeat 1–4 until you reach the beginning of the series.&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;In R code form:&lt;/p&gt;
@@ -766,7 +765,6 @@ best so far.&lt;/li&gt;
   series &amp;lt;- head(series, which.max(series == target) - 1)
   best_set &amp;lt;- set &amp;lt;- c()
   for (n in rev(series)) {
-    
     if (sum(set) == target &amp;amp; length(set) &amp;gt;= length(best_set))
       best_set &amp;lt;- set
     

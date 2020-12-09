@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="3028">
+<meta itemprop="wordCount" content="3013">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -873,17 +873,16 @@ immediately exclude any elements that are after our target invalid
 element.</p>
 
 <p>My procedure will then go as follows. We first initialize an empty set.
-Then, working <em>backwards</em> through the series:</p>
+Then, iterating backwards through the series:</p>
 
 <ol>
 <li>Add up all the values in the current set.</li>
-<li>If the sum is greater than the target and the set has more than two
-elements, delete the last element from the current set.</li>
+<li>If the sum is greater than the target, delete the last element.</li>
 <li>If the sum is equal to the target, and the current set larger than
-our current best set (initially the empty set), save this as our
-best so far.</li>
+our current best set (initially empty), save this as our best so
+far.</li>
 <li>Prepend the current set with the next element in the sequence.</li>
-<li>Repeat 1–4 until you reach the beginning of the original series.</li>
+<li>Repeat 1–4 until you reach the beginning of the series.</li>
 </ol>
 
 <p>In R code form:</p>
@@ -892,7 +891,6 @@ best so far.</li>
   series &lt;- head(series, which.max(series == target) - 1)
   best_set &lt;- set &lt;- c()
   for (n in rev(series)) {
-    
     if (sum(set) == target &amp; length(set) &gt;= length(best_set))
       best_set &lt;- set
     
