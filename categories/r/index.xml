@@ -813,8 +813,8 @@ prod(table(diff(jolts)))
 &lt;pre&gt;&lt;code&gt;[1] 2170
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;I could have equally appended the 3 in the second line as
-&lt;code&gt;max(input) + 3&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;I could have equally appended the 3 in the final line as
+&lt;code&gt;c(diff(jolts), 3)&lt;/code&gt;.&lt;/p&gt;
 
 &lt;h2 id=&#34;counting-combinations&#34;&gt;Counting combinations&lt;/h2&gt;
 
