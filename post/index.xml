@@ -53,6 +53,7 @@ results may differ from mine.&lt;/p&gt;
 &lt;li&gt;&lt;a href=&#34;#day7&#34;&gt;Handy haversacks&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day8&#34;&gt;Handheld halting&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day9&#34;&gt;Encoding error&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day10&#34;&gt;Adapter array&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;&lt;a id=&#39;day1&#39;&gt;&lt;/a&gt;&lt;/p&gt;
@@ -793,6 +794,28 @@ far.&lt;/li&gt;
 
 &lt;pre&gt;&lt;code&gt;[1] 75678618
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#39;day10&#39;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;day-10-adapter-array-https-adventofcode-com-2020-day-10&#34;&gt;Day 10 - &lt;a href=&#34;https://adventofcode.com/2020/day/10&#34;&gt;Adapter array&lt;/a&gt;&lt;/h1&gt;
+
+&lt;h2 id=&#34;lagged-differences&#34;&gt;Lagged differences&lt;/h2&gt;
+
+&lt;p&gt;This is pretty trivial. Read in the data, append a zero, sort the
+numbers, compute the lagged differences (appending a 3), tabulate them
+and multiply the result.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- as.integer(readLines(&#39;input10.txt&#39;))
+jolts &amp;lt;- c(0, sort(input), max(input) + 3)
+prod(table(diff(jolts)))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 2170
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I could have equivalently appended a 3 to the vector of differences, saving a call to &lt;code&gt;max(input)&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Part 2 coming soon&lt;/em&gt;&lt;/p&gt;
 
 &lt;hr /&gt;
 

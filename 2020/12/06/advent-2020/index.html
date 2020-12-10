@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="3013">
+<meta itemprop="wordCount" content="3083">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -179,6 +179,7 @@ results may differ from mine.</p>
 <li><a href="#day7">Handy haversacks</a></li>
 <li><a href="#day8">Handheld halting</a></li>
 <li><a href="#day9">Encoding error</a></li>
+<li><a href="#day10">Adapter array</a></li>
 </ol>
 
 <p><a id='day1'></a></p>
@@ -919,6 +920,28 @@ far.</li>
 
 <pre><code>[1] 75678618
 </code></pre>
+
+<p><a id='day10'></a></p>
+
+<h1 id="day-10-adapter-array-https-adventofcode-com-2020-day-10">Day 10 - <a href="https://adventofcode.com/2020/day/10">Adapter array</a></h1>
+
+<h2 id="lagged-differences">Lagged differences</h2>
+
+<p>This is pretty trivial. Read in the data, append a zero, sort the
+numbers, compute the lagged differences (appending a 3), tabulate them
+and multiply the result.</p>
+
+<pre><code class="language-r">input &lt;- as.integer(readLines('input10.txt'))
+jolts &lt;- c(0, sort(input), max(input) + 3)
+prod(table(diff(jolts)))
+</code></pre>
+
+<pre><code>[1] 2170
+</code></pre>
+
+<p>I could have equivalently appended a 3 to the vector of differences, saving a call to <code>max(input)</code>.</p>
+
+<p><em>Part 2 coming soon</em></p>
 
 <hr />
 
