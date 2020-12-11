@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="3338">
+<meta itemprop="wordCount" content="3603">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -180,6 +180,7 @@ results may differ from mine.</p>
 <li><a href="#day8">Handheld halting</a></li>
 <li><a href="#day9">Encoding error</a></li>
 <li><a href="#day10">Adapter array</a></li>
+<li><a href="#day11">Seating system</a></li>
 </ol>
 
 <p><a id='day1'></a></p>
@@ -939,8 +940,8 @@ prod(table(diff(jolts)))
 <pre><code>[1] 2170
 </code></pre>
 
-<p>I could have equally appended the 3 in the final line as
-<code>c(diff(jolts), 3)</code>.</p>
+<p>I could have equally appended the 3 in the second line as
+<code>max(input) + 3</code>.</p>
 
 <h2 id="counting-combinations">Counting combinations</h2>
 
@@ -961,7 +962,7 @@ lengths of subsequences of consecutive equal values in our vector.</p>
 
 <p>For a length-<em>n</em> subsequence of differences equal to 1:</p>
 
-<ol>
+<ul>
 <li>if <em>n</em> = 1 the adapter can’t be removed because the gap would then
 be 4:
 
@@ -985,7 +986,7 @@ be 4:
 <li>${3 \choose 0} + {3 \choose 1} + {3 \choose 2} = 7$</li>
 </ul></li>
 <li>and so on (though actually there aren’t any sequences longer than 4)</li>
-</ol>
+</ul>
 
 <p>Then multiply all these numbers of combinations together for every
 subsequence.</p>
@@ -1007,6 +1008,73 @@ prod(sequences$combos)
 
 <pre><code>[1] &quot;24803586664192&quot;
 </code></pre>
+
+<p><a id='day11'></a></p>
+
+<h1 id="day-11-seating-system-https-adventofcode-com-2020-day-11">Day 11 - <a href="https://adventofcode.com/2020/day/11">Seating system</a></h1>
+
+<h2 id="convoluted-seating-plan">Convoluted seating plan</h2>
+
+<p>This puzzle is effectively applying a <a href="https://en.wikipedia.org/wiki/Kernel_(image_processing)"><em>convolution
+matrix</em></a> (the
+set of rules) to a 2-dimensional image (the seating plan).</p>
+
+<p>We can import the data as a logical (binary) matrix where zero or
+<code>FALSE</code> means a seat is empty, and one or <code>TRUE</code> means it is occupied.
+Floor space is set to <code>NA</code>.</p>
+
+<pre><code class="language-r">input &lt;- do.call(rbind, strsplit(readLines('input11.txt'), ''))
+input &lt;- input != 'L'
+input[input &gt; 0] &lt;- NA
+</code></pre>
+
+<p>The rules are:</p>
+
+<ul>
+<li>If a seat is empty (<code>L</code>) and there are no occupied seats adjacent to
+it, the seat becomes occupied.</li>
+<li>If a seat is occupied (<code>#</code>) and four or more seats adjacent to it
+are also occupied, the seat becomes empty.</li>
+<li>Otherwise, the seat’s state does not change.</li>
+</ul>
+
+<p>A convolution kernel matrix can therefore be of the form:</p>
+
+<p>$$\omega = \begin{bmatrix}-1  &amp;  -1  &amp;  -1\\-1  &amp;   3  &amp;  -1\\-1  &amp;  -1  &amp;  -1\end{bmatrix}$$</p>
+
+<p>Which is followed by the filter:</p>
+
+<ul>
+<li>If the result is zero or more, then occupy the seat (set equal to
+<code>TRUE</code> or 1)</li>
+<li>Otherwise, empty the seat (set equal to <code>FALSE</code> or 0)</li>
+<li>If a cell is meant to be floor space, reset to zero (because
+<code>OpenImageR</code> is not currently written to handle <code>NA</code>s).</li>
+</ul>
+
+<pre><code class="language-r">kernel &lt;- matrix(c(rep(-1, 4), 3, rep(-1, 4)), 3, 3)
+
+convoluted_seating &lt;- function(input, kernel) {
+  seats &lt;- replace(input, is.na(input), 0)
+  
+  for (i in 1:100) {
+    convolved &lt;- OpenImageR::convolution(seats, kernel, mode = 'same')
+    new_seats &lt;- replace(convolved &gt;= 0, is.na(input), 0)
+    
+    if ( all(seats == new_seats) )
+      return(sum(new_seats))
+  
+    seats &lt;- new_seats
+  }
+}
+
+convoluted_seating(input, kernel)
+</code></pre>
+
+<pre><code>[1] 2194
+</code></pre>
+
+<p>This took 95 iterations.</p>
 
 <hr />
 
