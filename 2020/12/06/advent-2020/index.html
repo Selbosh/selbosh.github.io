@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="3603">
+<meta itemprop="wordCount" content="4046">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -1013,7 +1013,7 @@ prod(sequences$combos)
 
 <h1 id="day-11-seating-system-https-adventofcode-com-2020-day-11">Day 11 - <a href="https://adventofcode.com/2020/day/11">Seating system</a></h1>
 
-<h2 id="convoluted-seating-plan">Convoluted seating plan</h2>
+<h2 id="convoluted-solution">Convoluted solution</h2>
 
 <p>This puzzle is effectively applying a <a href="https://en.wikipedia.org/wiki/Kernel_(image_processing)"><em>convolution
 matrix</em></a> (the
@@ -1040,7 +1040,7 @@ are also occupied, the seat becomes empty.</li>
 
 <p>A convolution kernel matrix can therefore be of the form:</p>
 
-<p>$$\omega = \begin{bmatrix}-1  &amp;  -1  &amp;  -1\\-1  &amp;   3  &amp;  -1\\-1  &amp;  -1  &amp;  -1\end{bmatrix}$$</p>
+<p>$$\begin{bmatrix}-1  &amp;  -1  &amp;  -1 \\-1  &amp;   3  &amp;  -1 \\-1  &amp;  -1  &amp;  -1\end{bmatrix}$$</p>
 
 <p>Which is followed by the filter:</p>
 
@@ -1066,6 +1066,8 @@ convoluted_seating &lt;- function(input, kernel) {
   
     seats &lt;- new_seats
   }
+  
+  stop('Failed to converge after 100 iterations')
 }
 
 convoluted_seating(input, kernel)
@@ -1075,6 +1077,105 @@ convoluted_seating(input, kernel)
 </code></pre>
 
 <p>This took 95 iterations.</p>
+
+<h2 id="line-of-sight">Line of sight</h2>
+
+<p>In the first part, floor space was just treated like a seat that nobody
+sits in. Now, we have to change our convolution matrix for each pixel
+such that, if there is no seat in one direction, we cast our gaze
+further and borrow the state of a more distant seat.</p>
+
+<p>Unfortunately most image analysis packages only accept a constant matrix
+as the kernel argument, rather than a function, so we shall have to roll
+our own.</p>
+
+<p>Firstly, we run an algorithm to determine which seats are visible. This
+only needs to be run once.</p>
+
+<p>For each seat:</p>
+
+<ol>
+<li>Set radius equal to 1.</li>
+<li>Look in each of the eight directions for a seat. Is a seat visible?</li>
+<li>For any direction where this is not true, increase radius by 1.</li>
+<li>Repeat 2–3 until a visible seat is recorded for every direction.</li>
+</ol>
+
+<p>Today I discovered that <code>which()</code> has an extra argument <code>arr.ind</code> that,
+if <code>TRUE</code>, returns matrix indices. Handy for quickly converting a matrix
+into a long (possibly sparse) representation.</p>
+
+<pre><code class="language-r">seat_ids &lt;- which(!is.na(input), arr.ind = TRUE)
+dirs &lt;- subset(expand.grid(down = -1:1, right = -1:1), down | right)
+
+line_of_sight &lt;- apply(seat_ids, 1, function(ij) {
+  visible_seats &lt;- NULL
+  for (d in 1:nrow(dirs)) {
+    radius &lt;- 1
+    while (TRUE) {
+      i &lt;- ij[1] + radius * dirs$right[d]
+      j &lt;- ij[2] + radius * dirs$down[d]
+      
+      if (i &lt; 1 | j &lt; 1 | i &gt; max(seat_ids[, 1]) | j &gt; max(seat_ids[, 2])) {
+        break
+      }
+      
+      if ( any(seat_ids[, 'row'] == i &amp; seat_ids[, 'col'] == j) ) {
+        visible_seats &lt;- rbind(visible_seats, c(i, j))
+        break
+      }
+
+      radius &lt;- radius + 1
+    }
+  }
+  
+  return(visible_seats)
+})
+</code></pre>
+
+<p>Next we run the seat changing algorithm itself. For each seat:</p>
+
+<ol>
+<li>Add up the number of occupied seats visible from this one.</li>
+<li>If sum is zero and seat is unoccupied, occupy the seat.</li>
+<li>Else if sum is ≥ 5 and seat is occupied, empty the seat.</li>
+</ol>
+
+<p>Repeat until seating allocation does not change.</p>
+
+<pre><code class="language-r">change_places &lt;- function(visible, input) {
+  seating_plan &lt;- input
+  floor &lt;- is.na(seating_plan)
+  
+  for (iter in 1:100) {
+    new_seating_plan &lt;- seating_plan
+    for (seat in seq_along(visible)) {
+      current &lt;- seating_plan[!floor][seat]
+      neighbours &lt;- sum(seating_plan[visible[[seat]]])
+      if (current &amp; neighbours &gt;= 5) {
+        new_seating_plan[!floor][seat] &lt;- 0
+      } else if (!current &amp; !neighbours) {
+        new_seating_plan[!floor][seat] &lt;- 1
+      }
+    }
+    if (all(seating_plan == new_seating_plan, na.rm = TRUE)) {
+      return(sum(seating_plan, na.rm = TRUE))
+    }
+    seating_plan &lt;- new_seating_plan
+  }
+  
+  stop('Failed to converge after 100 iterations')
+}
+
+change_places(line_of_sight, input)
+</code></pre>
+
+<pre><code>[1] 1944
+</code></pre>
+
+<p>This was pretty slow, which is to be expected in R. To speed it up,
+we can rewrite the guts in a lower-level programming language. There
+may also be some scope for vectorisation.</p>
 
 <hr />
 
