@@ -1109,7 +1109,7 @@ are performed by the ship every time &lt;code&gt;F&lt;/code&gt; is invoked.&lt;/
 every &lt;code&gt;L&lt;/code&gt; or &lt;code&gt;R&lt;/code&gt; turn. &lt;a href=&#34;https://en.wikipedia.org/wiki/Euler%27s_formula&#34;&gt;Euler’s
 formula&lt;/a&gt; states:&lt;/p&gt;
 
-&lt;p&gt;$$e^{i\theta} = cos \theta + i \sin \theta,$$&lt;/p&gt;
+&lt;p&gt;$$e^{i\theta} = \cos \theta + i \sin \theta,$$&lt;/p&gt;
 
 &lt;p&gt;and we can use this to work out how to transform the relative
 coordinates of the waypoint to the ship every time there is a turn.&lt;/p&gt;
