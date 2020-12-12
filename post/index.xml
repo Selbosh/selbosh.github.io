@@ -55,6 +55,7 @@ results may differ from mine.&lt;/p&gt;
 &lt;li&gt;&lt;a href=&#34;#day9&#34;&gt;Encoding error&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day10&#34;&gt;Adapter array&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day11&#34;&gt;Seating system&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day12&#34;&gt;Rain risk&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;&lt;a id=&#39;day1&#39;&gt;&lt;/a&gt;&lt;/p&gt;
@@ -982,29 +983,24 @@ into a long (possibly sparse) representation.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;seat_ids &amp;lt;- which(!is.na(input), arr.ind = TRUE)
 dirs &amp;lt;- subset(expand.grid(down = -1:1, right = -1:1), down | right)
 
-line_of_sight &amp;lt;- apply(seat_ids, 1, function(ij) {
-  visible_seats &amp;lt;- NULL
-  for (d in 1:nrow(dirs)) {
-    radius &amp;lt;- 1
-    while (TRUE) {
-      i &amp;lt;- ij[1] + radius * dirs$right[d]
-      j &amp;lt;- ij[2] + radius * dirs$down[d]
-      
-      if (i &amp;lt; 1 | j &amp;lt; 1 | i &amp;gt; max(seat_ids[, 1]) | j &amp;gt; max(seat_ids[, 2])) {
-        break
-      }
-      
-      if ( any(seat_ids[, &#39;row&#39;] == i &amp;amp; seat_ids[, &#39;col&#39;] == j) ) {
-        visible_seats &amp;lt;- rbind(visible_seats, c(i, j))
-        break
-      }
-
-      radius &amp;lt;- radius + 1
-    }
-  }
+radial_search &amp;lt;- function(seat, directions, radius = 1) {
+  if (!nrow(directions))
+    return(NULL)
   
-  return(visible_seats)
-})
+  i &amp;lt;- seat[1] + radius * directions[[&#39;down&#39;]]
+  j &amp;lt;- seat[2] + radius * directions[[&#39;right&#39;]]
+  
+  in_bounds &amp;lt;- i &amp;gt; 0 &amp;amp; i &amp;lt;= nrow(input) &amp;amp; j &amp;gt; 0 &amp;amp; j &amp;lt;= ncol(input)
+  ij &amp;lt;- cbind(i, j)[in_bounds, , drop = FALSE]
+  
+  seat_exists &amp;lt;- !is.na( input[ij] )
+  remaining_dirs &amp;lt;- directions[in_bounds, ][!seat_exists, ]
+  visible &amp;lt;- unname(ij[seat_exists, , drop = FALSE])
+  
+  rbind(visible, radial_search(seat, remaining_dirs, radius + 1))
+}
+
+line_of_sight &amp;lt;- apply(seat_ids, 1, radial_search, directions = dirs)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Next we run the seat changing algorithm itself. For each seat:&lt;/p&gt;
@@ -1047,9 +1043,108 @@ change_places(line_of_sight, input)
 &lt;pre&gt;&lt;code&gt;[1] 1944
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;This was pretty slow, which is to be expected in R. To speed it up,
-we can rewrite the guts in a lower-level programming language. There
-may also be some scope for vectorisation.&lt;/p&gt;
+&lt;p&gt;This was pretty slow, which is to be expected in R. To speed it up, we
+can rewrite the guts in a lower-level programming language. There may
+also be some scope for vectorisation.&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;day12&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;day-12-rain-risk-https-adventofcode-com-2020-day-12&#34;&gt;Day 12 - &lt;a href=&#34;https://adventofcode.com/2020/day/12&#34;&gt;Rain risk&lt;/a&gt;&lt;/h1&gt;
+
+&lt;h2 id=&#34;complex-directions&#34;&gt;Complex directions&lt;/h2&gt;
+
+&lt;p&gt;I was actually expecting this to be more complicated, with turns in
+arbitrary numbers of degrees.
+But it turns out that they are all multiples of 90°, so all &lt;code&gt;F&lt;/code&gt; instructions can
+be simply converted into &lt;code&gt;N&lt;/code&gt;, &lt;code&gt;E&lt;/code&gt;, &lt;code&gt;S&lt;/code&gt; or &lt;code&gt;W&lt;/code&gt; without invoking trigonometry.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tidyr)
+library(dplyr)
+instructions &amp;lt;- tibble(input = readLines(&#39;input12.txt&#39;)) %&amp;gt;%
+  extract(input, c(&#39;direction&#39;, &#39;value&#39;), &#39;(\\w)(\\d+)&#39;, convert = TRUE) %&amp;gt;%
+  mutate(bearing = cumsum(- value * (direction == &#39;L&#39;)
+                          + value * (direction == &#39;R&#39;)),
+         bearing = (90 + bearing) %% 360,
+         cardinal = ifelse(direction == &#39;F&#39;,
+                           c(&#39;N&#39;, &#39;E&#39;, &#39;S&#39;, &#39;W&#39;)[1 + bearing / 90],
+                           direction))
+
+head(instructions)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;# A tibble: 6 x 4
+  direction value bearing cardinal
+  &amp;lt;chr&amp;gt;     &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;   
+1 F             8      90 E       
+2 N             2      90 N       
+3 F            32      90 E       
+4 F            17      90 E       
+5 E             4      90 E       
+6 N             4      90 N       
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now let’s work out where we are. No need to store the latitude and
+longitude in separate columns; we can add them up as complex numbers and
+then sum the real and imaginary parts.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;instructions %&amp;gt;%
+  mutate(east = (cardinal == &#39;E&#39;) - (cardinal == &#39;W&#39;),
+         north = (cardinal == &#39;N&#39;) - (cardinal == &#39;S&#39;)) %&amp;gt;%
+  summarise(position = sum(value * (east + north * 1i)),
+            distance = abs(Re(position)) + abs(Im(position)))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;# A tibble: 1 x 2
+  position  distance
+  &amp;lt;cpl&amp;gt;        &amp;lt;dbl&amp;gt;
+1 -127-752i      879
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;euler-s-bermuda-triangle&#34;&gt;Euler’s Bermuda Triangle&lt;/h2&gt;
+
+&lt;p&gt;Now the &lt;code&gt;N&lt;/code&gt;, &lt;code&gt;E&lt;/code&gt;, &lt;code&gt;S&lt;/code&gt; and &lt;code&gt;W&lt;/code&gt; directions store up instructions, which
+are performed by the ship every time &lt;code&gt;F&lt;/code&gt; is invoked.&lt;/p&gt;
+
+&lt;p&gt;The value of these instructions is rotated in the complex plane for
+every &lt;code&gt;L&lt;/code&gt; or &lt;code&gt;R&lt;/code&gt; turn. &lt;a href=&#34;https://en.wikipedia.org/wiki/Euler%27s_formula&#34;&gt;Euler’s
+formula&lt;/a&gt; states:&lt;/p&gt;
+
+&lt;p&gt;$$e^{i\theta} = cos \theta + i \sin \theta,$$&lt;/p&gt;
+
+&lt;p&gt;and we can use this to work out how to transform the relative
+coordinates of the waypoint to the ship every time there is a turn.&lt;/p&gt;
+
+&lt;p&gt;In the complex plane:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;turning 90° to the right is equivalent to multiplying by $0-i$,&lt;/li&gt;
+&lt;li&gt;turning 90° to the left is equivalent to multiplying by $0+i$,&lt;/li&gt;
+&lt;li&gt;turning 180° is equivalent to multiplying by $-1+0i$,&lt;/li&gt;
+&lt;li&gt;turning 270° is equivalent to turning by -90°, so use the rule above.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;instructions %&amp;gt;%
+  mutate(
+    east = value * ((direction == &#39;E&#39;) - (direction == &#39;W&#39;)),
+    north = value * ((direction == &#39;N&#39;) - (direction == &#39;S&#39;)),
+    radians = value * 2 * pi / 360 * ((direction == &#39;L&#39;) - (direction == &#39;R&#39;)),
+    rotate = exp(1i * radians),
+    waypoint = (10 + 1i + cumsum((east + north * 1i) * cumprod(1 / rotate))),
+  ) %&amp;gt;%
+  summarise(position = sum(value * (direction == &#39;F&#39;) * waypoint * cumprod(rotate)),
+            distance = abs(Re(position)) + abs(Im(position)))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;# A tibble: 1 x 2
+  position   distance
+  &amp;lt;cpl&amp;gt;         &amp;lt;dbl&amp;gt;
+1 17936-171i   18107.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;So that we can take advantage of &lt;code&gt;cumsum&lt;/code&gt; and &lt;code&gt;cumprod&lt;/code&gt; vectorisation,
+we rotate the ship rather than the waypoint, then reverse the rotation
+at the end to get the final position of the ship relative to its
+starting point.&lt;/p&gt;
 
 &lt;hr /&gt;
 

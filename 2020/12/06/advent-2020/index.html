@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="4046">
+<meta itemprop="wordCount" content="4533">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -181,6 +181,7 @@ results may differ from mine.</p>
 <li><a href="#day9">Encoding error</a></li>
 <li><a href="#day10">Adapter array</a></li>
 <li><a href="#day11">Seating system</a></li>
+<li><a href="#day12">Rain risk</a></li>
 </ol>
 
 <p><a id='day1'></a></p>
@@ -1108,29 +1109,24 @@ into a long (possibly sparse) representation.</p>
 <pre><code class="language-r">seat_ids &lt;- which(!is.na(input), arr.ind = TRUE)
 dirs &lt;- subset(expand.grid(down = -1:1, right = -1:1), down | right)
 
-line_of_sight &lt;- apply(seat_ids, 1, function(ij) {
-  visible_seats &lt;- NULL
-  for (d in 1:nrow(dirs)) {
-    radius &lt;- 1
-    while (TRUE) {
-      i &lt;- ij[1] + radius * dirs$right[d]
-      j &lt;- ij[2] + radius * dirs$down[d]
-      
-      if (i &lt; 1 | j &lt; 1 | i &gt; max(seat_ids[, 1]) | j &gt; max(seat_ids[, 2])) {
-        break
-      }
-      
-      if ( any(seat_ids[, 'row'] == i &amp; seat_ids[, 'col'] == j) ) {
-        visible_seats &lt;- rbind(visible_seats, c(i, j))
-        break
-      }
-
-      radius &lt;- radius + 1
-    }
-  }
+radial_search &lt;- function(seat, directions, radius = 1) {
+  if (!nrow(directions))
+    return(NULL)
   
-  return(visible_seats)
-})
+  i &lt;- seat[1] + radius * directions[['down']]
+  j &lt;- seat[2] + radius * directions[['right']]
+  
+  in_bounds &lt;- i &gt; 0 &amp; i &lt;= nrow(input) &amp; j &gt; 0 &amp; j &lt;= ncol(input)
+  ij &lt;- cbind(i, j)[in_bounds, , drop = FALSE]
+  
+  seat_exists &lt;- !is.na( input[ij] )
+  remaining_dirs &lt;- directions[in_bounds, ][!seat_exists, ]
+  visible &lt;- unname(ij[seat_exists, , drop = FALSE])
+  
+  rbind(visible, radial_search(seat, remaining_dirs, radius + 1))
+}
+
+line_of_sight &lt;- apply(seat_ids, 1, radial_search, directions = dirs)
 </code></pre>
 
 <p>Next we run the seat changing algorithm itself. For each seat:</p>
@@ -1173,9 +1169,108 @@ change_places(line_of_sight, input)
 <pre><code>[1] 1944
 </code></pre>
 
-<p>This was pretty slow, which is to be expected in R. To speed it up,
-we can rewrite the guts in a lower-level programming language. There
-may also be some scope for vectorisation.</p>
+<p>This was pretty slow, which is to be expected in R. To speed it up, we
+can rewrite the guts in a lower-level programming language. There may
+also be some scope for vectorisation.</p>
+
+<p><a id="day12"></a></p>
+
+<h1 id="day-12-rain-risk-https-adventofcode-com-2020-day-12">Day 12 - <a href="https://adventofcode.com/2020/day/12">Rain risk</a></h1>
+
+<h2 id="complex-directions">Complex directions</h2>
+
+<p>I was actually expecting this to be more complicated, with turns in
+arbitrary numbers of degrees.
+But it turns out that they are all multiples of 90°, so all <code>F</code> instructions can
+be simply converted into <code>N</code>, <code>E</code>, <code>S</code> or <code>W</code> without invoking trigonometry.</p>
+
+<pre><code class="language-r">library(tidyr)
+library(dplyr)
+instructions &lt;- tibble(input = readLines('input12.txt')) %&gt;%
+  extract(input, c('direction', 'value'), '(\\w)(\\d+)', convert = TRUE) %&gt;%
+  mutate(bearing = cumsum(- value * (direction == 'L')
+                          + value * (direction == 'R')),
+         bearing = (90 + bearing) %% 360,
+         cardinal = ifelse(direction == 'F',
+                           c('N', 'E', 'S', 'W')[1 + bearing / 90],
+                           direction))
+
+head(instructions)
+</code></pre>
+
+<pre><code># A tibble: 6 x 4
+  direction value bearing cardinal
+  &lt;chr&gt;     &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;   
+1 F             8      90 E       
+2 N             2      90 N       
+3 F            32      90 E       
+4 F            17      90 E       
+5 E             4      90 E       
+6 N             4      90 N       
+</code></pre>
+
+<p>Now let’s work out where we are. No need to store the latitude and
+longitude in separate columns; we can add them up as complex numbers and
+then sum the real and imaginary parts.</p>
+
+<pre><code class="language-r">instructions %&gt;%
+  mutate(east = (cardinal == 'E') - (cardinal == 'W'),
+         north = (cardinal == 'N') - (cardinal == 'S')) %&gt;%
+  summarise(position = sum(value * (east + north * 1i)),
+            distance = abs(Re(position)) + abs(Im(position)))
+</code></pre>
+
+<pre><code># A tibble: 1 x 2
+  position  distance
+  &lt;cpl&gt;        &lt;dbl&gt;
+1 -127-752i      879
+</code></pre>
+
+<h2 id="euler-s-bermuda-triangle">Euler’s Bermuda Triangle</h2>
+
+<p>Now the <code>N</code>, <code>E</code>, <code>S</code> and <code>W</code> directions store up instructions, which
+are performed by the ship every time <code>F</code> is invoked.</p>
+
+<p>The value of these instructions is rotated in the complex plane for
+every <code>L</code> or <code>R</code> turn. <a href="https://en.wikipedia.org/wiki/Euler%27s_formula">Euler’s
+formula</a> states:</p>
+
+<p>$$e^{i\theta} = cos \theta + i \sin \theta,$$</p>
+
+<p>and we can use this to work out how to transform the relative
+coordinates of the waypoint to the ship every time there is a turn.</p>
+
+<p>In the complex plane:</p>
+
+<ul>
+<li>turning 90° to the right is equivalent to multiplying by $0-i$,</li>
+<li>turning 90° to the left is equivalent to multiplying by $0+i$,</li>
+<li>turning 180° is equivalent to multiplying by $-1+0i$,</li>
+<li>turning 270° is equivalent to turning by -90°, so use the rule above.</li>
+</ul>
+
+<pre><code class="language-r">instructions %&gt;%
+  mutate(
+    east = value * ((direction == 'E') - (direction == 'W')),
+    north = value * ((direction == 'N') - (direction == 'S')),
+    radians = value * 2 * pi / 360 * ((direction == 'L') - (direction == 'R')),
+    rotate = exp(1i * radians),
+    waypoint = (10 + 1i + cumsum((east + north * 1i) * cumprod(1 / rotate))),
+  ) %&gt;%
+  summarise(position = sum(value * (direction == 'F') * waypoint * cumprod(rotate)),
+            distance = abs(Re(position)) + abs(Im(position)))
+</code></pre>
+
+<pre><code># A tibble: 1 x 2
+  position   distance
+  &lt;cpl&gt;         &lt;dbl&gt;
+1 17936-171i   18107.
+</code></pre>
+
+<p>So that we can take advantage of <code>cumsum</code> and <code>cumprod</code> vectorisation,
+we rotate the ship rather than the waypoint, then reverse the rotation
+at the end to get the final position of the ship relative to its
+starting point.</p>
 
 <hr />
 
