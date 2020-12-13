@@ -541,7 +541,7 @@ head(rules)
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;bag &amp;lt;- &#39;shiny gold&#39;
 containers &amp;lt;- NULL
 
-while (TRUE) {
+repeat {
   contained_in &amp;lt;- subset(rules, content %in% bag)
   if ( !nrow(contained_in) )
     break
@@ -603,7 +603,7 @@ far, and terminates the moment it visits a location for the second time.&lt;/p&g
 acc &amp;lt;- input$visited &amp;lt;- 0
 i &amp;lt;- 1
 
-while (TRUE) {
+repeat {
   input$visited[i] &amp;lt;- input$visited[i] + 1
   
   if ( any(input$visited &amp;gt; 1) )
@@ -667,7 +667,7 @@ brute_force &amp;lt;- function() {
     
     acc &amp;lt;- modified$visited &amp;lt;- 0
     i &amp;lt;- 1
-    while (TRUE) {
+    repeat {
       
       if (i == nrow(input) + 1)
         return(acc)
@@ -1189,12 +1189,10 @@ following properties:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;find_timetable &amp;lt;- function(buses, maxit = 1e5) {
   offsets &amp;lt;- seq_along(buses) - 1
-  i &amp;lt;- 1
-  while (i &amp;lt;= maxit) {
+  for (i in seq_len(maxit)) {
     t &amp;lt;- buses[1] * i
     if ( all((-t %% buses) == offsets, na.rm = TRUE) )
       return(t)
-    i &amp;lt;- i + 1
   }
   stop(&#39;Failed to find a valid t&#39;)
 }

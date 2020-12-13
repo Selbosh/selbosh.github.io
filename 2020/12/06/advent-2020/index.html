@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="4944">
+<meta itemprop="wordCount" content="4933">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -667,7 +667,7 @@ head(rules)
 <pre><code class="language-r">bag &lt;- 'shiny gold'
 containers &lt;- NULL
 
-while (TRUE) {
+repeat {
   contained_in &lt;- subset(rules, content %in% bag)
   if ( !nrow(contained_in) )
     break
@@ -729,7 +729,7 @@ far, and terminates the moment it visits a location for the second time.</p>
 acc &lt;- input$visited &lt;- 0
 i &lt;- 1
 
-while (TRUE) {
+repeat {
   input$visited[i] &lt;- input$visited[i] + 1
   
   if ( any(input$visited &gt; 1) )
@@ -793,7 +793,7 @@ brute_force &lt;- function() {
     
     acc &lt;- modified$visited &lt;- 0
     i &lt;- 1
-    while (TRUE) {
+    repeat {
       
       if (i == nrow(input) + 1)
         return(acc)
@@ -1315,12 +1315,10 @@ following properties:</p>
 
 <pre><code class="language-r">find_timetable &lt;- function(buses, maxit = 1e5) {
   offsets &lt;- seq_along(buses) - 1
-  i &lt;- 1
-  while (i &lt;= maxit) {
+  for (i in seq_len(maxit)) {
     t &lt;- buses[1] * i
     if ( all((-t %% buses) == offsets, na.rm = TRUE) )
       return(t)
-    i &lt;- i + 1
   }
   stop('Failed to find a valid t')
 }
