@@ -1237,10 +1237,10 @@ the first three buses.&lt;/li&gt;
   x[which.max(x %% n2 == a2 %% n2)]
 }
 
-find_timetable2 &amp;lt;- function(buses, maxit = 1e4) {
+find_timetable2 &amp;lt;- function(buses) {
   offsets &amp;lt;- -(seq_along(buses) - 1)[!is.na(buses)] # a
   buses &amp;lt;- buses[!is.na(buses)]                     # n
-  x &amp;lt;- 0
+  x &amp;lt;- offsets[1]
   for (i in 2:length(buses))
     x &amp;lt;- sieve(x, offsets[i], prod(head(buses, i-1)), buses[i])
   x

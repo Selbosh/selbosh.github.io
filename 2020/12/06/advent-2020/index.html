@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="4947">
+<meta itemprop="wordCount" content="4944">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -1363,10 +1363,10 @@ the first three buses.</li>
   x[which.max(x %% n2 == a2 %% n2)]
 }
 
-find_timetable2 &lt;- function(buses, maxit = 1e4) {
+find_timetable2 &lt;- function(buses) {
   offsets &lt;- -(seq_along(buses) - 1)[!is.na(buses)] # a
   buses &lt;- buses[!is.na(buses)]                     # n
-  x &lt;- 0
+  x &lt;- offsets[1]
   for (i in 2:length(buses))
     x &lt;- sieve(x, offsets[i], prod(head(buses, i-1)), buses[i])
   x
