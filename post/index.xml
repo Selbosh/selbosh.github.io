@@ -916,7 +916,7 @@ are also occupied, the seat becomes empty.&lt;/li&gt;
 
 &lt;p&gt;A convolution kernel matrix can therefore be of the form:&lt;/p&gt;
 
-&lt;p&gt;$$\begin{bmatrix}-1  &amp;amp;  -1  &amp;amp;  -1 \-1  &amp;amp;   3  &amp;amp;  -1 \-1  &amp;amp;  -1  &amp;amp;  -1\end{bmatrix}$$&lt;/p&gt;
+&lt;p&gt;$$\begin{bmatrix}-1  &amp;amp;  -1  &amp;amp;  -1 \\-1  &amp;amp;   3  &amp;amp;  -1 \\-1  &amp;amp;  -1  &amp;amp;  -1\end{bmatrix}$$&lt;/p&gt;
 
 &lt;p&gt;Which is followed by the filter:&lt;/p&gt;
 
