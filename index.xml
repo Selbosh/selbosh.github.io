@@ -56,6 +56,7 @@ results may differ from mine.&lt;/p&gt;
 &lt;li&gt;&lt;a href=&#34;#day10&#34;&gt;Adapter array&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day11&#34;&gt;Seating system&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day12&#34;&gt;Rain risk&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day13&#34;&gt;Shuttle search&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;&lt;a id=&#39;day1&#39;&gt;&lt;/a&gt;&lt;/p&gt;
@@ -915,7 +916,7 @@ are also occupied, the seat becomes empty.&lt;/li&gt;
 
 &lt;p&gt;A convolution kernel matrix can therefore be of the form:&lt;/p&gt;
 
-&lt;p&gt;$$\begin{bmatrix}-1  &amp;amp;  -1  &amp;amp;  -1 \\-1  &amp;amp;   3  &amp;amp;  -1 \\-1  &amp;amp;  -1  &amp;amp;  -1\end{bmatrix}$$&lt;/p&gt;
+&lt;p&gt;$$\begin{bmatrix}-1  &amp;amp;  -1  &amp;amp;  -1 \-1  &amp;amp;   3  &amp;amp;  -1 \-1  &amp;amp;  -1  &amp;amp;  -1\end{bmatrix}$$&lt;/p&gt;
 
 &lt;p&gt;Which is followed by the filter:&lt;/p&gt;
 
@@ -1054,9 +1055,9 @@ also be some scope for vectorisation.&lt;/p&gt;
 &lt;h2 id=&#34;complex-directions&#34;&gt;Complex directions&lt;/h2&gt;
 
 &lt;p&gt;I was actually expecting this to be more complicated, with turns in
-arbitrary numbers of degrees.
-But it turns out that they are all multiples of 90°, so all &lt;code&gt;F&lt;/code&gt; instructions can
-be simply converted into &lt;code&gt;N&lt;/code&gt;, &lt;code&gt;E&lt;/code&gt;, &lt;code&gt;S&lt;/code&gt; or &lt;code&gt;W&lt;/code&gt; without invoking trigonometry.&lt;/p&gt;
+arbitrary numbers of degrees. But it turns out that they are all
+multiples of 90°, so all &lt;code&gt;F&lt;/code&gt; instructions can be simply converted into
+&lt;code&gt;N&lt;/code&gt;, &lt;code&gt;E&lt;/code&gt;, &lt;code&gt;S&lt;/code&gt; or &lt;code&gt;W&lt;/code&gt; without invoking trigonometry.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tidyr)
 library(dplyr)
@@ -1107,12 +1108,10 @@ are performed by the ship every time &lt;code&gt;F&lt;/code&gt; is invoked.&lt;/
 
 &lt;p&gt;The value of these instructions is rotated in the complex plane for
 every &lt;code&gt;L&lt;/code&gt; or &lt;code&gt;R&lt;/code&gt; turn. &lt;a href=&#34;https://en.wikipedia.org/wiki/Euler%27s_formula&#34;&gt;Euler’s
-formula&lt;/a&gt; states:&lt;/p&gt;
-
-&lt;p&gt;$$e^{i\theta} = \cos \theta + i \sin \theta,$$&lt;/p&gt;
-
-&lt;p&gt;and we can use this to work out how to transform the relative
-coordinates of the waypoint to the ship every time there is a turn.&lt;/p&gt;
+formula&lt;/a&gt; states:
+$$e^{ix} = \cos x + i\sin x,$$ and we can use this to work out how to
+transform the relative coordinates of the waypoint to the ship every
+time there is a turn.&lt;/p&gt;
 
 &lt;p&gt;In the complex plane:&lt;/p&gt;
 
@@ -1120,7 +1119,7 @@ coordinates of the waypoint to the ship every time there is a turn.&lt;/p&gt;
 &lt;li&gt;turning 90° to the right is equivalent to multiplying by $0-i$,&lt;/li&gt;
 &lt;li&gt;turning 90° to the left is equivalent to multiplying by $0+i$,&lt;/li&gt;
 &lt;li&gt;turning 180° is equivalent to multiplying by $-1+0i$,&lt;/li&gt;
-&lt;li&gt;turning 270° is equivalent to turning by -90°, so use the rule above.&lt;/li&gt;
+&lt;li&gt;turning 270° is equivalent to turning by -90° so use the rule above.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;instructions %&amp;gt;%
@@ -1145,6 +1144,113 @@ coordinates of the waypoint to the ship every time there is a turn.&lt;/p&gt;
 we rotate the ship rather than the waypoint, then reverse the rotation
 at the end to get the final position of the ship relative to its
 starting point.&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;day13&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;day-13-shuttle-search-https-adventofcode-com-2020-day-13&#34;&gt;Day 13 - &lt;a href=&#34;https://adventofcode.com/2020/day/13&#34;&gt;Shuttle search&lt;/a&gt;&lt;/h1&gt;
+
+&lt;h2 id=&#34;earliest-bus&#34;&gt;Earliest bus&lt;/h2&gt;
+
+&lt;p&gt;A bus’s ID indicates the interval between departures, starting at time
+0.&lt;/p&gt;
+
+&lt;p&gt;This is simple modular arithmetic: find the remainder when the timestamp
+is divided by each bus’s ID/interval, then multiply the smallest such
+remainder with the corresponding bus’s ID.&lt;/p&gt;
+
+&lt;p&gt;But we want the bus to arrive &lt;em&gt;after&lt;/em&gt; we start waiting at the bus stop,
+not before. So we negate the timestamp.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- readLines(&#39;input13.txt&#39;)
+timestamp &amp;lt;- as.integer(input[1])
+buses &amp;lt;- as.integer(strsplit(input[2], &#39;,&#39;)[[1]])
+
+inservice &amp;lt;- buses[!is.na(buses)]
+inservice[which.min(-timestamp %% inservice)] * min(-timestamp %% inservice)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 222
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;bus-cluster&#34;&gt;Bus cluster&lt;/h2&gt;
+
+&lt;p&gt;We seek a timepoint $t$ at which our first listed bus arrives, the
+second bus arrives at time $t+1$, and so on. Thus it must have the
+following properties:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;$t \equiv 0 \mod b_0$&lt;/li&gt;
+&lt;li&gt;$t \equiv -1 \mod b_1$&lt;/li&gt;
+&lt;li&gt;…&lt;/li&gt;
+&lt;li&gt;$t \equiv -n \mod b_n$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;First looking at the examples, we can take this naïve approach:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;find_timetable &amp;lt;- function(buses, maxit = 1e5) {
+  offsets &amp;lt;- seq_along(buses) - 1
+  i &amp;lt;- 1
+  while (i &amp;lt;= maxit) {
+    t &amp;lt;- buses[1] * i
+    if ( all((-t %% buses) == offsets, na.rm = TRUE) )
+      return(t)
+    i &amp;lt;- i + 1
+  }
+  stop(&#39;Failed to find a valid t&#39;)
+}
+
+find_timetable(c(17, NA, 13, 19))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 3417
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;find_timetable(c(67, 7, 59, 61))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 754018
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;But this probably isn’t going to scale well. Time to dust off a bit of
+number theory. By the &lt;a href=&#34;https://en.wikipedia.org/wiki/Chinese_remainder_theorem&#34;&gt;Chinese remainder
+theorem&lt;/a&gt;, for
+any $a$, $b$ and coprime $m$, $n$, there exists a unique $x (\mod mn)$
+such that $x \equiv a \mod m$ and $x \equiv b \mod n$.&lt;/p&gt;
+
+&lt;p&gt;Here $a,b$ are offsets (the position of the bus in the list), $n$
+represents a bus ID and $x$ is the solution we seek.&lt;/p&gt;
+
+&lt;p&gt;The algorithm will be as follows:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Test values in the sequence $a_1, a_1 + n_1, a_1 + 2n_1, \dots$ to
+find the first time $x_1$ at which a bus arrives and the second bus
+arrives 1 minute later.&lt;/li&gt;
+&lt;li&gt;Test values in the sequence
+$x_1, x_1 + n_1n_2, x_1 + 2n_1n_2, \dots$ to get a valid time for
+the first three buses.&lt;/li&gt;
+&lt;li&gt;Repeat.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;sieve &amp;lt;- function(a1, a2, n1, n2, maxit = 1e5) {
+  x &amp;lt;- a1 + n1 * (0:maxit)
+  x[which.max(x %% n2 == a2 %% n2)]
+}
+
+find_timetable2 &amp;lt;- function(buses, maxit = 1e4) {
+  offsets &amp;lt;- -(seq_along(buses) - 1)[!is.na(buses)] # a
+  buses &amp;lt;- buses[!is.na(buses)]                     # n
+  x &amp;lt;- 0
+  for (i in 2:length(buses))
+    x &amp;lt;- sieve(x, offsets[i], prod(head(buses, i-1)), buses[i])
+  x
+}
+
+format(find_timetable2(buses), sci = FALSE)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] &amp;quot;408270049879073&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;hr /&gt;
 
