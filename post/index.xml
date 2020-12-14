@@ -1267,8 +1267,7 @@ bits and the puzzle is 36-bit.&lt;/p&gt;
 library(tidyr)
 intTo36Bits &amp;lt;- function(n) {
   bit32 &amp;lt;- rev(as.character(intToBits(n)))
-  bit36 &amp;lt;- c(rep(0, 4), as.integer(bit32))
-  paste(bit36, collapse = &#39;&#39;)
+  c(rep(0, 4), as.integer(bit32))
 }
 
 binaryToInt &amp;lt;- function(b) {
@@ -1291,7 +1290,8 @@ program &amp;lt;- read.table(&#39;input14.txt&#39;, sep = &#39;=&#39;, strip.whi
   filter(dest == &#39;mem&#39;) %&amp;gt;%
   select(-dest) %&amp;gt;%
   mutate(value = as.integer(value),
-         value_binary = sapply(value, intTo36Bits),
+         value_binary = lapply(value, intTo36Bits),
+         value_binary = sapply(value_binary, paste, collapse = &#39;&#39;),
          value_masked = mapply(mask, mask, value_binary))
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -1310,11 +1310,60 @@ address. Whatever values they took before the end are unimportant.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;program %&amp;gt;%
   group_by(address) %&amp;gt;%
   summarise(last_integer = binaryToInt(last(value_masked))) %&amp;gt;%
-  pull(last_integer) %&amp;gt;% sum %&amp;gt;% format(scientific = FALSE)
+  pull(last_integer) %&amp;gt;% sum %&amp;gt;% format(scientific = FALSE) # 14862056079561
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;pre&gt;&lt;code&gt;[1] &amp;quot;14862056079561&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;memory-address-decoder&#34;&gt;Memory address decoder&lt;/h2&gt;
+
+&lt;p&gt;In part 2, the mask applies to the memory address, &lt;em&gt;not&lt;/em&gt; to the value.
+Thus the same value gets applied to possibly many addresses.&lt;/p&gt;
+
+&lt;p&gt;It also helps to &lt;em&gt;read the question properly&lt;/em&gt;. I got stuck on this for
+ages until I eventually noticed the part that says&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;If the bitmask bit is 0, the corresponding memory address bit is
+&lt;strong&gt;unchanged&lt;/strong&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;which meant my mask was doing the wrong thing, even before the floating
+bits.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;decode &amp;lt;- function(mask, x) {
+  mask &amp;lt;- suppressWarnings(as.integer(strsplit(mask, &#39;&#39;)[[1]]))
+  x &amp;lt;- as.integer(strsplit(x, &#39;&#39;)[[1]])
+  x[!is.na(mask) &amp;amp; mask] &amp;lt;- mask[!is.na(mask) &amp;amp; mask] # no change if mask is 0!
+  n_floating &amp;lt;- sum(is.na(mask))
+  decoded &amp;lt;- c()
+  for (i in seq_len(2^n_floating) - 1) {
+    x[is.na(mask)] &amp;lt;- tail(intTo36Bits(i), n_floating)
+    decoded &amp;lt;- c(decoded, paste(x, collapse = &#39;&#39;))
+  }
+  decoded
+}
+
+program %&amp;gt;%
+  select(-value_masked) %&amp;gt;%
+  mutate(address_binary = sapply(lapply(address, intTo36Bits), paste, collapse = &#39;&#39;),
+         address_decoded = mapply(decode, mask, address_binary)) %&amp;gt;%
+  select(address_decoded, value_binary) %&amp;gt;%
+  tidyr::unnest_longer(address_decoded) %&amp;gt;%
+  group_by(address_decoded) %&amp;gt;%
+  summarise(last_integer = binaryToInt(last(value_binary))) %&amp;gt;%
+  pull(last_integer) %&amp;gt;% sum %&amp;gt;% format(scientific = FALSE)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] &amp;quot;3296185383161&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There are many ways I could have improved this solution. In particular,
+there wasn’t any actual reason why I needed to compress the binary
+digits into a string representation between operations—other than making
+the tables of values easier to read during debugging. I could have
+stored them as vectors or matrices in list-columns, instead.&lt;/p&gt;
 
 &lt;hr /&gt;
 

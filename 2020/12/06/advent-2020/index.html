@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="5179">
+<meta itemprop="wordCount" content="5405">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -1393,8 +1393,7 @@ bits and the puzzle is 36-bit.</p>
 library(tidyr)
 intTo36Bits &lt;- function(n) {
   bit32 &lt;- rev(as.character(intToBits(n)))
-  bit36 &lt;- c(rep(0, 4), as.integer(bit32))
-  paste(bit36, collapse = '')
+  c(rep(0, 4), as.integer(bit32))
 }
 
 binaryToInt &lt;- function(b) {
@@ -1417,7 +1416,8 @@ program &lt;- read.table('input14.txt', sep = '=', strip.white = TRUE,
   filter(dest == 'mem') %&gt;%
   select(-dest) %&gt;%
   mutate(value = as.integer(value),
-         value_binary = sapply(value, intTo36Bits),
+         value_binary = lapply(value, intTo36Bits),
+         value_binary = sapply(value_binary, paste, collapse = ''),
          value_masked = mapply(mask, mask, value_binary))
 </code></pre>
 
@@ -1436,11 +1436,60 @@ address. Whatever values they took before the end are unimportant.</p>
 <pre><code class="language-r">program %&gt;%
   group_by(address) %&gt;%
   summarise(last_integer = binaryToInt(last(value_masked))) %&gt;%
-  pull(last_integer) %&gt;% sum %&gt;% format(scientific = FALSE)
+  pull(last_integer) %&gt;% sum %&gt;% format(scientific = FALSE) # 14862056079561
 </code></pre>
 
 <pre><code>[1] &quot;14862056079561&quot;
 </code></pre>
+
+<h2 id="memory-address-decoder">Memory address decoder</h2>
+
+<p>In part 2, the mask applies to the memory address, <em>not</em> to the value.
+Thus the same value gets applied to possibly many addresses.</p>
+
+<p>It also helps to <em>read the question properly</em>. I got stuck on this for
+ages until I eventually noticed the part that says</p>
+
+<blockquote>
+<p>If the bitmask bit is 0, the corresponding memory address bit is
+<strong>unchanged</strong>.</p>
+</blockquote>
+
+<p>which meant my mask was doing the wrong thing, even before the floating
+bits.</p>
+
+<pre><code class="language-r">decode &lt;- function(mask, x) {
+  mask &lt;- suppressWarnings(as.integer(strsplit(mask, '')[[1]]))
+  x &lt;- as.integer(strsplit(x, '')[[1]])
+  x[!is.na(mask) &amp; mask] &lt;- mask[!is.na(mask) &amp; mask] # no change if mask is 0!
+  n_floating &lt;- sum(is.na(mask))
+  decoded &lt;- c()
+  for (i in seq_len(2^n_floating) - 1) {
+    x[is.na(mask)] &lt;- tail(intTo36Bits(i), n_floating)
+    decoded &lt;- c(decoded, paste(x, collapse = ''))
+  }
+  decoded
+}
+
+program %&gt;%
+  select(-value_masked) %&gt;%
+  mutate(address_binary = sapply(lapply(address, intTo36Bits), paste, collapse = ''),
+         address_decoded = mapply(decode, mask, address_binary)) %&gt;%
+  select(address_decoded, value_binary) %&gt;%
+  tidyr::unnest_longer(address_decoded) %&gt;%
+  group_by(address_decoded) %&gt;%
+  summarise(last_integer = binaryToInt(last(value_binary))) %&gt;%
+  pull(last_integer) %&gt;% sum %&gt;% format(scientific = FALSE)
+</code></pre>
+
+<pre><code>[1] &quot;3296185383161&quot;
+</code></pre>
+
+<p>There are many ways I could have improved this solution. In particular,
+there wasn’t any actual reason why I needed to compress the binary
+digits into a string representation between operations—other than making
+the tables of values easier to read during debugging. I could have
+stored them as vectors or matrices in list-columns, instead.</p>
 
 <hr />
 
