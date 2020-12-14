@@ -57,6 +57,7 @@ results may differ from mine.&lt;/p&gt;
 &lt;li&gt;&lt;a href=&#34;#day11&#34;&gt;Seating system&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day12&#34;&gt;Rain risk&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day13&#34;&gt;Shuttle search&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day14&#34;&gt;Docking data&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;&lt;a id=&#39;day1&#39;&gt;&lt;/a&gt;&lt;/p&gt;
@@ -1248,6 +1249,71 @@ format(find_timetable2(buses), sci = FALSE)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;pre&gt;&lt;code&gt;[1] &amp;quot;408270049879073&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;day14&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;day-14-docking-data-https-adventofcode-com-2020-day-14&#34;&gt;Day 14 - &lt;a href=&#34;https://adventofcode.com/2020/day/14&#34;&gt;Docking data&lt;/a&gt;&lt;/h1&gt;
+
+&lt;h2 id=&#34;bitmask&#34;&gt;Bitmask&lt;/h2&gt;
+
+&lt;p&gt;The trickiest bit(!) in the first part is reading in the data. I wanted
+a data frame that ‘remembered’ the value of the last mask set. The other
+part is converting to and from binary. To help you along the way, R has
+a function called &lt;code&gt;intToBits&lt;/code&gt;, but be careful because it converts to 32
+bits and the puzzle is 36-bit.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(dplyr)
+library(tidyr)
+intTo36Bits &amp;lt;- function(n) {
+  bit32 &amp;lt;- rev(as.character(intToBits(n)))
+  bit36 &amp;lt;- c(rep(0, 4), as.integer(bit32))
+  paste(bit36, collapse = &#39;&#39;)
+}
+
+binaryToInt &amp;lt;- function(b) {
+  b &amp;lt;- as.integer(strsplit(b, &#39;&#39;)[[1]])
+  sum(b * 2^rev(seq_along(b) - 1))
+}
+
+mask &amp;lt;- function(mask, x) {
+  mask &amp;lt;- suppressWarnings(as.integer(strsplit(mask, &#39;&#39;)[[1]]))
+  x &amp;lt;- as.integer(strsplit(x, &#39;&#39;)[[1]])
+  x[!is.na(mask)] &amp;lt;- mask[!is.na(mask)]
+  paste(x, collapse = &#39;&#39;)
+}
+
+program &amp;lt;- read.table(&#39;input14.txt&#39;, sep = &#39;=&#39;, strip.white = TRUE,
+                      col.names = c(&#39;key&#39;, &#39;value&#39;)) %&amp;gt;%
+  extract(key, c(&#39;dest&#39;, &#39;address&#39;), &#39;(mem|mask)\\[?(\\d*)\\]?&#39;,
+          convert = TRUE) %&amp;gt;%
+  mutate(mask = value[which(dest == &#39;mask&#39;)[cumsum(dest == &#39;mask&#39;)]]) %&amp;gt;%
+  filter(dest == &#39;mem&#39;) %&amp;gt;%
+  select(-dest) %&amp;gt;%
+  mutate(value = as.integer(value),
+         value_binary = sapply(value, intTo36Bits),
+         value_masked = mapply(mask, mask, value_binary))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As an example, here is the first value &lt;code&gt;51331021&lt;/code&gt; being masked to become
+&lt;code&gt;62069628301&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;value:   000000000011000011110011111111001101
+mask:    1110X1110XXX101X0011010X110X10X0110X
+result:  111001110011101000110101110110001101
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;What is the sum of the values in memory? Well, since we are just
+&lt;em&gt;setting&lt;/em&gt; values, the only value we care about is the last one for each
+address. Whatever values they took before the end are unimportant.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;program %&amp;gt;%
+  group_by(address) %&amp;gt;%
+  summarise(last_integer = binaryToInt(last(value_masked))) %&amp;gt;%
+  pull(last_integer) %&amp;gt;% sum %&amp;gt;% format(scientific = FALSE)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] &amp;quot;14862056079561&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;hr /&gt;
