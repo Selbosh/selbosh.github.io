@@ -2,28 +2,28 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>France on Tea &amp; Stats</title>
-    <link>https://selbydavid.com/categories/france/</link>
+    <link>/categories/france/</link>
     <description>Tea, statistics and t-statistics: a data science blog by David Selby.</description>
 		<atom:author>
 			<atom:name>David Selby</atom:name>
 			<atom:uri>https://selbydavid.com</atom:uri>
 		</atom:author>
 		<image>
-		    <link>https://selbydavid.com/categories/france/</link>
+		    <link>/categories/france/</link>
 		    <title>Tea &amp; Stats</title>
-		    <url>https://selbydavid.com/logo.png</url>
+		    <url>/logo.png</url>
 		</image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-GB</language>
     <lastBuildDate>Sun, 08 Jul 2018 11:00:00 +0200</lastBuildDate>
-    <atom:link href="https://selbydavid.com/categories/france/" rel="self" type="application/rss+xml" />
+    <atom:link href="/categories/france/" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Le lait, le comprenez-vous?</title>
-      <link>https://selbydavid.com/2018/07/08/milk/</link>
+      <link>/2018/07/08/milk/</link>
       <pubDate>Sun, 08 Jul 2018 11:00:00 +0200</pubDate>
       
-      <guid>https://selbydavid.com/2018/07/08/milk/</guid>
+      <guid>/2018/07/08/milk/</guid>
       <description>&lt;p&gt;Buying milk in France is not like at home.
 In the supermarket, it is always found in the farthest possible point from the shop entrance, but the similarities end there.&lt;/p&gt;
 
@@ -31,7 +31,7 @@ In the supermarket, it is always found in the farthest possible point from the s
 Blue milk bottles are semi-skimmed, red is full fat&amp;mdash;except when it&amp;rsquo;s green: then it&amp;rsquo;s &lt;em&gt;organic&lt;/em&gt; full fat&amp;mdash;and skimmed milk bottles are octarine or something.
 In the UK, it&amp;rsquo;s far simpler: red for skimmed, green for semi-skimmed, blue for full fat, gold for fuller than full fat and then orange for that other level that also exists.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/milk.jpg&#34; alt=&#34;Milk in a French supermarket&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/milk.jpg&#34; alt=&#34;Milk in a French supermarket&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;French milk bottles don&amp;rsquo;t have little handles on them, unlike British ones, maybe because the dexterity to add &amp;lsquo;just a dash&amp;rsquo; to a cup of tea is not in high demand in France.
 Bottles of drain cleaner do have the little handles, though.
@@ -41,17 +41,17 @@ I draw no conclusions from this.&lt;/p&gt;
     
     <item>
       <title>One week in Paris</title>
-      <link>https://selbydavid.com/2018/05/29/paris/</link>
+      <link>/2018/05/29/paris/</link>
       <pubDate>Tue, 29 May 2018 15:00:00 +0200</pubDate>
       
-      <guid>https://selbydavid.com/2018/05/29/paris/</guid>
+      <guid>/2018/05/29/paris/</guid>
       <description>
 
 &lt;p&gt;I have just moved to Paris ahead of a six-month internship.
 It is my first time even visiting the city, so here are some initial impressions.
 As many a Français(e) will keenly remind you: &amp;lsquo;Paris is not France&amp;rsquo;, so I also hope to venture outside &lt;em&gt;la Périphérique&lt;/em&gt; soon.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/david.jpg&#34; alt=&#34;David in Paris&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/david.jpg&#34; alt=&#34;David in Paris&#34; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;la-circulation&#34;&gt;La circulation&lt;/h3&gt;
 
@@ -59,7 +59,7 @@ As many a Français(e) will keenly remind you: &amp;lsquo;Paris is not France&am
 A red man at a pedestrian crossing means &amp;ldquo;cross at your peril&amp;rdquo; whilst a green man means exactly the same.
 Approximately 94% of roads and cycle paths are one-way, so route finding involves a fair bit of improvisation.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/triomphe.jpg&#34; alt=&#34;Arc de Triomphe de l&#39;Étoile&#34; title=&#34;Arc de Triomphe de l&#39;Étoile&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/triomphe.jpg&#34; alt=&#34;Arc de Triomphe de l&#39;Étoile&#34; title=&#34;Arc de Triomphe de l&#39;Étoile&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;The best places to observe Parisian drivers in their natural habitat are the many-laned roundabouts that are the Place de la Concorde and Arc de Triomphe.
 The car pictured above set off for work decades ago but still hasn&amp;rsquo;t managed successfully to navigate Baron Haussmann&amp;rsquo;s road network.&lt;/p&gt;
@@ -73,23 +73,23 @@ Bonus points if you hire a vélo that is covered in algae, having clearly just b
 &lt;p&gt;Nobody knows if the Blackpool Tower is smaller than the Eiffel Tower or just always farther away.
 Incredibly, the French managed to copy the design of the former before it was even built.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/eiffel.jpg&#34; alt=&#34;La Tour Eiffel&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/eiffel.jpg&#34; alt=&#34;La Tour Eiffel&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;On our first visit, the lift to the very top was closed, but it was still possible to go to the &lt;em&gt;deuxième étage&lt;/em&gt;.
 It is slightly cheaper (and quicker, given the queues) to take the stairs than to take the lift, so up the 669 steps we went.
 My mum reckoned the 130-year-old structure needed dusting and a lick of paint.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/eiffelq.jpg&#34; alt=&#34;View from Eiffel Tower stairs, looking down on the queue for the lift&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/eiffelq.jpg&#34; alt=&#34;View from Eiffel Tower stairs, looking down on the queue for the lift&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/eiffel2.jpg&#34; alt=&#34;La Tour Eiffel&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/eiffel2.jpg&#34; alt=&#34;La Tour Eiffel&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;The views over the city are pretty stunning, even from &amp;lsquo;only&amp;rsquo; 115 metres up.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/skyline.jpg&#34; alt=&#34;Paris skyline from Eiffel Tower&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/skyline.jpg&#34; alt=&#34;Paris skyline from Eiffel Tower&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/skyline2.jpg&#34; alt=&#34;Paris skyline from Eiffel Tower&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/skyline2.jpg&#34; alt=&#34;Paris skyline from Eiffel Tower&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/skyline3.jpg&#34; alt=&#34;Paris skyline from Eiffel Tower&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/skyline3.jpg&#34; alt=&#34;Paris skyline from Eiffel Tower&#34; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;les-catacombes-de-paris&#34;&gt;Les Catacombes de Paris&lt;/h3&gt;
 
@@ -103,12 +103,12 @@ My mum reckoned the 130-year-old structure needed dusting and a lick of paint.&l
 &lt;p&gt;If you looked at every item in the Louvre for a minute, it would take you more than two months to see everything.
 I haven&amp;rsquo;t been here that long yet.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/pyramide.jpg&#34; alt=&#34;Pyramide du Louvre&#34; title=&#34;Pyramide du Louvre&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/pyramide.jpg&#34; alt=&#34;Pyramide du Louvre&#34; title=&#34;Pyramide du Louvre&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;The famous art museum opens onto the Jardin des Tuileries, a big park.
 I tried on a few souvenir hats from the street sellers here but none of them were big enough.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/louvre.jpg&#34; alt=&#34;Musée du Louvre&#34; title=&#34;Musée du Louvre&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/louvre.jpg&#34; alt=&#34;Musée du Louvre&#34; title=&#34;Musée du Louvre&#34; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;les-champs-elysées&#34;&gt;Les Champs-Elysées&lt;/h3&gt;
 
@@ -121,44 +121,44 @@ You can buy T-shirts for €500 but I haven&amp;rsquo;t been tempted by them yet
 &lt;p&gt;French beer comes in small, medium and large-but-still-not-quite-a-pint.
 Prices on &lt;em&gt;les terrasses&lt;/em&gt; are about what you&amp;rsquo;d pay at home, multiplied by five.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/terrasse.jpg&#34; alt=&#34;Les terrasses&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/terrasse.jpg&#34; alt=&#34;Les terrasses&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;If you pick your seat strategically, you can watch &lt;em&gt;other&lt;/em&gt; people get wet when it starts to rain.
 We weren&amp;rsquo;t clever enough to avoid getting caught in a hailstorm on the first day, however.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/grele.gif&#34; alt=&#34;La grêle&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/grele.gif&#34; alt=&#34;La grêle&#34; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;mon-appartement-près-de-la-madeleine&#34;&gt;Mon appartement près de la Madeleine&lt;/h3&gt;
 
 &lt;p&gt;I have a flat in the 9th arrondissement, near the trendy Madeleine and Opéra districts.
 L&amp;rsquo;église de la Madeleine is a huge neo-classical church &amp;lsquo;designed as a temple to the glory of Napoleon&amp;rsquo;s army&amp;rsquo;.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/madeleine.jpg&#34; alt=&#34;La Madeleine&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/madeleine.jpg&#34; alt=&#34;La Madeleine&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/madeleine2.jpg&#34; alt=&#34;La Madeleine&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/madeleine2.jpg&#34; alt=&#34;La Madeleine&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Local boutiques include the &lt;em&gt;Galeries Lafayette&lt;/em&gt; and &lt;em&gt;Grands Magasins Printemps&lt;/em&gt;, which are temples to the glory of shopping.
 These historic high-end department stores are the only places I have found so far with hats that fit me, but at €250 a go, I haven&amp;rsquo;t splurged yet.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/lafayette.jpg&#34; alt=&#34;Galerie Lafayette&#34; title=&#34;Galerie Lafayette&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/lafayette.jpg&#34; alt=&#34;Galerie Lafayette&#34; title=&#34;Galerie Lafayette&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;I start my internship next week.&lt;/p&gt;
 
 &lt;h3 id=&#34;more-photos&#34;&gt;More photos&lt;/h3&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/seine.jpg&#34; alt=&#34;View of the Seine&#34; title=&#34;The Seine&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/seine.jpg&#34; alt=&#34;View of the Seine&#34; title=&#34;The Seine&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/seine2.jpg&#34; alt=&#34;Bridge over the Seine&#34; title=&#34;Passerelle Debilly&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/seine2.jpg&#34; alt=&#34;Bridge over the Seine&#34; title=&#34;Passerelle Debilly&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/manutention.jpg&#34; alt=&#34;Rue de la Manutention&#34; title=&#34;Rue de la Manutention&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/manutention.jpg&#34; alt=&#34;Rue de la Manutention&#34; title=&#34;Rue de la Manutention&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/concorde.jpg&#34; alt=&#34;Place de la Concorde&#34; title=&#34;Place de la Concorde&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/concorde.jpg&#34; alt=&#34;Place de la Concorde&#34; title=&#34;Place de la Concorde&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/royal.jpg&#34; alt=&#34;Palais Royal&#34; title=&#34;Palais Royal&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/royal.jpg&#34; alt=&#34;Palais Royal&#34; title=&#34;Palais Royal&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/opera.jpg&#34; alt=&#34;View from roof of Galerie Lafayette&#34; title=&#34;View from roof of Galerie Lafayette&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/opera.jpg&#34; alt=&#34;View from roof of Galerie Lafayette&#34; title=&#34;View from roof of Galerie Lafayette&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/carrousel.jpg&#34; alt=&#34;Arc de Triomphe du Carrousel&#34; title=&#34;Arc de Triomphe du Carrousel&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/carrousel.jpg&#34; alt=&#34;Arc de Triomphe du Carrousel&#34; title=&#34;Arc de Triomphe du Carrousel&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;I now take a croissant with my morning Yorkshire Tea but supplies of the latter are dwindling.
 Send more!&lt;/p&gt;

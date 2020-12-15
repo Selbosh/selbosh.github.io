@@ -16,9 +16,9 @@
 This year I am attempting it using R, which can make some challenges easier or harder depending on whether they are more ‘computer sciencey’ or more ‘data sciencey’. Generally it makes parsing datasets easier but low-level string manipulation more fiddly.
 Here are my solutions so far." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://selbydavid.com/2020/12/06/advent-2020/" />
+<meta property="og:url" content="/2020/12/06/advent-2020/" />
 
-  <meta property="og:image" content="https://selbydavid.com/img/2020/adventofcode.jpg" />
+  <meta property="og:image" content="/img/2020/adventofcode.jpg" />
 
 
 
@@ -46,16 +46,16 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="5405">
+<meta itemprop="wordCount" content="5823">
 
-  <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
+  <meta itemprop="image" content="/img/2020/adventofcode.jpg">
 
 
 
 <meta itemprop="keywords" content="" />
 
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image:src" content="https://selbydavid.com/img/2020/adventofcode.jpg"/>
+<meta name="twitter:image:src" content="/img/2020/adventofcode.jpg"/>
 <meta name="twitter:title" content="Advent of Code 2020"/>
 <meta name="twitter:description" content="Advent of Code is a series of programming puzzles you can tackle to hone your coding skills each day in the run-up to Christmas.
 This year I am attempting it using R, which can make some challenges easier or harder depending on whether they are more ‘computer sciencey’ or more ‘data sciencey’. Generally it makes parsing datasets easier but low-level string manipulation more fiddly.
@@ -80,7 +80,7 @@ Here are my solutions so far."/>
 
 
 
-<link rel="shortcut icon" href="https://selbydavid.com/favicon.ico">
+<link rel="shortcut icon" href="/favicon.ico">
 
 
 
@@ -89,7 +89,7 @@ Here are my solutions so far."/>
 
 
 
-<link rel="stylesheet" href="https://selbydavid.com/css/main.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
 
 <script src="https://use.fontawesome.com/269c7751ba.js"></script>
 
@@ -97,16 +97,16 @@ Here are my solutions so far."/>
   <body>
       
         <header id="masthead">
-          <img src="https://selbydavid.com/img/logo.svg"
+          <img src="/img/logo.svg"
                width="120"
                height=""
                alt="Tea and Stats">
-          <h1><a href="https://selbydavid.com/">Tea &amp; Stats</a></h1>
+          <h1><a href="/">Tea &amp; Stats</a></h1>
           <aside>Data science with David Selby</aside>
           <nav>
   <ul>
     
-      <li><a href="https://selbydavid.com/about/">About</a></li>
+      <li><a href="/about/">About</a></li>
     
     
     <li>
@@ -184,6 +184,7 @@ results may differ from mine.</p>
 <li><a href="#day12">Rain risk</a></li>
 <li><a href="#day13">Shuttle search</a></li>
 <li><a href="#day14">Docking data</a></li>
+<li><a href="#day15">Rambunctious recitation</a></li>
 </ol>
 
 <p><a id='day1'></a></p>
@@ -1491,6 +1492,103 @@ digits into a string representation between operations—other than making
 the tables of values easier to read during debugging. I could have
 stored them as vectors or matrices in list-columns, instead.</p>
 
+<p><a id="day15"></a></p>
+
+<h1 id="day-15-rambunctious-recitation-https-adventofcode-com-2020-day-15">Day 15 - <a href="https://adventofcode.com/2020/day/15">Rambunctious recitation</a></h1>
+
+<h2 id="memory-game">Memory game</h2>
+
+<p>The first part is straightforward even with not particularly optimal
+code:</p>
+
+<pre><code class="language-r">memory_game &lt;- function(n, start) {
+  nstart &lt;- length(start)
+  spoken &lt;- integer(10)
+  spoken[1:nstart] &lt;- start
+  for (i in nstart:(n-1)) {
+    before &lt;- which(spoken[1:(i-1)] == spoken[i])
+    if (!length(before)) {
+      spoken[i+1] &lt;- 0
+    } else spoken[i+1] &lt;- i - tail(before, 1)
+  }
+  spoken[n]
+}
+
+memory_game(2020, c(7, 12, 1, 0, 16, 2))
+</code></pre>
+
+<pre><code>[1] 410
+</code></pre>
+
+<h2 id="long-term-memory">Long-term memory</h2>
+
+<p>For the 30 millionth number spoken, it’s probably not very efficient to
+carry the whole vector with us. How can we make it more efficient? This
+is ten times faster:</p>
+
+<pre><code class="language-r">memory_game2 &lt;- function(n, start) {
+  nstart &lt;- length(start)
+  spoken &lt;- start[-nstart]
+  when &lt;- seq_along(spoken)
+  current &lt;- start[nstart]
+  for (i in nstart:(n-1)) {
+    if (!current %in% spoken) {
+      next_number &lt;- 0
+      spoken &lt;- c(spoken, current)
+      when &lt;- c(when, i)
+    } else {
+      next_number &lt;- i - when[spoken == current]
+      when[spoken == current] &lt;- i
+    }
+    current &lt;- next_number
+  }
+  current
+}
+
+memory_game(2020, c(7, 12, 1, 0, 16, 2))
+</code></pre>
+
+<pre><code>[1] 410
+</code></pre>
+
+<p>Unfortunately, that still just isn’t fast enough for the problem we
+have, partly because it involves growing the size of a large vector
+instead of fixing its length in advance. We can use direct lookup from a
+vector instead. Treat the indices of a vector (-1, because R indexes
+from 1) as the possible spoken numbers, and the values at those indices
+as the last time that number was spoken, or zero if it has not been said
+so far.</p>
+
+<p>This vector needs to be of length equal to the number of rounds in the
+game, i.e. 30 million elements long, which is not very big in the grand
+scheme of things. (When testing, you should also make sure it is at
+least as long as the size of the maximum value in the starting numbers.)</p>
+
+<pre><code class="language-r">memory_game3 &lt;- function(n, start) {
+  nstart &lt;- length(start)
+  spoken &lt;- numeric(max(n, start) + 1)
+  spoken[start[-nstart] + 1] &lt;- seq_len(nstart - 1)
+  current &lt;- start[nstart]
+  for (i in nstart:(n-1)) {
+    next_number &lt;- (spoken[current + 1] &gt; 0) * i - spoken[current + 1]
+    spoken[current + 1] &lt;- i
+    current &lt;- next_number
+  }
+  current
+}
+
+memory_game3(3e7, c(7, 12, 1, 0, 16, 2))
+</code></pre>
+
+<pre><code>[1] 238
+</code></pre>
+
+<p>According to <code>microbenchmark</code>, the second implementation is about 5
+times faster than the first, and my final implementation is 10 times
+faster than that. It takes just a second or two to run. A lower-level
+implementation in C++ might be even faster, but I already have the star
+now…</p>
+
 <hr />
 
 <p>I will update this post as I complete future puzzles.</p>
@@ -1523,7 +1621,7 @@ stored them as vectors or matrices in list-columns, instead.</p>
       <footer id="footer">
         
         <a href="#">
-          <img src="https://selbydavid.com/img/logo.svg"
+          <img src="/img/logo.svg"
                width="60"
                height=""
                alt="Return to top"

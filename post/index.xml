@@ -2,28 +2,28 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>Posts on Tea &amp; Stats</title>
-    <link>https://selbydavid.com/post/</link>
+    <link>/post/</link>
     <description>Tea, statistics and t-statistics: a data science blog by David Selby.</description>
 		<atom:author>
 			<atom:name>David Selby</atom:name>
 			<atom:uri>https://selbydavid.com</atom:uri>
 		</atom:author>
 		<image>
-		    <link>https://selbydavid.com/post/</link>
+		    <link>/post/</link>
 		    <title>Tea &amp; Stats</title>
-		    <url>https://selbydavid.com/logo.png</url>
+		    <url>/logo.png</url>
 		</image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-GB</language>
     <lastBuildDate>Sun, 06 Dec 2020 17:00:00 +0000</lastBuildDate>
-    <atom:link href="https://selbydavid.com/post/" rel="self" type="application/rss+xml" />
+    <atom:link href="/post/" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Advent of Code 2020</title>
-      <link>https://selbydavid.com/2020/12/06/advent-2020/</link>
+      <link>/2020/12/06/advent-2020/</link>
       <pubDate>Sun, 06 Dec 2020 17:00:00 +0000</pubDate>
       
-      <guid>https://selbydavid.com/2020/12/06/advent-2020/</guid>
+      <guid>/2020/12/06/advent-2020/</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;https://adventofcode.com/&#34;&gt;Advent of Code&lt;/a&gt; is a series of programming
@@ -58,6 +58,7 @@ results may differ from mine.&lt;/p&gt;
 &lt;li&gt;&lt;a href=&#34;#day12&#34;&gt;Rain risk&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day13&#34;&gt;Shuttle search&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day14&#34;&gt;Docking data&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day15&#34;&gt;Rambunctious recitation&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;&lt;a id=&#39;day1&#39;&gt;&lt;/a&gt;&lt;/p&gt;
@@ -1365,6 +1366,103 @@ digits into a string representation between operations—other than making
 the tables of values easier to read during debugging. I could have
 stored them as vectors or matrices in list-columns, instead.&lt;/p&gt;
 
+&lt;p&gt;&lt;a id=&#34;day15&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;day-15-rambunctious-recitation-https-adventofcode-com-2020-day-15&#34;&gt;Day 15 - &lt;a href=&#34;https://adventofcode.com/2020/day/15&#34;&gt;Rambunctious recitation&lt;/a&gt;&lt;/h1&gt;
+
+&lt;h2 id=&#34;memory-game&#34;&gt;Memory game&lt;/h2&gt;
+
+&lt;p&gt;The first part is straightforward even with not particularly optimal
+code:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;memory_game &amp;lt;- function(n, start) {
+  nstart &amp;lt;- length(start)
+  spoken &amp;lt;- integer(10)
+  spoken[1:nstart] &amp;lt;- start
+  for (i in nstart:(n-1)) {
+    before &amp;lt;- which(spoken[1:(i-1)] == spoken[i])
+    if (!length(before)) {
+      spoken[i+1] &amp;lt;- 0
+    } else spoken[i+1] &amp;lt;- i - tail(before, 1)
+  }
+  spoken[n]
+}
+
+memory_game(2020, c(7, 12, 1, 0, 16, 2))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 410
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;long-term-memory&#34;&gt;Long-term memory&lt;/h2&gt;
+
+&lt;p&gt;For the 30 millionth number spoken, it’s probably not very efficient to
+carry the whole vector with us. How can we make it more efficient? This
+is ten times faster:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;memory_game2 &amp;lt;- function(n, start) {
+  nstart &amp;lt;- length(start)
+  spoken &amp;lt;- start[-nstart]
+  when &amp;lt;- seq_along(spoken)
+  current &amp;lt;- start[nstart]
+  for (i in nstart:(n-1)) {
+    if (!current %in% spoken) {
+      next_number &amp;lt;- 0
+      spoken &amp;lt;- c(spoken, current)
+      when &amp;lt;- c(when, i)
+    } else {
+      next_number &amp;lt;- i - when[spoken == current]
+      when[spoken == current] &amp;lt;- i
+    }
+    current &amp;lt;- next_number
+  }
+  current
+}
+
+memory_game(2020, c(7, 12, 1, 0, 16, 2))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 410
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Unfortunately, that still just isn’t fast enough for the problem we
+have, partly because it involves growing the size of a large vector
+instead of fixing its length in advance. We can use direct lookup from a
+vector instead. Treat the indices of a vector (-1, because R indexes
+from 1) as the possible spoken numbers, and the values at those indices
+as the last time that number was spoken, or zero if it has not been said
+so far.&lt;/p&gt;
+
+&lt;p&gt;This vector needs to be of length equal to the number of rounds in the
+game, i.e. 30 million elements long, which is not very big in the grand
+scheme of things. (When testing, you should also make sure it is at
+least as long as the size of the maximum value in the starting numbers.)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;memory_game3 &amp;lt;- function(n, start) {
+  nstart &amp;lt;- length(start)
+  spoken &amp;lt;- numeric(max(n, start) + 1)
+  spoken[start[-nstart] + 1] &amp;lt;- seq_len(nstart - 1)
+  current &amp;lt;- start[nstart]
+  for (i in nstart:(n-1)) {
+    next_number &amp;lt;- (spoken[current + 1] &amp;gt; 0) * i - spoken[current + 1]
+    spoken[current + 1] &amp;lt;- i
+    current &amp;lt;- next_number
+  }
+  current
+}
+
+memory_game3(3e7, c(7, 12, 1, 0, 16, 2))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 238
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;According to &lt;code&gt;microbenchmark&lt;/code&gt;, the second implementation is about 5
+times faster than the first, and my final implementation is 10 times
+faster than that. It takes just a second or two to run. A lower-level
+implementation in C++ might be even faster, but I already have the star
+now…&lt;/p&gt;
+
 &lt;hr /&gt;
 
 &lt;p&gt;I will update this post as I complete future puzzles.&lt;/p&gt;
@@ -1373,10 +1471,10 @@ stored them as vectors or matrices in list-columns, instead.&lt;/p&gt;
     
     <item>
       <title>Which film should I watch during lockdown?</title>
-      <link>https://selbydavid.com/2020/05/06/films/</link>
+      <link>/2020/05/06/films/</link>
       <pubDate>Wed, 06 May 2020 12:55:00 +0100</pubDate>
       
-      <guid>https://selbydavid.com/2020/05/06/films/</guid>
+      <guid>/2020/05/06/films/</guid>
       <description>
 
 &lt;p&gt;My brother wrote to me this week with an interesting task:&lt;/p&gt;
@@ -1409,7 +1507,7 @@ So to get a film&amp;rsquo;s page, we can use the web site&amp;rsquo;s search fu
 
 &lt;p&gt;replacing &lt;code&gt;%s&lt;/code&gt; with your search query, and you see something like this in your browser:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2020/rottentomatoes.png&#34; alt=&#34;Search results page for &#39;The Good, The Bad and the Ugly&#39; on Rotten Tomatoes&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2020/rottentomatoes.png&#34; alt=&#34;Search results page for &#39;The Good, The Bad and the Ugly&#39; on Rotten Tomatoes&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;So in my mind, the workflow was going to be a simple matter of:&lt;/p&gt;
 
@@ -1463,7 +1561,7 @@ request &amp;lt;- mc_lookup(&#39;The Good, the Bad and the Ugly&#39;)
 &lt;p&gt;which programmatically retrieves the content of the following page.
 Notice there are no ratings or summaries displayed on the results page, so we will need to follow the link to each film&amp;rsquo;s page to get that information.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2020/imdb.png&#34; alt=&#34;Search results page for &#39;The Good, The Bad and the Ugly&#39; on IMDb&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2020/imdb.png&#34; alt=&#34;Search results page for &#39;The Good, The Bad and the Ugly&#39; on IMDb&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;scraping-results&#34;&gt;Scraping results&lt;/h2&gt;
 
@@ -1509,7 +1607,7 @@ It is something you should always consider when querying data on a server or net
 &lt;p&gt;The above function requests the IMDb film page linked in the search results.
 For example:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2020/imdb_film.png&#34; alt=&#34;IMDb page for &#39;The Good, The Bad and the Ugly&#39; (1966)&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2020/imdb_film.png&#34; alt=&#34;IMDb page for &#39;The Good, The Bad and the Ugly&#39; (1966)&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Almost there.
 Now we just need to scrape the key information from this page:&lt;/p&gt;
@@ -1601,10 +1699,10 @@ Export it to a csv file and you can search and sort it to your heart&amp;rsquo;s
     
     <item>
       <title>R code golf: the identity matrix</title>
-      <link>https://selbydavid.com/2019/03/27/identity-matrix/</link>
+      <link>/2019/03/27/identity-matrix/</link>
       <pubDate>Wed, 27 Mar 2019 15:50:00 +0000</pubDate>
       
-      <guid>https://selbydavid.com/2019/03/27/identity-matrix/</guid>
+      <guid>/2019/03/27/identity-matrix/</guid>
       <description>
 
 &lt;p&gt;How many different ways are there to create an identity matrix in R?
@@ -1887,10 +1985,10 @@ Maybe all the different ways of tackling a common data wrangling task, or produc
     
     <item>
       <title>Le lait, le comprenez-vous?</title>
-      <link>https://selbydavid.com/2018/07/08/milk/</link>
+      <link>/2018/07/08/milk/</link>
       <pubDate>Sun, 08 Jul 2018 11:00:00 +0200</pubDate>
       
-      <guid>https://selbydavid.com/2018/07/08/milk/</guid>
+      <guid>/2018/07/08/milk/</guid>
       <description>&lt;p&gt;Buying milk in France is not like at home.
 In the supermarket, it is always found in the farthest possible point from the shop entrance, but the similarities end there.&lt;/p&gt;
 
@@ -1898,7 +1996,7 @@ In the supermarket, it is always found in the farthest possible point from the s
 Blue milk bottles are semi-skimmed, red is full fat&amp;mdash;except when it&amp;rsquo;s green: then it&amp;rsquo;s &lt;em&gt;organic&lt;/em&gt; full fat&amp;mdash;and skimmed milk bottles are octarine or something.
 In the UK, it&amp;rsquo;s far simpler: red for skimmed, green for semi-skimmed, blue for full fat, gold for fuller than full fat and then orange for that other level that also exists.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/milk.jpg&#34; alt=&#34;Milk in a French supermarket&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/milk.jpg&#34; alt=&#34;Milk in a French supermarket&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;French milk bottles don&amp;rsquo;t have little handles on them, unlike British ones, maybe because the dexterity to add &amp;lsquo;just a dash&amp;rsquo; to a cup of tea is not in high demand in France.
 Bottles of drain cleaner do have the little handles, though.
@@ -1908,17 +2006,17 @@ I draw no conclusions from this.&lt;/p&gt;
     
     <item>
       <title>One week in Paris</title>
-      <link>https://selbydavid.com/2018/05/29/paris/</link>
+      <link>/2018/05/29/paris/</link>
       <pubDate>Tue, 29 May 2018 15:00:00 +0200</pubDate>
       
-      <guid>https://selbydavid.com/2018/05/29/paris/</guid>
+      <guid>/2018/05/29/paris/</guid>
       <description>
 
 &lt;p&gt;I have just moved to Paris ahead of a six-month internship.
 It is my first time even visiting the city, so here are some initial impressions.
 As many a Français(e) will keenly remind you: &amp;lsquo;Paris is not France&amp;rsquo;, so I also hope to venture outside &lt;em&gt;la Périphérique&lt;/em&gt; soon.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/david.jpg&#34; alt=&#34;David in Paris&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/david.jpg&#34; alt=&#34;David in Paris&#34; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;la-circulation&#34;&gt;La circulation&lt;/h3&gt;
 
@@ -1926,7 +2024,7 @@ As many a Français(e) will keenly remind you: &amp;lsquo;Paris is not France&am
 A red man at a pedestrian crossing means &amp;ldquo;cross at your peril&amp;rdquo; whilst a green man means exactly the same.
 Approximately 94% of roads and cycle paths are one-way, so route finding involves a fair bit of improvisation.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/triomphe.jpg&#34; alt=&#34;Arc de Triomphe de l&#39;Étoile&#34; title=&#34;Arc de Triomphe de l&#39;Étoile&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/triomphe.jpg&#34; alt=&#34;Arc de Triomphe de l&#39;Étoile&#34; title=&#34;Arc de Triomphe de l&#39;Étoile&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;The best places to observe Parisian drivers in their natural habitat are the many-laned roundabouts that are the Place de la Concorde and Arc de Triomphe.
 The car pictured above set off for work decades ago but still hasn&amp;rsquo;t managed successfully to navigate Baron Haussmann&amp;rsquo;s road network.&lt;/p&gt;
@@ -1940,23 +2038,23 @@ Bonus points if you hire a vélo that is covered in algae, having clearly just b
 &lt;p&gt;Nobody knows if the Blackpool Tower is smaller than the Eiffel Tower or just always farther away.
 Incredibly, the French managed to copy the design of the former before it was even built.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/eiffel.jpg&#34; alt=&#34;La Tour Eiffel&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/eiffel.jpg&#34; alt=&#34;La Tour Eiffel&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;On our first visit, the lift to the very top was closed, but it was still possible to go to the &lt;em&gt;deuxième étage&lt;/em&gt;.
 It is slightly cheaper (and quicker, given the queues) to take the stairs than to take the lift, so up the 669 steps we went.
 My mum reckoned the 130-year-old structure needed dusting and a lick of paint.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/eiffelq.jpg&#34; alt=&#34;View from Eiffel Tower stairs, looking down on the queue for the lift&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/eiffelq.jpg&#34; alt=&#34;View from Eiffel Tower stairs, looking down on the queue for the lift&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/eiffel2.jpg&#34; alt=&#34;La Tour Eiffel&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/eiffel2.jpg&#34; alt=&#34;La Tour Eiffel&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;The views over the city are pretty stunning, even from &amp;lsquo;only&amp;rsquo; 115 metres up.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/skyline.jpg&#34; alt=&#34;Paris skyline from Eiffel Tower&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/skyline.jpg&#34; alt=&#34;Paris skyline from Eiffel Tower&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/skyline2.jpg&#34; alt=&#34;Paris skyline from Eiffel Tower&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/skyline2.jpg&#34; alt=&#34;Paris skyline from Eiffel Tower&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/skyline3.jpg&#34; alt=&#34;Paris skyline from Eiffel Tower&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/skyline3.jpg&#34; alt=&#34;Paris skyline from Eiffel Tower&#34; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;les-catacombes-de-paris&#34;&gt;Les Catacombes de Paris&lt;/h3&gt;
 
@@ -1970,12 +2068,12 @@ My mum reckoned the 130-year-old structure needed dusting and a lick of paint.&l
 &lt;p&gt;If you looked at every item in the Louvre for a minute, it would take you more than two months to see everything.
 I haven&amp;rsquo;t been here that long yet.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/pyramide.jpg&#34; alt=&#34;Pyramide du Louvre&#34; title=&#34;Pyramide du Louvre&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/pyramide.jpg&#34; alt=&#34;Pyramide du Louvre&#34; title=&#34;Pyramide du Louvre&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;The famous art museum opens onto the Jardin des Tuileries, a big park.
 I tried on a few souvenir hats from the street sellers here but none of them were big enough.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/louvre.jpg&#34; alt=&#34;Musée du Louvre&#34; title=&#34;Musée du Louvre&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/louvre.jpg&#34; alt=&#34;Musée du Louvre&#34; title=&#34;Musée du Louvre&#34; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;les-champs-elysées&#34;&gt;Les Champs-Elysées&lt;/h3&gt;
 
@@ -1988,44 +2086,44 @@ You can buy T-shirts for €500 but I haven&amp;rsquo;t been tempted by them yet
 &lt;p&gt;French beer comes in small, medium and large-but-still-not-quite-a-pint.
 Prices on &lt;em&gt;les terrasses&lt;/em&gt; are about what you&amp;rsquo;d pay at home, multiplied by five.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/terrasse.jpg&#34; alt=&#34;Les terrasses&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/terrasse.jpg&#34; alt=&#34;Les terrasses&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;If you pick your seat strategically, you can watch &lt;em&gt;other&lt;/em&gt; people get wet when it starts to rain.
 We weren&amp;rsquo;t clever enough to avoid getting caught in a hailstorm on the first day, however.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/grele.gif&#34; alt=&#34;La grêle&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/grele.gif&#34; alt=&#34;La grêle&#34; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;mon-appartement-près-de-la-madeleine&#34;&gt;Mon appartement près de la Madeleine&lt;/h3&gt;
 
 &lt;p&gt;I have a flat in the 9th arrondissement, near the trendy Madeleine and Opéra districts.
 L&amp;rsquo;église de la Madeleine is a huge neo-classical church &amp;lsquo;designed as a temple to the glory of Napoleon&amp;rsquo;s army&amp;rsquo;.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/madeleine.jpg&#34; alt=&#34;La Madeleine&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/madeleine.jpg&#34; alt=&#34;La Madeleine&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/madeleine2.jpg&#34; alt=&#34;La Madeleine&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/madeleine2.jpg&#34; alt=&#34;La Madeleine&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Local boutiques include the &lt;em&gt;Galeries Lafayette&lt;/em&gt; and &lt;em&gt;Grands Magasins Printemps&lt;/em&gt;, which are temples to the glory of shopping.
 These historic high-end department stores are the only places I have found so far with hats that fit me, but at €250 a go, I haven&amp;rsquo;t splurged yet.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/lafayette.jpg&#34; alt=&#34;Galerie Lafayette&#34; title=&#34;Galerie Lafayette&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/lafayette.jpg&#34; alt=&#34;Galerie Lafayette&#34; title=&#34;Galerie Lafayette&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;I start my internship next week.&lt;/p&gt;
 
 &lt;h3 id=&#34;more-photos&#34;&gt;More photos&lt;/h3&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/seine.jpg&#34; alt=&#34;View of the Seine&#34; title=&#34;The Seine&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/seine.jpg&#34; alt=&#34;View of the Seine&#34; title=&#34;The Seine&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/seine2.jpg&#34; alt=&#34;Bridge over the Seine&#34; title=&#34;Passerelle Debilly&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/seine2.jpg&#34; alt=&#34;Bridge over the Seine&#34; title=&#34;Passerelle Debilly&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/manutention.jpg&#34; alt=&#34;Rue de la Manutention&#34; title=&#34;Rue de la Manutention&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/manutention.jpg&#34; alt=&#34;Rue de la Manutention&#34; title=&#34;Rue de la Manutention&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/concorde.jpg&#34; alt=&#34;Place de la Concorde&#34; title=&#34;Place de la Concorde&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/concorde.jpg&#34; alt=&#34;Place de la Concorde&#34; title=&#34;Place de la Concorde&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/royal.jpg&#34; alt=&#34;Palais Royal&#34; title=&#34;Palais Royal&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/royal.jpg&#34; alt=&#34;Palais Royal&#34; title=&#34;Palais Royal&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/opera.jpg&#34; alt=&#34;View from roof of Galerie Lafayette&#34; title=&#34;View from roof of Galerie Lafayette&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/opera.jpg&#34; alt=&#34;View from roof of Galerie Lafayette&#34; title=&#34;View from roof of Galerie Lafayette&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/paris/carrousel.jpg&#34; alt=&#34;Arc de Triomphe du Carrousel&#34; title=&#34;Arc de Triomphe du Carrousel&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2018/paris/carrousel.jpg&#34; alt=&#34;Arc de Triomphe du Carrousel&#34; title=&#34;Arc de Triomphe du Carrousel&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;I now take a croissant with my morning Yorkshire Tea but supplies of the latter are dwindling.
 Send more!&lt;/p&gt;
@@ -2034,10 +2132,10 @@ Send more!&lt;/p&gt;
     
     <item>
       <title>Exploring influence in networks</title>
-      <link>https://selbydavid.com/2018/03/07/influence/</link>
+      <link>/2018/03/07/influence/</link>
       <pubDate>Wed, 07 Mar 2018 15:00:00 +0000</pubDate>
       
-      <guid>https://selbydavid.com/2018/03/07/influence/</guid>
+      <guid>/2018/03/07/influence/</guid>
       <description>&lt;p&gt;I have just published an &lt;a href=&#34;http://selbydavid.com/influence/&#34;&gt;interactive graphic&lt;/a&gt; showing the effect of ranking scientific communities with pairwise comparison models.
 The visualisation is an interactive version of my (award-winning) &lt;em&gt;useR!2017&lt;/em&gt; poster, &lt;a href=&#34;http://selbydavid.com/2017/06/29/user2017/&#34;&gt;Ranking influential communities in networks&lt;/a&gt;.&lt;/p&gt;
 
@@ -2077,13 +2175,13 @@ Feedback is very welcome!&lt;/p&gt;
     
     <item>
       <title>Building a neural network from scratch in R</title>
-      <link>https://selbydavid.com/2018/01/09/neural-network/</link>
+      <link>/2018/01/09/neural-network/</link>
       <pubDate>Tue, 09 Jan 2018 10:00:00 +0000</pubDate>
       
-      <guid>https://selbydavid.com/2018/01/09/neural-network/</guid>
-      <description>&lt;script src=&#34;https://selbydavid.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;https://selbydavid.com/rmarkdown-libs/anchor-sections/anchor-sections.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;https://selbydavid.com/rmarkdown-libs/anchor-sections/anchor-sections.js&#34;&gt;&lt;/script&gt;
+      <guid>/2018/01/09/neural-network/</guid>
+      <description>&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;/rmarkdown-libs/anchor-sections/anchor-sections.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;/rmarkdown-libs/anchor-sections/anchor-sections.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;Neural networks can seem like a bit of a black box.
@@ -2096,7 +2194,7 @@ If you don’t like mathematics, feel free to skip to the code chunks towards th
 &lt;p&gt;What’s a logistic regression model?
 Suppose we want to build a machine that classifies objects in two groups, for example &lt;a href=&#34;https://www.youtube.com/watch?v=ACmydtFDTGs&#34;&gt;‘hot dog’ and ‘not hot dog’&lt;/a&gt;.
 We will say &lt;span class=&#34;math inline&#34;&gt;\(Y_i = 1\)&lt;/span&gt; if object &lt;em&gt;i&lt;/em&gt; is a hot dog, and &lt;span class=&#34;math inline&#34;&gt;\(Y_i = 0\)&lt;/span&gt; otherwise.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=ACmydtFDTGs&#34;&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/hotdog.gif&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=ACmydtFDTGs&#34;&gt;&lt;img src=&#34;/img/2018/hotdog.gif&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;A logistic regression model estimates these odds,
 &lt;span class=&#34;math display&#34;&gt;\[
 \operatorname{odds}(Y = 1)
@@ -2152,12 +2250,12 @@ Here is a random sample of five:&lt;/p&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;And a scatter plot of all of them:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/plot-spirals-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-01-09-neural-network_files/figure-html/plot-spirals-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Fitting a logistic regression model in R is easy:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;logreg &amp;lt;- glm(class ~ x1 + x2, family = binomial, data = hotdogs)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;But as the decision boundary can only be linear, it doesn’t work too well at distinguishing our two classes.
 Logistic regression classifies 134 (67%) of our objects correctly.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/logistic-boundary-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-01-09-neural-network_files/figure-html/logistic-boundary-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Nonlinearity is where neural networks are useful.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;artificial-neural-networks&#34; class=&#34;section level2&#34;&gt;
@@ -2173,7 +2271,7 @@ Like ogres and onions, they have layers—three to be exact.&lt;/p&gt;
 The input layer comprises the covariates and an intercept, as before.
 In the middle, there is a &lt;em&gt;hidden layer&lt;/em&gt;, which is a transformation of the input space into &lt;span class=&#34;math inline&#34;&gt;\(h\)&lt;/span&gt; dimensions, where &lt;span class=&#34;math inline&#34;&gt;\(h\)&lt;/span&gt; is a number chosen by us.
 We then perform a logistic regression on this transformed space to estimate the classes.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/neural-network-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-01-09-neural-network_files/figure-html/neural-network-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;It works like this.&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Generate &lt;span class=&#34;math inline&#34;&gt;\(h\)&lt;/span&gt; different linear combinations of the input variables.&lt;/li&gt;
@@ -2194,7 +2292,7 @@ So far, this is exactly like our logistic regression model above.&lt;/p&gt;
 &lt;p&gt;A neural network adds a hidden layer, which you might think of as an intermediate design matrix between the inputs and the outputs.
 &lt;a href=&#34;https://en.wikipedia.org/wiki/Deep_learning&#34;&gt;Deep learning&lt;/a&gt; is just a neural network with multiple hidden layers.&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:node-diagram&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/node-diagram-1.svg&#34; alt=&#34;Multi-layer perceptron with five hidden nodes&#34; width=&#34;672&#34; /&gt;
+&lt;img src=&#34;/post/2018-01-09-neural-network_files/figure-html/node-diagram-1.svg&#34; alt=&#34;Multi-layer perceptron with five hidden nodes&#34; width=&#34;672&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;
 Figure 1: Multi-layer perceptron with five hidden nodes
 &lt;/p&gt;
@@ -2358,17 +2456,17 @@ grid$class &amp;lt;- factor((ff_grid$output &amp;gt; .5) * 1,
   geom_point(data = grid, size = .5) +
   geom_point() +
   labs(x = expression(x[1]), y = expression(x[2]))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/plot-ad-hoc-1.png&#34; width=&#34;672&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-01-09-neural-network_files/figure-html/plot-ad-hoc-1.png&#34; width=&#34;672&#34; /&gt;
 The regions the neural network has classified into ‘hot dog’ and ‘not hot dog’ can no longer be separated by a single straight line.
 The more nodes we add to the hidden layer, the more elaborate the decision boundaries can become, improving accuracy at the expense of computation time (as more weights must be calculated) and increased risk of &lt;a href=&#34;https://en.wikipedia.org/wiki/Overfitting&#34;&gt;over-fitting&lt;/a&gt; the data.&lt;/p&gt;
 &lt;p&gt;How about 30 nodes?&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;nnet30 &amp;lt;- train(x, y, hidden = 30, iterations = 1e5)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;After 100,000 iterations, accuracy is 100%.
 The decision boundary looks much smoother:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/plot-30-nodes-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-01-09-neural-network_files/figure-html/plot-30-nodes-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;And for completeness, let’s see what one hidden node (plus an intercept) gives us.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;nnet1 &amp;lt;- train(x, y, hidden = 1, iterations = 1e5)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/plot-1-node-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-01-09-neural-network_files/figure-html/plot-1-node-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Much worse accuracy—68%—and the decision boundary looks linear.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;r6-class-implementation&#34; class=&#34;section level2&#34;&gt;
@@ -2544,10 +2642,10 @@ Full source code for this post is available &lt;a href=&#34;https://github.com/S
     
     <item>
       <title>Using R on Android</title>
-      <link>https://selbydavid.com/2017/12/29/r-android/</link>
+      <link>/2017/12/29/r-android/</link>
       <pubDate>Fri, 29 Dec 2017 15:00:00 +0000</pubDate>
       
-      <guid>https://selbydavid.com/2017/12/29/r-android/</guid>
+      <guid>/2017/12/29/r-android/</guid>
       <description>
 
 &lt;p&gt;I just discovered a way to get R running on my smartphone, with full support for packages, graphics and &lt;a href=&#34;http://rmarkdown.rstudio.com/&#34;&gt;R Markdown&lt;/a&gt;, and no need to connect to an external server.
@@ -2566,7 +2664,7 @@ It just works.&lt;/p&gt;
 &lt;p&gt;GNUroot Debian emulates a command line interface or &amp;ldquo;X Terminal&amp;rdquo; like on a regular desktop PC.
 You can work in multiple windows, and you have access to all the files on your Android system.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/gnuroot.png&#34; alt=&#34;GNUroot Debian&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2017/gnuroot.png&#34; alt=&#34;GNUroot Debian&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;You can use it not only to run R on your phone, but also Python or any other command-line tools supported by GNU/Linux.&lt;/p&gt;
 
@@ -2594,7 +2692,7 @@ apt-get install r-base r-base-dev
 This is just like the usual interactive R user interface (because it &lt;em&gt;is&lt;/em&gt; the usual interface).
 Run commands and load and install packages to your heart&amp;rsquo;s content.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/interactiveR.png&#34; alt=&#34;Interactive R session in GNUroot Debian&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2017/interactiveR.png&#34; alt=&#34;Interactive R session in GNUroot Debian&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;To quit R and return to the Linux command line, type&lt;/p&gt;
 
@@ -2622,7 +2720,7 @@ R -e &amp;quot;print(&#39;Hello, world&#39;)&amp;quot;
 &lt;p&gt;Pressing Up and Down on your keyboard lets you cycle through recently used commands, saving you from needing to retype repeated or very similar commands.
 Usually touch-screen keyboards don&amp;rsquo;t have arrow keys, but you can install the &lt;a href=&#34;https://play.google.com/store/apps/details?id=org.pocketworkstation.pckeyboard&#34;&gt;Hacker&amp;rsquo;s Keyboard&lt;/a&gt; for Android, which does (at least in landscape mode).&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/hackers-keyboard.png&#34; alt=&#34;Hacker&#39;s Keyboard&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2017/hackers-keyboard.png&#34; alt=&#34;Hacker&#39;s Keyboard&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;running-scripts&#34;&gt;Running scripts&lt;/h2&gt;
 
@@ -2664,7 +2762,7 @@ cat(x, y, sep = &#39;, &#39;)
 
 &lt;p&gt;for more detailed output.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/Rscript.png&#34; alt=&#34;Evaluating an R script on Android&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2017/Rscript.png&#34; alt=&#34;Evaluating an R script on Android&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;If you prefer working in R to in a Linux terminal, then you can equivalently do everything within an R session:&lt;/p&gt;
 
@@ -2700,7 +2798,7 @@ dev.off()
 &lt;p&gt;Run the script and use &lt;code&gt;ls&lt;/code&gt; or &lt;code&gt;list.files()&lt;/code&gt; to verify that a new file, &lt;code&gt;test.png&lt;/code&gt; has been created.
 In your Android launcher, go to &lt;strong&gt;Files &amp;gt; Local &amp;gt; Internal storage &amp;gt; Documents&lt;/strong&gt; (the names might vary depending on your device) and you should see your new plot, which you can open and share like any other image.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/test.png&#34; alt=&#34;Test R plot&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2017/test.png&#34; alt=&#34;Test R plot&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;r-markdown-on-android&#34;&gt;R Markdown on Android&lt;/h2&gt;
 
@@ -2748,16 +2846,83 @@ Once again, share or upload it like any other file.&lt;/p&gt;
 I hope you found this useful.
 This blog post was written on a Huawei Honor 8 smartphone using QuickEdit text editor.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/android-r.gif&#34; alt=&#34;R on Android&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2017/android-r.gif&#34; alt=&#34;R on Android&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How to process photos like a statistician</title>
+      <link>/2017/11/02/photo-editing/</link>
+      <pubDate>Thu, 02 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/11/02/photo-editing/</guid>
+      <description>
+
+&lt;p&gt;Much of this post is inspired by Pat David&amp;rsquo;s tutorial, &lt;a href=&#34;https://patdavid.net/2013/03/the-open-source-portrait-postprocessing.html&#34;&gt;The Open Source Portrait&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;open-source-software&#34;&gt;Open-source software&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;Real&lt;/em&gt; statisticians use free and open-source software, like R.
+We will follow the same mantra.
+There has been a lot of hand-wringing in the photography press recently about Adobe switching many of its products over to a subscription-only model, including PhotoShop, the bitmap editing software, and Lightroom, the companion application for batch processing and raw file conversion.
+I stopped using both of these programmes a while ago and now use free photo editors which I find equally, if not more powerful.&lt;/p&gt;
+
+&lt;p&gt;Gimp, or the GNU Image Manipulation Program, is effectively the free and open source equivalent to Photoshop.
+It offers most of the same core features, including curves, layers, masks, filters, selection tools and other stuff.
+The only noticeable thing it&amp;rsquo;s missing is adjustment layers, though these are nice-to-have rather than an essential feature.&lt;/p&gt;
+
+&lt;p&gt;There are several alternatives to Lightroom, but I quite like to use one called RawTherapee.&lt;/p&gt;
+
+&lt;p&gt;Both of these tools have a learning curve, but then so do Adobe&amp;rsquo;s products; it&amp;rsquo;s just a matter of getting used to it.
+I wouldn&amp;rsquo;t say that Adobe software is easier to use, and it certainly doesn&amp;rsquo;t seem any faster or bug-free compared to the alternatives.&lt;/p&gt;
+
+&lt;h3 id=&#34;histograms&#34;&gt;Histograms&lt;/h3&gt;
+
+&lt;p&gt;Maybe you prefer kernel density plots, but the photo industry seems to like histograms.&lt;/p&gt;
+
+&lt;h3 id=&#34;curves&#34;&gt;Curves&lt;/h3&gt;
+
+&lt;h3 id=&#34;wavelet-decomposition&#34;&gt;Wavelet decomposition&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Very brief background on wavelets&lt;/li&gt;
+&lt;li&gt;Don&amp;rsquo;t bother mentioning wavelets in RawTherapee for now&lt;/li&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;gaussian-blurs&#34;&gt;Gaussian blurs&lt;/h3&gt;
+
+&lt;h3 id=&#34;licensing&#34;&gt;Licensing&lt;/h3&gt;
+
+&lt;p&gt;Creative Commons etc&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Knitting a bookdown book in the Cloud with Travis CI</title>
+      <link>/2017/07/09/knitting-a-bookdown-book-in-the-cloud-with-travis-ci/</link>
+      <pubDate>Sun, 09 Jul 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/07/09/knitting-a-bookdown-book-in-the-cloud-with-travis-ci/</guid>
+      <description>&lt;p&gt;There is a guide to this in the official &lt;code&gt;bookdown&lt;/code&gt; book, but this predates Travis&amp;rsquo;s introduction of native support for &lt;a href=&#34;https://docs.travis-ci.com/user/deployment/pages/&#34;&gt;GitHub Pages Deployment&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Thus it should be straightforward to come up with a guide for both GitHub Pages use cases:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;GitHub project pages (deploying to &lt;code&gt;gh-pages&lt;/code&gt; branch or &lt;code&gt;/docs/&lt;/code&gt; folder)&lt;/li&gt;
+&lt;li&gt;GitHub user pages (deploying to &lt;code&gt;master&lt;/code&gt; branch of &lt;code&gt;username.github.io&lt;/code&gt;)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Coming soon!&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>useR! poster: ranking influential communities</title>
-      <link>https://selbydavid.com/2017/06/29/user2017/</link>
+      <link>/2017/06/29/user2017/</link>
       <pubDate>Thu, 29 Jun 2017 18:30:00 +0100</pubDate>
       
-      <guid>https://selbydavid.com/2017/06/29/user2017/</guid>
+      <guid>/2017/06/29/user2017/</guid>
       <description>&lt;p&gt;Next week I will be presenting a poster at the &lt;a href=&#34;https://user2017.brussels&#34;&gt;useR!2017&lt;/a&gt; conference in Brussels.&lt;/p&gt;
 
 &lt;p&gt;My topic is &lt;strong&gt;Ranking influential communities in networks&lt;/strong&gt;.
@@ -2770,7 +2935,7 @@ A journal having a high influence score means it tends to receive more citations
 &lt;p&gt;Statistics comes second in the inter-field ranking (after economics).
 We all know how cool statistics is, so the model must be right.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/user2017.png&#34; alt=&#34;useR!2017 poster&#34; title=&#34;Ranking influential communities in networks&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2017/user2017.png&#34; alt=&#34;useR!2017 poster&#34; title=&#34;Ranking influential communities in networks&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Here is a preview.
 You can download the full PDF on the &lt;a href=&#34;https://user2017.brussels/posters&#34;&gt;conference web site&lt;/a&gt;.&lt;/p&gt;
@@ -2785,13 +2950,13 @@ An idea for a future R package, perhaps?&lt;/p&gt;
     
     <item>
       <title>Chernoff faces in ggplot2</title>
-      <link>https://selbydavid.com/2017/06/25/ggchernoff/</link>
+      <link>/2017/06/25/ggchernoff/</link>
       <pubDate>Sun, 25 Jun 2017 18:25:00 +0100</pubDate>
       
-      <guid>https://selbydavid.com/2017/06/25/ggchernoff/</guid>
-      <description>&lt;script src=&#34;https://selbydavid.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;https://selbydavid.com/rmarkdown-libs/anchor-sections/anchor-sections.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;https://selbydavid.com/rmarkdown-libs/anchor-sections/anchor-sections.js&#34;&gt;&lt;/script&gt;
+      <guid>/2017/06/25/ggchernoff/</guid>
+      <description>&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;/rmarkdown-libs/anchor-sections/anchor-sections.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;/rmarkdown-libs/anchor-sections/anchor-sections.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;I am pleased to introduce my first R package for general consumption, &lt;a href=&#34;https://github.com/Selbosh/ggChernoff&#34;&gt;&lt;strong&gt;ggChernoff&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
@@ -2822,7 +2987,7 @@ Rather than choosing a types of graph from a list—for example bar plot, pie ch
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;into the following simple visualisation.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/lineplot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-06-25-ggchernoff_files/figure-html/lineplot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;In &lt;em&gt;Grammar of Graphics&lt;/em&gt; terms, we produce the plot using these semantics.&lt;/p&gt;
 &lt;dl&gt;
 &lt;dt&gt;Variables&lt;/dt&gt;
@@ -2857,9 +3022,9 @@ Rather than choosing a types of graph from a list—for example bar plot, pie ch
 &lt;p&gt;Our line plot above is grammatically equivalent to a bar chart—just make the lines thicker!
 Now, what if we swap Cartesian coordinates for polar coordinates, (r, θ)?
 The resulting graphic is still grammatically correct, though perhaps not very useful.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/polar-1.png&#34; width=&#34;384&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-06-25-ggchernoff_files/figure-html/polar-1.png&#34; width=&#34;384&#34; /&gt;
 We can even transpose it to (θ, r) coordinates, for another grammatically-valid data visualisation.
-&lt;img src=&#34;https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/radial-1.png&#34; width=&#34;384&#34; /&gt;&lt;/p&gt;
+&lt;img src=&#34;/post/2017-06-25-ggchernoff_files/figure-html/radial-1.png&#34; width=&#34;384&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;These plots don’t necessarily have names, so you don’t have to hunt through a list to find the right tool to create them.
 It is just a matter of knowing how the &lt;em&gt;Grammar of Graphics&lt;/em&gt; works.&lt;/p&gt;
 &lt;p&gt;Look at the specifications for our plot again.
@@ -2881,7 +3046,7 @@ Let’s try something completely different!&lt;/p&gt;
 &lt;/dd&gt;
 &lt;/dl&gt;
 &lt;p&gt;…and we produce this graph.
-&lt;img src=&#34;https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/smile-1.png&#34; width=&#34;480&#34; /&gt;&lt;/p&gt;
+&lt;img src=&#34;/post/2017-06-25-ggchernoff_files/figure-html/smile-1.png&#34; width=&#34;480&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Using faces for multivariate data visualisation is an idea credited to &lt;a href=&#34;https://en.wikipedia.org/wiki/Chernoff_face&#34;&gt;Herman Chernoff&lt;/a&gt;, and which Wilkinson discusses in some detail in &lt;em&gt;The Grammar of Graphics&lt;/em&gt;.
 In principle, you can represent data using all kinds of weird and wonderful things, so long as you can clearly define geometry, aesthetics, scales and so on to integrate them into a grammatical workflow.&lt;/p&gt;
 &lt;p&gt;My R package, &lt;a href=&#34;https://github.com/Selbosh/ggChernoff&#34;&gt;ggChernoff&lt;/a&gt;, extends ggplot2 with a new face geom and aesthetics for its mouth and eyebrows.
@@ -2899,7 +3064,7 @@ By mapping variables to the right aesthetic you can make your data happy or sad,
 &lt;/ul&gt;
 &lt;/dd&gt;
 &lt;/dl&gt;
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/eyebrow-1.png&#34; width=&#34;480&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-06-25-ggchernoff_files/figure-html/eyebrow-1.png&#34; width=&#34;480&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;This is a nice way to add a bit of personality to your data visualisations.
 Unlike the package &lt;a href=&#34;https://github.com/dill/emoGG&#34;&gt;emoGG&lt;/a&gt;, which involves selecting pre-drawn icons from a list, the faces in ggChernoff are procedurally generated, in the spirit of the grammar of graphics.&lt;/p&gt;
 &lt;p&gt;More demonstrations are coming in a future post.
@@ -2909,10 +3074,10 @@ The package ggChernoff is &lt;a href=&#34;https://github.com/Selbosh/ggChernoff&
     
     <item>
       <title>Publishing from blogdown to GitHub with Travis</title>
-      <link>https://selbydavid.com/2017/06/22/blogdown-travis/</link>
+      <link>/2017/06/22/blogdown-travis/</link>
       <pubDate>Thu, 22 Jun 2017 08:00:00 +0100</pubDate>
       
-      <guid>https://selbydavid.com/2017/06/22/blogdown-travis/</guid>
+      <guid>/2017/06/22/blogdown-travis/</guid>
       <description>
 
 &lt;p&gt;Yihui Xie&amp;rsquo;s new &lt;a href=&#34;https://bookdown.org/yihui/blogdown/&#34;&gt;blogdown&lt;/a&gt; package is a brilliantly elegant and simple tool for creating R-themed blogs and web sites.
@@ -2924,7 +3089,7 @@ Starting your own blog is as simple as one line of R code:&lt;/p&gt;
 &lt;p&gt;By default, blogdown uses &lt;a href=&#34;http://gohugo.io&#34;&gt;Hugo&lt;/a&gt;, a static web site generator written in Google&amp;rsquo;s Go programming language.
 This has a number of advantages over Jekyll (the site generator that powers GitHub Pages) and from personal experience, everything just seems to work more smoothly.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/hugo-lithium.png&#34; alt=&#34;Example blogdown site&#34; title=&#34;Example blogdown site&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2017/hugo-lithium.png&#34; alt=&#34;Example blogdown site&#34; title=&#34;Example blogdown site&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Previously I wrote about &lt;a href=&#34;http://selbydavid.com/2017/06/16/rmarkdown-jekyll/&#34;&gt;automatically deploying an R Markdown Jekyll blog with Travis&lt;/a&gt;.
 In this post, I am going to explain how you can use Travis to knit your R Markdown blog posts, then publish them with Hugo/blogdown.&lt;/p&gt;
@@ -2967,15 +3132,15 @@ More complete information is available in the &lt;a href=&#34;https://bookdown.o
 
 &lt;h2 id=&#34;linking-github-to-travis&#34;&gt;Linking GitHub to Travis&lt;/h2&gt;
 
-&lt;p&gt;This follows my &lt;a href=&#34;https://selbydavid.com/2017/06/16/rmarkdown-jekyll/#linking-github-to-travis&#34;&gt;earlier guide&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This follows my &lt;a href=&#34;/2017/06/16/rmarkdown-jekyll/#linking-github-to-travis&#34;&gt;earlier guide&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;Create a &lt;a href=&#34;https://github.com/settings/tokens&#34;&gt;GitHub personal access token&lt;/a&gt;, making sure the &amp;ldquo;repo&amp;rdquo; box is ticked so it has permission to push to repositories. Copy the token to your clipboard.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/github-pat.png&#34; alt=&#34;Creating a GitHub PAT&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2017/github-pat.png&#34; alt=&#34;Creating a GitHub PAT&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;On &lt;a href=&#34;https://travis-ci.org/&#34;&gt;Travis&lt;/a&gt;, enable the GitHub repository corresponding to your blogdown site. In Settings, create a new environment variable called &lt;code&gt;GITHUB_PAT&lt;/code&gt; and paste your token into the Value field.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/travis-pat.png&#34; alt=&#34;Adding a Travis environment variable&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2017/travis-pat.png&#34; alt=&#34;Adding a Travis environment variable&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;configuring-travis&#34;&gt;Configuring Travis&lt;/h2&gt;
 
@@ -3028,18 +3193,18 @@ In my experience it takes about two minutes from pushing changes to the updated 
 
 &lt;p&gt;If you have nothing better to do then you can watch Travis as it tries to deploy your blog. There&amp;rsquo;s no need to monitor it, though: if it fails for any reason, you&amp;rsquo;ll receive an e-mail.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/travis-log.png&#34; alt=&#34;Travis log for a successful build&#34; title=&#34;Travis log for a successful build&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2017/travis-log.png&#34; alt=&#34;Travis log for a successful build&#34; title=&#34;Travis log for a successful build&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Hopefully this guide helps. If you have any questions or feedback, feel free to leave a comment below or &lt;a href=&#34;https://selbydavid.com/about&#34;&gt;contact me&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Hopefully this guide helps. If you have any questions or feedback, feel free to leave a comment below or &lt;a href=&#34;/about&#34;&gt;contact me&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Cloudy with a chance of engagement</title>
-      <link>https://selbydavid.com/2017/06/20/cloudy/</link>
+      <link>/2017/06/20/cloudy/</link>
       <pubDate>Tue, 20 Jun 2017 12:30:00 +0100</pubDate>
       
-      <guid>https://selbydavid.com/2017/06/20/cloudy/</guid>
+      <guid>/2017/06/20/cloudy/</guid>
       <description>&lt;p&gt;Last summer I took part in an internship with the fledgling &lt;a href=&#34;https://www.turing.ac.uk/&#34;&gt;Alan Turing Institute&lt;/a&gt; at the British Library in London.
 My group helped analyse data from &lt;a href=&#34;https://www.cloudywithachanceofpain.com/&#34;&gt;Cloudy with a Chance of Pain&lt;/a&gt;, a citizen science project that uses smartphone app data to model the relationship between weather and joint pain.&lt;/p&gt;
 
@@ -3047,7 +3212,7 @@ My group helped analyse data from &lt;a href=&#34;https://www.cloudywithachanceo
 Naturally, the actual data available was nothing like that.
 It looked more like this:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/cloudy-data.png&#34; alt=&#34;Sequences of data entry&#34; title=&#34;Each dot is a day a participant provided data&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2017/cloudy-data.png&#34; alt=&#34;Sequences of data entry&#34; title=&#34;Each dot is a day a participant provided data&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Unlike in a traditional epidemiological study, people could join at any time.
 Some reported data every day, some every couple of days, some had one week on, one week off, while others would lose interest after a few months, after a few weeks or even after the first day.&lt;/p&gt;
@@ -3065,21 +3230,21 @@ Each user is clustered according to their probability of switching between these
 &lt;p&gt;An article I wrote about this project was recently published in &lt;a href=&#34;https://www.significancemagazine.com/&#34;&gt;&lt;em&gt;Significance&lt;/em&gt;&lt;/a&gt;, the magazine of the Royal Statistical Society and American Statistical Association.
 For more details on what we did, &lt;a href=&#34;http://onlinelibrary.wiley.com/doi/10.1111/j.1740-9713.2017.01013.x/abstract&#34;&gt;read the article&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;http://onlinelibrary.wiley.com/doi/10.1111/j.1740-9713.2017.01013.x/abstract&#34;&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/cloudy.png&#34; alt=&#34;&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://onlinelibrary.wiley.com/doi/10.1111/j.1740-9713.2017.01013.x/abstract&#34;&gt;&lt;img src=&#34;/img/2017/cloudy.png&#34; alt=&#34;&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Pretty errors, warnings and messages in R Markdown</title>
-      <link>https://selbydavid.com/2017/06/18/rmarkdown-alerts/</link>
+      <link>/2017/06/18/rmarkdown-alerts/</link>
       <pubDate>Sun, 18 Jun 2017 13:15:00 +0100</pubDate>
       
-      <guid>https://selbydavid.com/2017/06/18/rmarkdown-alerts/</guid>
+      <guid>/2017/06/18/rmarkdown-alerts/</guid>
       <description>&lt;p&gt;When knitting an R Markdown document to HTML output, R chunks can produce warnings, errors or messages.&lt;/p&gt;
 
 &lt;p&gt;Normally these messages look like any other console output:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/alerts2.png&#34; alt=&#34;R Markdown alert messages&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2017/alerts2.png&#34; alt=&#34;R Markdown alert messages&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Pretty ugly, and usually something I find myself trying to hide at the earliest opportunity.&lt;/p&gt;
 
@@ -3087,7 +3252,7 @@ For more details on what we did, &lt;a href=&#34;http://onlinelibrary.wiley.com/
 
 &lt;p&gt;What if you could have them looking like this?&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/alerts.png&#34; alt=&#34;Bootstrap-styled alert messages&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2017/alerts.png&#34; alt=&#34;Bootstrap-styled alert messages&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Bootstrap includes &lt;a href=&#34;http://getbootstrap.com/components/#alerts&#34;&gt;dedicated message boxes&lt;/a&gt; for danger, warnings and information.
 If you were writing an ordinary web site, you would generate these using the following HTML markup:&lt;/p&gt;
@@ -3125,10 +3290,10 @@ Just add the following code to a chunk near the start of your &lt;code&gt;.Rmd&l
     
     <item>
       <title>Deploying an R Markdown Jekyll site to GitHub Pages</title>
-      <link>https://selbydavid.com/2017/06/16/rmarkdown-jekyll/</link>
+      <link>/2017/06/16/rmarkdown-jekyll/</link>
       <pubDate>Fri, 16 Jun 2017 12:00:00 +0100</pubDate>
       
-      <guid>https://selbydavid.com/2017/06/16/rmarkdown-jekyll/</guid>
+      <guid>/2017/06/16/rmarkdown-jekyll/</guid>
       <description>
 
 &lt;p&gt;GitHub Pages&amp;rsquo; built-in &lt;a href=&#34;https://jekyllrb.com/&#34;&gt;Jekyll&lt;/a&gt; support makes it very easy for techie types to deploy static web sites.
@@ -3281,7 +3446,7 @@ It knits them to Markdown and makes sure plots get saved to the right directory.
 &lt;p&gt;You should now have a system that automagically renders and deploys your R Markdown posts every time you push them to your site&amp;rsquo;s GitHub repository.
 If anything is unclear, have a look at my &lt;a href=&#34;https://github.com/Selbosh/jekyll-rmd&#34;&gt;minimal working repository&lt;/a&gt; or &lt;a href=&#34;https://github.com/Selbosh/old-jekyll&#34;&gt;a real example&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;If you found this helpful or have any comments or questions, feel free to &lt;a href=&#34;https://selbydavid.com/about&#34;&gt;get in touch&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you found this helpful or have any comments or questions, feel free to &lt;a href=&#34;/about&#34;&gt;get in touch&lt;/a&gt;.&lt;/p&gt;
 &lt;div class=&#34;footnotes&#34;&gt;
 
 &lt;hr /&gt;
@@ -3296,13 +3461,13 @@ If anything is unclear, have a look at my &lt;a href=&#34;https://github.com/Sel
     
     <item>
       <title>Secret Santa in R</title>
-      <link>https://selbydavid.com/2016/12/07/santa/</link>
+      <link>/2016/12/07/santa/</link>
       <pubDate>Wed, 07 Dec 2016 09:00:00 +0000</pubDate>
       
-      <guid>https://selbydavid.com/2016/12/07/santa/</guid>
-      <description>&lt;script src=&#34;https://selbydavid.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;https://selbydavid.com/rmarkdown-libs/anchor-sections/anchor-sections.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;https://selbydavid.com/rmarkdown-libs/anchor-sections/anchor-sections.js&#34;&gt;&lt;/script&gt;
+      <guid>/2016/12/07/santa/</guid>
+      <description>&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;/rmarkdown-libs/anchor-sections/anchor-sections.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;/rmarkdown-libs/anchor-sections/anchor-sections.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;Our office just exchanged presents for &lt;em&gt;Secret Santa&lt;/em&gt;, a tradition where each person is randomly assigned someone else to give an anonyous gift. One of the challenges of Secret Santa is keeping the pairs of gift-givers and receivers both random and secret. How can you do this while also taking part yourself? Using R, of course!&lt;/p&gt;
@@ -3389,7 +3554,7 @@ for (i in seq_along(names)) {
 }&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;strong&gt;Merry Christmas!&lt;/strong&gt;&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;https://selbydavid.com/img/2016/santa.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;img src=&#34;/img/2016/santa.jpg&#34; alt=&#34;&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;Secret Santa at Warwick&lt;/p&gt;
 &lt;/div&gt;
 </description>
@@ -3397,36 +3562,36 @@ for (i in seq_along(names)) {
     
     <item>
       <title>Poster: PageRank and the Bradley–Terry model</title>
-      <link>https://selbydavid.com/2016/12/02/ima-poster/</link>
+      <link>/2016/12/02/ima-poster/</link>
       <pubDate>Fri, 02 Dec 2016 09:00:00 +0000</pubDate>
       
-      <guid>https://selbydavid.com/2016/12/02/ima-poster/</guid>
+      <guid>/2016/12/02/ima-poster/</guid>
       <description>&lt;p&gt;Here is my poster that I presented at the 2nd IMA Conference on the Mathematical Challenges of Big Data in London on 1st&amp;ndash;2nd December 2016. It is entitled &amp;ldquo;PageRank and the Bradley&amp;ndash;Terry model: Measuring influence with the Scroogefactor&amp;rdquo;.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2016/ima-poster.png&#34; alt=&#34;Zeeman Building, University of Warwick&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2016/ima-poster.png&#34; alt=&#34;Zeeman Building, University of Warwick&#34; /&gt;&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Sent to Coventry</title>
-      <link>https://selbydavid.com/2015/09/30/warwick/</link>
+      <link>/2015/09/30/warwick/</link>
       <pubDate>Wed, 30 Sep 2015 09:00:00 +0100</pubDate>
       
-      <guid>https://selbydavid.com/2015/09/30/warwick/</guid>
+      <guid>/2015/09/30/warwick/</guid>
       <description>&lt;p&gt;I have just moved to the University of Warwick to start my PhD in Statistics. So far most of the people I have met would regard Coventry as a bit of a downgrade from Edinburgh, but the Warwick campus seems to make up for it.&lt;/p&gt;
 
 &lt;p&gt;The Mathematics and Statistics building comes with resident geese.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2015/zeeman.jpg&#34; alt=&#34;Zeeman Building, University of Warwick&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2015/zeeman.jpg&#34; alt=&#34;Zeeman Building, University of Warwick&#34; /&gt;&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Edinburgh Broadband Map</title>
-      <link>https://selbydavid.com/2015/05/16/broadband/</link>
+      <link>/2015/05/16/broadband/</link>
       <pubDate>Sat, 16 May 2015 09:00:00 +0100</pubDate>
       
-      <guid>https://selbydavid.com/2015/05/16/broadband/</guid>
+      <guid>/2015/05/16/broadband/</guid>
       <description>&lt;p&gt;Despite living in the capital city of Scotland, my home broadband speeds (especially upload speeds) are painfully slow. There is no fibre-optic offered on my road, while my friend two streets over enjoys super-fast internet. It turns out, through the power of data visualisation, that EH16 is a bit of a broadband speed &amp;ldquo;notspot&amp;rdquo; along with a few other slow neighbourhoods throughout Edinburgh. The big empty hole to the east of the city centre is Arthur&amp;rsquo;s Seat and Holyrood Park.&lt;/p&gt;
 
 &lt;p&gt;&lt;script type=&#39;text/javascript&#39; src=&#39;https://public.tableau.com/javascripts/api/viz_v1.js&#39;&gt;&lt;/script&gt;&lt;div class=&#39;tableauPlaceholder&#39; style=&#39;width: 100%; height: 400px; margin: 0 auto;&#39;&gt;&lt;noscript&gt;&lt;a href=&#39;#&#39;&gt;&lt;img alt=&#39;Hotspots and Notspots: Edinburgh Home Broadband Speeds &#39; src=&#39;https:&amp;#47;&amp;#47;public.tableau.com&amp;#47;static&amp;#47;images&amp;#47;Ed&amp;#47;EdinburghBroadband&amp;#47;Map&amp;#47;1_rss.png&#39; style=&#39;border: none&#39; /&gt;&lt;/a&gt;&lt;/noscript&gt;&lt;object class=&#39;tableauViz&#39; width=&#39;100%&#39; height=&#39;400px&#39; style=&#39;display:none;&#39;&gt;&lt;param name=&#39;host_url&#39; value=&#39;https%3A%2F%2Fpublic.tableau.com%2F&#39; /&gt; &lt;param name=&#39;site_root&#39; value=&#39;&#39; /&gt;&lt;param name=&#39;name&#39; value=&#39;EdinburghBroadband&amp;#47;Map&#39; /&gt;&lt;param name=&#39;tabs&#39; value=&#39;no&#39; /&gt;&lt;param name=&#39;toolbar&#39; value=&#39;yes&#39; /&gt;&lt;param name=&#39;static_image&#39; value=&#39;https:&amp;#47;&amp;#47;public.tableau.com&amp;#47;static&amp;#47;images&amp;#47;Ed&amp;#47;EdinburghBroadband&amp;#47;Map&amp;#47;1.png&#39; /&gt; &lt;param name=&#39;animate_transition&#39; value=&#39;yes&#39; /&gt;&lt;param name=&#39;display_static_image&#39; value=&#39;yes&#39; /&gt;&lt;param name=&#39;display_spinner&#39; value=&#39;yes&#39; /&gt;&lt;param name=&#39;display_overlay&#39; value=&#39;yes&#39; /&gt;&lt;param name=&#39;display_count&#39; value=&#39;yes&#39; /&gt;&lt;param name=&#39;showVizHome&#39; value=&#39;no&#39; /&gt;&lt;param name=&#39;showTabs&#39; value=&#39;y&#39; /&gt;&lt;param name=&#39;bootstrapWhenNotified&#39; value=&#39;true&#39; /&gt;&lt;/object&gt;&lt;/div&gt;&lt;/p&gt;
@@ -3437,17 +3602,17 @@ for (i in seq_along(names)) {
     
     <item>
       <title>Everything is awesome</title>
-      <link>https://selbydavid.com/2015/02/17/lego/</link>
+      <link>/2015/02/17/lego/</link>
       <pubDate>Tue, 17 Feb 2015 09:00:00 +0000</pubDate>
       
-      <guid>https://selbydavid.com/2015/02/17/lego/</guid>
+      <guid>/2015/02/17/lego/</guid>
       <description>&lt;p&gt;Today I took part in the Lego Calculator Challenge, an event that was run as part of Edinburgh University&amp;rsquo;s Innovative Learning Week. The day included revising the finer points of adding in base 6 and learning about how people managed to do complicated calculations on mechanical computers before Alan Turing invented the Casio &lt;em&gt;fx&lt;/em&gt;-83.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2015/lego/tea.jpg&#34; alt=&#34;Working on the Lego Calculator Challenge&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2015/lego/tea.jpg&#34; alt=&#34;Working on the Lego Calculator Challenge&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;With the aid of &lt;a href=&#34;https://vimeo.com/46344551&#34;&gt;this therapeutic video&lt;/a&gt;, Lego expert Alex Allmont showed us some of the clever things that are possible using gears and ratchets. I also learnt the existence of and the inner workings of a car&amp;rsquo;s differential gear in a ten-minute time span, thanks to an excellent &lt;a href=&#34;https://www.youtube.com/watch?v=K4JhruinbWc&#34;&gt;film by Chevrolet from the 1930s&lt;/a&gt;. Using exactly the same kind of differential gear, but in reverse, we built our own &amp;ldquo;differential adders&amp;rdquo;, capable of adding or subtracting numbers up to 20.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2015/lego/differential.jpg&#34; alt=&#34;Stuff&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2015/lego/differential.jpg&#34; alt=&#34;Stuff&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Selecting two numbers from the top wheels will automatically compute and output their sum on the lower wheel. Conversely, fixing a number on the lower wheel first will let you perform subtraction. Awesome.&lt;/p&gt;
 </description>
@@ -3455,24 +3620,24 @@ for (i in seq_along(names)) {
     
     <item>
       <title>Twitter score predictions are not infallible</title>
-      <link>https://selbydavid.com/2014/06/14/world-cup/</link>
+      <link>/2014/06/14/world-cup/</link>
       <pubDate>Sat, 14 Jun 2014 09:00:00 +0100</pubDate>
       
-      <guid>https://selbydavid.com/2014/06/14/world-cup/</guid>
+      <guid>/2014/06/14/world-cup/</guid>
       <description>&lt;p&gt;This evening saw the Netherlands face Spain for their first match in the group stage of the 2014 Fifa World Cup. 604 score predictions were made on Twitter in the hour before kick-off. When the final whistle blew, 100% of them had missed the mark.&lt;/p&gt;
 
 &lt;p&gt;The Twittersphere overwhelmingly tipped a 2&amp;ndash;1 victory to Spain, the reigning world champions. A bit of a shame, then, that the Netherlands trounced them 5&amp;ndash;1. Maybe the &lt;a href=&#34;http://www.bbc.co.uk/news/uk-england-27810714&#34; title=&#34;World Cup 2014: Animals &#39;predict&#39; World Cup results - BBC News&#34;&gt;animal pundits&lt;/a&gt; will do better.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2014/twitterscore.png&#34; alt=&#34;Twitter predicted vs. actual score of Group B Netherlands vs. Spain match on 13 June 2014&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2014/twitterscore.png&#34; alt=&#34;Twitter predicted vs. actual score of Group B Netherlands vs. Spain match on 13 June 2014&#34; /&gt;&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Data mining: tea is for Twitter</title>
-      <link>https://selbydavid.com/2014/06/07/tea-bieber/</link>
+      <link>/2014/06/07/tea-bieber/</link>
       <pubDate>Sat, 07 Jun 2014 09:00:00 +0100</pubDate>
       
-      <guid>https://selbydavid.com/2014/06/07/tea-bieber/</guid>
+      <guid>/2014/06/07/tea-bieber/</guid>
       <description>&lt;p&gt;As part of my first foray into data science, I decided to have a go at opinion mining on Twitter. It&amp;rsquo;s common knowledge that everything stops for tea, but how much does the Twittersphere agree? And what else are microbloggers saying about the drink?&lt;/p&gt;
 
 &lt;p&gt;Using the free R statistical software it is very easy to start data mining on Twitter&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:R&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:R&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;. A short R script quickly retrieved 699 recent tweets containing the tag #tea. The code looks something like this:&lt;/p&gt;
@@ -3491,13 +3656,13 @@ text = laply(data, function(t) t$getText())
 
 &lt;p&gt;So what are our friends on Twitter saying about tea? Finding out calls for a graph. But not just any graph: a word cloud&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:wc&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:wc&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;, displaying words according to frequency.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2014/tea.png&#34; alt=&#34;Word cloud made from 699 tweets containing the hashtag &#39;#tea&#39;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2014/tea.png&#34; alt=&#34;Word cloud made from 699 tweets containing the hashtag &#39;#tea&#39;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Obviously every tweet contains &amp;ldquo;tea&amp;rdquo; because that&amp;rsquo;s what was sought. People also like to discuss milk and sugar, as well as coffee (possibly during cataclysmic breakfast drink dilemmas). To the right of centre, &lt;strong&gt;tcot&lt;/strong&gt; stands for &amp;ldquo;top conservatives on Twitter&amp;rdquo;, who enjoy talking about tea &amp;mdash; and tea parties &amp;mdash; as much as anyone. Other notable phrases include &amp;ldquo;freedom&amp;rdquo;, &amp;ldquo;greatness&amp;rdquo;, &amp;ldquo;best&amp;rdquo; and &amp;ldquo;delicious&amp;rdquo;. But we&amp;rsquo;ll do some more objective analysis shortly.&lt;/p&gt;
 
 &lt;p&gt;For variety, I also had a go at mining Twitter&amp;rsquo;s public streaming API for a larger sample, this time using Python. Here&amp;rsquo;s what some ten thousand tweets say about Canadian pop star Justin Bieber:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2014/justin.png&#34; alt=&#34;Word cloud made from 10,000 tweets containing the word &#39;bieber&#39;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2014/justin.png&#34; alt=&#34;Word cloud made from 10,000 tweets containing the word &#39;bieber&#39;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;He&amp;rsquo;s racist? &lt;em&gt;And&lt;/em&gt; shirtless. Who knew?&lt;/p&gt;
 
@@ -3515,7 +3680,7 @@ text = laply(data, function(t) t$getText())
 &lt;p&gt;Justin Bieber has serious issues, i wish he&amp;rsquo;d just sort his shit out because I for one am sick of seeing stupid crap about him in the news&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2014/sentiment.png&#34; alt=&#34;Histogram comparison of sentiment scores for tweets about tea and Justin Bieber&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2014/sentiment.png&#34; alt=&#34;Histogram comparison of sentiment scores for tweets about tea and Justin Bieber&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Our #tea dataset has a score distribution that&amp;rsquo;s mostly positive, with a mean sentiment score of +0.15 and a variance of 0.36. Clearly our intuition is correct and people really do like tea. Indeed, nobody really had much of a bad word to say about the beverage; the minimum score given was -2, which could easily have been obtained from a false-negative tweet like &amp;ldquo;I hate people who dislike #tea&amp;rdquo; (though it wasn&amp;rsquo;t).&lt;/p&gt;
 
@@ -3542,40 +3707,40 @@ text = laply(data, function(t) t$getText())
     
     <item>
       <title>T-set mug</title>
-      <link>https://selbydavid.com/2014/06/05/t-set/</link>
+      <link>/2014/06/05/t-set/</link>
       <pubDate>Thu, 05 Jun 2014 09:00:00 +0100</pubDate>
       
-      <guid>https://selbydavid.com/2014/06/05/t-set/</guid>
-      <description>&lt;p&gt;The set of all &lt;em&gt;t&lt;/em&gt; makes the perfect tea set for mathematicians and other numerate geeks. A natural accompaniment to your &lt;a href=&#34;https://selbydavid.com/2014/06/04/t-pot/&#34;&gt;Student&amp;rsquo;s t-distribution teapot&lt;/a&gt;, the t-set lets you collect mugs in a mathematical way.&lt;/p&gt;
+      <guid>/2014/06/05/t-set/</guid>
+      <description>&lt;p&gt;The set of all &lt;em&gt;t&lt;/em&gt; makes the perfect tea set for mathematicians and other numerate geeks. A natural accompaniment to your &lt;a href=&#34;/2014/06/04/t-pot/&#34;&gt;Student&amp;rsquo;s t-distribution teapot&lt;/a&gt;, the t-set lets you collect mugs in a mathematical way.&lt;/p&gt;
 
 &lt;p&gt;Get yours now &lt;a href=&#34;http://www.zazzle.co.uk/mathematical_t_set_black_coffee_mugs-168015681676499039&#34; title=&#34;t-set mug&#34;&gt;from Zazzle&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2014/t-set.png&#34; alt=&#34;t-set mug&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2014/t-set.png&#34; alt=&#34;t-set mug&#34; /&gt;&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Student&#39;s t-distribution teapot</title>
-      <link>https://selbydavid.com/2014/06/04/t-pot/</link>
+      <link>/2014/06/04/t-pot/</link>
       <pubDate>Wed, 04 Jun 2014 09:00:00 +0100</pubDate>
       
-      <guid>https://selbydavid.com/2014/06/04/t-pot/</guid>
+      <guid>/2014/06/04/t-pot/</guid>
       <description>&lt;p&gt;Where is a student&amp;rsquo;s tea distributed? Probably in a teapot. Thus the &lt;a href=&#34;http://www.zazzle.co.uk/students_t_distribution_teapot-180267930175357597&#34;&gt;Student&amp;rsquo;s t-distribution teapot&lt;/a&gt; is born.&lt;/p&gt;
 
 &lt;p&gt;Warmly emblazoned across the outside is the probability density function of &lt;a href=&#34;http://en.wikipedia.org/wiki/Student&#39;s_t-distribution&#34;&gt;Student&amp;rsquo;s t-distribution&lt;/a&gt;, in case you need to estimate the mean of a normally distributed population and pour a cup of tea at the same time.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2014/t-pot.png&#34; alt=&#34;Student&#39;s t-distribution teapot&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2014/t-pot.png&#34; alt=&#34;Student&#39;s t-distribution teapot&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Lovingly designed for students and academics who take their probability and statistics as seriously as they take a proper brew. You can get one for yourself &lt;a href=&#34;http://www.zazzle.co.uk/students_t_distribution_teapot-180267930175357597&#34;&gt;from Zazzle&lt;/a&gt;. Goes nicely with a &lt;a href=&#34;https://selbydavid.com/2014/06/05/t-set/&#34;&gt;t-set mug&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Lovingly designed for students and academics who take their probability and statistics as seriously as they take a proper brew. You can get one for yourself &lt;a href=&#34;http://www.zazzle.co.uk/students_t_distribution_teapot-180267930175357597&#34;&gt;from Zazzle&lt;/a&gt;. Goes nicely with a &lt;a href=&#34;/2014/06/05/t-set/&#34;&gt;t-set mug&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Contours Magazine</title>
-      <link>https://selbydavid.com/2014/06/04/contours/</link>
+      <link>/2014/06/04/contours/</link>
       <pubDate>Wed, 04 Jun 2014 08:00:00 +0100</pubDate>
       
-      <guid>https://selbydavid.com/2014/06/04/contours/</guid>
+      <guid>/2014/06/04/contours/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;http://www.maths.ed.ac.uk/outreach/contours-magazine&#34;&gt;Contours magazine&lt;/a&gt; is a student publication produced by the University of Edinburgh School of Mathematics, featuring interviews with maths lecturers. I was editor and graphic designer for the 2013&amp;ndash;14 edition. &lt;a href=&#34;http://issuu.com/uoemaths/docs/contours_web&#34;&gt;Click here to read it on Issuu&lt;/a&gt;, or pick up a hard copy from the King&amp;rsquo;s Buildings campus.&lt;/p&gt;
 
 &lt;blockquote&gt;
