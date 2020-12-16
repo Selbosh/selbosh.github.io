@@ -59,6 +59,7 @@ results may differ from mine.&lt;/p&gt;
 &lt;li&gt;&lt;a href=&#34;#day13&#34;&gt;Shuttle search&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day14&#34;&gt;Docking data&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day15&#34;&gt;Rambunctious recitation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day16&#34;&gt;Ticket translation&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;&lt;a id=&#39;day1&#39;&gt;&lt;/a&gt;&lt;/p&gt;
@@ -1462,6 +1463,101 @@ times faster than the first, and my final implementation is 10 times
 faster than that. It takes just a second or two to run. A lower-level
 implementation in C++ might be even faster, but I already have the star
 now…&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;day16&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;day-16-ticket-translation-https-adventofcode-com-2020-day-16&#34;&gt;Day 16 - &lt;a href=&#34;https://adventofcode.com/2020/day/16&#34;&gt;Ticket translation&lt;/a&gt;&lt;/h1&gt;
+
+&lt;p&gt;The first thing we need to do is parse the input data. Everything can be
+grouped into three sections that are separated by blank lines. As each
+section is structured rather differently, it’s easier to treat them
+separately.&lt;/p&gt;
+
+&lt;p&gt;This is very much a job for the package &lt;code&gt;tidyr&lt;/code&gt;. In my case I will
+process &lt;code&gt;your ticket&lt;/code&gt; and &lt;code&gt;nearby tickets&lt;/code&gt; together and the former will
+be denoted by a &lt;code&gt;ticket_id&lt;/code&gt; of &lt;code&gt;0&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- readLines(&#39;input16.txt&#39;)
+
+library(tidyr)
+rules &amp;lt;- input[cumsum(!nchar(input)) &amp;lt; 1] %&amp;gt;%
+  tibble(rules = .) %&amp;gt;%
+  extract(rules,
+          c(&#39;field_name&#39;, &#39;min1&#39;, &#39;max1&#39;, &#39;min2&#39;, &#39;max2&#39;),
+          &#39;(.+): (\\d+)-(\\d+) or (\\d+)-(\\d+)&#39;,
+          convert = TRUE)
+
+tickets &amp;lt;- input[cumsum(!nchar(input)) &amp;gt; 0] %&amp;gt;%
+  tibble(value = .) %&amp;gt;%
+  subset(grepl(&#39;^\\d&#39;, value)) %&amp;gt;%
+  transform(value = strsplit(value, &#39;,&#39;),
+            ticket_id = seq_along(value) - 1L) %&amp;gt;%
+  unnest_longer(value, indices_to = &#39;field_id&#39;) %&amp;gt;%
+  transform(value = as.integer(value))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;invalid-tickets&#34;&gt;Invalid tickets&lt;/h2&gt;
+
+&lt;p&gt;Firstly we identify and add up the invalid values.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(data.table)
+setDT(tickets, key = &#39;ticket_id&#39;)
+tickets[, valid_field := any(value %between% .(rules$min1, rules$max1) |
+                               value %between% .(rules$min2, rules$max2)),
+        by = .(ticket_id, field_id)]
+tickets[(!valid_field), sum(value)]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 19087
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;bipartite-matching&#34;&gt;Bipartite matching&lt;/h2&gt;
+
+&lt;p&gt;Filter out any tickets with invalid fields:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tickets[, valid_ticket := all(valid_field), by = ticket_id]
+tickets &amp;lt;- tickets[(valid_ticket)]
+tickets$valid_field &amp;lt;- tickets$valid_ticket &amp;lt;- NULL
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then try to work out which fields are which. For this I finally get to
+use a non-equi join in &lt;code&gt;data.table&lt;/code&gt;. Also known as witchcraft.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;rules_long &amp;lt;- rules %&amp;gt;%
+  pivot_longer(min1:max2,
+               names_to = c(&#39;.value&#39;, &#39;rule&#39;),
+               names_pattern = &#39;([a-z]{3})([1-2])&#39;)
+setDT(rules_long, key = &#39;field_name&#39;)
+
+matched_fields &amp;lt;- rules_long[tickets[ticket_id &amp;gt; 0],
+                             .(field_name, field_id),
+                             allow.cartesian = TRUE,
+                             on = .(min &amp;lt;= value, max &amp;gt;= value)]
+ntickets &amp;lt;- length(unique(tickets$ticket_id)) - 1 # for own ticket
+matched_fields[, all := .N &amp;gt;= ntickets, by = .(field_name, field_id)]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We have field names assigned to IDs, but it’s not immediately clear what
+is the unique solution that maps exactly one field name to one ID. In
+graph theory, this is a &lt;em&gt;maximum bipartite matching&lt;/em&gt; and can be solved
+as a linear programme.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;igraph&lt;/code&gt; package has a dedicated function for this. It’s extremely
+fragile: if you forget to set the vertex &lt;code&gt;types&lt;/code&gt; then it’ll crash your R
+session immediately and without explanation. The types need to indicate
+whether a vertex corresponds to a field name or an ID.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(igraph)
+g &amp;lt;- graph_from_data_frame(matched_fields[(all)])
+V(g)$type &amp;lt;- rep(1:0, each = vcount(g) / 2)
+matching &amp;lt;- max_bipartite_match(g)$matching
+tickets[, field_name := matching[as.character(field_id)]]
+tickets[grepl(&#39;^departure&#39;, field_name) &amp;amp; !ticket_id] -&amp;gt; departures
+format(prod(departures$value), scientific = FALSE)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] &amp;quot;1382443095281&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;hr /&gt;
 
