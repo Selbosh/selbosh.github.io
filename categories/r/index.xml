@@ -2,28 +2,28 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>R on Tea &amp; Stats</title>
-    <link>/categories/r/</link>
+    <link>https://selbydavid.com/categories/r/</link>
     <description>Tea, statistics and t-statistics: a data science blog by David Selby.</description>
 		<atom:author>
 			<atom:name>David Selby</atom:name>
 			<atom:uri>https://selbydavid.com</atom:uri>
 		</atom:author>
 		<image>
-		    <link>/categories/r/</link>
+		    <link>https://selbydavid.com/categories/r/</link>
 		    <title>Tea &amp; Stats</title>
-		    <url>/logo.png</url>
+		    <url>https://selbydavid.com/logo.png</url>
 		</image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-GB</language>
     <lastBuildDate>Sun, 06 Dec 2020 17:00:00 +0000</lastBuildDate>
-    <atom:link href="/categories/r/" rel="self" type="application/rss+xml" />
+    <atom:link href="https://selbydavid.com/categories/r/" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Advent of Code 2020</title>
-      <link>/2020/12/06/advent-2020/</link>
+      <link>https://selbydavid.com/2020/12/06/advent-2020/</link>
       <pubDate>Sun, 06 Dec 2020 17:00:00 +0000</pubDate>
       
-      <guid>/2020/12/06/advent-2020/</guid>
+      <guid>https://selbydavid.com/2020/12/06/advent-2020/</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;https://adventofcode.com/&#34;&gt;Advent of Code&lt;/a&gt; is a series of programming
@@ -1420,7 +1420,7 @@ is ten times faster:&lt;/p&gt;
   current
 }
 
-memory_game(2020, c(7, 12, 1, 0, 16, 2))
+memory_game2(2020, c(7, 12, 1, 0, 16, 2))
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;pre&gt;&lt;code&gt;[1] 410
@@ -1458,11 +1458,54 @@ memory_game3(3e7, c(7, 12, 1, 0, 16, 2))
 &lt;pre&gt;&lt;code&gt;[1] 238
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;According to &lt;code&gt;microbenchmark&lt;/code&gt;, the second implementation is about 5
-times faster than the first, and my final implementation is 10 times
-faster than that. It takes just a second or two to run. A lower-level
-implementation in C++ might be even faster, but I already have the star
-now…&lt;/p&gt;
+&lt;p&gt;It takes just a few seconds to run the third version. At this point I
+stopped, because I had the gold star at this point. But further
+improvements could still be made, if needed.&lt;/p&gt;
+
+&lt;h2 id=&#34;rcpp-implementation&#34;&gt;Rcpp implementation&lt;/h2&gt;
+
+&lt;p&gt;Later I came back to rewrite it in C++, just to see how much more
+quickly it would run. Of course there’s a trade-off between computer
+time and programmer time, but this is a simple enough example.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;#include &amp;lt;Rcpp.h&amp;gt;
+
+//[[Rcpp::export]]
+int memory_game_cpp(int n, Rcpp::NumericVector start) {
+  int nstart = start.length() - 1;
+  if (n &amp;lt;= nstart) {
+    return start[n - 1];
+  }
+  
+  int max_start = Rcpp::max(start) + 1;
+  Rcpp::NumericVector spoken(std::max(n + 1, max_start));
+  for (int i = 0; i &amp;lt; nstart; i++){
+    spoken[start[i]] = i + 1;
+  }
+  
+  int current = start[nstart];
+  int next_number;
+  for (int i = nstart + 1; i &amp;lt; n; i++){
+    next_number = int(spoken[current] &amp;gt; 0) * i - spoken[current];
+    spoken[current] = i;
+    current = next_number;
+  }
+  
+  return current;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To see the difference in performance, I passed each of the functions
+into the &lt;code&gt;microbenchmark&lt;/code&gt;, which measured the average runtime for
+multiple runs, when passed the parameters from part 1 (i.e. &lt;code&gt;n = 2020&lt;/code&gt;).
+Below is the resulting distribution of times in microseconds (on a
+logarithmic scale).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2020/aoc-day15-benchmark.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;For &lt;code&gt;n = 30000000&lt;/code&gt;, the C++ function completed in just under one
+second—about ten times faster than my fastest pure-R code. Worth it?
+Possibly not for this one-off exercise, but it’s interesting to note.&lt;/p&gt;
 
 &lt;p&gt;&lt;a id=&#34;day16&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
@@ -1567,10 +1610,10 @@ format(prod(departures$value), scientific = FALSE)
     
     <item>
       <title>Which film should I watch during lockdown?</title>
-      <link>/2020/05/06/films/</link>
+      <link>https://selbydavid.com/2020/05/06/films/</link>
       <pubDate>Wed, 06 May 2020 12:55:00 +0100</pubDate>
       
-      <guid>/2020/05/06/films/</guid>
+      <guid>https://selbydavid.com/2020/05/06/films/</guid>
       <description>
 
 &lt;p&gt;My brother wrote to me this week with an interesting task:&lt;/p&gt;
@@ -1603,7 +1646,7 @@ So to get a film&amp;rsquo;s page, we can use the web site&amp;rsquo;s search fu
 
 &lt;p&gt;replacing &lt;code&gt;%s&lt;/code&gt; with your search query, and you see something like this in your browser:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2020/rottentomatoes.png&#34; alt=&#34;Search results page for &#39;The Good, The Bad and the Ugly&#39; on Rotten Tomatoes&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2020/rottentomatoes.png&#34; alt=&#34;Search results page for &#39;The Good, The Bad and the Ugly&#39; on Rotten Tomatoes&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;So in my mind, the workflow was going to be a simple matter of:&lt;/p&gt;
 
@@ -1657,7 +1700,7 @@ request &amp;lt;- mc_lookup(&#39;The Good, the Bad and the Ugly&#39;)
 &lt;p&gt;which programmatically retrieves the content of the following page.
 Notice there are no ratings or summaries displayed on the results page, so we will need to follow the link to each film&amp;rsquo;s page to get that information.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2020/imdb.png&#34; alt=&#34;Search results page for &#39;The Good, The Bad and the Ugly&#39; on IMDb&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2020/imdb.png&#34; alt=&#34;Search results page for &#39;The Good, The Bad and the Ugly&#39; on IMDb&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;scraping-results&#34;&gt;Scraping results&lt;/h2&gt;
 
@@ -1703,7 +1746,7 @@ It is something you should always consider when querying data on a server or net
 &lt;p&gt;The above function requests the IMDb film page linked in the search results.
 For example:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2020/imdb_film.png&#34; alt=&#34;IMDb page for &#39;The Good, The Bad and the Ugly&#39; (1966)&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2020/imdb_film.png&#34; alt=&#34;IMDb page for &#39;The Good, The Bad and the Ugly&#39; (1966)&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Almost there.
 Now we just need to scrape the key information from this page:&lt;/p&gt;
@@ -1795,10 +1838,10 @@ Export it to a csv file and you can search and sort it to your heart&amp;rsquo;s
     
     <item>
       <title>R code golf: the identity matrix</title>
-      <link>/2019/03/27/identity-matrix/</link>
+      <link>https://selbydavid.com/2019/03/27/identity-matrix/</link>
       <pubDate>Wed, 27 Mar 2019 15:50:00 +0000</pubDate>
       
-      <guid>/2019/03/27/identity-matrix/</guid>
+      <guid>https://selbydavid.com/2019/03/27/identity-matrix/</guid>
       <description>
 
 &lt;p&gt;How many different ways are there to create an identity matrix in R?
@@ -2081,10 +2124,10 @@ Maybe all the different ways of tackling a common data wrangling task, or produc
     
     <item>
       <title>Exploring influence in networks</title>
-      <link>/2018/03/07/influence/</link>
+      <link>https://selbydavid.com/2018/03/07/influence/</link>
       <pubDate>Wed, 07 Mar 2018 15:00:00 +0000</pubDate>
       
-      <guid>/2018/03/07/influence/</guid>
+      <guid>https://selbydavid.com/2018/03/07/influence/</guid>
       <description>&lt;p&gt;I have just published an &lt;a href=&#34;http://selbydavid.com/influence/&#34;&gt;interactive graphic&lt;/a&gt; showing the effect of ranking scientific communities with pairwise comparison models.
 The visualisation is an interactive version of my (award-winning) &lt;em&gt;useR!2017&lt;/em&gt; poster, &lt;a href=&#34;http://selbydavid.com/2017/06/29/user2017/&#34;&gt;Ranking influential communities in networks&lt;/a&gt;.&lt;/p&gt;
 
@@ -2124,13 +2167,13 @@ Feedback is very welcome!&lt;/p&gt;
     
     <item>
       <title>Building a neural network from scratch in R</title>
-      <link>/2018/01/09/neural-network/</link>
+      <link>https://selbydavid.com/2018/01/09/neural-network/</link>
       <pubDate>Tue, 09 Jan 2018 10:00:00 +0000</pubDate>
       
-      <guid>/2018/01/09/neural-network/</guid>
-      <description>&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;/rmarkdown-libs/anchor-sections/anchor-sections.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;/rmarkdown-libs/anchor-sections/anchor-sections.js&#34;&gt;&lt;/script&gt;
+      <guid>https://selbydavid.com/2018/01/09/neural-network/</guid>
+      <description>&lt;script src=&#34;https://selbydavid.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://selbydavid.com/rmarkdown-libs/anchor-sections/anchor-sections.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://selbydavid.com/rmarkdown-libs/anchor-sections/anchor-sections.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;Neural networks can seem like a bit of a black box.
@@ -2143,7 +2186,7 @@ If you don’t like mathematics, feel free to skip to the code chunks towards th
 &lt;p&gt;What’s a logistic regression model?
 Suppose we want to build a machine that classifies objects in two groups, for example &lt;a href=&#34;https://www.youtube.com/watch?v=ACmydtFDTGs&#34;&gt;‘hot dog’ and ‘not hot dog’&lt;/a&gt;.
 We will say &lt;span class=&#34;math inline&#34;&gt;\(Y_i = 1\)&lt;/span&gt; if object &lt;em&gt;i&lt;/em&gt; is a hot dog, and &lt;span class=&#34;math inline&#34;&gt;\(Y_i = 0\)&lt;/span&gt; otherwise.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=ACmydtFDTGs&#34;&gt;&lt;img src=&#34;/img/2018/hotdog.gif&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=ACmydtFDTGs&#34;&gt;&lt;img src=&#34;https://selbydavid.com/img/2018/hotdog.gif&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;A logistic regression model estimates these odds,
 &lt;span class=&#34;math display&#34;&gt;\[
 \operatorname{odds}(Y = 1)
@@ -2199,12 +2242,12 @@ Here is a random sample of five:&lt;/p&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;And a scatter plot of all of them:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2018-01-09-neural-network_files/figure-html/plot-spirals-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/plot-spirals-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Fitting a logistic regression model in R is easy:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;logreg &amp;lt;- glm(class ~ x1 + x2, family = binomial, data = hotdogs)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;But as the decision boundary can only be linear, it doesn’t work too well at distinguishing our two classes.
 Logistic regression classifies 134 (67%) of our objects correctly.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2018-01-09-neural-network_files/figure-html/logistic-boundary-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/logistic-boundary-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Nonlinearity is where neural networks are useful.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;artificial-neural-networks&#34; class=&#34;section level2&#34;&gt;
@@ -2220,7 +2263,7 @@ Like ogres and onions, they have layers—three to be exact.&lt;/p&gt;
 The input layer comprises the covariates and an intercept, as before.
 In the middle, there is a &lt;em&gt;hidden layer&lt;/em&gt;, which is a transformation of the input space into &lt;span class=&#34;math inline&#34;&gt;\(h\)&lt;/span&gt; dimensions, where &lt;span class=&#34;math inline&#34;&gt;\(h\)&lt;/span&gt; is a number chosen by us.
 We then perform a logistic regression on this transformed space to estimate the classes.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2018-01-09-neural-network_files/figure-html/neural-network-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/neural-network-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;It works like this.&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Generate &lt;span class=&#34;math inline&#34;&gt;\(h\)&lt;/span&gt; different linear combinations of the input variables.&lt;/li&gt;
@@ -2241,7 +2284,7 @@ So far, this is exactly like our logistic regression model above.&lt;/p&gt;
 &lt;p&gt;A neural network adds a hidden layer, which you might think of as an intermediate design matrix between the inputs and the outputs.
 &lt;a href=&#34;https://en.wikipedia.org/wiki/Deep_learning&#34;&gt;Deep learning&lt;/a&gt; is just a neural network with multiple hidden layers.&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:node-diagram&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;/post/2018-01-09-neural-network_files/figure-html/node-diagram-1.svg&#34; alt=&#34;Multi-layer perceptron with five hidden nodes&#34; width=&#34;672&#34; /&gt;
+&lt;img src=&#34;https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/node-diagram-1.svg&#34; alt=&#34;Multi-layer perceptron with five hidden nodes&#34; width=&#34;672&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;
 Figure 1: Multi-layer perceptron with five hidden nodes
 &lt;/p&gt;
@@ -2405,17 +2448,17 @@ grid$class &amp;lt;- factor((ff_grid$output &amp;gt; .5) * 1,
   geom_point(data = grid, size = .5) +
   geom_point() +
   labs(x = expression(x[1]), y = expression(x[2]))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2018-01-09-neural-network_files/figure-html/plot-ad-hoc-1.png&#34; width=&#34;672&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/plot-ad-hoc-1.png&#34; width=&#34;672&#34; /&gt;
 The regions the neural network has classified into ‘hot dog’ and ‘not hot dog’ can no longer be separated by a single straight line.
 The more nodes we add to the hidden layer, the more elaborate the decision boundaries can become, improving accuracy at the expense of computation time (as more weights must be calculated) and increased risk of &lt;a href=&#34;https://en.wikipedia.org/wiki/Overfitting&#34;&gt;over-fitting&lt;/a&gt; the data.&lt;/p&gt;
 &lt;p&gt;How about 30 nodes?&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;nnet30 &amp;lt;- train(x, y, hidden = 30, iterations = 1e5)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;After 100,000 iterations, accuracy is 100%.
 The decision boundary looks much smoother:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2018-01-09-neural-network_files/figure-html/plot-30-nodes-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/plot-30-nodes-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;And for completeness, let’s see what one hidden node (plus an intercept) gives us.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;nnet1 &amp;lt;- train(x, y, hidden = 1, iterations = 1e5)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2018-01-09-neural-network_files/figure-html/plot-1-node-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2018-01-09-neural-network_files/figure-html/plot-1-node-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Much worse accuracy—68%—and the decision boundary looks linear.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;r6-class-implementation&#34; class=&#34;section level2&#34;&gt;
@@ -2591,10 +2634,10 @@ Full source code for this post is available &lt;a href=&#34;https://github.com/S
     
     <item>
       <title>Using R on Android</title>
-      <link>/2017/12/29/r-android/</link>
+      <link>https://selbydavid.com/2017/12/29/r-android/</link>
       <pubDate>Fri, 29 Dec 2017 15:00:00 +0000</pubDate>
       
-      <guid>/2017/12/29/r-android/</guid>
+      <guid>https://selbydavid.com/2017/12/29/r-android/</guid>
       <description>
 
 &lt;p&gt;I just discovered a way to get R running on my smartphone, with full support for packages, graphics and &lt;a href=&#34;http://rmarkdown.rstudio.com/&#34;&gt;R Markdown&lt;/a&gt;, and no need to connect to an external server.
@@ -2613,7 +2656,7 @@ It just works.&lt;/p&gt;
 &lt;p&gt;GNUroot Debian emulates a command line interface or &amp;ldquo;X Terminal&amp;rdquo; like on a regular desktop PC.
 You can work in multiple windows, and you have access to all the files on your Android system.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2017/gnuroot.png&#34; alt=&#34;GNUroot Debian&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/gnuroot.png&#34; alt=&#34;GNUroot Debian&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;You can use it not only to run R on your phone, but also Python or any other command-line tools supported by GNU/Linux.&lt;/p&gt;
 
@@ -2641,7 +2684,7 @@ apt-get install r-base r-base-dev
 This is just like the usual interactive R user interface (because it &lt;em&gt;is&lt;/em&gt; the usual interface).
 Run commands and load and install packages to your heart&amp;rsquo;s content.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2017/interactiveR.png&#34; alt=&#34;Interactive R session in GNUroot Debian&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/interactiveR.png&#34; alt=&#34;Interactive R session in GNUroot Debian&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;To quit R and return to the Linux command line, type&lt;/p&gt;
 
@@ -2669,7 +2712,7 @@ R -e &amp;quot;print(&#39;Hello, world&#39;)&amp;quot;
 &lt;p&gt;Pressing Up and Down on your keyboard lets you cycle through recently used commands, saving you from needing to retype repeated or very similar commands.
 Usually touch-screen keyboards don&amp;rsquo;t have arrow keys, but you can install the &lt;a href=&#34;https://play.google.com/store/apps/details?id=org.pocketworkstation.pckeyboard&#34;&gt;Hacker&amp;rsquo;s Keyboard&lt;/a&gt; for Android, which does (at least in landscape mode).&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2017/hackers-keyboard.png&#34; alt=&#34;Hacker&#39;s Keyboard&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/hackers-keyboard.png&#34; alt=&#34;Hacker&#39;s Keyboard&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;running-scripts&#34;&gt;Running scripts&lt;/h2&gt;
 
@@ -2711,7 +2754,7 @@ cat(x, y, sep = &#39;, &#39;)
 
 &lt;p&gt;for more detailed output.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2017/Rscript.png&#34; alt=&#34;Evaluating an R script on Android&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/Rscript.png&#34; alt=&#34;Evaluating an R script on Android&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;If you prefer working in R to in a Linux terminal, then you can equivalently do everything within an R session:&lt;/p&gt;
 
@@ -2747,7 +2790,7 @@ dev.off()
 &lt;p&gt;Run the script and use &lt;code&gt;ls&lt;/code&gt; or &lt;code&gt;list.files()&lt;/code&gt; to verify that a new file, &lt;code&gt;test.png&lt;/code&gt; has been created.
 In your Android launcher, go to &lt;strong&gt;Files &amp;gt; Local &amp;gt; Internal storage &amp;gt; Documents&lt;/strong&gt; (the names might vary depending on your device) and you should see your new plot, which you can open and share like any other image.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2017/test.png&#34; alt=&#34;Test R plot&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/test.png&#34; alt=&#34;Test R plot&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;r-markdown-on-android&#34;&gt;R Markdown on Android&lt;/h2&gt;
 
@@ -2795,16 +2838,16 @@ Once again, share or upload it like any other file.&lt;/p&gt;
 I hope you found this useful.
 This blog post was written on a Huawei Honor 8 smartphone using QuickEdit text editor.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2017/android-r.gif&#34; alt=&#34;R on Android&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/android-r.gif&#34; alt=&#34;R on Android&#34; /&gt;&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>useR! poster: ranking influential communities</title>
-      <link>/2017/06/29/user2017/</link>
+      <link>https://selbydavid.com/2017/06/29/user2017/</link>
       <pubDate>Thu, 29 Jun 2017 18:30:00 +0100</pubDate>
       
-      <guid>/2017/06/29/user2017/</guid>
+      <guid>https://selbydavid.com/2017/06/29/user2017/</guid>
       <description>&lt;p&gt;Next week I will be presenting a poster at the &lt;a href=&#34;https://user2017.brussels&#34;&gt;useR!2017&lt;/a&gt; conference in Brussels.&lt;/p&gt;
 
 &lt;p&gt;My topic is &lt;strong&gt;Ranking influential communities in networks&lt;/strong&gt;.
@@ -2817,7 +2860,7 @@ A journal having a high influence score means it tends to receive more citations
 &lt;p&gt;Statistics comes second in the inter-field ranking (after economics).
 We all know how cool statistics is, so the model must be right.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2017/user2017.png&#34; alt=&#34;useR!2017 poster&#34; title=&#34;Ranking influential communities in networks&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/user2017.png&#34; alt=&#34;useR!2017 poster&#34; title=&#34;Ranking influential communities in networks&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Here is a preview.
 You can download the full PDF on the &lt;a href=&#34;https://user2017.brussels/posters&#34;&gt;conference web site&lt;/a&gt;.&lt;/p&gt;
@@ -2832,13 +2875,13 @@ An idea for a future R package, perhaps?&lt;/p&gt;
     
     <item>
       <title>Chernoff faces in ggplot2</title>
-      <link>/2017/06/25/ggchernoff/</link>
+      <link>https://selbydavid.com/2017/06/25/ggchernoff/</link>
       <pubDate>Sun, 25 Jun 2017 18:25:00 +0100</pubDate>
       
-      <guid>/2017/06/25/ggchernoff/</guid>
-      <description>&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;/rmarkdown-libs/anchor-sections/anchor-sections.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;/rmarkdown-libs/anchor-sections/anchor-sections.js&#34;&gt;&lt;/script&gt;
+      <guid>https://selbydavid.com/2017/06/25/ggchernoff/</guid>
+      <description>&lt;script src=&#34;https://selbydavid.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://selbydavid.com/rmarkdown-libs/anchor-sections/anchor-sections.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://selbydavid.com/rmarkdown-libs/anchor-sections/anchor-sections.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;I am pleased to introduce my first R package for general consumption, &lt;a href=&#34;https://github.com/Selbosh/ggChernoff&#34;&gt;&lt;strong&gt;ggChernoff&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
@@ -2869,7 +2912,7 @@ Rather than choosing a types of graph from a list—for example bar plot, pie ch
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;into the following simple visualisation.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-06-25-ggchernoff_files/figure-html/lineplot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/lineplot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;In &lt;em&gt;Grammar of Graphics&lt;/em&gt; terms, we produce the plot using these semantics.&lt;/p&gt;
 &lt;dl&gt;
 &lt;dt&gt;Variables&lt;/dt&gt;
@@ -2904,9 +2947,9 @@ Rather than choosing a types of graph from a list—for example bar plot, pie ch
 &lt;p&gt;Our line plot above is grammatically equivalent to a bar chart—just make the lines thicker!
 Now, what if we swap Cartesian coordinates for polar coordinates, (r, θ)?
 The resulting graphic is still grammatically correct, though perhaps not very useful.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-06-25-ggchernoff_files/figure-html/polar-1.png&#34; width=&#34;384&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/polar-1.png&#34; width=&#34;384&#34; /&gt;
 We can even transpose it to (θ, r) coordinates, for another grammatically-valid data visualisation.
-&lt;img src=&#34;/post/2017-06-25-ggchernoff_files/figure-html/radial-1.png&#34; width=&#34;384&#34; /&gt;&lt;/p&gt;
+&lt;img src=&#34;https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/radial-1.png&#34; width=&#34;384&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;These plots don’t necessarily have names, so you don’t have to hunt through a list to find the right tool to create them.
 It is just a matter of knowing how the &lt;em&gt;Grammar of Graphics&lt;/em&gt; works.&lt;/p&gt;
 &lt;p&gt;Look at the specifications for our plot again.
@@ -2928,7 +2971,7 @@ Let’s try something completely different!&lt;/p&gt;
 &lt;/dd&gt;
 &lt;/dl&gt;
 &lt;p&gt;…and we produce this graph.
-&lt;img src=&#34;/post/2017-06-25-ggchernoff_files/figure-html/smile-1.png&#34; width=&#34;480&#34; /&gt;&lt;/p&gt;
+&lt;img src=&#34;https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/smile-1.png&#34; width=&#34;480&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Using faces for multivariate data visualisation is an idea credited to &lt;a href=&#34;https://en.wikipedia.org/wiki/Chernoff_face&#34;&gt;Herman Chernoff&lt;/a&gt;, and which Wilkinson discusses in some detail in &lt;em&gt;The Grammar of Graphics&lt;/em&gt;.
 In principle, you can represent data using all kinds of weird and wonderful things, so long as you can clearly define geometry, aesthetics, scales and so on to integrate them into a grammatical workflow.&lt;/p&gt;
 &lt;p&gt;My R package, &lt;a href=&#34;https://github.com/Selbosh/ggChernoff&#34;&gt;ggChernoff&lt;/a&gt;, extends ggplot2 with a new face geom and aesthetics for its mouth and eyebrows.
@@ -2946,7 +2989,7 @@ By mapping variables to the right aesthetic you can make your data happy or sad,
 &lt;/ul&gt;
 &lt;/dd&gt;
 &lt;/dl&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2017-06-25-ggchernoff_files/figure-html/eyebrow-1.png&#34; width=&#34;480&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2017-06-25-ggchernoff_files/figure-html/eyebrow-1.png&#34; width=&#34;480&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;This is a nice way to add a bit of personality to your data visualisations.
 Unlike the package &lt;a href=&#34;https://github.com/dill/emoGG&#34;&gt;emoGG&lt;/a&gt;, which involves selecting pre-drawn icons from a list, the faces in ggChernoff are procedurally generated, in the spirit of the grammar of graphics.&lt;/p&gt;
 &lt;p&gt;More demonstrations are coming in a future post.
@@ -2956,10 +2999,10 @@ The package ggChernoff is &lt;a href=&#34;https://github.com/Selbosh/ggChernoff&
     
     <item>
       <title>Publishing from blogdown to GitHub with Travis</title>
-      <link>/2017/06/22/blogdown-travis/</link>
+      <link>https://selbydavid.com/2017/06/22/blogdown-travis/</link>
       <pubDate>Thu, 22 Jun 2017 08:00:00 +0100</pubDate>
       
-      <guid>/2017/06/22/blogdown-travis/</guid>
+      <guid>https://selbydavid.com/2017/06/22/blogdown-travis/</guid>
       <description>
 
 &lt;p&gt;Yihui Xie&amp;rsquo;s new &lt;a href=&#34;https://bookdown.org/yihui/blogdown/&#34;&gt;blogdown&lt;/a&gt; package is a brilliantly elegant and simple tool for creating R-themed blogs and web sites.
@@ -2971,7 +3014,7 @@ Starting your own blog is as simple as one line of R code:&lt;/p&gt;
 &lt;p&gt;By default, blogdown uses &lt;a href=&#34;http://gohugo.io&#34;&gt;Hugo&lt;/a&gt;, a static web site generator written in Google&amp;rsquo;s Go programming language.
 This has a number of advantages over Jekyll (the site generator that powers GitHub Pages) and from personal experience, everything just seems to work more smoothly.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2017/hugo-lithium.png&#34; alt=&#34;Example blogdown site&#34; title=&#34;Example blogdown site&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/hugo-lithium.png&#34; alt=&#34;Example blogdown site&#34; title=&#34;Example blogdown site&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Previously I wrote about &lt;a href=&#34;http://selbydavid.com/2017/06/16/rmarkdown-jekyll/&#34;&gt;automatically deploying an R Markdown Jekyll blog with Travis&lt;/a&gt;.
 In this post, I am going to explain how you can use Travis to knit your R Markdown blog posts, then publish them with Hugo/blogdown.&lt;/p&gt;
@@ -3014,15 +3057,15 @@ More complete information is available in the &lt;a href=&#34;https://bookdown.o
 
 &lt;h2 id=&#34;linking-github-to-travis&#34;&gt;Linking GitHub to Travis&lt;/h2&gt;
 
-&lt;p&gt;This follows my &lt;a href=&#34;/2017/06/16/rmarkdown-jekyll/#linking-github-to-travis&#34;&gt;earlier guide&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This follows my &lt;a href=&#34;https://selbydavid.com/2017/06/16/rmarkdown-jekyll/#linking-github-to-travis&#34;&gt;earlier guide&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;Create a &lt;a href=&#34;https://github.com/settings/tokens&#34;&gt;GitHub personal access token&lt;/a&gt;, making sure the &amp;ldquo;repo&amp;rdquo; box is ticked so it has permission to push to repositories. Copy the token to your clipboard.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2017/github-pat.png&#34; alt=&#34;Creating a GitHub PAT&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/github-pat.png&#34; alt=&#34;Creating a GitHub PAT&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;On &lt;a href=&#34;https://travis-ci.org/&#34;&gt;Travis&lt;/a&gt;, enable the GitHub repository corresponding to your blogdown site. In Settings, create a new environment variable called &lt;code&gt;GITHUB_PAT&lt;/code&gt; and paste your token into the Value field.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2017/travis-pat.png&#34; alt=&#34;Adding a Travis environment variable&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/travis-pat.png&#34; alt=&#34;Adding a Travis environment variable&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;configuring-travis&#34;&gt;Configuring Travis&lt;/h2&gt;
 
@@ -3075,23 +3118,23 @@ In my experience it takes about two minutes from pushing changes to the updated 
 
 &lt;p&gt;If you have nothing better to do then you can watch Travis as it tries to deploy your blog. There&amp;rsquo;s no need to monitor it, though: if it fails for any reason, you&amp;rsquo;ll receive an e-mail.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2017/travis-log.png&#34; alt=&#34;Travis log for a successful build&#34; title=&#34;Travis log for a successful build&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/travis-log.png&#34; alt=&#34;Travis log for a successful build&#34; title=&#34;Travis log for a successful build&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Hopefully this guide helps. If you have any questions or feedback, feel free to leave a comment below or &lt;a href=&#34;/about&#34;&gt;contact me&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Hopefully this guide helps. If you have any questions or feedback, feel free to leave a comment below or &lt;a href=&#34;https://selbydavid.com/about&#34;&gt;contact me&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Pretty errors, warnings and messages in R Markdown</title>
-      <link>/2017/06/18/rmarkdown-alerts/</link>
+      <link>https://selbydavid.com/2017/06/18/rmarkdown-alerts/</link>
       <pubDate>Sun, 18 Jun 2017 13:15:00 +0100</pubDate>
       
-      <guid>/2017/06/18/rmarkdown-alerts/</guid>
+      <guid>https://selbydavid.com/2017/06/18/rmarkdown-alerts/</guid>
       <description>&lt;p&gt;When knitting an R Markdown document to HTML output, R chunks can produce warnings, errors or messages.&lt;/p&gt;
 
 &lt;p&gt;Normally these messages look like any other console output:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2017/alerts2.png&#34; alt=&#34;R Markdown alert messages&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/alerts2.png&#34; alt=&#34;R Markdown alert messages&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Pretty ugly, and usually something I find myself trying to hide at the earliest opportunity.&lt;/p&gt;
 
@@ -3099,7 +3142,7 @@ In my experience it takes about two minutes from pushing changes to the updated 
 
 &lt;p&gt;What if you could have them looking like this?&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/img/2017/alerts.png&#34; alt=&#34;Bootstrap-styled alert messages&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2017/alerts.png&#34; alt=&#34;Bootstrap-styled alert messages&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Bootstrap includes &lt;a href=&#34;http://getbootstrap.com/components/#alerts&#34;&gt;dedicated message boxes&lt;/a&gt; for danger, warnings and information.
 If you were writing an ordinary web site, you would generate these using the following HTML markup:&lt;/p&gt;
@@ -3137,10 +3180,10 @@ Just add the following code to a chunk near the start of your &lt;code&gt;.Rmd&l
     
     <item>
       <title>Deploying an R Markdown Jekyll site to GitHub Pages</title>
-      <link>/2017/06/16/rmarkdown-jekyll/</link>
+      <link>https://selbydavid.com/2017/06/16/rmarkdown-jekyll/</link>
       <pubDate>Fri, 16 Jun 2017 12:00:00 +0100</pubDate>
       
-      <guid>/2017/06/16/rmarkdown-jekyll/</guid>
+      <guid>https://selbydavid.com/2017/06/16/rmarkdown-jekyll/</guid>
       <description>
 
 &lt;p&gt;GitHub Pages&amp;rsquo; built-in &lt;a href=&#34;https://jekyllrb.com/&#34;&gt;Jekyll&lt;/a&gt; support makes it very easy for techie types to deploy static web sites.
@@ -3293,7 +3336,7 @@ It knits them to Markdown and makes sure plots get saved to the right directory.
 &lt;p&gt;You should now have a system that automagically renders and deploys your R Markdown posts every time you push them to your site&amp;rsquo;s GitHub repository.
 If anything is unclear, have a look at my &lt;a href=&#34;https://github.com/Selbosh/jekyll-rmd&#34;&gt;minimal working repository&lt;/a&gt; or &lt;a href=&#34;https://github.com/Selbosh/old-jekyll&#34;&gt;a real example&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;If you found this helpful or have any comments or questions, feel free to &lt;a href=&#34;/about&#34;&gt;get in touch&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you found this helpful or have any comments or questions, feel free to &lt;a href=&#34;https://selbydavid.com/about&#34;&gt;get in touch&lt;/a&gt;.&lt;/p&gt;
 &lt;div class=&#34;footnotes&#34;&gt;
 
 &lt;hr /&gt;
@@ -3308,13 +3351,13 @@ If anything is unclear, have a look at my &lt;a href=&#34;https://github.com/Sel
     
     <item>
       <title>Secret Santa in R</title>
-      <link>/2016/12/07/santa/</link>
+      <link>https://selbydavid.com/2016/12/07/santa/</link>
       <pubDate>Wed, 07 Dec 2016 09:00:00 +0000</pubDate>
       
-      <guid>/2016/12/07/santa/</guid>
-      <description>&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
-&lt;link href=&#34;/rmarkdown-libs/anchor-sections/anchor-sections.css&#34; rel=&#34;stylesheet&#34; /&gt;
-&lt;script src=&#34;/rmarkdown-libs/anchor-sections/anchor-sections.js&#34;&gt;&lt;/script&gt;
+      <guid>https://selbydavid.com/2016/12/07/santa/</guid>
+      <description>&lt;script src=&#34;https://selbydavid.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://selbydavid.com/rmarkdown-libs/anchor-sections/anchor-sections.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://selbydavid.com/rmarkdown-libs/anchor-sections/anchor-sections.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;Our office just exchanged presents for &lt;em&gt;Secret Santa&lt;/em&gt;, a tradition where each person is randomly assigned someone else to give an anonyous gift. One of the challenges of Secret Santa is keeping the pairs of gift-givers and receivers both random and secret. How can you do this while also taking part yourself? Using R, of course!&lt;/p&gt;
@@ -3401,7 +3444,7 @@ for (i in seq_along(names)) {
 }&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;strong&gt;Merry Christmas!&lt;/strong&gt;&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/img/2016/santa.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;img src=&#34;https://selbydavid.com/img/2016/santa.jpg&#34; alt=&#34;&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;Secret Santa at Warwick&lt;/p&gt;
 &lt;/div&gt;
 </description>

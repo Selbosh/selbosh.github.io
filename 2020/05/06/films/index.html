@@ -15,9 +15,9 @@
 <meta property="og:description" content="My brother wrote to me this week with an interesting task:
  I&rsquo;ve got a list of films I&rsquo;ve noted down whenever I&rsquo;ve seen a good review. But it&rsquo;s hundreds long and I can never remember what a film is from its title and can&rsquo;t be bothered to look them up each time. Any chance you can knock up a script that cross-references a Rotten Tomatoes score and quick synopsis so I can browse the list more easily?" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/2020/05/06/films/" />
+<meta property="og:url" content="https://selbydavid.com/2020/05/06/films/" />
 
-  <meta property="og:image" content="/img/2020/imdb_film.png" />
+  <meta property="og:image" content="https://selbydavid.com/img/2020/imdb_film.png" />
 
 
 
@@ -46,14 +46,14 @@
 <meta itemprop="dateModified" content="2020-05-06T12:55:00&#43;01:00" />
 <meta itemprop="wordCount" content="1592">
 
-  <meta itemprop="image" content="/img/2020/imdb_film.png">
+  <meta itemprop="image" content="https://selbydavid.com/img/2020/imdb_film.png">
 
 
 
 <meta itemprop="keywords" content="" />
 
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image:src" content="/img/2020/imdb_film.png"/>
+<meta name="twitter:image:src" content="https://selbydavid.com/img/2020/imdb_film.png"/>
 <meta name="twitter:title" content="Which film should I watch during lockdown?"/>
 <meta name="twitter:description" content="My brother wrote to me this week with an interesting task:
  I&rsquo;ve got a list of films I&rsquo;ve noted down whenever I&rsquo;ve seen a good review. But it&rsquo;s hundreds long and I can never remember what a film is from its title and can&rsquo;t be bothered to look them up each time. Any chance you can knock up a script that cross-references a Rotten Tomatoes score and quick synopsis so I can browse the list more easily?"/>
@@ -77,7 +77,7 @@
 
 
 
-<link rel="shortcut icon" href="/favicon.ico">
+<link rel="shortcut icon" href="https://selbydavid.com/favicon.ico">
 
 
 
@@ -86,7 +86,7 @@
 
 
 
-<link rel="stylesheet" href="/css/main.css" media="all">
+<link rel="stylesheet" href="https://selbydavid.com/css/main.css" media="all">
 
 <script src="https://use.fontawesome.com/269c7751ba.js"></script>
 
@@ -94,16 +94,16 @@
   <body>
       
         <header id="masthead">
-          <img src="/img/logo.svg"
+          <img src="https://selbydavid.com/img/logo.svg"
                width="120"
                height=""
                alt="Tea and Stats">
-          <h1><a href="/">Tea &amp; Stats</a></h1>
+          <h1><a href="https://selbydavid.com/">Tea &amp; Stats</a></h1>
           <aside>Data science with David Selby</aside>
           <nav>
   <ul>
     
-      <li><a href="/about/">About</a></li>
+      <li><a href="https://selbydavid.com/about/">About</a></li>
     
     
     <li>
@@ -179,7 +179,7 @@ So to get a film&rsquo;s page, we can use the web site&rsquo;s search function a
 
 <p>replacing <code>%s</code> with your search query, and you see something like this in your browser:</p>
 
-<p><img src="/img/2020/rottentomatoes.png" alt="Search results page for 'The Good, The Bad and the Ugly' on Rotten Tomatoes" /></p>
+<p><img src="https://selbydavid.com/img/2020/rottentomatoes.png" alt="Search results page for 'The Good, The Bad and the Ugly' on Rotten Tomatoes" /></p>
 
 <p>So in my mind, the workflow was going to be a simple matter of:</p>
 
@@ -233,7 +233,7 @@ request &lt;- mc_lookup('The Good, the Bad and the Ugly')
 <p>which programmatically retrieves the content of the following page.
 Notice there are no ratings or summaries displayed on the results page, so we will need to follow the link to each film&rsquo;s page to get that information.</p>
 
-<p><img src="/img/2020/imdb.png" alt="Search results page for 'The Good, The Bad and the Ugly' on IMDb" /></p>
+<p><img src="https://selbydavid.com/img/2020/imdb.png" alt="Search results page for 'The Good, The Bad and the Ugly' on IMDb" /></p>
 
 <h2 id="scraping-results">Scraping results</h2>
 
@@ -279,7 +279,7 @@ It is something you should always consider when querying data on a server or net
 <p>The above function requests the IMDb film page linked in the search results.
 For example:</p>
 
-<p><img src="/img/2020/imdb_film.png" alt="IMDb page for 'The Good, The Bad and the Ugly' (1966)" /></p>
+<p><img src="https://selbydavid.com/img/2020/imdb_film.png" alt="IMDb page for 'The Good, The Bad and the Ugly' (1966)" /></p>
 
 <p>Almost there.
 Now we just need to scrape the key information from this page:</p>
@@ -395,7 +395,7 @@ Export it to a csv file and you can search and sort it to your heart&rsquo;s con
       <footer id="footer">
         
         <a href="#">
-          <img src="/img/logo.svg"
+          <img src="https://selbydavid.com/img/logo.svg"
                width="60"
                height=""
                alt="Return to top"

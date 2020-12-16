@@ -16,9 +16,9 @@
 This year I am attempting it using R, which can make some challenges easier or harder depending on whether they are more ‘computer sciencey’ or more ‘data sciencey’. Generally it makes parsing datasets easier but low-level string manipulation more fiddly.
 Here are my solutions so far." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/2020/12/06/advent-2020/" />
+<meta property="og:url" content="https://selbydavid.com/2020/12/06/advent-2020/" />
 
-  <meta property="og:image" content="/img/2020/adventofcode.jpg" />
+  <meta property="og:image" content="https://selbydavid.com/img/2020/adventofcode.jpg" />
 
 
 
@@ -46,16 +46,16 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="6217">
+<meta itemprop="wordCount" content="6409">
 
-  <meta itemprop="image" content="/img/2020/adventofcode.jpg">
+  <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
 
 <meta itemprop="keywords" content="" />
 
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image:src" content="/img/2020/adventofcode.jpg"/>
+<meta name="twitter:image:src" content="https://selbydavid.com/img/2020/adventofcode.jpg"/>
 <meta name="twitter:title" content="Advent of Code 2020"/>
 <meta name="twitter:description" content="Advent of Code is a series of programming puzzles you can tackle to hone your coding skills each day in the run-up to Christmas.
 This year I am attempting it using R, which can make some challenges easier or harder depending on whether they are more ‘computer sciencey’ or more ‘data sciencey’. Generally it makes parsing datasets easier but low-level string manipulation more fiddly.
@@ -80,7 +80,7 @@ Here are my solutions so far."/>
 
 
 
-<link rel="shortcut icon" href="/favicon.ico">
+<link rel="shortcut icon" href="https://selbydavid.com/favicon.ico">
 
 
 
@@ -89,7 +89,7 @@ Here are my solutions so far."/>
 
 
 
-<link rel="stylesheet" href="/css/main.css" media="all">
+<link rel="stylesheet" href="https://selbydavid.com/css/main.css" media="all">
 
 <script src="https://use.fontawesome.com/269c7751ba.js"></script>
 
@@ -97,16 +97,16 @@ Here are my solutions so far."/>
   <body>
       
         <header id="masthead">
-          <img src="/img/logo.svg"
+          <img src="https://selbydavid.com/img/logo.svg"
                width="120"
                height=""
                alt="Tea and Stats">
-          <h1><a href="/">Tea &amp; Stats</a></h1>
+          <h1><a href="https://selbydavid.com/">Tea &amp; Stats</a></h1>
           <aside>Data science with David Selby</aside>
           <nav>
   <ul>
     
-      <li><a href="/about/">About</a></li>
+      <li><a href="https://selbydavid.com/about/">About</a></li>
     
     
     <li>
@@ -1546,7 +1546,7 @@ is ten times faster:</p>
   current
 }
 
-memory_game(2020, c(7, 12, 1, 0, 16, 2))
+memory_game2(2020, c(7, 12, 1, 0, 16, 2))
 </code></pre>
 
 <pre><code>[1] 410
@@ -1584,11 +1584,54 @@ memory_game3(3e7, c(7, 12, 1, 0, 16, 2))
 <pre><code>[1] 238
 </code></pre>
 
-<p>According to <code>microbenchmark</code>, the second implementation is about 5
-times faster than the first, and my final implementation is 10 times
-faster than that. It takes just a second or two to run. A lower-level
-implementation in C++ might be even faster, but I already have the star
-now…</p>
+<p>It takes just a few seconds to run the third version. At this point I
+stopped, because I had the gold star at this point. But further
+improvements could still be made, if needed.</p>
+
+<h2 id="rcpp-implementation">Rcpp implementation</h2>
+
+<p>Later I came back to rewrite it in C++, just to see how much more
+quickly it would run. Of course there’s a trade-off between computer
+time and programmer time, but this is a simple enough example.</p>
+
+<pre><code class="language-cpp">#include &lt;Rcpp.h&gt;
+
+//[[Rcpp::export]]
+int memory_game_cpp(int n, Rcpp::NumericVector start) {
+  int nstart = start.length() - 1;
+  if (n &lt;= nstart) {
+    return start[n - 1];
+  }
+  
+  int max_start = Rcpp::max(start) + 1;
+  Rcpp::NumericVector spoken(std::max(n + 1, max_start));
+  for (int i = 0; i &lt; nstart; i++){
+    spoken[start[i]] = i + 1;
+  }
+  
+  int current = start[nstart];
+  int next_number;
+  for (int i = nstart + 1; i &lt; n; i++){
+    next_number = int(spoken[current] &gt; 0) * i - spoken[current];
+    spoken[current] = i;
+    current = next_number;
+  }
+  
+  return current;
+}
+</code></pre>
+
+<p>To see the difference in performance, I passed each of the functions
+into the <code>microbenchmark</code>, which measured the average runtime for
+multiple runs, when passed the parameters from part 1 (i.e. <code>n = 2020</code>).
+Below is the resulting distribution of times in microseconds (on a
+logarithmic scale).</p>
+
+<p><img src="https://selbydavid.com/img/2020/aoc-day15-benchmark.png" alt="" /></p>
+
+<p>For <code>n = 30000000</code>, the C++ function completed in just under one
+second—about ten times faster than my fastest pure-R code. Worth it?
+Possibly not for this one-off exercise, but it’s interesting to note.</p>
 
 <p><a id="day16"></a></p>
 
@@ -1717,7 +1760,7 @@ format(prod(departures$value), scientific = FALSE)
       <footer id="footer">
         
         <a href="#">
-          <img src="/img/logo.svg"
+          <img src="https://selbydavid.com/img/logo.svg"
                width="60"
                height=""
                alt="Return to top"
