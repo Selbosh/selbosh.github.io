@@ -1821,16 +1821,16 @@ this time we use a <em>matrix</em> of zeros with a one in the middle (<code>pad2
       for (j in 1:J)
         for (k in 1:K)
           for (l in 1:L) {
-          is &lt;- max(i - 1, 0):min(i + 1, I)
-          js &lt;- max(j - 1, 0):min(j + 1, J)
-          ks &lt;- max(k - 1, 0):min(k + 1, K)
-          ls &lt;- max(l - 1, 0):min(l + 1, L)
-          neighbours &lt;- sum(state[is, js, ks, ls])
-          if (state[i, j, k, l]) {
-            new_state[i, j, k, l] &lt;- neighbours %in% 3:4
-          } else {
-            new_state[i, j, k, l] &lt;- neighbours == 3
-          }
+            is &lt;- max(i - 1, 0):min(i + 1, I)
+            js &lt;- max(j - 1, 0):min(j + 1, J)
+            ks &lt;- max(k - 1, 0):min(k + 1, K)
+            ls &lt;- max(l - 1, 0):min(l + 1, L)
+            neighbours &lt;- sum(state[is, js, ks, ls])
+           if (state[i, j, k, l]) {
+          new_state[i, j, k, l] &lt;- neighbours %in% 3:4
+           } else {
+             new_state[i, j, k, l] &lt;- neighbours == 3
+           }
         }
     state &lt;- new_state
   }
