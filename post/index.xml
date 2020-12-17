@@ -60,6 +60,7 @@ results may differ from mine.&lt;/p&gt;
 &lt;li&gt;&lt;a href=&#34;#day14&#34;&gt;Docking data&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day15&#34;&gt;Rambunctious recitation&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day16&#34;&gt;Ticket translation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day17&#34;&gt;Conway cubes&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;&lt;a id=&#39;day1&#39;&gt;&lt;/a&gt;&lt;/p&gt;
@@ -1601,6 +1602,126 @@ format(prod(departures$value), scientific = FALSE)
 
 &lt;pre&gt;&lt;code&gt;[1] &amp;quot;1382443095281&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;day17&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;day-17-conway-cubes-https-adventofcode-com-2020-day-17&#34;&gt;Day 17 - &lt;a href=&#34;https://adventofcode.com/2020/day/17&#34;&gt;Conway cubes&lt;/a&gt;&lt;/h1&gt;
+
+&lt;p&gt;The idea will be to grow the size of our cube by 1 in each of the three
+dimensions, keeping all the data so far in the middle. Actually doing
+this seems terrible inefficient, so I will instead anticipate the final
+size (i.e. &lt;code&gt;dims&lt;/code&gt; + 6 × 2) and pre-allocate this memory.&lt;/p&gt;
+
+&lt;p&gt;The rules are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;if a cube is active and exactly 2 or 3 of its neighbours are also
+active, the cube remains active. Otherwise, it becomes inactive.&lt;/li&gt;
+&lt;li&gt;if a cube is inactive but exactly three of its neighbours are
+active, the cube becomes active. Otherwise, the cube remains
+inactive.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This is basically like the convolution we applied in &lt;a href=&#34;#day11&#34;&gt;day 11&lt;/a&gt;, but with an
+extra dimension. In R, an array is a matrix with an arbitrary number of
+dimensions. We can also take advantage of the outer product &lt;code&gt;%o%&lt;/code&gt; to pad
+the space with zeros initially.&lt;/p&gt;
+
+&lt;h2 id=&#34;three-dimensions&#34;&gt;Three dimensions&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;cubes &amp;lt;- do.call(rbind, strsplit(readLines(&#39;input17.txt&#39;), &#39;&#39;)) == &#39;#&#39;
+
+conway3D &amp;lt;- function(cubes, n) {
+  padded &amp;lt;- matrix(0, nrow(cubes) + 2 * n,
+                      ncol(cubes) + 2 * n)
+  padded[(n + 1):(n + nrow(cubes)),
+         (n + 1):(n + ncol(cubes))] &amp;lt;- cubes
+  pad1D &amp;lt;- c(rep(0, n + 1), 1, rep(0, n + 1))
+  padded &amp;lt;- padded %o% pad1D
+  I &amp;lt;- dim(padded)[1]
+  J &amp;lt;- dim(padded)[2]
+  K &amp;lt;- dim(padded)[3]
+  state &amp;lt;- padded
+  for (step in seq_len(n)) {
+    new_state &amp;lt;- state
+    for (i in 1:I)
+      for (j in 1:J)
+        for (k in 1:K) {
+          is &amp;lt;- max(i - 1, 0):min(i + 1, I)
+          js &amp;lt;- max(j - 1, 0):min(j + 1, J)
+          ks &amp;lt;- max(k - 1, 0):min(k + 1, K)
+          neighbours &amp;lt;- sum(state[is, js, ks])
+          if (state[i, j, k]) {
+            new_state[i, j, k] &amp;lt;- neighbours %in% 3:4
+          } else {
+            new_state[i, j, k] &amp;lt;- neighbours == 3
+          }
+        }
+    state &amp;lt;- new_state
+  }
+  sum(state)
+}
+
+conway3D(cubes, 6)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 375
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;four-dimensions&#34;&gt;Four dimensions&lt;/h2&gt;
+
+&lt;p&gt;Add another dimension. All this means is that adding another level to
+the loop. To allocate space initially, in &lt;code&gt;conway3D&lt;/code&gt; we take the outer
+product of the two-dimensional matrix with a vector of zeros with a one
+in the middle (&lt;code&gt;pad1D&lt;/code&gt;). In &lt;code&gt;conway4D&lt;/code&gt; the basic idea is the same, but
+this time we use a &lt;em&gt;matrix&lt;/em&gt; of zeros with a one in the middle (&lt;code&gt;pad2D&lt;/code&gt;).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;conway4D &amp;lt;- function(cubes, n) {
+  padded &amp;lt;- matrix(0, nrow(cubes) + 2 * n,
+                      ncol(cubes) + 2 * n)
+  padded[(n + 1):(n + nrow(cubes)),
+         (n + 1):(n + ncol(cubes))] &amp;lt;- cubes
+  pad2D &amp;lt;- matrix(0, 2 * n + 1, 2 * n + 1)
+  pad2D[n + 1, n + 1] &amp;lt;- 1
+  padded &amp;lt;- padded %o% pad2D
+  I &amp;lt;- dim(padded)[1]
+  J &amp;lt;- dim(padded)[2]
+  K &amp;lt;- dim(padded)[3]
+  L &amp;lt;- dim(padded)[4]
+  state &amp;lt;- padded
+  for (step in seq_len(n)) {
+    new_state &amp;lt;- state
+    for (i in 1:I)
+      for (j in 1:J)
+        for (k in 1:K)
+          for (l in 1:L) {
+          is &amp;lt;- max(i - 1, 0):min(i + 1, I)
+          js &amp;lt;- max(j - 1, 0):min(j + 1, J)
+          ks &amp;lt;- max(k - 1, 0):min(k + 1, K)
+          ls &amp;lt;- max(l - 1, 0):min(l + 1, L)
+          neighbours &amp;lt;- sum(state[is, js, ks, ls])
+          if (state[i, j, k, l]) {
+            new_state[i, j, k, l] &amp;lt;- neighbours %in% 3:4
+          } else {
+            new_state[i, j, k, l] &amp;lt;- neighbours == 3
+          }
+        }
+    state &amp;lt;- new_state
+  }
+  sum(state)
+}
+
+conway4D(cubes, 6)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 2192
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A five-level nested loop is probably most R users’ idea of hell. However
+it runs in a couple of seconds, so presumably it’s what they actually
+expect you to do here. I wouldn’t expect this code to scale well without
+a rewrite in &lt;code&gt;Rcpp&lt;/code&gt; (see &lt;a href=&#34;#day15&#34;&gt;day 15&lt;/a&gt;) or a sparse matrix/tensor
+library.&lt;/p&gt;
 
 &lt;hr /&gt;
 

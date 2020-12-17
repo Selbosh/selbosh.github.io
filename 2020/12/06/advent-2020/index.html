@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="6409">
+<meta itemprop="wordCount" content="7011">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -186,6 +186,7 @@ results may differ from mine.</p>
 <li><a href="#day14">Docking data</a></li>
 <li><a href="#day15">Rambunctious recitation</a></li>
 <li><a href="#day16">Ticket translation</a></li>
+<li><a href="#day17">Conway cubes</a></li>
 </ol>
 
 <p><a id='day1'></a></p>
@@ -1727,6 +1728,126 @@ format(prod(departures$value), scientific = FALSE)
 
 <pre><code>[1] &quot;1382443095281&quot;
 </code></pre>
+
+<p><a id="day17"></a></p>
+
+<h1 id="day-17-conway-cubes-https-adventofcode-com-2020-day-17">Day 17 - <a href="https://adventofcode.com/2020/day/17">Conway cubes</a></h1>
+
+<p>The idea will be to grow the size of our cube by 1 in each of the three
+dimensions, keeping all the data so far in the middle. Actually doing
+this seems terrible inefficient, so I will instead anticipate the final
+size (i.e. <code>dims</code> + 6 × 2) and pre-allocate this memory.</p>
+
+<p>The rules are:</p>
+
+<ul>
+<li>if a cube is active and exactly 2 or 3 of its neighbours are also
+active, the cube remains active. Otherwise, it becomes inactive.</li>
+<li>if a cube is inactive but exactly three of its neighbours are
+active, the cube becomes active. Otherwise, the cube remains
+inactive.</li>
+</ul>
+
+<p>This is basically like the convolution we applied in <a href="#day11">day 11</a>, but with an
+extra dimension. In R, an array is a matrix with an arbitrary number of
+dimensions. We can also take advantage of the outer product <code>%o%</code> to pad
+the space with zeros initially.</p>
+
+<h2 id="three-dimensions">Three dimensions</h2>
+
+<pre><code class="language-r">cubes &lt;- do.call(rbind, strsplit(readLines('input17.txt'), '')) == '#'
+
+conway3D &lt;- function(cubes, n) {
+  padded &lt;- matrix(0, nrow(cubes) + 2 * n,
+                      ncol(cubes) + 2 * n)
+  padded[(n + 1):(n + nrow(cubes)),
+         (n + 1):(n + ncol(cubes))] &lt;- cubes
+  pad1D &lt;- c(rep(0, n + 1), 1, rep(0, n + 1))
+  padded &lt;- padded %o% pad1D
+  I &lt;- dim(padded)[1]
+  J &lt;- dim(padded)[2]
+  K &lt;- dim(padded)[3]
+  state &lt;- padded
+  for (step in seq_len(n)) {
+    new_state &lt;- state
+    for (i in 1:I)
+      for (j in 1:J)
+        for (k in 1:K) {
+          is &lt;- max(i - 1, 0):min(i + 1, I)
+          js &lt;- max(j - 1, 0):min(j + 1, J)
+          ks &lt;- max(k - 1, 0):min(k + 1, K)
+          neighbours &lt;- sum(state[is, js, ks])
+          if (state[i, j, k]) {
+            new_state[i, j, k] &lt;- neighbours %in% 3:4
+          } else {
+            new_state[i, j, k] &lt;- neighbours == 3
+          }
+        }
+    state &lt;- new_state
+  }
+  sum(state)
+}
+
+conway3D(cubes, 6)
+</code></pre>
+
+<pre><code>[1] 375
+</code></pre>
+
+<h2 id="four-dimensions">Four dimensions</h2>
+
+<p>Add another dimension. All this means is that adding another level to
+the loop. To allocate space initially, in <code>conway3D</code> we take the outer
+product of the two-dimensional matrix with a vector of zeros with a one
+in the middle (<code>pad1D</code>). In <code>conway4D</code> the basic idea is the same, but
+this time we use a <em>matrix</em> of zeros with a one in the middle (<code>pad2D</code>).</p>
+
+<pre><code class="language-r">conway4D &lt;- function(cubes, n) {
+  padded &lt;- matrix(0, nrow(cubes) + 2 * n,
+                      ncol(cubes) + 2 * n)
+  padded[(n + 1):(n + nrow(cubes)),
+         (n + 1):(n + ncol(cubes))] &lt;- cubes
+  pad2D &lt;- matrix(0, 2 * n + 1, 2 * n + 1)
+  pad2D[n + 1, n + 1] &lt;- 1
+  padded &lt;- padded %o% pad2D
+  I &lt;- dim(padded)[1]
+  J &lt;- dim(padded)[2]
+  K &lt;- dim(padded)[3]
+  L &lt;- dim(padded)[4]
+  state &lt;- padded
+  for (step in seq_len(n)) {
+    new_state &lt;- state
+    for (i in 1:I)
+      for (j in 1:J)
+        for (k in 1:K)
+          for (l in 1:L) {
+          is &lt;- max(i - 1, 0):min(i + 1, I)
+          js &lt;- max(j - 1, 0):min(j + 1, J)
+          ks &lt;- max(k - 1, 0):min(k + 1, K)
+          ls &lt;- max(l - 1, 0):min(l + 1, L)
+          neighbours &lt;- sum(state[is, js, ks, ls])
+          if (state[i, j, k, l]) {
+            new_state[i, j, k, l] &lt;- neighbours %in% 3:4
+          } else {
+            new_state[i, j, k, l] &lt;- neighbours == 3
+          }
+        }
+    state &lt;- new_state
+  }
+  sum(state)
+}
+
+conway4D(cubes, 6)
+</code></pre>
+
+<pre><code>[1] 2192
+</code></pre>
+
+<p>A five-level nested loop is probably most R users’ idea of hell. However
+it runs in a couple of seconds, so presumably it’s what they actually
+expect you to do here. I wouldn’t expect this code to scale well without
+a rewrite in <code>Rcpp</code> (see <a href="#day15">day 15</a>) or a sparse matrix/tensor
+library.</p>
 
 <hr />
 
