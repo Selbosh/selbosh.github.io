@@ -61,6 +61,7 @@ results may differ from mine.&lt;/p&gt;
 &lt;li&gt;&lt;a href=&#34;#day15&#34;&gt;Rambunctious recitation&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day16&#34;&gt;Ticket translation&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day17&#34;&gt;Conway cubes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day18&#34;&gt;Operation order&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;&lt;a id=&#39;day1&#39;&gt;&lt;/a&gt;&lt;/p&gt;
@@ -1622,10 +1623,10 @@ active, the cube becomes active. Otherwise, the cube remains
 inactive.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;This is basically like the convolution we applied in &lt;a href=&#34;#day11&#34;&gt;day 11&lt;/a&gt;, but with an
-extra dimension. In R, an array is a matrix with an arbitrary number of
-dimensions. We can also take advantage of the outer product &lt;code&gt;%o%&lt;/code&gt; to pad
-the space with zeros initially.&lt;/p&gt;
+&lt;p&gt;This is basically like the convolution we applied in &lt;a href=&#34;#day11&#34;&gt;day 11&lt;/a&gt;,
+but with an extra dimension. In R, an array is a matrix with an
+arbitrary number of dimensions. We can also take advantage of the outer
+product &lt;code&gt;%o%&lt;/code&gt; to pad the space with zeros initially.&lt;/p&gt;
 
 &lt;h2 id=&#34;three-dimensions&#34;&gt;Three dimensions&lt;/h2&gt;
 
@@ -1700,12 +1701,12 @@ this time we use a &lt;em&gt;matrix&lt;/em&gt; of zeros with a one in the middle
             ks &amp;lt;- max(k - 1, 0):min(k + 1, K)
             ls &amp;lt;- max(l - 1, 0):min(l + 1, L)
             neighbours &amp;lt;- sum(state[is, js, ks, ls])
-           if (state[i, j, k, l]) {
-          new_state[i, j, k, l] &amp;lt;- neighbours %in% 3:4
-           } else {
-             new_state[i, j, k, l] &amp;lt;- neighbours == 3
-           }
-        }
+            if (state[i, j, k, l]) {
+              new_state[i, j, k, l] &amp;lt;- neighbours %in% 3:4
+            } else {
+              new_state[i, j, k, l] &amp;lt;- neighbours == 3
+            }
+          }
     state &amp;lt;- new_state
   }
   sum(state)
@@ -1722,6 +1723,102 @@ it runs in a couple of seconds, so presumably it’s what they actually
 expect you to do here. I wouldn’t expect this code to scale well without
 a rewrite in &lt;code&gt;Rcpp&lt;/code&gt; (see &lt;a href=&#34;#day15&#34;&gt;day 15&lt;/a&gt;) or a sparse matrix/tensor
 library.&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;day18&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;day-18-operation-order-https-adventofcode-com-2020-day-18&#34;&gt;Day 18 - &lt;a href=&#34;https://adventofcode.com/2020/day/18&#34;&gt;Operation order&lt;/a&gt;&lt;/h1&gt;
+
+&lt;p&gt;In an R session, the standard order of arithmetic operations applies:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;1 + 2 * 3 + 4 * 5 + 6
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 33
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;ignoring-bidmas&#34;&gt;Ignoring Bidmas&lt;/h2&gt;
+
+&lt;p&gt;But if we define our own arithmetic operators, then R will just read
+them from left to right with no ‘Bidmas’ (or ‘Bodmas’ or ‘Pemdas’) to
+override it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;local({
+  `%+%` &amp;lt;- function(a, b) a + b
+  `%*%` &amp;lt;- function(a, b) a * b
+  1 %+% 2 %*% 3 %+% 4 %*% 5 %+% 6
+})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 71
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It’s also possible to reassign the base &lt;code&gt;+&lt;/code&gt; and &lt;code&gt;*&lt;/code&gt; operators themselves
+(with great power comes great responsibility), but if you do this then
+it retains ordering, so that’s not so helpful for part 1.&lt;/p&gt;
+
+&lt;p&gt;For now we just need a way to swap out the expressions in the maths
+homework for our custom ones, then &lt;code&gt;parse&lt;/code&gt; and &lt;code&gt;eval&lt;/code&gt;uate the formulae.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;maths &amp;lt;- function(expr) {
+  `%+%` &amp;lt;- function(a, b) a + b
+  `%*%` &amp;lt;- function(a, b) a * b
+  expr &amp;lt;- gsub(&#39;\\+&#39;, &#39;%+%&#39;, expr)
+  expr &amp;lt;- gsub(&#39;\\*&#39;, &#39;%*%&#39;, expr)
+  eval(parse(text = expr))
+}
+
+maths(&#39;1 + 2 * 3 + 4 * 5 + 6&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 71
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;homework &amp;lt;- readLines(&#39;input18.txt&#39;)
+results &amp;lt;- sapply(homework, maths)
+format(sum(results), scientific = FALSE)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] &amp;quot;50956598240016&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;a-new-order&#34;&gt;A new order&lt;/h2&gt;
+
+&lt;p&gt;In part 2 it turns out that the order of arithmetic operations &lt;em&gt;does&lt;/em&gt;
+matter, just that the precedence of addition is above multiplication.
+Now we can hijack R’s understanding of operation order for our own
+purposes. We’ll call it &lt;code&gt;Bisamd&lt;/code&gt; to represent our new order.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;Bisamd &amp;lt;- function(expr) {
+  # Do not try this at home!
+  `+` &amp;lt;- function(a, b) base::`*`(a, b)
+  `*` &amp;lt;- function(a, b) base::`+`(a, b)
+  expr &amp;lt;- gsub(&#39;\\+&#39;, &#39;tmp&#39;, expr)
+  expr &amp;lt;- gsub(&#39;\\*&#39;, &#39;+&#39;, expr)
+  expr &amp;lt;- gsub(&#39;tmp&#39;, &#39;*&#39;, expr)
+  eval(parse(text = expr))
+}
+
+Bisamd(&#39;1 + 2 * 3 + 4 * 5 + 6&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 231
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;results2 &amp;lt;- sapply(homework, Bisamd)
+format(sum(results2), scientific = FALSE)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] &amp;quot;535809575344339&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Would you ever want to reassign low-level operators like this? Well,
+&lt;code&gt;ggplot2&lt;/code&gt; does it—by overloading the &lt;code&gt;+&lt;/code&gt; you can join &lt;code&gt;ggproto&lt;/code&gt; objects
+together. (However Hadley Wickham said they would have used a pipe,
+&lt;code&gt;%&amp;gt;%&lt;/code&gt;, had they discovered that first).&lt;/p&gt;
+
+&lt;p&gt;Reassigning addition to another function is also a hilarious prank you can play
+on someone who never clears out their global workspace. It&amp;rsquo;ll teach them the
+value of starting with clean working environment.&lt;/p&gt;
 
 &lt;hr /&gt;
 
