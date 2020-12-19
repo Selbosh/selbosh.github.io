@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="7405">
+<meta itemprop="wordCount" content="8103">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -188,6 +188,7 @@ results may differ from mine.</p>
 <li><a href="#day16">Ticket translation</a></li>
 <li><a href="#day17">Conway cubes</a></li>
 <li><a href="#day18">Operation order</a></li>
+<li><a href="#day19">Monster messages</a></li>
 </ol>
 
 <p><a id='day1'></a></p>
@@ -1912,9 +1913,9 @@ format(sum(results), scientific = FALSE)
 <p>In part 2 it turns out that the order of arithmetic operations <em>does</em>
 matter, just that the precedence of addition is above multiplication.
 Now we can hijack R’s understanding of operation order for our own
-purposes. We’ll call it <code>Bisamd</code> to represent our new order.</p>
+purposes. We’ll call it <code>Bidams</code> to represent our new order.</p>
 
-<pre><code class="language-r">Bisamd &lt;- function(expr) {
+<pre><code class="language-r">Bidams &lt;- function(expr) {
   # Do not try this at home!
   `+` &lt;- function(a, b) base::`*`(a, b)
   `*` &lt;- function(a, b) base::`+`(a, b)
@@ -1924,13 +1925,13 @@ purposes. We’ll call it <code>Bisamd</code> to represent our new order.</p>
   eval(parse(text = expr))
 }
 
-Bisamd('1 + 2 * 3 + 4 * 5 + 6')
+Bidams('1 + 2 * 3 + 4 * 5 + 6')
 </code></pre>
 
 <pre><code>[1] 231
 </code></pre>
 
-<pre><code class="language-r">results2 &lt;- sapply(homework, Bisamd)
+<pre><code class="language-r">results2 &lt;- sapply(homework, Bidams)
 format(sum(results2), scientific = FALSE)
 </code></pre>
 
@@ -1942,9 +1943,168 @@ format(sum(results2), scientific = FALSE)
 together. (However Hadley Wickham said they would have used a pipe,
 <code>%&gt;%</code>, had they discovered that first).</p>
 
-<p>Reassigning addition to another function is also a hilarious prank you can play
-on someone who never clears out their global workspace. It&rsquo;ll teach them the
-value of starting with clean working environment.</p>
+<p>Reassigning addition to another function is also a hilarious prank you
+can play on someone who never clears out their global workspace. It’ll
+teach them the value of starting with clean working environment.</p>
+
+<p><a id="day19"></a></p>
+
+<h1 id="day-19-monster-messages-https-adventofcode-com-2020-day-19">Day 19 - <a href="https://adventofcode.com/2020/day/19">Monster messages</a></h1>
+
+<p>Consider the first example rule set.</p>
+
+<pre><code>0: 1 2
+1: &quot;a&quot;
+2: 1 3 | 3 1
+3: &quot;b&quot;
+</code></pre>
+
+<p>This could be written as a regular expression. Rules 1 and 3 are <code>a</code> and
+<code>b</code> respectively, so then rule 2 is <code>'ab|ba'</code> and hence rule 0 is
+<code>'a(ab|ba)'</code>, which will match the strings <code>'aab'</code> and <code>'aba'</code> but not
+<code>'aaa'</code> or <code>'bba'</code>.</p>
+
+<pre><code class="language-r">grepl('^a(ab|ba)$', c('aab', 'aba', 'aaa', 'bba'))
+</code></pre>
+
+<pre><code>[1]  TRUE  TRUE FALSE FALSE
+</code></pre>
+
+<p>The tricky bit is how to build the regex from a set of rules
+programmatically. Let’s look at the more complicated example.</p>
+
+<pre><code>0: 4 1 5
+1: 2 3 | 3 2
+2: 4 4 | 5 5
+3: 4 5 | 5 4
+4: &quot;a&quot;
+5: &quot;b&quot;
+</code></pre>
+
+<p>In the first step, we notice that rules 4 and 5 are single characters,
+so we can simply replace all <code>4</code>s and <code>5</code>s with the letters <code>a</code> and <code>b</code>
+(dropping the quotation marks for now). We obtain:</p>
+
+<pre><code>0: a 1 b
+1: 2 3 | 3 2
+2: a a | b b
+3: a b | b a
+4: &quot;a&quot;
+5: &quot;b&quot;
+</code></pre>
+
+<p>Then we see that rules 2 and 3 no longer contain any numerical IDs, so
+we can slot them into place in rule 1:</p>
+
+<pre><code>0: a 1 b
+1: (a a | b b) (a b | b a) | (a b | b a) (a a | b b)
+2: a a | b b
+3: a b | b a
+4: &quot;a&quot;
+5: &quot;b&quot;
+</code></pre>
+
+<p>Hence insert the rule 1 into rule 0 and we are done.</p>
+
+<h2 id="regex-generator">Regex generator</h2>
+
+<p>Import the data:</p>
+
+<pre><code class="language-r">library(magrittr)
+input &lt;- readLines('input19.txt')
+rules &lt;- input[cumsum(!nchar(input)) &lt; 1] %&gt;%
+  strsplit(': ') %&gt;% do.call(rbind, .) %&gt;%
+  as.data.frame %&gt;% setNames(c('id', 'rule'))
+messages &lt;- input[cumsum(!nchar(input)) &gt; 0][-1]
+</code></pre>
+
+<p>Then implement the algorithm, which works like this:</p>
+
+<ol>
+<li>For every rule, replace any integers in the pattern with the rules
+corresponding to those integer IDs.</li>
+<li>Repeat until none of the patterns contain any integers.</li>
+</ol>
+
+<p>For it to be a valid regular expression, we should also ignore the
+spaces between the terms, but we don’t need to do this until the very
+end.</p>
+
+<pre><code class="language-r">library(stringr)
+make_regex_bounded &lt;- function(rules, max_length = Inf) {
+  rules %&lt;&gt;%
+    transform(regex = str_remove_all(rule, '[&quot;]')) %&gt;%
+    transform(char_only = str_detect(regex, '\\d', negate = TRUE))
+  
+  while( any(!rules$char_only) ) {
+    rules %&lt;&gt;%
+      transform(regex = str_replace_all(regex,
+      pattern =  '\\d+',
+      replacement = function(d) {
+        rule_d &lt;- rules$regex[rules$id == d]
+        len &lt;- str_count(rule_d, '\\([^)]*\\)')
+        if (len &gt; max_length)  # for part 2
+          return('x')
+        if (!str_detect(rule_d, '\\|'))
+          return(rule_d)
+        sprintf('(?:%s)', rule_d)
+      }
+    )) %&gt;%
+      transform(char_only = str_detect(regex, '\\d', negate = TRUE))
+  }
+  
+  str_remove_all(rules$regex[1], ' ')
+}
+</code></pre>
+
+<p>All that remains is a bit of housekeeping: for an exact match, the
+regular expression should start and end with <code>^</code> and <code>$</code> anchors,
+otherwise it risks matching substrings of longer messages.</p>
+
+<pre><code class="language-r">matching_messages &lt;- function(rules, messages) {
+  longest &lt;- max(nchar(messages))
+  regex &lt;- sprintf('^%s$', make_regex_bounded(rules, longest))
+  matches &lt;- str_detect(messages, regex)
+  sum(matches)
+}
+
+matching_messages(rules, messages)
+</code></pre>
+
+<pre><code>[1] 285
+</code></pre>
+
+<h2 id="loops-and-bounds">Loops and bounds</h2>
+
+<p>The number of possible rules might be infinite, but rules are
+monotonically increasing in length, whereas our input messages are of
+finite length. Thus the only change we need to make is to impose a cap
+on the maximum message length, deleting any parts of rules that are
+longer than this, as they will never match any of our messages.</p>
+
+<p>We incorporated this with a maximum message length in our function
+<code>make_regex_bounded</code>. It isn’t necessary for part 1 but it will cut off
+any runaway rules in part 2. It does this by replacing overlong patterns
+with the literal letter <code>x</code>, which (we assume) doesn’t appear in any of
+our messages so will never match.</p>
+
+<pre><code class="language-r">rules2 &lt;- within(rules, {
+  rule[id == '8'] &lt;- '42 | 42 8'
+  rule[id == '11'] &lt;- '42 31 | 42 11 31'
+})
+
+matching_messages(rules2, messages)
+</code></pre>
+
+<pre><code>[1] 412
+</code></pre>
+
+<p>I am not sure what the best way to count the possible lengths of matches
+to a regular expression but in this case I used <code>'\([^)]*\)'</code>, which
+detects pairs of brackets that do not contain other brackets. The
+shortest possible pattern length is one (or maybe two because I didn’t
+enclose single letters in brackets) so this provides a reasonable lower
+bound.</p>
 
 <hr />
 

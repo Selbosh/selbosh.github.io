@@ -62,6 +62,7 @@ results may differ from mine.&lt;/p&gt;
 &lt;li&gt;&lt;a href=&#34;#day16&#34;&gt;Ticket translation&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day17&#34;&gt;Conway cubes&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day18&#34;&gt;Operation order&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day19&#34;&gt;Monster messages&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;&lt;a id=&#39;day1&#39;&gt;&lt;/a&gt;&lt;/p&gt;
@@ -1786,9 +1787,9 @@ format(sum(results), scientific = FALSE)
 &lt;p&gt;In part 2 it turns out that the order of arithmetic operations &lt;em&gt;does&lt;/em&gt;
 matter, just that the precedence of addition is above multiplication.
 Now we can hijack R’s understanding of operation order for our own
-purposes. We’ll call it &lt;code&gt;Bisamd&lt;/code&gt; to represent our new order.&lt;/p&gt;
+purposes. We’ll call it &lt;code&gt;Bidams&lt;/code&gt; to represent our new order.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;Bisamd &amp;lt;- function(expr) {
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;Bidams &amp;lt;- function(expr) {
   # Do not try this at home!
   `+` &amp;lt;- function(a, b) base::`*`(a, b)
   `*` &amp;lt;- function(a, b) base::`+`(a, b)
@@ -1798,13 +1799,13 @@ purposes. We’ll call it &lt;code&gt;Bisamd&lt;/code&gt; to represent our new o
   eval(parse(text = expr))
 }
 
-Bisamd(&#39;1 + 2 * 3 + 4 * 5 + 6&#39;)
+Bidams(&#39;1 + 2 * 3 + 4 * 5 + 6&#39;)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;pre&gt;&lt;code&gt;[1] 231
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;results2 &amp;lt;- sapply(homework, Bisamd)
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;results2 &amp;lt;- sapply(homework, Bidams)
 format(sum(results2), scientific = FALSE)
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -1816,9 +1817,168 @@ format(sum(results2), scientific = FALSE)
 together. (However Hadley Wickham said they would have used a pipe,
 &lt;code&gt;%&amp;gt;%&lt;/code&gt;, had they discovered that first).&lt;/p&gt;
 
-&lt;p&gt;Reassigning addition to another function is also a hilarious prank you can play
-on someone who never clears out their global workspace. It&amp;rsquo;ll teach them the
-value of starting with clean working environment.&lt;/p&gt;
+&lt;p&gt;Reassigning addition to another function is also a hilarious prank you
+can play on someone who never clears out their global workspace. It’ll
+teach them the value of starting with clean working environment.&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;day19&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;day-19-monster-messages-https-adventofcode-com-2020-day-19&#34;&gt;Day 19 - &lt;a href=&#34;https://adventofcode.com/2020/day/19&#34;&gt;Monster messages&lt;/a&gt;&lt;/h1&gt;
+
+&lt;p&gt;Consider the first example rule set.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;0: 1 2
+1: &amp;quot;a&amp;quot;
+2: 1 3 | 3 1
+3: &amp;quot;b&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This could be written as a regular expression. Rules 1 and 3 are &lt;code&gt;a&lt;/code&gt; and
+&lt;code&gt;b&lt;/code&gt; respectively, so then rule 2 is &lt;code&gt;&#39;ab|ba&#39;&lt;/code&gt; and hence rule 0 is
+&lt;code&gt;&#39;a(ab|ba)&#39;&lt;/code&gt;, which will match the strings &lt;code&gt;&#39;aab&#39;&lt;/code&gt; and &lt;code&gt;&#39;aba&#39;&lt;/code&gt; but not
+&lt;code&gt;&#39;aaa&#39;&lt;/code&gt; or &lt;code&gt;&#39;bba&#39;&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;grepl(&#39;^a(ab|ba)$&#39;, c(&#39;aab&#39;, &#39;aba&#39;, &#39;aaa&#39;, &#39;bba&#39;))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1]  TRUE  TRUE FALSE FALSE
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The tricky bit is how to build the regex from a set of rules
+programmatically. Let’s look at the more complicated example.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;0: 4 1 5
+1: 2 3 | 3 2
+2: 4 4 | 5 5
+3: 4 5 | 5 4
+4: &amp;quot;a&amp;quot;
+5: &amp;quot;b&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In the first step, we notice that rules 4 and 5 are single characters,
+so we can simply replace all &lt;code&gt;4&lt;/code&gt;s and &lt;code&gt;5&lt;/code&gt;s with the letters &lt;code&gt;a&lt;/code&gt; and &lt;code&gt;b&lt;/code&gt;
+(dropping the quotation marks for now). We obtain:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;0: a 1 b
+1: 2 3 | 3 2
+2: a a | b b
+3: a b | b a
+4: &amp;quot;a&amp;quot;
+5: &amp;quot;b&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then we see that rules 2 and 3 no longer contain any numerical IDs, so
+we can slot them into place in rule 1:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;0: a 1 b
+1: (a a | b b) (a b | b a) | (a b | b a) (a a | b b)
+2: a a | b b
+3: a b | b a
+4: &amp;quot;a&amp;quot;
+5: &amp;quot;b&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Hence insert the rule 1 into rule 0 and we are done.&lt;/p&gt;
+
+&lt;h2 id=&#34;regex-generator&#34;&gt;Regex generator&lt;/h2&gt;
+
+&lt;p&gt;Import the data:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(magrittr)
+input &amp;lt;- readLines(&#39;input19.txt&#39;)
+rules &amp;lt;- input[cumsum(!nchar(input)) &amp;lt; 1] %&amp;gt;%
+  strsplit(&#39;: &#39;) %&amp;gt;% do.call(rbind, .) %&amp;gt;%
+  as.data.frame %&amp;gt;% setNames(c(&#39;id&#39;, &#39;rule&#39;))
+messages &amp;lt;- input[cumsum(!nchar(input)) &amp;gt; 0][-1]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then implement the algorithm, which works like this:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;For every rule, replace any integers in the pattern with the rules
+corresponding to those integer IDs.&lt;/li&gt;
+&lt;li&gt;Repeat until none of the patterns contain any integers.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;For it to be a valid regular expression, we should also ignore the
+spaces between the terms, but we don’t need to do this until the very
+end.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(stringr)
+make_regex_bounded &amp;lt;- function(rules, max_length = Inf) {
+  rules %&amp;lt;&amp;gt;%
+    transform(regex = str_remove_all(rule, &#39;[&amp;quot;]&#39;)) %&amp;gt;%
+    transform(char_only = str_detect(regex, &#39;\\d&#39;, negate = TRUE))
+  
+  while( any(!rules$char_only) ) {
+    rules %&amp;lt;&amp;gt;%
+      transform(regex = str_replace_all(regex,
+      pattern =  &#39;\\d+&#39;,
+      replacement = function(d) {
+        rule_d &amp;lt;- rules$regex[rules$id == d]
+        len &amp;lt;- str_count(rule_d, &#39;\\([^)]*\\)&#39;)
+        if (len &amp;gt; max_length)  # for part 2
+          return(&#39;x&#39;)
+        if (!str_detect(rule_d, &#39;\\|&#39;))
+          return(rule_d)
+        sprintf(&#39;(?:%s)&#39;, rule_d)
+      }
+    )) %&amp;gt;%
+      transform(char_only = str_detect(regex, &#39;\\d&#39;, negate = TRUE))
+  }
+  
+  str_remove_all(rules$regex[1], &#39; &#39;)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;All that remains is a bit of housekeeping: for an exact match, the
+regular expression should start and end with &lt;code&gt;^&lt;/code&gt; and &lt;code&gt;$&lt;/code&gt; anchors,
+otherwise it risks matching substrings of longer messages.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;matching_messages &amp;lt;- function(rules, messages) {
+  longest &amp;lt;- max(nchar(messages))
+  regex &amp;lt;- sprintf(&#39;^%s$&#39;, make_regex_bounded(rules, longest))
+  matches &amp;lt;- str_detect(messages, regex)
+  sum(matches)
+}
+
+matching_messages(rules, messages)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 285
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;loops-and-bounds&#34;&gt;Loops and bounds&lt;/h2&gt;
+
+&lt;p&gt;The number of possible rules might be infinite, but rules are
+monotonically increasing in length, whereas our input messages are of
+finite length. Thus the only change we need to make is to impose a cap
+on the maximum message length, deleting any parts of rules that are
+longer than this, as they will never match any of our messages.&lt;/p&gt;
+
+&lt;p&gt;We incorporated this with a maximum message length in our function
+&lt;code&gt;make_regex_bounded&lt;/code&gt;. It isn’t necessary for part 1 but it will cut off
+any runaway rules in part 2. It does this by replacing overlong patterns
+with the literal letter &lt;code&gt;x&lt;/code&gt;, which (we assume) doesn’t appear in any of
+our messages so will never match.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;rules2 &amp;lt;- within(rules, {
+  rule[id == &#39;8&#39;] &amp;lt;- &#39;42 | 42 8&#39;
+  rule[id == &#39;11&#39;] &amp;lt;- &#39;42 31 | 42 11 31&#39;
+})
+
+matching_messages(rules2, messages)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 412
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I am not sure what the best way to count the possible lengths of matches
+to a regular expression but in this case I used &lt;code&gt;&#39;\([^)]*\)&#39;&lt;/code&gt;, which
+detects pairs of brackets that do not contain other brackets. The
+shortest possible pattern length is one (or maybe two because I didn’t
+enclose single letters in brackets) so this provides a reasonable lower
+bound.&lt;/p&gt;
 
 &lt;hr /&gt;
 
