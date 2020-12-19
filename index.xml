@@ -1973,7 +1973,7 @@ matching_messages(rules2, messages)
 &lt;pre&gt;&lt;code&gt;[1] 412
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;I am not sure what the best way to count the possible lengths of matches
+&lt;p&gt;I am not sure what the best way is to count the possible lengths of matches
 to a regular expression but in this case I used &lt;code&gt;&#39;\([^)]*\)&#39;&lt;/code&gt;, which
 detects pairs of brackets that do not contain other brackets. The
 shortest possible pattern length is one (or maybe two because I didn’t
