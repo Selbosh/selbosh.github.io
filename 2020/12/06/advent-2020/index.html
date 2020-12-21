@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="8841">
+<meta itemprop="wordCount" content="9358">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -2117,7 +2117,7 @@ possible that there might be multiple candidates, but presumably there
 is only one way to fit the entire jigsaw together.</p>
 
 <pre><code class="language-r">library(dplyr)
-tiles &lt;- tibble(input = readLines('input20a.txt')) %&gt;%
+tiles &lt;- tibble(input = readLines('input20.txt')) %&gt;%
     mutate(is_tile_id = grepl('Tile', input),
            tile_id = input[which(is_tile_id)[cumsum(is_tile_id)]],
            tile_id = as.integer(gsub('\\D', '', tile_id))) %&gt;%
@@ -2166,7 +2166,8 @@ A corner piece is any piece that attaches to two other pieces, where
 those two other pieces attach to three other pieces. The actual joining
 can be done with a SQL-like <code>dplyr::inner_join</code>:</p>
 
-<pre><code class="language-r">jigsaw &lt;- edges %&gt;%
+<pre><code class="language-r">library(magrittr)
+jigsaw &lt;- edges %&gt;%
   inner_join(filter(., tile_id != first(tile_id),
              !grepl('rev', name)), ., by = 'value') %&gt;%
   filter(tile_id.x != tile_id.y) %&gt;%
@@ -2180,21 +2181,13 @@ corner &lt;- jigsaw %$%
 prod(corner) %&gt;% format(scientific = FALSE)
 </code></pre>
 
-<pre><code>[1] &quot;20899048083289&quot;
+<pre><code>[1] &quot;15670959891893&quot;
 </code></pre>
 
 <p>As you can see I don’t care how the image as a whole fits together—the
 code just work out which tiles are valid corner pieces.</p>
 
-<h2 id="arranging-the-tiles">Arranging the tiles</h2>
-
-<p>Now we are actually supposed to build up the image and look for patterns
-in it (discarding the edges) that look like this sea monster:</p>
-
-<pre><code>                  # 
-#    ##    ##    ###
- #  #  #  #  #  #   
-</code></pre>
+<h2 id="a-more-complex-approach">A more complex approach.</h2>
 
 <p>And now for something completely different. Storing these as matrices
 seems awfully inefficient, and coming up with eight different
@@ -2206,7 +2199,7 @@ representation?</p>
 rotations and translations as complex arithmetic.</p>
 
 <pre><code class="language-r">transformations &lt;- expand.grid(flip = c(FALSE, TRUE),
-                               rotate = 1i^(0:3),
+                               rotate = 1i^(1:4),
                                tile_id = unique(tiles$tile_id))
 
 complex_tiles &lt;- tiles %&gt;%
@@ -2221,42 +2214,179 @@ complex_tiles &lt;- tiles %&gt;%
          hashes2 = (Re(hashes2) %% (dims[2] + 1)) +
            (Im(hashes2) %% (dims[1] + 1)) * 1i,
          # Cannot do joins on complex numbers:
-         rotate = Arg(rotate)) %&gt;%
+         rotate = Arg(rotate) %% (2 * pi)) %&gt;%
   group_by(tile_id, flip, rotate) %&gt;%
   summarise(hashes = list(sort(hashes2)), .groups = 'drop')
 
 complex_edges &lt;- complex_tiles %&gt;%
-  mutate(top = lapply(hashes, function(h) Re(h)[Im(h) == 1]),
-         left = lapply(hashes, function(h) Im(h)[Re(h) == 1]),
-         right = lapply(hashes, function(h) Im(h)[Re(h) == dims[2]]),
-         bottom = lapply(hashes, function(h) Re(h)[Im(h) == dims[1]])) %&gt;%
+  mutate(top =    lapply(hashes, function(h) Im(h)[Re(h) == 1]),
+         left =   lapply(hashes, function(h) Re(h)[Im(h) == 1]),
+         right =  lapply(hashes, function(h) Re(h)[Im(h) == dims[1]]),
+         bottom = lapply(hashes, function(h) Im(h)[Re(h) == dims[2]])) %&gt;%
   select(-hashes) %&gt;%
   mutate_at(vars(top:bottom), sapply, paste, collapse = ' ')
 
 # Find where the edges match between tiles.
 complex_edges %&lt;&gt;%
-  left_join(., ., by = c(right = 'left'),
+  inner_join(., ., by = c(right = 'left'),
             suffix = c('', '.right')) %&gt;%
-  left_join(., complex_edges, by = c(bottom = 'top'),
-            suffix = c('', '.below')) %&gt;%
-  # Ignore self-matches.
-  filter(tile_id != tile_id.right, tile_id != tile_id.below) %&gt;%
-  # Tidy up.
-  select_if(~ !is.character(.))
+  filter(tile_id != tile_id.right)
 </code></pre>
 
 <p>And here is the solution to part 1, again.</p>
 
 <pre><code class="language-r">complex_edges %&gt;%
-  count(tile_id) %&gt;% filter(n == 2) %$%
+  count(tile_id) %&gt;% filter(n == min(n)) %$%
   prod(tile_id) %&gt;% format(scientific = FALSE)
 </code></pre>
 
-<pre><code>[1] &quot;20899048083289&quot;
+<pre><code>[1] &quot;15670959891893&quot;
 </code></pre>
 
-<p>I thought this might make part 2 a bit easier, but that&rsquo;s still a work in
-progress&hellip;</p>
+<h2 id="arranging-the-tiles">Arranging the tiles</h2>
+
+<p>Now we are actually supposed to build up the image and look for patterns
+in it (discarding the edges) that look like this sea monster:</p>
+
+<pre><code>                  # 
+#    ##    ##    ###
+ #  #  #  #  #  #   
+</code></pre>
+
+<p>Our approach starts at the top-left of the image and works to the right.
+When we get to the end of a row of tiles, we <em>rotate</em> the first tile of
+the previous row so that ‘below’ becomes ‘right’ and we can get the
+first tile of the next now (rotating back again to the correct
+orientation). Then we convert the complex indices into a matrix of
+hashes.</p>
+
+<pre><code class="language-r">complex_tiles %&lt;&gt;%
+  mutate(hash_content = lapply(hashes, function(h) h[Re(h) &gt; 1 &amp; Im(h) &gt; 1 &amp;
+                                                       Re(h) &lt; dims[2] &amp;
+                                                       Im(h) &lt; dims[1]]))
+
+image_row &lt;- function(start) {
+  img &lt;- NULL
+  current_tile &lt;- start
+  repeat {
+    img &lt;- img %&gt;%
+      bind_rows(left_join(current_tile, complex_tiles))
+    if ( is.na(current_tile$tile_id.right) )
+      break
+    next_tile &lt;- current_tile %&gt;%
+      select(tile_id = tile_id.right,
+             rotate = rotate.right,
+             flip = flip.right) %&gt;%
+      left_join(complex_edges, by = c('tile_id', 'rotate', 'flip'))
+    
+    current_tile &lt;- next_tile
+  }
+  img
+}
+
+# Make sure nothing can appear above/left of start.
+row_start &lt;- complex_edges %&gt;%
+  add_count(top, name = 'n_top') %&gt;%
+  add_count(left, name = 'n_left') %&gt;%
+  filter(n_top == 1, n_left == 1) %&gt;%
+  slice(2) %&gt;% select(-n_top, -n_left)
+
+grid_size &lt;- sqrt(nrow(tiles))
+img_data &lt;- tibble()
+for (row in 1:grid_size) {
+  img_data %&lt;&gt;% bind_rows(image_row(row_start))
+  # Rotate to get the next row start:
+  row_start %&lt;&gt;%
+    mutate(rotate = (rotate + pi / 2) %% (2 * pi),
+           flip = flip) %&gt;%
+    select(tile_id, flip, rotate) %&gt;%
+    left_join(complex_edges) %&gt;%
+    transmute(tile_id = tile_id.right,
+              flip = flip.right,
+              rotate = (rotate.right - pi / 2) %% (2 * pi)) %&gt;%  # undo rotation
+    left_join(complex_edges)
+}
+
+stopifnot('Image is missing tiles' = nrow(img_data) == nrow(tiles))
+
+image &lt;- img_data %&gt;%
+  select(tile_id, hashes) %&gt;%
+  mutate(row = rep(1:grid_size, each = grid_size),
+         col = rep(1:grid_size, times = grid_size)) %&gt;%
+  unnest_longer(hashes) %&gt;%
+  mutate(hashes = hashes + (dims[1] - 1) * ((col - 1) * 1i + (row - 1)),
+         i = Im(hashes), j = Re(hashes))
+
+image &lt;- img_data %&gt;%
+  select(tile_id, hashes = hash_content) %&gt;%
+  mutate(row = rep(1:grid_size, each = grid_size),
+         col = rep(1:grid_size, times = grid_size)) %&gt;%
+  unnest_longer(hashes) %&gt;%
+  mutate(hashes = hashes + (dims[1] - 2) * ((col - 1) * 1i + (row - 1)),
+         i = Im(hashes), j = Re(hashes))
+</code></pre>
+
+<p>Here’s what the scene looks like:</p>
+
+<p><img src="https://selbydavid.com/img/2020/aoc-day20-jigsaw.png" alt="" /></p>
+
+<p>Now let’s go monster hunting.</p>
+
+<pre><code class="language-r">monster &lt;- c('                  # ',
+             '#    ##    ##    ###',
+             ' #  #  #  #  #  #   ')
+monster &lt;- do.call(rbind, strsplit(monster, '')) == '#'
+monster_ids &lt;- as.data.frame(which(monster, arr.ind = TRUE))
+
+monster_search &lt;- function(image, monster) {
+  monsters &lt;- NULL
+  count &lt;- 0
+  monster_ids &lt;- as.data.frame(which(monster, arr.ind = TRUE))
+  for (i in 0:(max(image$i) - max(monster_ids$row)))
+    for (j in 0:(max(image$j) - max(monster_ids$col))) {
+      shifted_monster &lt;- transform(monster_ids, i = row + i, j = col + j)
+      join &lt;- semi_join(shifted_monster, image, by = c('i', 'j'))
+      if (nrow(join) == nrow(monster_ids))
+        monsters &lt;- bind_rows(monsters, shifted_monster[, c('i', 'j')])
+    }
+  monsters
+}
+
+for (rotation in 1i^(1:4)) {
+  for (flip in 0:1) {
+    transformed &lt;- image %&gt;%
+        mutate(hashes = rotation * if (flip) Conj(hashes) else hashes,
+               i = Im(hashes) %% (grid_size * dims[1] - 2),
+               j = Re(hashes) %% (grid_size * dims[2] - 2))
+    results &lt;- monster_search(transformed, monster)
+    if (length(results))
+      break
+  }
+  if (length(results))
+    break
+}
+
+cat(sprintf('Found %d monsters; water roughness is %d',
+            nrow(results) / nrow(monster_ids),
+            nrow(image) - nrow(results)))
+</code></pre>
+
+<pre><code>Found 38 monsters; water roughness is 1964
+</code></pre>
+
+<p>Where are they on the map?</p>
+
+<pre><code class="language-r">ggplot(transformed) +
+  aes(j, i) +
+  geom_tile(fill = '#f5c966') +
+  geom_tile(data = results, fill = '#418997') +
+  scale_y_reverse() +
+  theme_void()
+</code></pre>
+
+<p><img src="https://selbydavid.com/img/2020/aoc-day20-monsters.png" alt="" /></p>
+
+<p>This puzzle was a real slog!</p>
 
 <hr />
 
