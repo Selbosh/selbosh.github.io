@@ -64,6 +64,7 @@ results may differ from mine.&lt;/p&gt;
 &lt;li&gt;&lt;a href=&#34;#day18&#34;&gt;Operation order&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day19&#34;&gt;Monster messages&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day20&#34;&gt;Jurassic jigsaw&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day21&#34;&gt;Allergen assessment&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;&lt;a id=&#39;day1&#39;&gt;&lt;/a&gt;&lt;/p&gt;
@@ -2035,10 +2036,10 @@ edges &amp;lt;- tiles %&amp;gt;%
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;No point in reversing both the piece and that to which it is matched. So
-we fix the first piece in place and look rotate the other pieces to fit.
-A corner piece is any piece that attaches to two other pieces, where
-those two other pieces attach to three other pieces. The actual joining
-can be done with a SQL-like &lt;code&gt;dplyr::inner_join&lt;/code&gt;:&lt;/p&gt;
+we fix the first piece in place and rotate the other pieces to fit. A
+corner piece is any piece that attaches to two other pieces, where those
+two other pieces attach to three other pieces. The actual joining can be
+done with a SQL-like &lt;code&gt;dplyr::inner_join&lt;/code&gt;:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(magrittr)
 jigsaw &amp;lt;- edges %&amp;gt;%
@@ -2204,7 +2205,8 @@ image &amp;lt;- img_data %&amp;gt;%
 
 &lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2020/aoc-day20-jigsaw.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Now let’s go monster hunting.&lt;/p&gt;
+&lt;p&gt;Now let’s go
+monster hunting.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;monster &amp;lt;- c(&#39;                  # &#39;,
              &#39;#    ##    ##    ###&#39;,
@@ -2214,7 +2216,6 @@ monster_ids &amp;lt;- as.data.frame(which(monster, arr.ind = TRUE))
 
 monster_search &amp;lt;- function(image, monster) {
   monsters &amp;lt;- NULL
-  count &amp;lt;- 0
   monster_ids &amp;lt;- as.data.frame(which(monster, arr.ind = TRUE))
   for (i in 0:(max(image$i) - max(monster_ids$row)))
     for (j in 0:(max(image$j) - max(monster_ids$col))) {
@@ -2261,6 +2262,72 @@ cat(sprintf(&#39;Found %d monsters; water roughness is %d&#39;,
 &lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2020/aoc-day20-monsters.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;This puzzle was a real slog!&lt;/p&gt;
+
+&lt;p&gt;I got waylaid for a while by the fact you can’t do table joins on
+complex number columns in &lt;code&gt;dplyr&lt;/code&gt;. My workaround was to convert the
+rotations to their angles in radians (using &lt;code&gt;Arg()&lt;/code&gt;), but in retrospect
+it would have been more robust to convert the numbers to string, or just
+to give each tile rotation a unique ID.&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;day21&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;day-21-allergen-assessment-https-adventofcode-com-2020-day-21&#34;&gt;Day 21 - &lt;a href=&#34;https://adventofcode.com/2020/day/21&#34;&gt;Allergen assessment&lt;/a&gt;&lt;/h1&gt;
+
+&lt;p&gt;Each allergen is found in exactly one ingredient.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- readLines(&#39;input21.txt&#39;)
+
+library(tidyr)
+ingredients &amp;lt;- tibble(input = input) %&amp;gt;%
+  tidyr::extract(input, c(&#39;ingredient&#39;, &#39;allergen&#39;),
+                 &#39;(.+) \\(contains (.+)\\)&#39;) %&amp;gt;%
+  transform(ingredient = strsplit(ingredient, &#39; &#39;),
+            allergen = strsplit(allergen, &#39;, &#39;))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;allergen-intersection&#34;&gt;Allergen intersection&lt;/h2&gt;
+
+&lt;p&gt;We can find the risky ingredients via an intersection operation between
+recipes that contain each allergen.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(dplyr)
+risky_foods &amp;lt;- ingredients %&amp;gt;%
+  unnest_longer(allergen) %&amp;gt;%
+  group_by(allergen) %&amp;gt;%
+  summarise(ingredient = Reduce(intersect, ingredient))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Part 1 asks us to count up the number of times that non-risky foods
+appear.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ingredients %&amp;gt;%
+  unnest_longer(ingredient) %&amp;gt;%
+  count(ingredient) %&amp;gt;%
+  anti_join(risky_foods) %&amp;gt;%
+  pull(n) %&amp;gt;% sum
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 2786
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;bipartite-food-pairing&#34;&gt;Bipartite food pairing&lt;/h2&gt;
+
+&lt;p&gt;This is a bipartite graph theory problem, just as in &lt;a href=&#34;#day16&#34;&gt;day 16&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(igraph)
+g &amp;lt;- graph_from_data_frame(risky_foods)
+V(g)$type &amp;lt;- V(g)$name %in% risky_foods$allergen  
+matching &amp;lt;- max_bipartite_match(g)$matching
+
+matching[matching %in% risky_foods$allergen] %&amp;gt;%
+  sort %&amp;gt;% names %&amp;gt;%
+  paste(collapse = &#39;,&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] &amp;quot;prxmdlz,ncjv,knprxg,lxjtns,vzzz,clg,cxfz,qdfpq&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Refreshingly straightforward.&lt;/p&gt;
 
 &lt;hr /&gt;
 

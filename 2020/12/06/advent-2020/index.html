@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="9358">
+<meta itemprop="wordCount" content="9556">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -190,6 +190,7 @@ results may differ from mine.</p>
 <li><a href="#day18">Operation order</a></li>
 <li><a href="#day19">Monster messages</a></li>
 <li><a href="#day20">Jurassic jigsaw</a></li>
+<li><a href="#day21">Allergen assessment</a></li>
 </ol>
 
 <p><a id='day1'></a></p>
@@ -2161,10 +2162,10 @@ edges &lt;- tiles %&gt;%
 </code></pre>
 
 <p>No point in reversing both the piece and that to which it is matched. So
-we fix the first piece in place and look rotate the other pieces to fit.
-A corner piece is any piece that attaches to two other pieces, where
-those two other pieces attach to three other pieces. The actual joining
-can be done with a SQL-like <code>dplyr::inner_join</code>:</p>
+we fix the first piece in place and rotate the other pieces to fit. A
+corner piece is any piece that attaches to two other pieces, where those
+two other pieces attach to three other pieces. The actual joining can be
+done with a SQL-like <code>dplyr::inner_join</code>:</p>
 
 <pre><code class="language-r">library(magrittr)
 jigsaw &lt;- edges %&gt;%
@@ -2330,7 +2331,8 @@ image &lt;- img_data %&gt;%
 
 <p><img src="https://selbydavid.com/img/2020/aoc-day20-jigsaw.png" alt="" /></p>
 
-<p>Now let’s go monster hunting.</p>
+<p>Now let’s go
+monster hunting.</p>
 
 <pre><code class="language-r">monster &lt;- c('                  # ',
              '#    ##    ##    ###',
@@ -2340,7 +2342,6 @@ monster_ids &lt;- as.data.frame(which(monster, arr.ind = TRUE))
 
 monster_search &lt;- function(image, monster) {
   monsters &lt;- NULL
-  count &lt;- 0
   monster_ids &lt;- as.data.frame(which(monster, arr.ind = TRUE))
   for (i in 0:(max(image$i) - max(monster_ids$row)))
     for (j in 0:(max(image$j) - max(monster_ids$col))) {
@@ -2387,6 +2388,72 @@ cat(sprintf('Found %d monsters; water roughness is %d',
 <p><img src="https://selbydavid.com/img/2020/aoc-day20-monsters.png" alt="" /></p>
 
 <p>This puzzle was a real slog!</p>
+
+<p>I got waylaid for a while by the fact you can’t do table joins on
+complex number columns in <code>dplyr</code>. My workaround was to convert the
+rotations to their angles in radians (using <code>Arg()</code>), but in retrospect
+it would have been more robust to convert the numbers to string, or just
+to give each tile rotation a unique ID.</p>
+
+<p><a id="day21"></a></p>
+
+<h1 id="day-21-allergen-assessment-https-adventofcode-com-2020-day-21">Day 21 - <a href="https://adventofcode.com/2020/day/21">Allergen assessment</a></h1>
+
+<p>Each allergen is found in exactly one ingredient.</p>
+
+<pre><code class="language-r">input &lt;- readLines('input21.txt')
+
+library(tidyr)
+ingredients &lt;- tibble(input = input) %&gt;%
+  tidyr::extract(input, c('ingredient', 'allergen'),
+                 '(.+) \\(contains (.+)\\)') %&gt;%
+  transform(ingredient = strsplit(ingredient, ' '),
+            allergen = strsplit(allergen, ', '))
+</code></pre>
+
+<h2 id="allergen-intersection">Allergen intersection</h2>
+
+<p>We can find the risky ingredients via an intersection operation between
+recipes that contain each allergen.</p>
+
+<pre><code class="language-r">library(dplyr)
+risky_foods &lt;- ingredients %&gt;%
+  unnest_longer(allergen) %&gt;%
+  group_by(allergen) %&gt;%
+  summarise(ingredient = Reduce(intersect, ingredient))
+</code></pre>
+
+<p>Part 1 asks us to count up the number of times that non-risky foods
+appear.</p>
+
+<pre><code class="language-r">ingredients %&gt;%
+  unnest_longer(ingredient) %&gt;%
+  count(ingredient) %&gt;%
+  anti_join(risky_foods) %&gt;%
+  pull(n) %&gt;% sum
+</code></pre>
+
+<pre><code>[1] 2786
+</code></pre>
+
+<h2 id="bipartite-food-pairing">Bipartite food pairing</h2>
+
+<p>This is a bipartite graph theory problem, just as in <a href="#day16">day 16</a>.</p>
+
+<pre><code class="language-r">library(igraph)
+g &lt;- graph_from_data_frame(risky_foods)
+V(g)$type &lt;- V(g)$name %in% risky_foods$allergen  
+matching &lt;- max_bipartite_match(g)$matching
+
+matching[matching %in% risky_foods$allergen] %&gt;%
+  sort %&gt;% names %&gt;%
+  paste(collapse = ',')
+</code></pre>
+
+<pre><code>[1] &quot;prxmdlz,ncjv,knprxg,lxjtns,vzzz,clg,cxfz,qdfpq&quot;
+</code></pre>
+
+<p>Refreshingly straightforward.</p>
 
 <hr />
 
