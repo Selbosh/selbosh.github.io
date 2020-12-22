@@ -2337,7 +2337,8 @@ matching[V(g)$type] %&amp;gt;%
 
 &lt;p&gt;Games are independent of one another until cards from previous games
 come back into play. Therefore, if player 1 has $n$ cards and player2
-has $m$ cards, we can simulate the first $\min(n, m)$ rounds in parallel.&lt;/p&gt;
+has $m$ cards, we can simulate the first $\min(n, m)$ rounds in
+parallel.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;combat &amp;lt;- function(p1, p2) {
   if (!length(p1)) return(p2)
@@ -2385,17 +2386,19 @@ second part, as we shall see.&lt;/p&gt;
 &lt;p&gt;The rules are as follows:&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;If this exact round has happened before (during &lt;em&gt;this game&lt;/em&gt;), we stop and
-player 1 automatically wins the &lt;em&gt;game&lt;/em&gt;, to prevent an infinite recursion.&lt;/li&gt;
-&lt;li&gt;If each player&amp;rsquo;s deck has more cards than the &lt;code&gt;value&lt;/code&gt; of their latest draw,
-copy the next &lt;code&gt;value&lt;/code&gt; cards and play a (recursive) sub-game to determine the
-winner of this round.&lt;/li&gt;
+&lt;li&gt;If this exact round has happened before (during &lt;em&gt;this game&lt;/em&gt;), we
+stop and player 1 automatically wins the &lt;em&gt;game&lt;/em&gt;, to prevent an
+infinite recursion.&lt;/li&gt;
+&lt;li&gt;If each player’s deck has more cards than the &lt;code&gt;value&lt;/code&gt; of their
+latest draw, copy the next &lt;code&gt;value&lt;/code&gt; cards and play a (recursive)
+sub-game to determine the winner of this round.&lt;/li&gt;
 &lt;li&gt;Otherwise, the player with the higher-value card wins the round.&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;To keep track of already-played rounds, I’m going to store the deck
-configuration as a string. However, you could also take a hint from submitting
-the answer to part 1: the sum of the deck multiplied by its indices is unique.&lt;/p&gt;
+configuration as a string. However, you could also take a hint from
+submitting the answer to part 1: the sum of the deck multiplied by its
+indices is unique.&lt;/p&gt;
 
 &lt;p&gt;For part 2 it’s not as easy to take advantage of vectorisation, because
 even though a win or a loss is still a binary value, it depends on the
@@ -2448,8 +2451,7 @@ recursion was not such a great idea. Stack overflow!&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;recursive_recursive_combat(deck[, 1], deck[, 2])
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code&gt;Error in stopifnot(length(result1) + length(result2) == length(p1) + length(p2)) : 
-  node stack overflow
+&lt;pre&gt;&lt;code&gt;Error: node stack overflow
 Error during wrapup: node stack overflow
 Error: no more error handlers available (recursive errors?); invoking &#39;abort&#39; restart
 &lt;/code&gt;&lt;/pre&gt;
@@ -2458,14 +2460,10 @@ Error: no more error handlers available (recursive errors?); invoking &#39;abort
 
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;recursive_combat &amp;lt;- function(p1, p2, played = NULL) {
   while (length(p1) &amp;amp; length(p2)) {
-    
-    # Has this game already been played? If so, player 1 wins.
     config &amp;lt;- paste(p1, p2, collapse = &#39;,&#39;, sep = &#39;|&#39;)
     if (config %in% played) return(p1)
     played &amp;lt;- c(played, config)
     
-    # Does each player have as many cards as their last dealt card value?
-    # If so, play a sub-game with a copy of the next {value} cards.
     if (p1[1] &amp;lt; length(p1) &amp;amp; p2[1] &amp;lt; length(p2)) {
       win1 &amp;lt;- all( recursive_combat(head(p1[-1], p1[1]),
                                     head(p2[-1], p2[1])) &amp;gt; 0 )
@@ -2473,7 +2471,6 @@ Error: no more error handlers available (recursive errors?); invoking &#39;abort
     
     result1 &amp;lt;- c(p1[-1], p1[1][win1], p2[1][win1])
     result2 &amp;lt;- c(p2[-1], p2[1][!win1], p1[1][!win1])
-    stopifnot(length(result1) + length(result2) == length(p1) + length(p2))
     
     p1 &amp;lt;- result1
     p2 &amp;lt;- result2
