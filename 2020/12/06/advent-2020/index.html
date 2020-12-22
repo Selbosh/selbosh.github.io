@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="9556">
+<meta itemprop="wordCount" content="10346">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -191,6 +191,7 @@ results may differ from mine.</p>
 <li><a href="#day19">Monster messages</a></li>
 <li><a href="#day20">Jurassic jigsaw</a></li>
 <li><a href="#day21">Allergen assessment</a></li>
+<li><a href="#day22">Crab combat</a></li>
 </ol>
 
 <p><a id='day1'></a></p>
@@ -2331,8 +2332,7 @@ image &lt;- img_data %&gt;%
 
 <p><img src="https://selbydavid.com/img/2020/aoc-day20-jigsaw.png" alt="" /></p>
 
-<p>Now let’s go
-monster hunting.</p>
+<p>Now let’s go monster hunting.</p>
 
 <pre><code class="language-r">monster &lt;- c('                  # ',
              '#    ##    ##    ###',
@@ -2442,10 +2442,10 @@ appear.</p>
 
 <pre><code class="language-r">library(igraph)
 g &lt;- graph_from_data_frame(risky_foods)
-V(g)$type &lt;- V(g)$name %in% risky_foods$allergen  
+V(g)$type &lt;- V(g)$name %in% risky_foods$ingredient
 matching &lt;- max_bipartite_match(g)$matching
 
-matching[matching %in% risky_foods$allergen] %&gt;%
+matching[V(g)$type] %&gt;%
   sort %&gt;% names %&gt;%
   paste(collapse = ',')
 </code></pre>
@@ -2454,6 +2454,172 @@ matching[matching %in% risky_foods$allergen] %&gt;%
 </code></pre>
 
 <p>Refreshingly straightforward.</p>
+
+<p><a id="day22"></a></p>
+
+<h1 id="day-22-crab-combat-https-adventofcode-com-2020-day-22">Day 22 - <a href="https://adventofcode.com/2020/day/22">Crab combat</a></h1>
+
+<h2 id="combat">Combat</h2>
+
+<p>Games are independent of one another until cards from previous games
+come back into play. Therefore, if player 1 has $n$ cards and player2
+has $m$ cards, we can simulate the first $\min(n, m)$ rounds in parallel.</p>
+
+<pre><code class="language-r">combat &lt;- function(p1, p2) {
+  if (!length(p1)) return(p2)
+  if (!length(p2)) return(p1)
+  length(p1) &lt;- length(p2) &lt;- max(length(p1), length(p2))
+  win1 &lt;- p1 &gt; p2
+  result1 &lt;- c(rbind(p1[win1], p2[win1]))
+  result2 &lt;- c(rbind(p2[!win1], p1[!win1]))
+  output1 &lt;- c(p1[is.na(win1)], result1)
+  output2 &lt;- c(p2[is.na(win1)], result2)
+  combat(output1[!is.na(output1)], output2[!is.na(output2)])
+}
+</code></pre>
+
+<p>Test on the example data:</p>
+
+<pre><code class="language-r">ex1 &lt;- c(9, 2, 6, 3, 1)
+ex2 &lt;- c(5, 8, 4, 7, 10)
+example &lt;- combat(ex1, ex2)
+sum(rev(example) * seq_along(example))
+</code></pre>
+
+<pre><code>[1] 306
+</code></pre>
+
+<p>Now read in the puzzle input and simulate for part 1.</p>
+
+<pre><code class="language-r">input &lt;- as.integer(readLines('input22.txt'))
+deck &lt;- matrix(input[!is.na(input)], ncol = 2)
+result &lt;- combat(deck[, 1], deck[, 2])
+sum(rev(result) * seq_along(result))
+</code></pre>
+
+<pre><code>[1] 30138
+</code></pre>
+
+<p>Apparently, I wasn’t supposed to do the first part with a recursion and
+should have used a <code>while</code> loop, instead. I have to fix this in the
+second part, as we shall see.</p>
+
+<h2 id="recursive-combat">Recursive combat</h2>
+
+<p>For the next round we actually need a recursion.</p>
+
+<p>The rules are as follows:</p>
+
+<ol>
+<li>If this exact round has happened before (during <em>this game</em>), we stop and
+player 1 automatically wins the <em>game</em>, to prevent an infinite recursion.</li>
+<li>If each player&rsquo;s deck has more cards than the <code>value</code> of their latest draw,
+copy the next <code>value</code> cards and play a (recursive) sub-game to determine the
+winner of this round.</li>
+<li>Otherwise, the player with the higher-value card wins the round.</li>
+</ol>
+
+<p>To keep track of already-played rounds, I’m going to store the deck
+configuration as a string. However, you could also take a hint from submitting
+the answer to part 1: the sum of the deck multiplied by its indices is unique.</p>
+
+<p>For part 2 it’s not as easy to take advantage of vectorisation, because
+even though a win or a loss is still a binary value, it depends on the
+result of the previous game (in the event that it goes to a sub-game).</p>
+
+<p>Since the outer function needs to return scores (for submitting as our
+puzzle answer) but the inner functions need only to say who won each
+match, we can return the final deck as a positive vector if it was
+player 1 who won, and negated if it was player 2.</p>
+
+<p>Initially I tried to wrap up my previously-recursive function for part 1
+in another recursion.</p>
+
+<pre><code class="language-r">recursive_recursive_combat &lt;- function(p1, p2, played = NULL) {
+  if (!length(p1)) return(-p2)
+  if (!length(p2)) return(p1)
+  
+  # Has this game already been played? If so, player 1 wins.
+  config &lt;- paste(p1, p2, collapse = ',', sep = '|')
+  if (config %in% played) return(p1)
+  played &lt;- c(played, config)
+  
+  # Does each player have as many cards as their last dealt card value?
+  # If so, play a sub-game with a copy of the next {value} cards.
+  if (p1[1] &lt; length(p1) &amp; p2[1] &lt; length(p2)) {
+    win1 &lt;- all( recursive_recursive_combat(head(p1[-1], p1[1]),
+                                            head(p2[-1], p2[1])) &gt; 0 )
+  } else win1 &lt;- p1[1] &gt; p2[1]
+  
+  result1 &lt;- c(p1[-1], p1[1][win1], p2[1][win1])
+  result2 &lt;- c(p2[-1], p2[1][!win1], p1[1][!win1])
+  
+  recursive_recursive_combat(result1, result2, played = played)
+}
+</code></pre>
+
+<p>This works OK on the small example dataset. Testing on the example data,
+a negative score indicates it is the crab who wins:</p>
+
+<pre><code class="language-r">example2 &lt;- recursive_recursive_combat(ex1, ex2)
+sum(rev(example2) * seq_along(example2))
+</code></pre>
+
+<pre><code>[1] -291
+</code></pre>
+
+<p>But on the test inputs, it becomes clear that a recursion within a
+recursion was not such a great idea. Stack overflow!</p>
+
+<pre><code class="language-r">recursive_recursive_combat(deck[, 1], deck[, 2])
+</code></pre>
+
+<pre><code>Error in stopifnot(length(result1) + length(result2) == length(p1) + length(p2)) : 
+  node stack overflow
+Error during wrapup: node stack overflow
+Error: no more error handlers available (recursive errors?); invoking 'abort' restart
+</code></pre>
+
+<p>Rewriting the main game as a loop, everything works as designed.</p>
+
+<pre><code class="language-r">recursive_combat &lt;- function(p1, p2, played = NULL) {
+  while (length(p1) &amp; length(p2)) {
+    
+    # Has this game already been played? If so, player 1 wins.
+    config &lt;- paste(p1, p2, collapse = ',', sep = '|')
+    if (config %in% played) return(p1)
+    played &lt;- c(played, config)
+    
+    # Does each player have as many cards as their last dealt card value?
+    # If so, play a sub-game with a copy of the next {value} cards.
+    if (p1[1] &lt; length(p1) &amp; p2[1] &lt; length(p2)) {
+      win1 &lt;- all( recursive_combat(head(p1[-1], p1[1]),
+                                    head(p2[-1], p2[1])) &gt; 0 )
+    } else win1 &lt;- p1[1] &gt; p2[1]
+    
+    result1 &lt;- c(p1[-1], p1[1][win1], p2[1][win1])
+    result2 &lt;- c(p2[-1], p2[1][!win1], p1[1][!win1])
+    stopifnot(length(result1) + length(result2) == length(p1) + length(p2))
+    
+    p1 &lt;- result1
+    p2 &lt;- result2
+  }
+  
+  if (!length(p1)) return(-p2)
+  p1
+}
+
+result2 &lt;- recursive_combat(deck[, 1], deck[, 2])
+sum(rev(result2) * seq_along(result2))
+</code></pre>
+
+<pre><code>[1] 31587
+</code></pre>
+
+<p>It turns out that writing recursive functions instead of loops is
+neither big nor clever, and I have certainly learnt my lesson.</p>
+
+<p>Also: it looks like the crab lost the final game.</p>
 
 <hr />
 
