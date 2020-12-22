@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="10290">
+<meta itemprop="wordCount" content="10495">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -2550,8 +2550,10 @@ in another recursion.</p>
   # Does each player have as many cards as their last dealt card value?
   # If so, play a sub-game with a copy of the next {value} cards.
   if (p1[1] &lt; length(p1) &amp; p2[1] &lt; length(p2)) {
-    win1 &lt;- all( recursive_recursive_combat(head(p1[-1], p1[1]),
-                                            head(p2[-1], p2[1])) &gt; 0 )
+    # If player 1 holds highest card, skip the sub-game.
+    win1 &lt;- if (max(p1[-1]) &gt; max(p2[-1])) TRUE else
+      all( recursive_recursive_combat(head(p1[-1], p1[1]),
+                                      head(p2[-1], p2[1])) &gt; 0 )
   } else win1 &lt;- p1[1] &gt; p2[1]
   
   result1 &lt;- c(p1[-1], p1[1][win1], p2[1][win1])
@@ -2571,15 +2573,13 @@ sum(rev(example2) * seq_along(example2))
 <pre><code>[1] -291
 </code></pre>
 
-<p>But on the test inputs, it becomes clear that a recursion within a
-recursion was not such a great idea. Stack overflow!</p>
+<p>But on the test inputs, it became clear that a recursion within a
+recursion was not such a great idea. My original implementation of this
+caused a stack overflow, until I patched in the player 1 sub-game trick
+(described below).</p>
 
-<pre><code class="language-r">recursive_recursive_combat(deck[, 1], deck[, 2])
-</code></pre>
-
-<pre><code>Error: node stack overflow
-Error during wrapup: node stack overflow
-Error: no more error handlers available (recursive errors?); invoking 'abort' restart
+<pre><code class="language-r">result2 &lt;- recursive_recursive_combat(deck[, 1], deck[, 2])
+sum(rev(result2) * seq_along(result2))
 </code></pre>
 
 <p>Rewriting the main game as a loop, everything works as designed.</p>
@@ -2591,8 +2591,9 @@ Error: no more error handlers available (recursive errors?); invoking 'abort' re
     played &lt;- c(played, config)
     
     if (p1[1] &lt; length(p1) &amp; p2[1] &lt; length(p2)) {
-      win1 &lt;- all( recursive_combat(head(p1[-1], p1[1]),
-                                    head(p2[-1], p2[1])) &gt; 0 )
+      win1 &lt;- if (max(p1[-1]) &gt; max(p2[-1])) TRUE else
+        all( recursive_combat(head(p1[-1], p1[1]),
+                              head(p2[-1], p2[1])) &gt; 0 )
     } else win1 &lt;- p1[1] &gt; p2[1]
     
     result1 &lt;- c(p1[-1], p1[1][win1], p2[1][win1])
@@ -2610,13 +2611,35 @@ result2 &lt;- recursive_combat(deck[, 1], deck[, 2])
 sum(rev(result2) * seq_along(result2))
 </code></pre>
 
-<pre><code>[1] 31587
+<pre><code>[1] 34705
 </code></pre>
 
-<p>It turns out that writing recursive functions instead of loops is
-neither big nor clever, and I have certainly learnt my lesson.</p>
+<p>Writing recursive functions just to avoid loops is a bad idea because it
+can result in nesting so deep that a stack overflow occurs, and it’s
+just as easy to write a <code>while</code> loop for the outer part of this
+algorithm.</p>
 
-<p>Also: it looks like the crab lost the final game.</p>
+<p>However, it turns out that my original nested recursion actually works
+without error if I exploit a trick—that I missed first time around—to
+skip simulating many of the sub-games.</p>
+
+<p>Specifically: in any sub-game, if player 1 holds the highest card, they
+are <em>guaranteed</em> to win. This is because they will never hand this
+maximum card over to player 2, so the sub-game will just continue until
+either player 2 loses, or a loop occurs, in which case player 1 wins by
+default according to rule 1.</p>
+
+<p>By checking before each sub-game if player 1 holds the maximum card, and
+skipping the sub-game if it is a foregone conclusion, a huge amount of
+computation can be avoided, and it even reduces the call stack such that
+<code>recursive_recursive_combat()</code> works without error (at least on my input
+dataset).</p>
+
+<p>According to <code>microbenchmark</code>, this trick cuts my run time from around
+34 whole seconds to just 15 milliseconds (for either the loop or the
+double recursion). Nice optimization when you can get it!</p>
+
+<p>Also: the crab lost.</p>
 
 <hr />
 
