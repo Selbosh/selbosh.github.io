@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="10533">
+<meta itemprop="wordCount" content="10586">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -2635,6 +2635,11 @@ recursion and outer-loop versions).</p>
 <em>guaranteed</em> to win. This is because they will never hand this maximum card over
 to player 2, so the sub-game will just continue until either player 2 loses, or
 a loop occurs, in which case player 1 wins by default according to rule 1.</p>
+
+<p><em>(The maximum card will <strong>never</strong> trigger a sub-sub-game, because the maximum
+value in a set of distinct natural numbers is always greater than or equal to
+the size of that set. You could even use this fact to skip the main game of
+recursive combat&mdash;if you didn&rsquo;t need to know the final score.)</em></p>
 
 <p>By checking before each sub-game if player 1 holds the maximum card, and
 skipping the sub-game if it is a foregone conclusion, a huge amount of
