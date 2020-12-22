@@ -2412,9 +2412,12 @@ player 1 who won, and negated if it was player 2.&lt;/p&gt;
 &lt;p&gt;Initially I tried to wrap up my previously-recursive function for part 1
 in another recursion.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;recursive_recursive_combat &amp;lt;- function(p1, p2, played = NULL) {
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;recursive_recursive_combat &amp;lt;- function(p1, p2, subgame = FALSE,
+                                       played = NULL) {
   if (!length(p1)) return(-p2)
   if (!length(p2)) return(p1)
+  # If player 1 holds highest card, skip the sub-game.
+  if (subgame &amp;amp; (max(p1) &amp;gt; max(p2))) return(p1)
   
   # Has this game already been played? If so, player 1 wins.
   config &amp;lt;- paste(p1, p2, collapse = &#39;,&#39;, sep = &#39;|&#39;)
@@ -2424,23 +2427,22 @@ in another recursion.&lt;/p&gt;
   # Does each player have as many cards as their last dealt card value?
   # If so, play a sub-game with a copy of the next {value} cards.
   if (p1[1] &amp;lt; length(p1) &amp;amp; p2[1] &amp;lt; length(p2)) {
-    # If player 1 holds highest card, skip the sub-game.
-    win1 &amp;lt;- if (max(p1[-1]) &amp;gt; max(p2[-1])) TRUE else
-      all( recursive_recursive_combat(head(p1[-1], p1[1]),
-                                      head(p2[-1], p2[1])) &amp;gt; 0 )
+    win1 &amp;lt;- all( recursive_recursive_combat(head(p1[-1], p1[1]),
+                                            head(p2[-1], p2[1]),
+                                            subgame = TRUE) &amp;gt; 0)
   } else win1 &amp;lt;- p1[1] &amp;gt; p2[1]
   
   result1 &amp;lt;- c(p1[-1], p1[1][win1], p2[1][win1])
   result2 &amp;lt;- c(p2[-1], p2[1][!win1], p1[1][!win1])
   
-  recursive_recursive_combat(result1, result2, played = played)
+  recursive_recursive_combat(result1, result2, subgame, played)
 }
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;This works OK on the small example dataset. Testing on the example data,
 a negative score indicates it is the crab who wins:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;example2 &amp;lt;- recursive_recursive_combat(ex1, ex2)
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;example2 &amp;lt;- recursive_recursive_combat(ex1, ex2, F)
 sum(rev(example2) * seq_along(example2))
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -2448,26 +2450,32 @@ sum(rev(example2) * seq_along(example2))
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;But on the test inputs, it became clear that a recursion within a
-recursion was not such a great idea. My original implementation of this
-caused a stack overflow, until I patched in the player 1 sub-game trick
-(described below).&lt;/p&gt;
+recursion was not such a great idea. The deeply nested recursion causes
+a stack overflow. (&lt;em&gt;Edit&lt;/em&gt;: at least, it did before I added the sub-game
+skipping trick, described below.)&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;result2 &amp;lt;- recursive_recursive_combat(deck[, 1], deck[, 2])
 sum(rev(result2) * seq_along(result2))
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Rewriting the main game as a loop, everything works as designed.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[1] 31587
+&lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;recursive_combat &amp;lt;- function(p1, p2, played = NULL) {
+&lt;p&gt;Rewriting the main game as a loop is probably better coding practice.
+This is the equivalent non-doubly-recursive version:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;recursive_combat &amp;lt;- function(p1, p2, subgame = FALSE) {
+  if (subgame &amp;amp; (max(p1) &amp;gt; max(p2))) return(p1)
+  played &amp;lt;- NULL
   while (length(p1) &amp;amp; length(p2)) {
     config &amp;lt;- paste(p1, p2, collapse = &#39;,&#39;, sep = &#39;|&#39;)
     if (config %in% played) return(p1)
     played &amp;lt;- c(played, config)
     
     if (p1[1] &amp;lt; length(p1) &amp;amp; p2[1] &amp;lt; length(p2)) {
-      win1 &amp;lt;- if (max(p1[-1]) &amp;gt; max(p2[-1])) TRUE else
-        all( recursive_combat(head(p1[-1], p1[1]),
-                              head(p2[-1], p2[1])) &amp;gt; 0 )
+      win1 &amp;lt;- all( recursive_combat(head(p1[-1], p1[1]),
+                                    head(p2[-1], p2[1]),
+                                    subgame = TRUE) &amp;gt; 0 )
     } else win1 &amp;lt;- p1[1] &amp;gt; p2[1]
     
     result1 &amp;lt;- c(p1[-1], p1[1][win1], p2[1][win1])
@@ -2485,33 +2493,31 @@ result2 &amp;lt;- recursive_combat(deck[, 1], deck[, 2])
 sum(rev(result2) * seq_along(result2))
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code&gt;[1] 34705
+&lt;pre&gt;&lt;code&gt;[1] 31587
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Writing recursive functions just to avoid loops is a bad idea because it
-can result in nesting so deep that a stack overflow occurs, and it’s
-just as easy to write a &lt;code&gt;while&lt;/code&gt; loop for the outer part of this
-algorithm.&lt;/p&gt;
+&lt;p&gt;Writing recursive functions just to avoid loops is a bad idea because it can
+result in nesting so deep that a stack overflow occurs, and it&amp;rsquo;s just
+as easy to write a &lt;code&gt;while&lt;/code&gt; loop for the outer part of this algorithm.&lt;/p&gt;
 
-&lt;p&gt;However, it turns out that my original nested recursion actually works
-without error if I exploit a trick—that I missed first time around—to
-skip simulating many of the sub-games.&lt;/p&gt;
+&lt;p&gt;However, since I originally solved this problem, I came across a trick that not
+only prevents a stack overflow, but it speeds up the algorithm significantly by
+avoiding a large amount of unnecessary computation (both for the double
+recursion and outer-loop versions).&lt;/p&gt;
 
-&lt;p&gt;Specifically: in any sub-game, if player 1 holds the highest card, they
-are &lt;em&gt;guaranteed&lt;/em&gt; to win. This is because they will never hand this
-maximum card over to player 2, so the sub-game will just continue until
-either player 2 loses, or a loop occurs, in which case player 1 wins by
-default according to rule 1.&lt;/p&gt;
+&lt;p&gt;Specifically: in any sub-game, if player 1 holds the highest card, they are
+&lt;em&gt;guaranteed&lt;/em&gt; to win. This is because they will never hand this maximum card over
+to player 2, so the sub-game will just continue until either player 2 loses, or
+a loop occurs, in which case player 1 wins by default according to rule 1.&lt;/p&gt;
 
 &lt;p&gt;By checking before each sub-game if player 1 holds the maximum card, and
 skipping the sub-game if it is a foregone conclusion, a huge amount of
-computation can be avoided, and it even reduces the call stack such that
-&lt;code&gt;recursive_recursive_combat()&lt;/code&gt; works without error (at least on my input
-dataset).&lt;/p&gt;
+computation can be avoided, and it may even reduce the call stack such that
+&lt;code&gt;recursive_recursive_combat()&lt;/code&gt; works without error (at least on my input data).&lt;/p&gt;
 
-&lt;p&gt;According to &lt;code&gt;microbenchmark&lt;/code&gt;, this trick cuts my run time from around
-34 whole seconds to just 15 milliseconds (for either the loop or the
-double recursion). Nice optimization when you can get it!&lt;/p&gt;
+&lt;p&gt;According to &lt;code&gt;microbenchmark&lt;/code&gt;, this trick cuts my run time from around 34
+seconds to just 250 milliseconds on the full data (and the loop is a few ms
+faster than the double recursion).&lt;/p&gt;
 
 &lt;p&gt;Also: the crab lost.&lt;/p&gt;
 
