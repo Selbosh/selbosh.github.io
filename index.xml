@@ -66,6 +66,7 @@ results may differ from mine.&lt;/p&gt;
 &lt;li&gt;&lt;a href=&#34;#day20&#34;&gt;Jurassic jigsaw&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day21&#34;&gt;Allergen assessment&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day22&#34;&gt;Crab combat&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day23&#34;&gt;Crab cups&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;&lt;a id=&#39;day1&#39;&gt;&lt;/a&gt;&lt;/p&gt;
@@ -2496,35 +2497,185 @@ sum(rev(result2) * seq_along(result2))
 &lt;pre&gt;&lt;code&gt;[1] 31587
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Writing recursive functions just to avoid loops is a bad idea because it can
-result in nesting so deep that a stack overflow occurs, and it&amp;rsquo;s just
-as easy to write a &lt;code&gt;while&lt;/code&gt; loop for the outer part of this algorithm.&lt;/p&gt;
+&lt;p&gt;Writing recursive functions just to avoid loops is a bad idea because it
+can result in nesting so deep that a stack overflow occurs, and it’s
+just as easy to write a &lt;code&gt;while&lt;/code&gt; loop for the outer part of this
+algorithm.&lt;/p&gt;
 
-&lt;p&gt;However, since I originally solved this problem, I came across a trick that not
-only prevents a stack overflow, but it speeds up the algorithm significantly by
-avoiding a large amount of unnecessary computation (both for the double
-recursion and outer-loop versions).&lt;/p&gt;
+&lt;p&gt;However, since I originally solved this problem, I came across a trick
+that not only prevents a stack overflow, but it speeds up the algorithm
+significantly by avoiding a large amount of unnecessary computation
+(both for the double recursion and outer-loop versions).&lt;/p&gt;
 
-&lt;p&gt;Specifically: in any sub-game, if player 1 holds the highest card, they are
-&lt;em&gt;guaranteed&lt;/em&gt; to win. This is because they will never hand this maximum card over
-to player 2, so the sub-game will just continue until either player 2 loses, or
-a loop occurs, in which case player 1 wins by default according to rule 1.&lt;/p&gt;
+&lt;p&gt;Specifically: in any sub-game, if player 1 holds the highest card, they
+are &lt;em&gt;guaranteed&lt;/em&gt; to win. This is because they will never hand this
+maximum card over to player 2, so the sub-game will just continue until
+either player 2 loses, or a loop occurs, in which case player 1 wins by
+default according to rule 1.&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;(The maximum card will &lt;strong&gt;never&lt;/strong&gt; trigger a sub-sub-game, because the maximum
-value in a set of distinct natural numbers is always greater than or equal to
-the size of that set. You could even use this fact to skip the main game of
-recursive combat&amp;mdash;if you didn&amp;rsquo;t need to know the final score.)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;*(The maximum card will &lt;strong&gt;never&lt;/strong&gt; trigger a sub-sub-game, because the
+maximum value in a set of distinct natural numbers is always greater
+than or equal to the size of that set. You could even use this fact to
+skip the main game of recursive combat—if you didn’t need to know the
+final score.)*&lt;/p&gt;
 
 &lt;p&gt;By checking before each sub-game if player 1 holds the maximum card, and
 skipping the sub-game if it is a foregone conclusion, a huge amount of
-computation can be avoided, and it may even reduce the call stack such that
-&lt;code&gt;recursive_recursive_combat()&lt;/code&gt; works without error (at least on my input data).&lt;/p&gt;
+computation can be avoided, and it may even reduce the call stack such
+that &lt;code&gt;recursive_recursive_combat()&lt;/code&gt; works without error (at least on my
+input data).&lt;/p&gt;
 
-&lt;p&gt;According to &lt;code&gt;microbenchmark&lt;/code&gt;, this trick cuts my run time from around 34
-seconds to just 250 milliseconds on the full data (and the loop is a few ms
-faster than the double recursion).&lt;/p&gt;
+&lt;p&gt;According to &lt;code&gt;microbenchmark&lt;/code&gt;, this trick cuts my run time from around
+34 seconds to just 250 milliseconds on the full data (and the loop is a
+few ms faster than the double recursion).&lt;/p&gt;
 
 &lt;p&gt;Also: the crab lost.&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;day23&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;day-23-crab-cups-https-adventofcode-com-2020-day-23&#34;&gt;Day 23 - &lt;a href=&#34;https://adventofcode.com/2020/day/23&#34;&gt;Crab cups&lt;/a&gt;&lt;/h1&gt;
+
+&lt;h2 id=&#34;ten-moves&#34;&gt;Ten moves&lt;/h2&gt;
+
+&lt;p&gt;In the first part, the key bit to figure out is how to cycle through a
+vector, such that if you reach either the maximum index or maximum
+value, the following index/value loops back round to the start.&lt;/p&gt;
+
+&lt;p&gt;You can do this with modular arithmetic, for which I wrote a utility
+function &lt;code&gt;idx()&lt;/code&gt;, which makes the rest of the code easier to read. R
+indices and the values on the cups both start at 1 (rather than 0) so
+you need to subtract 1, get the modulo and then add 1 again.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;crab_cups &amp;lt;- function(circle, moves = 10) {
+  ncups &amp;lt;- length(circle)
+  idx &amp;lt;- function(i) 1 + (i - 1) %% ncups
+  i &amp;lt;- 1
+  for (iter in 1:moves) {
+    current &amp;lt;- circle[idx(i)]
+    grab &amp;lt;- circle[idx(seq(i + 1, i + 3))]
+    dest &amp;lt;- idx(current - 1:4)
+    dest &amp;lt;- dest[which.min(dest %in% grab)]
+    next_circle &amp;lt;- setdiff(circle, grab)
+    next_circle &amp;lt;- append(next_circle, grab,
+                          after = which(next_circle == dest))
+    circle &amp;lt;- next_circle
+    i &amp;lt;- which(circle == current) + 1
+  }
+  circle
+}
+
+labels &amp;lt;- function(circle) {
+  n &amp;lt;- length(circle)
+  i1 &amp;lt;- which(circle == 1)
+  result &amp;lt;- circle[1 + (i1 + 0:(n - 2)) %% n]
+  paste(result, collapse = &#39;&#39;)
+}
+
+example &amp;lt;- crab_cups(c(3, 8, 9, 1, 2, 5, 4, 6, 7))
+labels(example)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] &amp;quot;92658374&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Another helper function, &lt;code&gt;labels()&lt;/code&gt;, deals with rotating the vector so
+we get all the values after the cup labelled with a 1.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- c(9, 7, 4, 6, 1, 8, 3, 5, 2)
+result &amp;lt;- crab_cups(input, 100)
+labels(result)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] &amp;quot;75893264&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;ten-million-moves&#34;&gt;Ten million moves&lt;/h2&gt;
+
+&lt;p&gt;In principle we’ve just been asked to add a load of cups and run the
+same thing again, but clearly this won’t scale well over ten million
+moves with a million cups. There must be a trick here to reduce the
+computational load, but what is it? Ten million moves is a tiny amount
+relative to the number of possible orderings (which is $1000000!$) so it
+seems unlikely we’ll hit a loop.&lt;/p&gt;
+
+&lt;p&gt;There is no way to skip steps as in yesterday’s problem. Instead, we
+look at how the circle itself is stored.&lt;/p&gt;
+
+&lt;p&gt;To avoid shrinking and resizing the vector of values, or updating many
+elements’ values or positions in place, we can take advantage of a data
+structure known as a &lt;a href=&#34;https://en.wikipedia.org/wiki/Linked_list&#34;&gt;linked
+list&lt;/a&gt;. In a linked list,
+positions of elements are described by &lt;em&gt;relative&lt;/em&gt; rather than absolute
+indices.&lt;/p&gt;
+
+&lt;p&gt;We can store the cups as a linked list where each label is linked to the
+label of the cup immediately preceding (anti-clockwise to) it in the
+circle. Then, at each iteration, the only nodes that need updating are
+the current cup, the destination cup and those cups that are immediately
+adjacent to the three we pick up.&lt;/p&gt;
+
+&lt;p&gt;There is no specific class for linked lists in base R; instead you can
+use an ordinary vector where the index of each element corresponds to
+the label of the previous one. An nifty one-liner for this is
+&lt;code&gt;c(x[-1], x[1])[order(x)]&lt;/code&gt;, which you can see implemented below.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;linked_cups &amp;lt;- function(circle, moves = 10, terms = 9) {
+  ncups &amp;lt;- length(circle)
+  stopifnot(terms &amp;lt;= ncups)
+  # Linked list where each index is the label of the preceding cup.
+  lnklst &amp;lt;- c(circle[-1], circle[1])[order(circle)]
+  current &amp;lt;- circle[1]
+  for (iter in 1:moves) {
+    # Pick the 3 next cups.
+    grab1 &amp;lt;- lnklst[current]
+    grab2 &amp;lt;- lnklst[grab1]
+    grab3 &amp;lt;- lnklst[grab2]
+    # Choose destination.
+    dest &amp;lt;- 1 + (current - 1:4 - 1) %% ncups
+    dest &amp;lt;- dest[which.min(dest %in% c(grab1, grab2, grab3))]
+    # Lift out the 3 cups.
+    lnklst[current] &amp;lt;- lnklst[grab3]
+    # Slot in the 3 cups.
+    lnklst[grab3] &amp;lt;- lnklst[dest]
+    lnklst[dest] &amp;lt;- grab1
+    # Move clockwise by 1.
+    current &amp;lt;- lnklst[current]
+  }
+  
+  # Convert back into a vector of labels for output.
+  cups &amp;lt;- integer(terms)
+  cups[1] &amp;lt;- 1
+  for (i in 2:terms) cups[i] &amp;lt;- lnklst[cups[i-1]]
+  cups
+}
+
+result2 &amp;lt;- linked_cups(c(input, 10:1e6), 1e7, terms = 3)
+prod(result2)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 38162588308
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As a linked list has no absolute start or end point, the function above
+just returns the few terms immediately after 1 in the circle, which is
+all we need for the puzzle solution.&lt;/p&gt;
+
+&lt;p&gt;A more R-like solution might be just to use a named vector/list.
+Something like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;linked_list &amp;lt;- setNames(c(circle[-1], circle[1]), circle)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;though you have to be careful with this because &lt;code&gt;linked_list[&#39;1&#39;]&lt;/code&gt; is
+not the same thing as &lt;code&gt;linked_list[1]&lt;/code&gt;. The former means ‘the label
+after label 1’ whereas the latter just gives the first element of the
+vector (which could be something else entirely, unless the vector were
+sorted by its names). An advantage of a named vector is that you can
+have any labels you like, including zeros, negative numbers,
+non-integers or strings.&lt;/p&gt;
+
+&lt;p&gt;However, for this particular example, the conversion back and forth from integer
+to numeric makes a named vector/list slower than the index-based solution above.&lt;/p&gt;
 
 &lt;hr /&gt;
 
