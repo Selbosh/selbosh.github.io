@@ -2513,11 +2513,11 @@ maximum card over to player 2, so the sub-game will just continue until
 either player 2 loses, or a loop occurs, in which case player 1 wins by
 default according to rule 1.&lt;/p&gt;
 
-&lt;p&gt;*(The maximum card will &lt;strong&gt;never&lt;/strong&gt; trigger a sub-sub-game, because the
+&lt;p&gt;&lt;em&gt;(The maximum card will &lt;strong&gt;never&lt;/strong&gt; trigger a sub-sub-game, because the
 maximum value in a set of distinct natural numbers is always greater
 than or equal to the size of that set. You could even use this fact to
 skip the main game of recursive combat—if you didn’t need to know the
-final score.)*&lt;/p&gt;
+final score.)&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;By checking before each sub-game if player 1 holds the maximum card, and
 skipping the sub-game if it is a foregone conclusion, a huge amount of
