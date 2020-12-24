@@ -2694,8 +2694,8 @@ with any other cardinal direction. So we break up the input strings as
 follows using a regular expression &lt;em&gt;lookbehind&lt;/em&gt; and &lt;em&gt;lookahead&lt;/em&gt;,
 effectively making a custom word boundary:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- readLines(&#39;input24.txt&#39;)
-input &amp;lt;- stringi::stri_split(input, regex = &#39;(?&amp;lt;=[ew])(?=[nesw])&#39;)
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- readLines(&#39;input24a.txt&#39;)
+input &amp;lt;- stringi::stri_split(input, regex = &#39;(?&amp;lt;=[ew])(?=.)&#39;)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;hexagonal-coordinates&#34;&gt;Hexagonal coordinates&lt;/h2&gt;
@@ -2768,7 +2768,7 @@ number of tiles that appear an odd number of times.&lt;/p&gt;
 nrow(black_tiles)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code&gt;[1] 473
+&lt;pre&gt;&lt;code&gt;[1] 10
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;conway-tiles&#34;&gt;Conway tiles&lt;/h2&gt;
@@ -2814,15 +2814,78 @@ full_grid %&amp;gt;%
   nrow
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code&gt;[1] 4070
+&lt;pre&gt;&lt;code&gt;[1] 2208
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;It’s not very efficient, but it works!&lt;/p&gt;
 
-&lt;p&gt;Here is what the grid looks like after 100 days (except the actual pattern would
-be hexagonal).&lt;/p&gt;
+&lt;p&gt;Here is what the grid looks like after 100 days (except the actual
+pattern would be hexagonal).&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2020/aoc-day24-floor.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;faster-approach&#34;&gt;Faster approach?&lt;/h2&gt;
+
+&lt;p&gt;I’ve been inspired by &lt;a href=&#34;https://twitter.com/Brotherluii/status/1342060160433401859&#34;&gt;Thomas Loock on
+Twitter&lt;/a&gt;,
+whose concise solution takes advantage of Python’s
+&lt;a href=&#34;https://docs.python.org/3/library/collections.html#collections.defaultdict&#34;&gt;&lt;code&gt;defaultdict&lt;/code&gt;&lt;/a&gt;
+data structure. This is like an ordinary Python dictionary, but if you
+try to extract a key that doesn’t exist, it returns a default value
+(e.g. &lt;code&gt;false&lt;/code&gt;) rather than throwing an error.&lt;/p&gt;
+
+&lt;p&gt;Can we implement something similar in R?&lt;/p&gt;
+
+&lt;p&gt;The nearest R equivalent to a Python dictionary is a named list. But is
+there an R equivalent to a &lt;code&gt;defaultdict&lt;/code&gt;? Well, a few things, actually.
+In fact, most R data structures will return either &lt;code&gt;NA&lt;/code&gt; (vectors) or
+&lt;code&gt;NULL&lt;/code&gt; (lists) if the key or index is missing. The exception to this is
+arrays/matrices, which throw a &lt;code&gt;subscript out of bounds&lt;/code&gt; error if that
+dimension doesn’t exist.&lt;/p&gt;
+
+&lt;p&gt;Here is an R translation. The dictionary &lt;code&gt;delta&lt;/code&gt; can be a named list.
+Looping over lines of an open file is probably not very R-like, so we
+use the regex from earlier to parse the input. Similarly, most of the
+rest of the initial &lt;code&gt;while&lt;/code&gt; loop can be a one-liner, leaving just the
+issue of getting rid of tiles flipped back to white.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;delta &amp;lt;- list(w = c(-1, 0), e = c(1, 0), ne = c(0, 1), nw = c(-1, 1),
+              se = c(1, -1), sw = c(0, -1))
+file &amp;lt;- readLines(&#39;input24.txt&#39;)
+input &amp;lt;- stringi::stri_split(file, regex = &#39;(?&amp;lt;=[ew])(?=.)&#39;)
+tiles &amp;lt;- sapply(input, function(x) Reduce(&#39;+&#39;, delta[x]))
+tiles &amp;lt;- setNames(as.data.table(t(tiles)), c(&#39;x&#39;, &#39;y&#39;))
+tiles &amp;lt;- tiles[j = .(n = .N), by = .(x, y)]
+
+cat(&#39;Part 1:&#39;, tiles[n %% 2 == 1, .N], &#39;\n&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;Part 1: 473 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;deltaDT &amp;lt;- setNames(as.data.table(do.call(rbind, delta)), c(&#39;dx&#39;, &#39;dy&#39;))
+for (day in 1:100) {
+  tiles &amp;lt;- tiles[n %% 2 == 1]
+  neighbours &amp;lt;- setDT(tidyr::crossing(tiles, deltaDT))
+  neighbours[, x := x + dx][, y:= y + dy]
+  neighbours &amp;lt;- neighbours[, .(nbrs = .N), by = .(x, y)]
+  tiles &amp;lt;- merge(tiles, neighbours, all = TRUE)
+  # If is.na(n), tile is white.
+  # If is.na(nbrs), tile has no neighbours.
+  tiles[!is.na(n), new := !is.na(nbrs) &amp;amp; nbrs &amp;gt; 0 &amp;amp; nbrs &amp;lt; 3]
+  tiles[is.na(n),  new := !is.na(nbrs) &amp;amp; nbrs == 2]
+  tiles[, n := new][, new := NULL][, nbrs := NULL]
+}
+
+cat(&#39;Part 2:&#39;, tiles[n %% 2 == 1, .N])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;Part 2: 4070
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once into part 2, it’s back to a tabular solution, but this &lt;code&gt;data.table&lt;/code&gt;
+implementation is much faster than the &lt;code&gt;dplyr&lt;/code&gt; version originally
+implemented above.&lt;/p&gt;
 
 &lt;hr /&gt;
 

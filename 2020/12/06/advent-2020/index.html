@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="12048">
+<meta itemprop="wordCount" content="12431">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -2820,8 +2820,8 @@ with any other cardinal direction. So we break up the input strings as
 follows using a regular expression <em>lookbehind</em> and <em>lookahead</em>,
 effectively making a custom word boundary:</p>
 
-<pre><code class="language-r">input &lt;- readLines('input24.txt')
-input &lt;- stringi::stri_split(input, regex = '(?&lt;=[ew])(?=[nesw])')
+<pre><code class="language-r">input &lt;- readLines('input24a.txt')
+input &lt;- stringi::stri_split(input, regex = '(?&lt;=[ew])(?=.)')
 </code></pre>
 
 <h2 id="hexagonal-coordinates">Hexagonal coordinates</h2>
@@ -2894,7 +2894,7 @@ number of tiles that appear an odd number of times.</p>
 nrow(black_tiles)
 </code></pre>
 
-<pre><code>[1] 473
+<pre><code>[1] 10
 </code></pre>
 
 <h2 id="conway-tiles">Conway tiles</h2>
@@ -2940,15 +2940,78 @@ full_grid %&gt;%
   nrow
 </code></pre>
 
-<pre><code>[1] 4070
+<pre><code>[1] 2208
 </code></pre>
 
 <p>It’s not very efficient, but it works!</p>
 
-<p>Here is what the grid looks like after 100 days (except the actual pattern would
-be hexagonal).</p>
+<p>Here is what the grid looks like after 100 days (except the actual
+pattern would be hexagonal).</p>
 
 <p><img src="https://selbydavid.com/img/2020/aoc-day24-floor.png" alt="" /></p>
+
+<h2 id="faster-approach">Faster approach?</h2>
+
+<p>I’ve been inspired by <a href="https://twitter.com/Brotherluii/status/1342060160433401859">Thomas Loock on
+Twitter</a>,
+whose concise solution takes advantage of Python’s
+<a href="https://docs.python.org/3/library/collections.html#collections.defaultdict"><code>defaultdict</code></a>
+data structure. This is like an ordinary Python dictionary, but if you
+try to extract a key that doesn’t exist, it returns a default value
+(e.g. <code>false</code>) rather than throwing an error.</p>
+
+<p>Can we implement something similar in R?</p>
+
+<p>The nearest R equivalent to a Python dictionary is a named list. But is
+there an R equivalent to a <code>defaultdict</code>? Well, a few things, actually.
+In fact, most R data structures will return either <code>NA</code> (vectors) or
+<code>NULL</code> (lists) if the key or index is missing. The exception to this is
+arrays/matrices, which throw a <code>subscript out of bounds</code> error if that
+dimension doesn’t exist.</p>
+
+<p>Here is an R translation. The dictionary <code>delta</code> can be a named list.
+Looping over lines of an open file is probably not very R-like, so we
+use the regex from earlier to parse the input. Similarly, most of the
+rest of the initial <code>while</code> loop can be a one-liner, leaving just the
+issue of getting rid of tiles flipped back to white.</p>
+
+<pre><code class="language-r">delta &lt;- list(w = c(-1, 0), e = c(1, 0), ne = c(0, 1), nw = c(-1, 1),
+              se = c(1, -1), sw = c(0, -1))
+file &lt;- readLines('input24.txt')
+input &lt;- stringi::stri_split(file, regex = '(?&lt;=[ew])(?=.)')
+tiles &lt;- sapply(input, function(x) Reduce('+', delta[x]))
+tiles &lt;- setNames(as.data.table(t(tiles)), c('x', 'y'))
+tiles &lt;- tiles[j = .(n = .N), by = .(x, y)]
+
+cat('Part 1:', tiles[n %% 2 == 1, .N], '\n')
+</code></pre>
+
+<pre><code>Part 1: 473 
+</code></pre>
+
+<pre><code class="language-r">deltaDT &lt;- setNames(as.data.table(do.call(rbind, delta)), c('dx', 'dy'))
+for (day in 1:100) {
+  tiles &lt;- tiles[n %% 2 == 1]
+  neighbours &lt;- setDT(tidyr::crossing(tiles, deltaDT))
+  neighbours[, x := x + dx][, y:= y + dy]
+  neighbours &lt;- neighbours[, .(nbrs = .N), by = .(x, y)]
+  tiles &lt;- merge(tiles, neighbours, all = TRUE)
+  # If is.na(n), tile is white.
+  # If is.na(nbrs), tile has no neighbours.
+  tiles[!is.na(n), new := !is.na(nbrs) &amp; nbrs &gt; 0 &amp; nbrs &lt; 3]
+  tiles[is.na(n),  new := !is.na(nbrs) &amp; nbrs == 2]
+  tiles[, n := new][, new := NULL][, nbrs := NULL]
+}
+
+cat('Part 2:', tiles[n %% 2 == 1, .N])
+</code></pre>
+
+<pre><code>Part 2: 4070
+</code></pre>
+
+<p>Once into part 2, it’s back to a tabular solution, but this <code>data.table</code>
+implementation is much faster than the <code>dplyr</code> version originally
+implemented above.</p>
 
 <hr />
 
