@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="11382">
+<meta itemprop="wordCount" content="12031">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -162,7 +162,7 @@ or more ‘data sciencey’. Generally it makes parsing datasets easier but
 low-level string manipulation more fiddly.</p>
 
 <p>Here are my solutions so far. Where possible, I’ve tried to strike a
-balance between efficiency and readability, and to try avoid using the
+balance between efficiency and readability, and to avoid using the
 packages I might usually use (e.g. <code>dplyr</code>) if I think it makes the
 puzzle too easy.</p>
 
@@ -193,6 +193,7 @@ results may differ from mine.</p>
 <li><a href="#day21">Allergen assessment</a></li>
 <li><a href="#day22">Crab combat</a></li>
 <li><a href="#day23">Crab cups</a></li>
+<li><a href="#day24">Lobby layout</a></li>
 </ol>
 
 <p><a id='day1'></a></p>
@@ -2639,11 +2640,11 @@ maximum card over to player 2, so the sub-game will just continue until
 either player 2 loses, or a loop occurs, in which case player 1 wins by
 default according to rule 1.</p>
 
-<p><em>(The maximum card will <strong>never</strong> trigger a sub-sub-game, because the
+<p>*(The maximum card will <strong>never</strong> trigger a sub-sub-game, because the
 maximum value in a set of distinct natural numbers is always greater
 than or equal to the size of that set. You could even use this fact to
 skip the main game of recursive combat—if you didn’t need to know the
-final score.)</em></p>
+final score.)*</p>
 
 <p>By checking before each sub-game if player 1 holds the maximum card, and
 skipping the sub-game if it is a foregone conclusion, a huge amount of
@@ -2800,8 +2801,149 @@ sorted by its names). An advantage of a named vector is that you can
 have any labels you like, including zeros, negative numbers,
 non-integers or strings.</p>
 
-<p>However, for this particular example, the conversion back and forth from integer
-to character makes a named vector/list slower than the index-based solution above.</p>
+<p>However, for this particular example, the conversion back and forth from
+integer to character makes a named vector/list slower than the
+index-based solution above.</p>
+
+<p><a id="day24"></a></p>
+
+<h1 id="day-24-lobby-layout-https-adventofcode-com-2020-day-24">Day 24 - <a href="https://adventofcode.com/2020/day/24">Lobby layout</a></h1>
+
+<p>The first challenge in this puzzle is parsing the input, which has no
+delimiters between directions. As the directions are <code>e</code>, <code>se</code>, <code>sw</code>,
+<code>w</code>, <code>nw</code> and <code>ne</code>, there aren’t any directions that are a partial match
+for any other direction. So we can use a regular expression to split up
+the input.</p>
+
+<p>That is, every direction ends with either <code>'e'</code> or <code>'w'</code>, and starts
+with any other cardinal direction. So we break up the input strings as
+follows using a regular expression <em>lookbehind</em> and <em>lookahead</em>,
+effectively making a custom word boundary:</p>
+
+<pre><code class="language-r">input &lt;- readLines('input24.txt')
+input &lt;- stringi::stri_split(input, regex = '(?&lt;=[ew])(?=[nesw])')
+</code></pre>
+
+<h2 id="hexagonal-coordinates">Hexagonal coordinates</h2>
+
+<p>The next thing we need is a coordinate system. An ordinary 2-dimensional
+lattice in Cartesian coordinates doesn’t quite do the trick, because we
+can move in six directions, not just four.</p>
+
+<p>We need an <a href="https://math.stackexchange.com/a/2643016">hexagonal coordinate
+system</a> and one way of
+representing this is in three-dimensional space $(x, y, z)$ where
+$x + y + z = 0$ for every point at the origin. Then axial offsets are:</p>
+
+<ul>
+<li>origin - (0, 0)</li>
+<li><code>ne</code> - (1, -1)</li>
+<li><code>e</code> - (1, 0)</li>
+<li><code>se</code> - (0, 1)</li>
+<li><code>sw</code> - (-1, 1)</li>
+<li><code>w</code> - (-1, 0)</li>
+<li><code>nw</code> - (0, -1)</li>
+</ul>
+
+<p>It’s not so easy to visualise this, but it should be easy enough to
+implement in R. Let zero represent a white tile and one represent black,
+and construct a coordinate system $(x, y, z)$ defined as above.</p>
+
+<pre><code class="language-r">library(dplyr)
+hex_coords &lt;- tibble(
+  dir = c('ne', 'e', 'se', 'sw', 'w', 'nw'),
+  x = c(1, 1, 0, -1, -1, 0),
+  y = c(-1, 0, 1, 1, 0, -1)
+)
+
+floor_pattern &lt;- tibble(
+  row = rep(seq_along(input), lengths(input)),
+  dir = unlist(input)
+) %&gt;%
+  left_join(hex_coords, by = 'dir')
+</code></pre>
+
+<p>Now we have a data frame containing our instructions, we need to follow
+them, which amounts to taking the cumulative sum of the individual
+directions.</p>
+
+<p>I got very confused by this by not reading the puzzle properly. In
+particular:</p>
+
+<blockquote>
+<p>Each line in the list identifies <strong>a single tile</strong> that needs to be
+flipped by giving a series of steps starting from a reference tile in
+the very center of the room.</p>
+</blockquote>
+
+<p>Initially I assumed that every tile you walk on as you go along the line
+also got flipped. But it’s only the very end of each line that needs
+flipping.</p>
+
+<p>Thus the solution is a simple split-apply-combine operation. We add up
+the coordinates to find out which tile each line of the input refers to.
+Then we count how many times each tile appears, and our result is the
+number of tiles that appear an odd number of times.</p>
+
+<pre><code class="language-r">black_tiles &lt;- floor_pattern %&gt;%
+  group_by(row) %&gt;%
+  summarise(x = sum(x), y = sum(y)) %&gt;%
+  count(x, y) %&gt;%
+  filter(n %% 2 == 1)
+
+nrow(black_tiles)
+</code></pre>
+
+<pre><code>[1] 473
+</code></pre>
+
+<h2 id="conway-tiles">Conway tiles</h2>
+
+<p>The second part of this puzzle is essentially similar to <a href="#day17">day
+17</a>. We can adapt that code for this puzzle, or take a slightly
+different approach.</p>
+
+<p>A reminder, the rules are:</p>
+
+<ul>
+<li>any black tile with zero or more than 2 black tiles immediately
+adjacent to it is flipped to white.</li>
+<li>any white tile with exactly 2 black tiles immediately adjacent to it
+is flipped to black.</li>
+</ul>
+
+<p>Here is a (slow) dataframe-based approach that uses lots of joins.</p>
+
+<pre><code class="language-r">full_grid &lt;- expand.grid(i = -100:100,
+                         j = -100:100) %&gt;%
+  left_join(black_tiles, by = c(i = 'x', j = 'y')) %&gt;%
+  mutate(n = !is.na(n)) %&gt;%
+  rename(black = n) %&gt;%
+  tidyr::crossing(hex_coords) %&gt;%
+  mutate(neighbour_x = i + x,
+         neighbour_y = j + y) %&gt;%
+  select(-x, -y)
+
+for (day in 1:100) {
+  full_grid &lt;- full_grid %&gt;%
+    inner_join(full_grid %&gt;% distinct(i, j, black),
+               by = c(neighbour_x = 'i', neighbour_y = 'j'),
+               suffix = c('', '.y')) %&gt;%
+    add_count(i, j, wt = black.y) %&gt;%
+    mutate(black = ifelse(black, n == 1 | n == 2, n == 2)) %&gt;%
+    select(-black.y, -n)
+}
+
+full_grid %&gt;%
+  filter(black) %&gt;%
+  distinct(i, j) %&gt;%
+  nrow
+</code></pre>
+
+<pre><code>[1] 4070
+</code></pre>
+
+<p>It’s not very efficient, but it works!</p>
 
 <hr />
 

@@ -36,7 +36,7 @@ or more ‘data sciencey’. Generally it makes parsing datasets easier but
 low-level string manipulation more fiddly.&lt;/p&gt;
 
 &lt;p&gt;Here are my solutions so far. Where possible, I’ve tried to strike a
-balance between efficiency and readability, and to try avoid using the
+balance between efficiency and readability, and to avoid using the
 packages I might usually use (e.g. &lt;code&gt;dplyr&lt;/code&gt;) if I think it makes the
 puzzle too easy.&lt;/p&gt;
 
@@ -67,6 +67,7 @@ results may differ from mine.&lt;/p&gt;
 &lt;li&gt;&lt;a href=&#34;#day21&#34;&gt;Allergen assessment&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day22&#34;&gt;Crab combat&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day23&#34;&gt;Crab cups&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day24&#34;&gt;Lobby layout&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;&lt;a id=&#39;day1&#39;&gt;&lt;/a&gt;&lt;/p&gt;
@@ -2513,11 +2514,11 @@ maximum card over to player 2, so the sub-game will just continue until
 either player 2 loses, or a loop occurs, in which case player 1 wins by
 default according to rule 1.&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;(The maximum card will &lt;strong&gt;never&lt;/strong&gt; trigger a sub-sub-game, because the
+&lt;p&gt;*(The maximum card will &lt;strong&gt;never&lt;/strong&gt; trigger a sub-sub-game, because the
 maximum value in a set of distinct natural numbers is always greater
 than or equal to the size of that set. You could even use this fact to
 skip the main game of recursive combat—if you didn’t need to know the
-final score.)&lt;/em&gt;&lt;/p&gt;
+final score.)*&lt;/p&gt;
 
 &lt;p&gt;By checking before each sub-game if player 1 holds the maximum card, and
 skipping the sub-game if it is a foregone conclusion, a huge amount of
@@ -2674,8 +2675,149 @@ sorted by its names). An advantage of a named vector is that you can
 have any labels you like, including zeros, negative numbers,
 non-integers or strings.&lt;/p&gt;
 
-&lt;p&gt;However, for this particular example, the conversion back and forth from integer
-to character makes a named vector/list slower than the index-based solution above.&lt;/p&gt;
+&lt;p&gt;However, for this particular example, the conversion back and forth from
+integer to character makes a named vector/list slower than the
+index-based solution above.&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;day24&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;day-24-lobby-layout-https-adventofcode-com-2020-day-24&#34;&gt;Day 24 - &lt;a href=&#34;https://adventofcode.com/2020/day/24&#34;&gt;Lobby layout&lt;/a&gt;&lt;/h1&gt;
+
+&lt;p&gt;The first challenge in this puzzle is parsing the input, which has no
+delimiters between directions. As the directions are &lt;code&gt;e&lt;/code&gt;, &lt;code&gt;se&lt;/code&gt;, &lt;code&gt;sw&lt;/code&gt;,
+&lt;code&gt;w&lt;/code&gt;, &lt;code&gt;nw&lt;/code&gt; and &lt;code&gt;ne&lt;/code&gt;, there aren’t any directions that are a partial match
+for any other direction. So we can use a regular expression to split up
+the input.&lt;/p&gt;
+
+&lt;p&gt;That is, every direction ends with either &lt;code&gt;&#39;e&#39;&lt;/code&gt; or &lt;code&gt;&#39;w&#39;&lt;/code&gt;, and starts
+with any other cardinal direction. So we break up the input strings as
+follows using a regular expression &lt;em&gt;lookbehind&lt;/em&gt; and &lt;em&gt;lookahead&lt;/em&gt;,
+effectively making a custom word boundary:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- readLines(&#39;input24.txt&#39;)
+input &amp;lt;- stringi::stri_split(input, regex = &#39;(?&amp;lt;=[ew])(?=[nesw])&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;hexagonal-coordinates&#34;&gt;Hexagonal coordinates&lt;/h2&gt;
+
+&lt;p&gt;The next thing we need is a coordinate system. An ordinary 2-dimensional
+lattice in Cartesian coordinates doesn’t quite do the trick, because we
+can move in six directions, not just four.&lt;/p&gt;
+
+&lt;p&gt;We need an &lt;a href=&#34;https://math.stackexchange.com/a/2643016&#34;&gt;hexagonal coordinate
+system&lt;/a&gt; and one way of
+representing this is in three-dimensional space $(x, y, z)$ where
+$x + y + z = 0$ for every point at the origin. Then axial offsets are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;origin - (0, 0)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ne&lt;/code&gt; - (1, -1)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;e&lt;/code&gt; - (1, 0)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;se&lt;/code&gt; - (0, 1)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sw&lt;/code&gt; - (-1, 1)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;w&lt;/code&gt; - (-1, 0)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;nw&lt;/code&gt; - (0, -1)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It’s not so easy to visualise this, but it should be easy enough to
+implement in R. Let zero represent a white tile and one represent black,
+and construct a coordinate system $(x, y, z)$ defined as above.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(dplyr)
+hex_coords &amp;lt;- tibble(
+  dir = c(&#39;ne&#39;, &#39;e&#39;, &#39;se&#39;, &#39;sw&#39;, &#39;w&#39;, &#39;nw&#39;),
+  x = c(1, 1, 0, -1, -1, 0),
+  y = c(-1, 0, 1, 1, 0, -1)
+)
+
+floor_pattern &amp;lt;- tibble(
+  row = rep(seq_along(input), lengths(input)),
+  dir = unlist(input)
+) %&amp;gt;%
+  left_join(hex_coords, by = &#39;dir&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now we have a data frame containing our instructions, we need to follow
+them, which amounts to taking the cumulative sum of the individual
+directions.&lt;/p&gt;
+
+&lt;p&gt;I got very confused by this by not reading the puzzle properly. In
+particular:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Each line in the list identifies &lt;strong&gt;a single tile&lt;/strong&gt; that needs to be
+flipped by giving a series of steps starting from a reference tile in
+the very center of the room.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Initially I assumed that every tile you walk on as you go along the line
+also got flipped. But it’s only the very end of each line that needs
+flipping.&lt;/p&gt;
+
+&lt;p&gt;Thus the solution is a simple split-apply-combine operation. We add up
+the coordinates to find out which tile each line of the input refers to.
+Then we count how many times each tile appears, and our result is the
+number of tiles that appear an odd number of times.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;black_tiles &amp;lt;- floor_pattern %&amp;gt;%
+  group_by(row) %&amp;gt;%
+  summarise(x = sum(x), y = sum(y)) %&amp;gt;%
+  count(x, y) %&amp;gt;%
+  filter(n %% 2 == 1)
+
+nrow(black_tiles)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 473
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;conway-tiles&#34;&gt;Conway tiles&lt;/h2&gt;
+
+&lt;p&gt;The second part of this puzzle is essentially similar to &lt;a href=&#34;#day17&#34;&gt;day
+17&lt;/a&gt;. We can adapt that code for this puzzle, or take a slightly
+different approach.&lt;/p&gt;
+
+&lt;p&gt;A reminder, the rules are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;any black tile with zero or more than 2 black tiles immediately
+adjacent to it is flipped to white.&lt;/li&gt;
+&lt;li&gt;any white tile with exactly 2 black tiles immediately adjacent to it
+is flipped to black.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Here is a (slow) dataframe-based approach that uses lots of joins.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;full_grid &amp;lt;- expand.grid(i = -100:100,
+                         j = -100:100) %&amp;gt;%
+  left_join(black_tiles, by = c(i = &#39;x&#39;, j = &#39;y&#39;)) %&amp;gt;%
+  mutate(n = !is.na(n)) %&amp;gt;%
+  rename(black = n) %&amp;gt;%
+  tidyr::crossing(hex_coords) %&amp;gt;%
+  mutate(neighbour_x = i + x,
+         neighbour_y = j + y) %&amp;gt;%
+  select(-x, -y)
+
+for (day in 1:100) {
+  full_grid &amp;lt;- full_grid %&amp;gt;%
+    inner_join(full_grid %&amp;gt;% distinct(i, j, black),
+               by = c(neighbour_x = &#39;i&#39;, neighbour_y = &#39;j&#39;),
+               suffix = c(&#39;&#39;, &#39;.y&#39;)) %&amp;gt;%
+    add_count(i, j, wt = black.y) %&amp;gt;%
+    mutate(black = ifelse(black, n == 1 | n == 2, n == 2)) %&amp;gt;%
+    select(-black.y, -n)
+}
+
+full_grid %&amp;gt;%
+  filter(black) %&amp;gt;%
+  distinct(i, j) %&amp;gt;%
+  nrow
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 4070
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It’s not very efficient, but it works!&lt;/p&gt;
 
 &lt;hr /&gt;
 
