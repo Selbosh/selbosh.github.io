@@ -2819,7 +2819,8 @@ full_grid %&amp;gt;%
 
 &lt;p&gt;It’s not very efficient, but it works!&lt;/p&gt;
 
-&lt;p&gt;Here is what the floor pattern looks like after 100 days.&lt;/p&gt;
+&lt;p&gt;Here is what the grid looks like after 100 days (except the actual pattern would
+be hexagonal).&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2020/aoc-day24-floor.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
