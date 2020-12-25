@@ -68,6 +68,7 @@ results may differ from mine.&lt;/p&gt;
 &lt;li&gt;&lt;a href=&#34;#day22&#34;&gt;Crab combat&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day23&#34;&gt;Crab cups&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day24&#34;&gt;Lobby layout&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day25&#34;&gt;Combo breaker&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;&lt;a id=&#39;day1&#39;&gt;&lt;/a&gt;&lt;/p&gt;
@@ -2857,17 +2858,17 @@ tiles &amp;lt;- sapply(input, function(x) Reduce(&#39;+&#39;, delta[x]))
 tiles &amp;lt;- setNames(as.data.table(t(tiles)), c(&#39;x&#39;, &#39;y&#39;))
 tiles &amp;lt;- tiles[j = .(n = .N), by = .(x, y)]
 
-cat(&#39;Part 1:&#39;, tiles[n %% 2 == 1, .N], &#39;\n&#39;)
+cat(&#39;Part 1:&#39;, tiles[n %% 2 == 1, .N])
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code&gt;Part 1: 473 
+&lt;pre&gt;&lt;code&gt;Part 1: 473
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;deltaDT &amp;lt;- setNames(as.data.table(do.call(rbind, delta)), c(&#39;dx&#39;, &#39;dy&#39;))
 for (day in 1:100) {
   tiles &amp;lt;- tiles[n %% 2 == 1]
   neighbours &amp;lt;- setDT(tidyr::crossing(tiles, deltaDT))
-  neighbours[, x := x + dx][, y:= y + dy]
+  neighbours[, x := x + dx][, y := y + dy]
   neighbours &amp;lt;- neighbours[, .(nbrs = .N), by = .(x, y)]
   tiles &amp;lt;- merge(tiles, neighbours, all = TRUE)
   # If is.na(n), tile is white.
@@ -2887,9 +2888,71 @@ cat(&#39;Part 2:&#39;, tiles[n %% 2 == 1, .N])
 implementation is much faster than the &lt;code&gt;dplyr&lt;/code&gt; version originally
 implemented above.&lt;/p&gt;
 
+&lt;p&gt;&lt;a id=&#34;day25&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;day-25-combo-breaker-https-adventofcode-com-2020-day-25&#34;&gt;Day 25 - &lt;a href=&#34;https://adventofcode.com/2020/day/25&#34;&gt;Combo breaker&lt;/a&gt;&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Set value to itself multiplied by the subject number (&lt;code&gt;7&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;Set the value to itself modulo &lt;code&gt;20201227&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Repeat &lt;code&gt;loopsize&lt;/code&gt; times until we get the original value again.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Once we have the loop size for one device, change the subject to the
+public key of the &lt;em&gt;other&lt;/em&gt; device and run the loop that many times to get
+the encryption key. Run it both ways (using the other loop size and the
+other public key) to verify the same encryption key comes out.&lt;/p&gt;
+
+&lt;p&gt;I wrote the same function to do both tasks. The default &lt;code&gt;publickey&lt;/code&gt; and
+&lt;code&gt;loop&lt;/code&gt; size are infinite. Pass it just a public key and it will give you
+the loop size. Pass it a subject (from a public key) and a loop size and
+it will return the encryption key.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;decrypt &amp;lt;- function(publickey = -Inf, loop = Inf, subject = 7) {
+  stopifnot(is.finite(publickey) + is.finite(loop) == 1)
+  value &amp;lt;- subject
+  iter &amp;lt;- 1
+  repeat {
+    if (value == publickey) return(iter) # Loop size
+    if (iter &amp;gt;= loop) return(value)      # Encryption key
+    value &amp;lt;- (value * subject) %% 20201227
+    iter &amp;lt;- iter + 1
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;On the example data:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;decrypt(subject = 17807724, loop = decrypt(publickey = 5764801))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 14897079
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;decrypt(subject = 5764801, loop = decrypt(publickey = 17807724))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 14897079
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And the puzzle inputs:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- as.double(readLines(&#39;input25.txt&#39;))
+key1 &amp;lt;- decrypt(subject = input[2], loop = decrypt(input[1]))
+key2 &amp;lt;- decrypt(subject = input[1], loop = decrypt(input[2]))
+stopifnot(key1 == key2)
+key1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[1] 545789
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running both isn’t strictly necessary but it’s good to verify they give
+the same result.&lt;/p&gt;
+
 &lt;hr /&gt;
 
-&lt;p&gt;I will update this post as I complete future puzzles.&lt;/p&gt;
+&lt;p&gt;Merry Christmas!&lt;/p&gt;
 </description>
     </item>
     
