@@ -2950,6 +2950,25 @@ key1
 &lt;p&gt;Running both isn’t strictly necessary but it’s good to verify they give
 the same result.&lt;/p&gt;
 
+&lt;p&gt;An even shorter version, once again inspired by &lt;a href=&#34;https://twitter.com/Brotherluii/status/1342411275431776256&#34;&gt;Thomas
+Loock&lt;/a&gt;, who
+recognised you only need a single loop:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;decrypt2 &amp;lt;- function(card, door) {
+  val &amp;lt;- c(subj = 7, key = door)
+  while(val[&#39;subj&#39;] != card)
+    val &amp;lt;- (val * c(7, door)) %% 20201227
+  val[&#39;key&#39;]
+}
+
+input &amp;lt;- as.double(readLines(&#39;input25.txt&#39;))
+do.call(decrypt2, as.list(input))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;   key 
+545789 
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;hr /&gt;
 
 &lt;p&gt;Merry Christmas!&lt;/p&gt;

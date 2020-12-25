@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="12684">
+<meta itemprop="wordCount" content="12735">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -3075,6 +3075,25 @@ key1
 
 <p>Running both isn’t strictly necessary but it’s good to verify they give
 the same result.</p>
+
+<p>An even shorter version, once again inspired by <a href="https://twitter.com/Brotherluii/status/1342411275431776256">Thomas
+Loock</a>, who
+recognised you only need a single loop:</p>
+
+<pre><code class="language-r">decrypt2 &lt;- function(card, door) {
+  val &lt;- c(subj = 7, key = door)
+  while(val['subj'] != card)
+    val &lt;- (val * c(7, door)) %% 20201227
+  val['key']
+}
+
+input &lt;- as.double(readLines('input25.txt'))
+do.call(decrypt2, as.list(input))
+</code></pre>
+
+<pre><code>   key 
+545789 
+</code></pre>
 
 <hr />
 
