@@ -2969,6 +2969,20 @@ do.call(decrypt2, as.list(input))
 545789 
 &lt;/code&gt;&lt;/pre&gt;
 
+&lt;p&gt;Or, if you &lt;em&gt;really&lt;/em&gt; enjoy abusing R’s assignment operator (&lt;code&gt;&amp;lt;-&lt;/code&gt;), you
+can do everything in two lines, plus one to print the result. It even
+features a gratuitous &lt;code&gt;while&lt;/code&gt; loop that does nothing. For code golf
+enthusiasts only!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;val &amp;lt;- c(subj = 7, key = (input &amp;lt;- as.double(readLines(&#39;input25.txt&#39;)))[2])
+while((val &amp;lt;- (val * c(7, input[2])) %% 20201227)[&#39;subj&#39;] != input[1]) NULL
+val[&#39;key&#39;]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;   key 
+545789 
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;hr /&gt;
 
 &lt;p&gt;Merry Christmas!&lt;/p&gt;

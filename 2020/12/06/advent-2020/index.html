@@ -46,7 +46,7 @@ Here are my solutions so far.">
 
 <meta itemprop="datePublished" content="2020-12-06T17:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-12-06T17:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="12735">
+<meta itemprop="wordCount" content="12797">
 
   <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
@@ -3089,6 +3089,20 @@ recognised you only need a single loop:</p>
 
 input &lt;- as.double(readLines('input25.txt'))
 do.call(decrypt2, as.list(input))
+</code></pre>
+
+<pre><code>   key 
+545789 
+</code></pre>
+
+<p>Or, if you <em>really</em> enjoy abusing R’s assignment operator (<code>&lt;-</code>), you
+can do everything in two lines, plus one to print the result. It even
+features a gratuitous <code>while</code> loop that does nothing. For code golf
+enthusiasts only!</p>
+
+<pre><code class="language-r">val &lt;- c(subj = 7, key = (input &lt;- as.double(readLines('input25.txt')))[2])
+while((val &lt;- (val * c(7, input[2])) %% 20201227)['subj'] != input[1]) NULL
+val['key']
 </code></pre>
 
 <pre><code>   key 
