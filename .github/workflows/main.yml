@@ -8,7 +8,6 @@ name: Build and upload blogdown site to GitHub
 jobs:
   blogdown:
     runs-on: ubuntu-latest
-    
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v2
@@ -19,14 +18,25 @@ jobs:
       - name: Set up pandoc
         uses: r-lib/actions/setup-pandoc@v1
         
-      - name: Install blogdown and R Markdown
-        run: Rscript -e "install.packages('blogdown', dependencies = TRUE)"
+      - name: Query R package dependencies
+        run: |
+          install.packages('remotes', 'sessioninfo')
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE),
+                  '.github/depends.Rds', version = 2)
+        shell: Rscript {0}
         
-      - name: Install other R packages used in blog posts
-        run: Rscript -e "install.packages('ggChernoff')"
+      - name: Cache R packages 
+        uses: actions/cache@v1
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
+        
+      - name: Install R package dependencies
+        run: Rscript -e "remotes::install_deps(dependencies = TRUE)"
         
       - name: Install Hugo
-        run: Rscript -e "blogdown::install_hugo()"
+        run: Rscript -e "blogdown::install_hugo('0.79.1')"
         
       - name: Render site
         run: Rscript -e "blogdown::build_site()"
@@ -36,7 +46,14 @@ jobs:
         with:
           name: public
           path: public/
-    
+          
+      - name: R session info
+        run: |
+          options(width = 100)
+          pkgs <- installed.packages()[, 'Package']
+          sessioninfo::session_info(pkgs, include_base = TRUE)
+        shell: Rscript {0}
+          
   checkout-and-deploy:
     runs-on: ubuntu-latest
     needs: blogdown

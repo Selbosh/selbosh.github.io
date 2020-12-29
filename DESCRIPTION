@@ -1,3 +1,5 @@
 Package: arbitrary
-Title: Does not matter.
+Title: Use this file to declare any R package dependencies for blog posts.
 Version: 0.0.1
+Depends: blogdown
+Imports: ggChernoff
