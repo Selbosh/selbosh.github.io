@@ -142,29 +142,34 @@ You can work in multiple windows, and you have access to all the files on your A
 <p>You can use it not only to run R on your phone, but also Python or any other command-line tools supported by GNU/Linux.</p>
 <h2 id="installing-r">Installing R</h2>
 <p>To install R, type the following commands in GNUroot Debian, hitting Enter after each line and waiting for the respective processes to finish.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">apt-get update
+<pre><code class="language-bash">apt-get update
 apt-get upgrade
 apt-get install r-base r-base-dev
-</code></pre></div><p>Now you have R installed on your phone.</p>
+</code></pre>
+<p>Now you have R installed on your phone.</p>
 <h2 id="interactive-r-commands">Interactive R commands</h2>
 <p>Starting an R session is as simple as typing</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">R
-</code></pre></div><p>into the terminal.</p>
+<pre><code class="language-bash">R
+</code></pre>
+<p>into the terminal.</p>
 <p>You will know R is running because the start of the command prompt will change from a hash, <code>#</code>, to a greater-than sign, <code>&gt;</code>.
 This is just like the usual interactive R user interface (because it <em>is</em> the usual interface).
 Run commands and load and install packages to your heart&rsquo;s content.</p>
 <p><img src="https://selbydavid.com/img/2017/interactiveR.png" alt="Interactive R session in GNUroot Debian"></p>
 <p>To quit R and return to the Linux command line, type</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">q</span>()
-</code></pre></div><p>and hit Enter.</p>
+<pre><code class="language-r">q()
+</code></pre>
+<p>and hit Enter.</p>
 <p>You can run quick R one-liners without diving into a full R session, by using the following syntax.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">Rscript -e <span style="color:#e6db74">&#34;rnorm(5)&#34;</span> <span style="color:#75715e"># five random numbers</span>
-Rscript -e <span style="color:#e6db74">&#34;print(&#39;Hello, world&#39;)&#34;</span>
-</code></pre></div><p>Be careful about matching quotation marks.</p>
+<pre><code class="language-bash">Rscript -e &quot;rnorm(5)&quot; # five random numbers
+Rscript -e &quot;print('Hello, world')&quot;
+</code></pre>
+<p>Be careful about matching quotation marks.</p>
 <p>You can also use the syntax</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">R -e <span style="color:#e6db74">&#34;rnorm(5)&#34;</span>
-R -e <span style="color:#e6db74">&#34;print(&#39;Hello, world&#39;)&#34;</span>
-</code></pre></div><p>which does the same thing but prints more verbose output to the console.</p>
+<pre><code class="language-bash">R -e &quot;rnorm(5)&quot;
+R -e &quot;print('Hello, world')&quot;
+</code></pre>
+<p>which does the same thing but prints more verbose output to the console.</p>
 <p>Pressing Up and Down on your keyboard lets you cycle through recently used commands, saving you from needing to retype repeated or very similar commands.
 Usually touch-screen keyboards don&rsquo;t have arrow keys, but you can install the <a href="https://play.google.com/store/apps/details?id=org.pocketworkstation.pckeyboard">Hacker&rsquo;s Keyboard</a> for Android, which does (at least in landscape mode).</p>
 <p><img src="https://selbydavid.com/img/2017/hackers-keyboard.png" alt="Hacker&rsquo;s Keyboard"></p>
@@ -174,70 +179,82 @@ While you could open a Linux text editor within GNUroot, this is probably more t
 Dedicated Android text editors are better optimised for use with a small touch screen and don&rsquo;t need arrow keys or special control commands to work.
 <a href="https://play.google.com/store/apps/details?id=com.rhmsoft.edit">QuickEdit</a> is a free text editor with syntax highlighting for R and Markdown, line numbering and other useful features.</p>
 <p>In your text editor, write a basic R script, like the following.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">x <span style="color:#f92672">&lt;-</span> <span style="color:#e6db74">&#34;Hello&#34;</span>
-y <span style="color:#f92672">&lt;-</span> <span style="color:#e6db74">&#34;world!&#34;</span>
-<span style="color:#a6e22e">cat</span>(x, y, sep <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;, &#39;</span>)
-</code></pre></div><p>Save the file as <code>test.R</code> and put it somewhere easy to find, like your <code>Documents</code> folder.</p>
+<pre><code class="language-r">x &lt;- &quot;Hello&quot;
+y &lt;- &quot;world!&quot;
+cat(x, y, sep = ', ')
+</code></pre>
+<p>Save the file as <code>test.R</code> and put it somewhere easy to find, like your <code>Documents</code> folder.</p>
 <p>Reopen GNUroot Debian. Navigate to the directory where you saved your R script file. In my case, I had saved it to Documents, which I reached using</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">cd sdcard/Documents
-</code></pre></div><p>The command <code>cd</code> means &ldquo;change directory&rdquo;. Type <code>ls</code> for a list of files and folders in the current directory. If you make a wrong turn, simply type</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">cd ..
-</code></pre></div><p>to go up (back) one folder.</p>
+<pre><code class="language-bash">cd sdcard/Documents
+</code></pre>
+<p>The command <code>cd</code> means &ldquo;change directory&rdquo;. Type <code>ls</code> for a list of files and folders in the current directory. If you make a wrong turn, simply type</p>
+<pre><code class="language-bash">cd ..
+</code></pre>
+<p>to go up (back) one folder.</p>
 <p>Once you&rsquo;ve found your R script file, evaluate it with</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">Rscript test.R
-</code></pre></div><p>or</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">R <span style="color:#f92672">-</span>f test.R
-</code></pre></div><p>for more detailed output.</p>
+<pre><code class="language-r">Rscript test.R
+</code></pre>
+<p>or</p>
+<pre><code class="language-r">R -f test.R
+</code></pre>
+<p>for more detailed output.</p>
 <p><img src="https://selbydavid.com/img/2017/Rscript.png" alt="Evaluating an R script on Android"></p>
 <p>If you prefer working in R to in a Linux terminal, then you can equivalently do everything within an R session:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">getwd</span>() <span style="color:#75715e"># show current directory</span>
-<span style="color:#a6e22e">list.files</span>() <span style="color:#75715e"># equivalent to ls</span>
-<span style="color:#a6e22e">setwd</span>(<span style="color:#e6db74">&#39;sdcard/Documents&#39;</span>) <span style="color:#75715e"># equivalent to cd</span>
-<span style="color:#a6e22e">source</span>(<span style="color:#e6db74">&#39;test.R&#39;</span>) <span style="color:#75715e"># run the script</span>
-</code></pre></div><h2 id="saving-output">Saving output</h2>
+<pre><code class="language-r">getwd() # show current directory
+list.files() # equivalent to ls
+setwd('sdcard/Documents') # equivalent to cd
+source('test.R') # run the script
+</code></pre>
+<h2 id="saving-output">Saving output</h2>
 <p>If your scripts produce output, like plots saved as image files or data in csv files, you can open these with ordinary Android apps and share them.
 Just keep track of where the files are saved.</p>
 <p>For example, here is a short script that produces a plot and saves it as a PNG.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">n <span style="color:#f92672">&lt;-</span> <span style="color:#ae81ff">1000</span>
-g <span style="color:#f92672">&lt;-</span> <span style="color:#ae81ff">16</span>
-cx <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">rep</span>(<span style="color:#ae81ff">1</span><span style="color:#f92672">:</span><span style="color:#ae81ff">4</span>, each <span style="color:#f92672">=</span> <span style="color:#ae81ff">4</span>) <span style="color:#f92672">*</span> n <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span>
-cy <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">rep</span>(<span style="color:#ae81ff">1</span><span style="color:#f92672">:</span><span style="color:#ae81ff">4</span>, times <span style="color:#f92672">=</span> <span style="color:#ae81ff">4</span>) <span style="color:#f92672">*</span> n <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span>
-t <span style="color:#f92672">&lt;-</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span><span style="color:#ae81ff">1000</span>
-x <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">rep</span>(t <span style="color:#f92672">*</span> <span style="color:#a6e22e">cos</span>(t), each <span style="color:#f92672">=</span> g) <span style="color:#f92672">+</span> cx
-y <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">rep</span>(t <span style="color:#f92672">*</span> <span style="color:#a6e22e">sin</span>(t), each <span style="color:#f92672">=</span> g) <span style="color:#f92672">+</span> cy
-<span style="color:#a6e22e">png</span>(<span style="color:#e6db74">&#34;test.png&#34;</span>, width <span style="color:#f92672">=</span> <span style="color:#ae81ff">600</span>, height <span style="color:#f92672">=</span> <span style="color:#ae81ff">600</span>)
-<span style="color:#a6e22e">par</span>(mar <span style="color:#f92672">=</span> <span style="color:#a6e22e">rep</span>(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">4</span>))
-<span style="color:#a6e22e">plot</span>(x, y,
-     col <span style="color:#f92672">=</span> <span style="color:#a6e22e">rep</span>(<span style="color:#a6e22e">c</span>(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">4</span>), each <span style="color:#f92672">=</span> g),
-     asp <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>,
-     axes <span style="color:#f92672">=</span> <span style="color:#66d9ef">FALSE</span>)
-<span style="color:#a6e22e">dev.off</span>()
-</code></pre></div><p>Run the script and use <code>ls</code> or <code>list.files()</code> to verify that a new file, <code>test.png</code> has been created.
+<pre><code class="language-r">n &lt;- 1000
+g &lt;- 16
+cx &lt;- rep(1:4, each = 4) * n * 2
+cy &lt;- rep(1:4, times = 4) * n * 2
+t &lt;- 1:1000
+x &lt;- rep(t * cos(t), each = g) + cx
+y &lt;- rep(t * sin(t), each = g) + cy
+png(&quot;test.png&quot;, width = 600, height = 600)
+par(mar = rep(0, 4))
+plot(x, y,
+     col = rep(c(2, 4), each = g),
+     asp = 1,
+     axes = FALSE)
+dev.off()
+</code></pre>
+<p>Run the script and use <code>ls</code> or <code>list.files()</code> to verify that a new file, <code>test.png</code> has been created.
 In your Android launcher, go to <strong>Files &gt; Local &gt; Internal storage &gt; Documents</strong> (the names might vary depending on your device) and you should see your new plot, which you can open and share like any other image.</p>
 <p><img src="https://selbydavid.com/img/2017/test.png" alt="Test R plot"></p>
 <h2 id="r-markdown-on-android">R Markdown on Android</h2>
 <p>Rendering/knitting R Markdown documents requires the R package <strong>knitr</strong> and the external application <strong>pandoc</strong>.
 Install the former using</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">install.packages</span>(<span style="color:#e6db74">&#39;knitr&#39;</span>, dependencies <span style="color:#f92672">=</span> <span style="color:#66d9ef">TRUE</span>)
-</code></pre></div><p>If you accidentally choose a CRAN mirror that doesn&rsquo;t work, you can select another one with</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">chooseCRANmirror</span>()
-</code></pre></div><p>You also need pandoc.
+<pre><code class="language-r">install.packages('knitr', dependencies = TRUE)
+</code></pre>
+<p>If you accidentally choose a CRAN mirror that doesn&rsquo;t work, you can select another one with</p>
+<pre><code class="language-r">chooseCRANmirror()
+</code></pre>
+<p>You also need pandoc.
 Install it from the command line with</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">apt-get install pandoc
-</code></pre></div><p>After installing, you might need to restart your terminal to ensure pandoc has been properly added to the PATH (and so can be found by R).</p>
+<pre><code class="language-bash">apt-get install pandoc
+</code></pre>
+<p>After installing, you might need to restart your terminal to ensure pandoc has been properly added to the PATH (and so can be found by R).</p>
 <p>Write a minimal R Markdown document in your Android text editor, for example</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-markdown" data-lang="markdown"># Hello, world!
+<pre><code class="language-markdown"># Hello, world!
 
-I am an <span style="font-style:italic">*R Markdown*</span> document.
-A horse has <span style="color:#e6db74">`r 2+2`</span> legs.
+I am an *R Markdown* document.
+A horse has `r 2+2` legs.
 Here is some random noise.
 
 ```{r}
 plot(runif(100), runif(100))
 ```
-</code></pre></div><p>Convert it using</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">Rscript -e <span style="color:#e6db74">&#34;rmarkdown::render(&#39;test.rmd&#39;)&#34;</span>
-</code></pre></div><p>And using <code>ls</code> or <code>list.files()</code> or your Android file explorer, you should see the output Markdown, HTML, Word, or PDF document, which you can open in your Android text editor, browser, word processor or PDF reader, respectively.
+</code></pre>
+<p>Convert it using</p>
+<pre><code class="language-bash">Rscript -e &quot;rmarkdown::render('test.rmd')&quot;
+</code></pre>
+<p>And using <code>ls</code> or <code>list.files()</code> or your Android file explorer, you should see the output Markdown, HTML, Word, or PDF document, which you can open in your Android text editor, browser, word processor or PDF reader, respectively.
 Once again, share or upload it like any other file.</p>
 <p>So there we have it: R and R Markdown running on Android!
 I hope you found this useful.

@@ -145,29 +145,31 @@ What if you could have them looking like this?"/>
 <p><img src="https://selbydavid.com/img/2017/alerts.png" alt="Bootstrap-styled alert messages"></p>
 <p>Bootstrap includes <a href="http://getbootstrap.com/components/#alerts">dedicated message boxes</a> for danger, warnings and information.
 If you were writing an ordinary web site, you would generate these using the following HTML markup:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;alert alert-danger&#34;</span>
-  <span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">strong</span>&gt;Danger:&lt;/<span style="color:#f92672">strong</span>&gt; This is a warning!
-&lt;/<span style="color:#f92672">div</span>&gt;
-</code></pre></div><p>You can achieve this in R Markdown using knitr chunk hooks.
+<pre><code class="language-html">&lt;div class=&quot;alert alert-danger&quot;
+  &lt;strong&gt;Danger:&lt;/strong&gt; This is a warning!
+&lt;/div&gt;
+</code></pre>
+<p>You can achieve this in R Markdown using knitr chunk hooks.
 Just add the following code to a chunk near the start of your <code>.Rmd</code> file.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">knitr<span style="color:#f92672">::</span>knit_hooks<span style="color:#f92672">$</span><span style="color:#a6e22e">set</span>(
-   error <span style="color:#f92672">=</span> <span style="color:#a6e22e">function</span>(x, options) {
-     <span style="color:#a6e22e">paste</span>(<span style="color:#e6db74">&#39;\n\n&lt;div class=&#34;alert alert-danger&#34;&gt;&#39;</span>,
-           <span style="color:#a6e22e">gsub</span>(<span style="color:#e6db74">&#39;##&#39;</span>, <span style="color:#e6db74">&#39;\n&#39;</span>, <span style="color:#a6e22e">gsub</span>(<span style="color:#e6db74">&#39;^##\ Error&#39;</span>, <span style="color:#e6db74">&#39;**Error**&#39;</span>, x)),
-           <span style="color:#e6db74">&#39;&lt;/div&gt;&#39;</span>, sep <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;\n&#39;</span>)
+<pre><code class="language-r">knitr::knit_hooks$set(
+   error = function(x, options) {
+     paste('\n\n&lt;div class=&quot;alert alert-danger&quot;&gt;',
+           gsub('##', '\n', gsub('^##\ Error', '**Error**', x)),
+           '&lt;/div&gt;', sep = '\n')
    },
-   warning <span style="color:#f92672">=</span> <span style="color:#a6e22e">function</span>(x, options) {
-     <span style="color:#a6e22e">paste</span>(<span style="color:#e6db74">&#39;\n\n&lt;div class=&#34;alert alert-warning&#34;&gt;&#39;</span>,
-           <span style="color:#a6e22e">gsub</span>(<span style="color:#e6db74">&#39;##&#39;</span>, <span style="color:#e6db74">&#39;\n&#39;</span>, <span style="color:#a6e22e">gsub</span>(<span style="color:#e6db74">&#39;^##\ Warning:&#39;</span>, <span style="color:#e6db74">&#39;**Warning**&#39;</span>, x)),
-           <span style="color:#e6db74">&#39;&lt;/div&gt;&#39;</span>, sep <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;\n&#39;</span>)
+   warning = function(x, options) {
+     paste('\n\n&lt;div class=&quot;alert alert-warning&quot;&gt;',
+           gsub('##', '\n', gsub('^##\ Warning:', '**Warning**', x)),
+           '&lt;/div&gt;', sep = '\n')
    },
-   message <span style="color:#f92672">=</span> <span style="color:#a6e22e">function</span>(x, options) {
-     <span style="color:#a6e22e">paste</span>(<span style="color:#e6db74">&#39;\n\n&lt;div class=&#34;alert alert-info&#34;&gt;&#39;</span>,
-           <span style="color:#a6e22e">gsub</span>(<span style="color:#e6db74">&#39;##&#39;</span>, <span style="color:#e6db74">&#39;\n&#39;</span>, x),
-           <span style="color:#e6db74">&#39;&lt;/div&gt;&#39;</span>, sep <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;\n&#39;</span>)
+   message = function(x, options) {
+     paste('\n\n&lt;div class=&quot;alert alert-info&quot;&gt;',
+           gsub('##', '\n', x),
+           '&lt;/div&gt;', sep = '\n')
    }
 )
-</code></pre></div><p>And you&rsquo;re done! For a full demonstration and further details, read <a href="http://selbydavid.com/vignettes/alerts.html">this vignette</a>.</p>
+</code></pre>
+<p>And you&rsquo;re done! For a full demonstration and further details, read <a href="http://selbydavid.com/vignettes/alerts.html">this vignette</a>.</p>
 
     </section>
     

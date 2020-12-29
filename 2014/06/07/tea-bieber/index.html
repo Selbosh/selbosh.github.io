@@ -125,15 +125,16 @@ Using the free R statistical software it is very easy to start data mining on Tw
     <section>
     <p>As part of my first foray into data science, I decided to have a go at opinion mining on Twitter. It&rsquo;s common knowledge that everything stops for tea, but how much does the Twittersphere agree? And what else are microbloggers saying about the drink?</p>
 <p>Using the free R statistical software it is very easy to start data mining on Twitter<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>. A short R script quickly retrieved 699 recent tweets containing the tag #tea. The code looks something like this:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">library</span>(twitteR)
-cred <span style="color:#f92672">&lt;-</span> OAuthFactory<span style="color:#f92672">$</span><span style="color:#a6e22e">new</span>(<span style="color:#66d9ef">...</span>)
-<span style="color:#66d9ef">...</span>
-<span style="color:#a6e22e">load</span>(<span style="color:#e6db74">&#34;twitter authentication.Rdata&#34;</span>)
-<span style="color:#a6e22e">registerTwitterOAuth</span>(cred)
-<span style="color:#a6e22e">require</span>(plyr)
-data<span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">searchTwitter</span>(<span style="color:#e6db74">&#34;#tea&#34;</span>, n<span style="color:#f92672">=</span><span style="color:#ae81ff">1500</span>, cainfo<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;cacert.pem&#34;</span>)
-text <span style="color:#f92672">=</span> <span style="color:#a6e22e">laply</span>(data, <span style="color:#a6e22e">function</span>(t) t<span style="color:#f92672">$</span><span style="color:#a6e22e">getText</span>())
-</code></pre></div><p>Before anything interesting can be gleaned from the dataset, some housework must be done. Text mining<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> removes irrelevant URLs, punctuation, symbols and &ldquo;stop words&rdquo;, leaving each tweet ready for scrutiny.</p>
+<pre><code class="language-r">library(twitteR)
+cred &lt;- OAuthFactory$new(...)
+...
+load(&quot;twitter authentication.Rdata&quot;)
+registerTwitterOAuth(cred)
+require(plyr)
+data&lt;- searchTwitter(&quot;#tea&quot;, n=1500, cainfo=&quot;cacert.pem&quot;)
+text = laply(data, function(t) t$getText())
+</code></pre>
+<p>Before anything interesting can be gleaned from the dataset, some housework must be done. Text mining<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> removes irrelevant URLs, punctuation, symbols and &ldquo;stop words&rdquo;, leaving each tweet ready for scrutiny.</p>
 <p>So what are our friends on Twitter saying about tea? Finding out calls for a graph. But not just any graph: a word cloud<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>, displaying words according to frequency.</p>
 <p><img src="https://selbydavid.com/img/2014/tea.png" alt="Word cloud made from 699 tweets containing the hashtag &lsquo;#tea&rsquo;"></p>
 <p>Obviously every tweet contains &ldquo;tea&rdquo; because that&rsquo;s what was sought. People also like to discuss milk and sugar, as well as coffee (possibly during cataclysmic breakfast drink dilemmas). To the right of centre, <strong>tcot</strong> stands for &ldquo;top conservatives on Twitter&rdquo;, who enjoy talking about tea &mdash; and tea parties &mdash; as much as anyone. Other notable phrases include &ldquo;freedom&rdquo;, &ldquo;greatness&rdquo;, &ldquo;best&rdquo; and &ldquo;delicious&rdquo;. But we&rsquo;ll do some more objective analysis shortly.</p>

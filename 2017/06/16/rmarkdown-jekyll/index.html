@@ -147,70 +147,78 @@ It doesn&rsquo;t actually do anything just yet, but now Travis knows to watch fo
 <h2 id="configuring-the-travis-build">Configuring the Travis build</h2>
 <p>Travis is <a href="https://docs.travis-ci.com/user/customizing-the-build">controlled by a file</a> called <code>.travis.yml</code> that lives in the root of your Git repository.
 As a baseline, I recommend creating a file that contains the following configuration.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">language</span>: <span style="color:#ae81ff">r</span>
-<span style="color:#f92672">cache</span>: <span style="color:#ae81ff">packages</span>
-<span style="color:#f92672">pandoc_version</span>: <span style="color:#ae81ff">1.17.2</span>
+<pre><code class="language-yaml">language: r
+cache: packages
+pandoc_version: 1.17.2
 
-<span style="color:#f92672">branches</span>:
-  <span style="color:#f92672">only</span>: <span style="color:#ae81ff">source</span>
+branches:
+  only: source
 
-<span style="color:#f92672">script</span>:
-  - <span style="color:#ae81ff">Rscript -e &#39;servr:::knit_maybe(c(&#34;.&#34;, &#34;_source&#34;, &#34;_posts&#34;), c(&#34;.&#34;, &#34;_posts&#34;, &#34;_posts&#34;), &#34;build.R&#34;, &#34;jekyll&#34;)&#39;</span>
+script:
+  - Rscript -e 'servr:::knit_maybe(c(&quot;.&quot;, &quot;_source&quot;, &quot;_posts&quot;), c(&quot;.&quot;, &quot;_posts&quot;, &quot;_posts&quot;), &quot;build.R&quot;, &quot;jekyll&quot;)'
   
-<span style="color:#f92672">deploy</span>:
-  <span style="color:#f92672">provider</span>: <span style="color:#ae81ff">pages</span>
-  <span style="color:#f92672">skip_cleanup</span>: <span style="color:#66d9ef">true</span>
-  <span style="color:#f92672">github_token</span>: <span style="color:#ae81ff">$GITHUB_PAT</span>
-  <span style="color:#f92672">on</span>:
-    <span style="color:#f92672">branch</span>: <span style="color:#ae81ff">source</span>
-  <span style="color:#f92672">target_branch</span>: <span style="color:#ae81ff">master</span>
-</code></pre></div><p>Let&rsquo;s walk through this, line by line. The first two lines are:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">language</span>: <span style="color:#ae81ff">r</span>
-<span style="color:#f92672">cache</span>: <span style="color:#ae81ff">packages</span>
-</code></pre></div><p>Since we will be knitting R Markdown files into Markdown, we want Travis to have a copy of R installed. <a href="https://docs.travis-ci.com/user/languages/r/">R is natively supported in Travis</a> thanks to work by the community.</p>
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_PAT
+  on:
+    branch: source
+  target_branch: master
+</code></pre>
+<p>Let&rsquo;s walk through this, line by line. The first two lines are:</p>
+<pre><code class="language-yaml">language: r
+cache: packages
+</code></pre>
+<p>Since we will be knitting R Markdown files into Markdown, we want Travis to have a copy of R installed. <a href="https://docs.travis-ci.com/user/languages/r/">R is natively supported in Travis</a> thanks to work by the community.</p>
 <p>A Travis R build comes with pandoc and LaTeX, ostensibly for building R package documentation. To generate standalone R Markdown documents or web sites with Travis, you need to hoodwink the system into thinking it is building a real R package.</p>
 <p>The most minimal R package comprises a single file, called <code>DESCRIPTION</code>. More on that <a href="#r-files">below</a>.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">pandoc_version</span>: <span style="color:#ae81ff">1.17.2</span>
-</code></pre></div><p>Pandoc is a key piece of software that R Markdown uses to convert documents between various formats.
+<pre><code class="language-yaml">pandoc_version: 1.17.2
+</code></pre>
+<p>Pandoc is a key piece of software that R Markdown uses to convert documents between various formats.
 By default, Travis seems to use an old version of pandoc (1.15 or so), which can cause unexpected errors when trying to render R Markdown documents.
 At the time of writing 1.17.2 seems to be the recommended version of pandoc for R Markdown, though I expect <a href="http://pandoc.org/releases.html">newer releases</a> should be fine, too.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">branches</span>:
-  <span style="color:#f92672">only</span>: <span style="color:#ae81ff">source</span>
-</code></pre></div><p>Choose the branch of your repository to which you will submit your code.
+<pre><code class="language-yaml">branches:
+  only: source
+</code></pre>
+<p>Choose the branch of your repository to which you will submit your code.
 For a personal site&mdash;i.e. <code>username.github.io</code>&mdash;GitHub says the final rendered web site files have to be on the <code>master</code> branch, so we want to push our source code somewhere else.
 I have opted to use a branch called <code>source</code> but you can use whatever you like.</p>
 <p>Whenever you push commits to the <code>source</code> branch, Travis will notice and start a build.
 The output will then be deployed to another branch.
 We choose <code>only: source</code> so that Travis doesn&rsquo;t trigger itself when it pushes your site to the <code>master</code> branch, otherwise we would get an endless feedback loop.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">script</span>:
-  - <span style="color:#ae81ff">Rscript -e &#39;servr:::knit_maybe(c(&#34;.&#34;, &#34;_source&#34;, &#34;_posts&#34;), c(&#34;.&#34;, &#34;_posts&#34;, &#34;_posts&#34;), &#34;build.R&#34;, &#34;jekyll&#34;)&#39;</span>
-</code></pre></div><p>When you push a new commit to the repository, the script above looks for <code>.Rmd</code> files, converts them into <code>.md</code> files and puts them in the root directory (in the case of R Markdown pages) or the <code>_posts</code> directory in the case of R Markdown blog posts.</p>
+<pre><code class="language-yaml">script:
+  - Rscript -e 'servr:::knit_maybe(c(&quot;.&quot;, &quot;_source&quot;, &quot;_posts&quot;), c(&quot;.&quot;, &quot;_posts&quot;, &quot;_posts&quot;), &quot;build.R&quot;, &quot;jekyll&quot;)'
+</code></pre>
+<p>When you push a new commit to the repository, the script above looks for <code>.Rmd</code> files, converts them into <code>.md</code> files and puts them in the root directory (in the case of R Markdown pages) or the <code>_posts</code> directory in the case of R Markdown blog posts.</p>
 <p>Why not use <code>servr::jekyll(serve = TRUE)</code>? Because that command requires Jekyll to be installed&mdash;not available on Travis&rsquo;s R environment&mdash;and we aren&rsquo;t interested in building the whole site with Jekyll on Travis anyway.
 All we want is plain Markdown files and images, which GitHub Pages' own Jekyll engine will build into an HTML site for us.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">deploy</span>:
-  <span style="color:#f92672">provider</span>: <span style="color:#ae81ff">pages</span>
-  <span style="color:#f92672">skip_cleanup</span>: <span style="color:#66d9ef">true</span>
-  <span style="color:#f92672">github_token</span>: <span style="color:#ae81ff">$GITHUB_PAT</span>
-  <span style="color:#f92672">on</span>:
-    <span style="color:#f92672">branch</span>: <span style="color:#ae81ff">source</span>
-  <span style="color:#f92672">target_branch</span>: <span style="color:#ae81ff">master</span>
-</code></pre></div><p>Once the site is built, it needs to be published or <code>deploy</code>ed somewhere.
+<pre><code class="language-yaml">deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_PAT
+  on:
+    branch: source
+  target_branch: master
+</code></pre>
+<p>Once the site is built, it needs to be published or <code>deploy</code>ed somewhere.
 The line <code>provider: pages</code> means we take advantage of <a href="https://docs.travis-ci.com/user/deployment/pages/">Travis&rsquo;s native GitHub Pages support</a> and don&rsquo;t have to write our own shell script to run all the complicated git commands.</p>
 <p>Skipping cleanup means Travis doesn&rsquo;t delete everything it builds, which you might want when testing an R package, but not when building a web site.</p>
 <p>The GitHub personal access token gives Travis permission to push to your repository.
 Make sure the variable name (after the <code>$</code> sign) matches the one you set in Travis settings.</p>
 <p>The last few lines specify Travis should look for your source code (R Markdown and Markdown files) and where to deploy the generated Markdown files.
 If you are working on a <a href="https://help.github.com/articles/user-organization-and-project-pages/">Project page rather than a User page</a>, then you probably want to change the settings to the following.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">  <span style="color:#f92672">on</span>:
-    <span style="color:#f92672">branch</span>: <span style="color:#ae81ff">master</span>
-  <span style="color:#f92672">target_branch</span>: <span style="color:#ae81ff">gh-pages</span>
-</code></pre></div><h2 id="description-file">DESCRIPTION file</h2>
+<pre><code class="language-yaml">  on:
+    branch: master
+  target_branch: gh-pages
+</code></pre>
+<h2 id="description-file">DESCRIPTION file</h2>
 <p>To convince Travis it is building a valid R package, include a <code>DESCRIPTION</code> file in the root directory of the repository with the following contents.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">Package</span>: <span style="color:#ae81ff">placeholder</span>
-<span style="color:#f92672">Title</span>: <span style="color:#ae81ff">Does not matter.</span>
-<span style="color:#f92672">Version</span>: <span style="color:#ae81ff">0.0.1</span>
-<span style="color:#f92672">Imports</span>: <span style="color:#ae81ff">servr, rmarkdown</span>
-</code></pre></div><p>The <code>Package</code>, <code>Title</code> and <code>Version</code> are arbitrary, but <code>Imports</code> describes which R packages should be installed when building your site.
+<pre><code class="language-yaml">Package: placeholder
+Title: Does not matter.
+Version: 0.0.1
+Imports: servr, rmarkdown
+</code></pre>
+<p>The <code>Package</code>, <code>Title</code> and <code>Version</code> are arbitrary, but <code>Imports</code> describes which R packages should be installed when building your site.
 You need servr and rmarkdown at least.
 If R code chunks in your blog posts make use of other R packages, you might want to include those here as well.</p>
 <h2 id="buildr">build.R</h2>
