@@ -20,7 +20,7 @@ jobs:
         
       - name: Query R package dependencies
         run: |
-          install.packages('remotes', 'sessioninfo')
+          install.packages(c('remotes', 'sessioninfo'))
           saveRDS(remotes::dev_package_deps(dependencies = TRUE),
                   '.github/depends.Rds', version = 2)
         shell: Rscript {0}
