@@ -1,9 +1,9 @@
-name: Build and upload blogdown site to GitHub
-
 on:
   push:
     branches:
       - source  # where the blog posts source files are written
+
+name: Build and upload blogdown site to GitHub
 
 jobs:
   blogdown:
