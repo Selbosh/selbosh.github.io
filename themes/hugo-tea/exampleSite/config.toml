@@ -5,6 +5,7 @@ title = "My New Hugo Site"
 theme = "hugo-tea"
 disqusShortname = ""
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
+pygmentsCodeFences = false # If enabled, will conflict with highlight.js
 
 [permalinks]
   post = "/:year/:month/:day/:slug/"
