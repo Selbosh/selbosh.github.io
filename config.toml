@@ -7,6 +7,7 @@ Paginate = 30
 googleAnalytics = "UA-11136457-6"
 disqusShortname = "tea-stats"
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
+pygmentsCodeFences = false # Disable Chroma highlighter; it conflicts with hljs
 
 [permalinks]
   post = "/:year/:month/:day/:slug/"
