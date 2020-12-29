@@ -26,15 +26,15 @@
 {{ end }}
 
 <meta name="theme" content="hugo-tea">
-{{.Hugo.Generator}}
+{{ hugo.Generator }}
 
 {{ if .Keywords }}
 <meta property="keywords" content ="{{ delimit .Keywords ", " }}">
 {{ end }}
 
-{{ if .RSSLink }}
-<link href="{{ .RSSLink | relURL }}" rel="alternate" type="application/rss+xml" title="{{ .Site.Title }}" />
-{{ end }}
+{{ with .OutputFormats.Get "rss" -}}
+    {{ printf `<link rel="%s" type="%s" href="%s" title="%s" />` .Rel .MediaType.Type .Permalink $.Site.Title | safeHTML }}
+{{ end -}}
 
 <link rel="shortcut icon" href="/favicon.ico">
 
