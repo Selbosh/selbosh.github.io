@@ -1,0 +1,126 @@
+---
+title: Chernoff faces in ggplot2
+slug: ggchernoff
+date: '2017-06-25T18:25:00+01:00'
+categories:
+  - R
+images:
+  - '/post/2017-06-25-ggchernoff_files/figure-html/eyebrow-1.png'
+  - '/post/2017-06-25-ggchernoff_files/figure-html/smile-1.png'
+---
+
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+<link href="/rmarkdown-libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/anchor-sections/anchor-sections.js"></script>
+
+
+<p>I am pleased to introduce my first R package for general consumption, <a href="https://github.com/Selbosh/ggChernoff"><strong>ggChernoff</strong></a>.</p>
+<p>Inspiration stems from Leland Wilkinson’s book, <a href="http://www.springer.com/gb/book/9780387245447"><em>The Grammar of Graphics</em></a>, whose principles were later implemented as the <a href="http://vita.had.co.nz/papers/layered-grammar.pdf">layered grammar of graphics</a> in Hadley Wickham’s popular R package, <a href="http://ggplot2.org/">ggplot2</a>.</p>
+<p>Wilkinson’s grammar generalises data visualisation.
+Rather than choosing a types of graph from a list—for example bar plot, pie chart or line graphs—instead we break down graphics into algebra, scales, statistics, geometry, coordinates and aesthetics.</p>
+<p>What does that actually mean? Suppose we want to transform the following data,</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">name</th>
+<th align="right">value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">a</td>
+<td align="right">37</td>
+</tr>
+<tr class="even">
+<td align="left">b</td>
+<td align="right">21</td>
+</tr>
+<tr class="odd">
+<td align="left">c</td>
+<td align="right">42</td>
+</tr>
+</tbody>
+</table>
+<p>into the following simple visualisation.</p>
+<p><img src="/post/2017-06-25-ggchernoff_files/figure-html/lineplot-1.png" width="672" /></p>
+<p>In <em>Grammar of Graphics</em> terms, we produce the plot using these semantics.</p>
+<dl>
+<dt>Variables</dt>
+<dd><code>name</code>, <code>value</code>
+</dd>
+<dt>Algebra</dt>
+<dd><code>name</code> × <code>value</code> → (a, 37), (b, 21), (c, 42).
+</dd>
+<dt>Scales</dt>
+<dd><ul>
+<li>(37, 21, 42) → (0.88, 0.50, 1.00)
+<ul>
+<li>(a, b, c) → (3, 2, 1)</li>
+</ul></li>
+</ul>
+</dd>
+<dt>Geometry</dt>
+<dd>For each tuple, draw a line between two points.
+</dd>
+<dt>Coordinates</dt>
+<dd>use Cartesian (x, y) coordinates in 2-dimensional space.
+</dd>
+<dt>Aesthetics</dt>
+<dd><ul>
+<li>(0, <code>name</code>) → (<em>x</em><sub>1</sub>, <em>y</em><sub>1</sub>)
+<ul>
+<li>(<code>value</code>, <code>name</code>) → (<em>x</em><sub>2</sub>, <em>y</em><sub>2</sub>)</li>
+</ul></li>
+</ul>
+</dd>
+</dl>
+<p>Our line plot above is grammatically equivalent to a bar chart—just make the lines thicker!
+Now, what if we swap Cartesian coordinates for polar coordinates, (r, θ)?
+The resulting graphic is still grammatically correct, though perhaps not very useful.</p>
+<p><img src="/post/2017-06-25-ggchernoff_files/figure-html/polar-1.png" width="384" />
+We can even transpose it to (θ, r) coordinates, for another grammatically-valid data visualisation.
+<img src="/post/2017-06-25-ggchernoff_files/figure-html/radial-1.png" width="384" /></p>
+<p>These plots don’t necessarily have names, so you don’t have to hunt through a list to find the right tool to create them.
+It is just a matter of knowing how the <em>Grammar of Graphics</em> works.</p>
+<p>Look at the specifications for our plot again.
+Geometry and aesthetics don’t have to be as conventional as lines and boxes of different sizes.
+Let’s try something completely different!</p>
+<p>A couple of amendments to the specifications…</p>
+<dl>
+<dt>Geometry</dt>
+<dd>For each tuple, draw a face.
+</dd>
+<dt>Aesthetics</dt>
+<dd><ul>
+<li><code>name</code> → x
+<ul>
+<li>0 → y</li>
+<li><code>value</code> → smile</li>
+</ul></li>
+</ul>
+</dd>
+</dl>
+<p>…and we produce this graph.
+<img src="/post/2017-06-25-ggchernoff_files/figure-html/smile-1.png" width="480" /></p>
+<p>Using faces for multivariate data visualisation is an idea credited to <a href="https://en.wikipedia.org/wiki/Chernoff_face">Herman Chernoff</a>, and which Wilkinson discusses in some detail in <em>The Grammar of Graphics</em>.
+In principle, you can represent data using all kinds of weird and wonderful things, so long as you can clearly define geometry, aesthetics, scales and so on to integrate them into a grammatical workflow.</p>
+<p>My R package, <a href="https://github.com/Selbosh/ggChernoff">ggChernoff</a>, extends ggplot2 with a new face geom and aesthetics for its mouth and eyebrows.
+By mapping variables to the right aesthetic you can make your data happy or sad, angry or expressionless.</p>
+<p>Here is another set of aesthetic mappings.</p>
+<dl>
+<dt>Aesthetics</dt>
+<dd><ul>
+<li><code>name</code> → x
+<ul>
+<li>0 → y</li>
+<li>1 → smile</li>
+<li><code>value</code> → eyebrows</li>
+</ul></li>
+</ul>
+</dd>
+</dl>
+<p><img src="/post/2017-06-25-ggchernoff_files/figure-html/eyebrow-1.png" width="480" /></p>
+<p>This is a nice way to add a bit of personality to your data visualisations.
+Unlike the package <a href="https://github.com/dill/emoGG">emoGG</a>, which involves selecting pre-drawn icons from a list, the faces in ggChernoff are procedurally generated, in the spirit of the grammar of graphics.</p>
+<p>More demonstrations are coming in a future post.
+The package ggChernoff is <a href="https://github.com/Selbosh/ggChernoff">now available on GitHub</a>.</p>
