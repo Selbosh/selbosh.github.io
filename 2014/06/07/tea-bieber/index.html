@@ -16,39 +16,23 @@
 Using the free R statistical software it is very easy to start data mining on Twitter1. A short R script quickly retrieved 699 recent tweets containing the tag #tea." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://selbydavid.com/2014/06/07/tea-bieber/" />
-
-
-
-<meta property="article:published_time" content="2014-06-07T09:00:00&#43;01:00"/>
-
-<meta property="article:modified_time" content="2014-06-07T09:00:00&#43;01:00"/>
-
-
-
-
-
-
-
-
-
-
-
+<meta property="article:published_time" content="2014-06-07T09:00:00+01:00" />
+<meta property="article:modified_time" content="2014-06-07T09:00:00+01:00" />
 
 
 <meta itemprop="name" content="Data mining: tea is for Twitter">
 <meta itemprop="description" content="As part of my first foray into data science, I decided to have a go at opinion mining on Twitter. It&rsquo;s common knowledge that everything stops for tea, but how much does the Twittersphere agree? And what else are microbloggers saying about the drink?
 Using the free R statistical software it is very easy to start data mining on Twitter1. A short R script quickly retrieved 699 recent tweets containing the tag #tea.">
-
-
-<meta itemprop="datePublished" content="2014-06-07T09:00:00&#43;01:00" />
-<meta itemprop="dateModified" content="2014-06-07T09:00:00&#43;01:00" />
+<meta itemprop="datePublished" content="2014-06-07T09:00:00+01:00" />
+<meta itemprop="dateModified" content="2014-06-07T09:00:00+01:00" />
 <meta itemprop="wordCount" content="596">
 
 
 
 <meta itemprop="keywords" content="" />
 
-<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Data mining: tea is for Twitter"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Data mining: tea is for Twitter"/>
 <meta name="twitter:description" content="As part of my first foray into data science, I decided to have a go at opinion mining on Twitter. It&rsquo;s common knowledge that everything stops for tea, but how much does the Twittersphere agree? And what else are microbloggers saying about the drink?
 Using the free R statistical software it is very easy to start data mining on Twitter1. A short R script quickly retrieved 699 recent tweets containing the tag #tea."/>
 <meta name="twitter:site" content="@TeaStats"/>
@@ -65,7 +49,7 @@ Using the free R statistical software it is very easy to start data mining on Tw
 
 
 <meta name="theme" content="hugo-tea">
-<meta name="generator" content="Hugo 0.32.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 
@@ -142,69 +126,53 @@ Using the free R statistical software it is very easy to start data mining on Tw
     
     <section>
     <p>As part of my first foray into data science, I decided to have a go at opinion mining on Twitter. It&rsquo;s common knowledge that everything stops for tea, but how much does the Twittersphere agree? And what else are microbloggers saying about the drink?</p>
-
-<p>Using the free R statistical software it is very easy to start data mining on Twitter<sup class="footnote-ref" id="fnref:R"><a rel="footnote" href="#fn:R">1</a></sup>. A short R script quickly retrieved 699 recent tweets containing the tag #tea. The code looks something like this:</p>
-
-<pre><code class="language-r">library(twitteR)
-cred &lt;- OAuthFactory$new(...)
-...
-load(&quot;twitter authentication.Rdata&quot;)
-registerTwitterOAuth(cred)
-require(plyr)
-data&lt;- searchTwitter(&quot;#tea&quot;, n=1500, cainfo=&quot;cacert.pem&quot;)
-text = laply(data, function(t) t$getText())
-</code></pre>
-
-<p>Before anything interesting can be gleaned from the dataset, some housework must be done. Text mining<sup class="footnote-ref" id="fnref:tm"><a rel="footnote" href="#fn:tm">2</a></sup> removes irrelevant URLs, punctuation, symbols and &ldquo;stop words&rdquo;, leaving each tweet ready for scrutiny.</p>
-
-<p>So what are our friends on Twitter saying about tea? Finding out calls for a graph. But not just any graph: a word cloud<sup class="footnote-ref" id="fnref:wc"><a rel="footnote" href="#fn:wc">3</a></sup>, displaying words according to frequency.</p>
-
-<p><img src="https://selbydavid.com/img/2014/tea.png" alt="Word cloud made from 699 tweets containing the hashtag '#tea'" /></p>
-
+<p>Using the free R statistical software it is very easy to start data mining on Twitter<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>. A short R script quickly retrieved 699 recent tweets containing the tag #tea. The code looks something like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">library</span>(twitteR)
+cred <span style="color:#f92672">&lt;-</span> OAuthFactory<span style="color:#f92672">$</span><span style="color:#a6e22e">new</span>(<span style="color:#66d9ef">...</span>)
+<span style="color:#66d9ef">...</span>
+<span style="color:#a6e22e">load</span>(<span style="color:#e6db74">&#34;twitter authentication.Rdata&#34;</span>)
+<span style="color:#a6e22e">registerTwitterOAuth</span>(cred)
+<span style="color:#a6e22e">require</span>(plyr)
+data<span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">searchTwitter</span>(<span style="color:#e6db74">&#34;#tea&#34;</span>, n<span style="color:#f92672">=</span><span style="color:#ae81ff">1500</span>, cainfo<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;cacert.pem&#34;</span>)
+text <span style="color:#f92672">=</span> <span style="color:#a6e22e">laply</span>(data, <span style="color:#a6e22e">function</span>(t) t<span style="color:#f92672">$</span><span style="color:#a6e22e">getText</span>())
+</code></pre></div><p>Before anything interesting can be gleaned from the dataset, some housework must be done. Text mining<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> removes irrelevant URLs, punctuation, symbols and &ldquo;stop words&rdquo;, leaving each tweet ready for scrutiny.</p>
+<p>So what are our friends on Twitter saying about tea? Finding out calls for a graph. But not just any graph: a word cloud<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>, displaying words according to frequency.</p>
+<p><img src="https://selbydavid.com/img/2014/tea.png" alt="Word cloud made from 699 tweets containing the hashtag &lsquo;#tea&rsquo;"></p>
 <p>Obviously every tweet contains &ldquo;tea&rdquo; because that&rsquo;s what was sought. People also like to discuss milk and sugar, as well as coffee (possibly during cataclysmic breakfast drink dilemmas). To the right of centre, <strong>tcot</strong> stands for &ldquo;top conservatives on Twitter&rdquo;, who enjoy talking about tea &mdash; and tea parties &mdash; as much as anyone. Other notable phrases include &ldquo;freedom&rdquo;, &ldquo;greatness&rdquo;, &ldquo;best&rdquo; and &ldquo;delicious&rdquo;. But we&rsquo;ll do some more objective analysis shortly.</p>
-
 <p>For variety, I also had a go at mining Twitter&rsquo;s public streaming API for a larger sample, this time using Python. Here&rsquo;s what some ten thousand tweets say about Canadian pop star Justin Bieber:</p>
-
-<p><img src="https://selbydavid.com/img/2014/justin.png" alt="Word cloud made from 10,000 tweets containing the word 'bieber'" /></p>
-
+<p><img src="https://selbydavid.com/img/2014/justin.png" alt="Word cloud made from 10,000 tweets containing the word &lsquo;bieber&rsquo;"></p>
 <p>He&rsquo;s racist? <em>And</em> shirtless. Who knew?</p>
-
-<p>To assess public opinion more objectively, we can perform sentiment analysis, which involves assigning a mood to each tweet and observing the distribution<sup class="footnote-ref" id="fnref:sent"><a rel="footnote" href="#fn:sent">4</a></sup>. A tweet&rsquo;s mood score derives from comparing each constituent word against a database of &ldquo;positive&rdquo; and &ldquo;negative&rdquo; English words then adding and subtracting 1 respectively. A total less than -2 is very negative, zero is neutral and greater than +2 is very positive.</p>
-
+<p>To assess public opinion more objectively, we can perform sentiment analysis, which involves assigning a mood to each tweet and observing the distribution<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>. A tweet&rsquo;s mood score derives from comparing each constituent word against a database of &ldquo;positive&rdquo; and &ldquo;negative&rdquo; English words then adding and subtracting 1 respectively. A total less than -2 is very negative, zero is neutral and greater than +2 is very positive.</p>
 <p>For example, this tweet gets a score of +5:</p>
-
 <blockquote>
 <p>@justinbieber i&rsquo;m so happy to say : &ldquo;Justin Bieber is my idol and he&rsquo;s perfect&rdquo; because i love you so much you&rsquo;re a very good man</p>
 </blockquote>
-
 <p>whereas this one is assigned a score of -4:</p>
-
 <blockquote>
 <p>Justin Bieber has serious issues, i wish he&rsquo;d just sort his shit out because I for one am sick of seeing stupid crap about him in the news</p>
 </blockquote>
-
-<p><img src="https://selbydavid.com/img/2014/sentiment.png" alt="Histogram comparison of sentiment scores for tweets about tea and Justin Bieber" /></p>
-
+<p><img src="https://selbydavid.com/img/2014/sentiment.png" alt="Histogram comparison of sentiment scores for tweets about tea and Justin Bieber"></p>
 <p>Our #tea dataset has a score distribution that&rsquo;s mostly positive, with a mean sentiment score of +0.15 and a variance of 0.36. Clearly our intuition is correct and people really do like tea. Indeed, nobody really had much of a bad word to say about the beverage; the minimum score given was -2, which could easily have been obtained from a false-negative tweet like &ldquo;I hate people who dislike #tea&rdquo; (though it wasn&rsquo;t).</p>
-
 <p>On the other hand, the outlook isn&rsquo;t so rosy for our friend Justin. From our dataset of 10,003 tweets, the mean mood score is -0.07, which is slightly negative. He&rsquo;s a divisive topic of discussion, too: the score variance is 0.87, giving a more widely-spread distribution of sentiments.</p>
-
 <p>So it&rsquo;s official. Twitter likes tea more than it likes Justin Bieber. Probably. Time for a cuppa.</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:R">Jeff Gentry (2013). <a href="http://CRAN.R-project.org/package=twitteR"><em>twitteR: R based Twitter client</em></a>. R package version 1.1.7.
- <a class="footnote-return" href="#fnref:R"><sup>[return]</sup></a></li>
-<li id="fn:tm">Ingo Feinerer and Kurt Hornik (2014). <a href="http://CRAN.R-project.org/package=tm"><em>tm: Text Mining Package</em></a>. R package version 0.5-10.
- <a class="footnote-return" href="#fnref:tm"><sup>[return]</sup></a></li>
-<li id="fn:wc">Ian Fellows (2013). <a href="http://CRAN.R-project.org/package=wordcloud"><em>wordcloud: Word Clouds</em></a>. R package version 2.4.
- <a class="footnote-return" href="#fnref:wc"><sup>[return]</sup></a></li>
-<li id="fn:sent">Jeffrey Breen (2011). <a href="http://www.slideshare.net/jeffreybreen/r-by-example-mining-twitter-for"><em>R by example: mining Twitter for consumer attitudes towards airlines.</em></a>
- <a class="footnote-return" href="#fnref:sent"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p>Jeff Gentry (2013). <a href="http://CRAN.R-project.org/package=twitteR"><em>twitteR: R based Twitter client</em></a>. R package version 1.1.7. <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>Ingo Feinerer and Kurt Hornik (2014). <a href="http://CRAN.R-project.org/package=tm"><em>tm: Text Mining Package</em></a>. R package version 0.5-10. <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p>Ian Fellows (2013). <a href="http://CRAN.R-project.org/package=wordcloud"><em>wordcloud: Word Clouds</em></a>. R package version 2.4. <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<pre><code>Jeffrey Breen (2011). [*R by example: mining Twitter for consumer attitudes towards airlines.*](http://www.slideshare.net/jeffreybreen/r-by-example-mining-twitter-for)
+</code></pre>
+ <a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></li>
 </ol>
-</div>
+</section>
 
     </section>
     
@@ -272,14 +240,17 @@ text = laply(data, function(t) t$getText())
 
 
     
-<script>
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-11136457-6', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-11136457-6', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
 
   </body>

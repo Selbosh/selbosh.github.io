@@ -13,54 +13,34 @@
 <title>Publishing from blogdown to GitHub with Travis &middot; Tea &amp; Stats</title>
 <meta property="og:title" content="Publishing from blogdown to GitHub with Travis" />
 <meta property="og:description" content="Yihui Xie&rsquo;s new blogdown package is a brilliantly elegant and simple tool for creating R-themed blogs and web sites. Starting your own blog is as simple as one line of R code:
-blogdown::new_site()  By default, blogdown uses Hugo, a static web site generator written in Google&rsquo;s Go programming language. This has a number of advantages over Jekyll (the site generator that powers GitHub Pages) and from personal experience, everything just seems to work more smoothly." />
+blogdown::new_site() By default, blogdown uses Hugo, a static web site generator written in Google&rsquo;s Go programming language. This has a number of advantages over Jekyll (the site generator that powers GitHub Pages) and from personal experience, everything just seems to work more smoothly." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://selbydavid.com/2017/06/22/blogdown-travis/" />
-
-  <meta property="og:image" content="https://selbydavid.com/img/2017/travis-log.png" />
-
-  <meta property="og:image" content="https://selbydavid.com/img/2017/hugo-lithium.png" />
-
-
-
-<meta property="article:published_time" content="2017-06-22T08:00:00&#43;01:00"/>
-
-<meta property="article:modified_time" content="2017-06-22T08:00:00&#43;01:00"/>
-
-
-
-
-
-
-
-
-
-
-
+<meta property="og:image" content="https://selbydavid.com/img/2017/travis-log.png" />
+<meta property="og:image" content="https://selbydavid.com/img/2017/hugo-lithium.png" />
+<meta property="article:published_time" content="2017-06-22T08:00:00+01:00" />
+<meta property="article:modified_time" content="2017-06-22T08:00:00+01:00" />
 
 
 <meta itemprop="name" content="Publishing from blogdown to GitHub with Travis">
 <meta itemprop="description" content="Yihui Xie&rsquo;s new blogdown package is a brilliantly elegant and simple tool for creating R-themed blogs and web sites. Starting your own blog is as simple as one line of R code:
-blogdown::new_site()  By default, blogdown uses Hugo, a static web site generator written in Google&rsquo;s Go programming language. This has a number of advantages over Jekyll (the site generator that powers GitHub Pages) and from personal experience, everything just seems to work more smoothly.">
-
-
-<meta itemprop="datePublished" content="2017-06-22T08:00:00&#43;01:00" />
-<meta itemprop="dateModified" content="2017-06-22T08:00:00&#43;01:00" />
+blogdown::new_site() By default, blogdown uses Hugo, a static web site generator written in Google&rsquo;s Go programming language. This has a number of advantages over Jekyll (the site generator that powers GitHub Pages) and from personal experience, everything just seems to work more smoothly.">
+<meta itemprop="datePublished" content="2017-06-22T08:00:00+01:00" />
+<meta itemprop="dateModified" content="2017-06-22T08:00:00+01:00" />
 <meta itemprop="wordCount" content="748">
-
-  <meta itemprop="image" content="https://selbydavid.com/img/2017/travis-log.png">
-
-  <meta itemprop="image" content="https://selbydavid.com/img/2017/hugo-lithium.png">
+<meta itemprop="image" content="https://selbydavid.com/img/2017/travis-log.png">
+<meta itemprop="image" content="https://selbydavid.com/img/2017/hugo-lithium.png">
 
 
 
 <meta itemprop="keywords" content="" />
 
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image:src" content="https://selbydavid.com/img/2017/travis-log.png"/>
+<meta name="twitter:image" content="https://selbydavid.com/img/2017/travis-log.png"/>
+
 <meta name="twitter:title" content="Publishing from blogdown to GitHub with Travis"/>
 <meta name="twitter:description" content="Yihui Xie&rsquo;s new blogdown package is a brilliantly elegant and simple tool for creating R-themed blogs and web sites. Starting your own blog is as simple as one line of R code:
-blogdown::new_site()  By default, blogdown uses Hugo, a static web site generator written in Google&rsquo;s Go programming language. This has a number of advantages over Jekyll (the site generator that powers GitHub Pages) and from personal experience, everything just seems to work more smoothly."/>
+blogdown::new_site() By default, blogdown uses Hugo, a static web site generator written in Google&rsquo;s Go programming language. This has a number of advantages over Jekyll (the site generator that powers GitHub Pages) and from personal experience, everything just seems to work more smoothly."/>
 <meta name="twitter:site" content="@TeaStats"/>
 
 
@@ -75,7 +55,7 @@ blogdown::new_site()  By default, blogdown uses Hugo, a static web site generato
 
 
 <meta name="theme" content="hugo-tea">
-<meta name="generator" content="Hugo 0.32.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 
@@ -151,123 +131,79 @@ blogdown::new_site()  By default, blogdown uses Hugo, a static web site generato
     </footer>
     
     <section>
-    
-
-<p>Yihui Xie&rsquo;s new <a href="https://bookdown.org/yihui/blogdown/">blogdown</a> package is a brilliantly elegant and simple tool for creating R-themed blogs and web sites.
+    <p>Yihui Xie&rsquo;s new <a href="https://bookdown.org/yihui/blogdown/">blogdown</a> package is a brilliantly elegant and simple tool for creating R-themed blogs and web sites.
 Starting your own blog is as simple as one line of R code:</p>
-
-<pre><code class="language-r">blogdown::new_site()
-</code></pre>
-
-<p>By default, blogdown uses <a href="http://gohugo.io">Hugo</a>, a static web site generator written in Google&rsquo;s Go programming language.
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">blogdown<span style="color:#f92672">::</span><span style="color:#a6e22e">new_site</span>()
+</code></pre></div><p>By default, blogdown uses <a href="http://gohugo.io">Hugo</a>, a static web site generator written in Google&rsquo;s Go programming language.
 This has a number of advantages over Jekyll (the site generator that powers GitHub Pages) and from personal experience, everything just seems to work more smoothly.</p>
-
-<p><img src="https://selbydavid.com/img/2017/hugo-lithium.png" alt="Example blogdown site" title="Example blogdown site" /></p>
-
+<p><img src="https://selbydavid.com/img/2017/hugo-lithium.png" alt="Example blogdown site" title="Example blogdown site"></p>
 <p>Previously I wrote about <a href="http://selbydavid.com/2017/06/16/rmarkdown-jekyll/">automatically deploying an R Markdown Jekyll blog with Travis</a>.
 In this post, I am going to explain how you can use Travis to knit your R Markdown blog posts, then publish them with Hugo/blogdown.</p>
-
 <p>Why Travis? In the official blogdown documentation, Yihui <a href="https://bookdown.org/yihui/blogdown/netlify.html">recommends Netflify</a>, a rival service, instead.
 However, for the time being at least, Netlify doesn&rsquo;t have R support.
 This means that any R Markdown (vs plain Markdown) posts you write will need to be built locally before pushing them to your Git repository, and therefore you can only maintain R-infused content from a computer with R + blogdown installed.</p>
-
 <p>In an ideal world, you should be able to create content from any computer (or device) that has a web browser.
 Therefore we will push plain text to Git and have Travis compile all the R chunks for us, then automatically push the built site to GitHub Pages.</p>
-
 <p>A few weeks ago Neal Richardson published a <a href="https://nealrichardson.github.io/2017/06/01/building-a-blogdown-site-with-travis-ci/">post on a similar topic</a>, but that guide is a bit more complicated than it needs to be, because it doesn&rsquo;t take advantage of Travis&rsquo;s <a href="https://docs.travis-ci.com/user/deployment/pages/">native GitHub Pages support</a>.</p>
-
 <p>You should be able to get up and running extremely quickly, with minimal Git knowledge required.
 Want to see a fully working example?
 Take a look at <a href="https://github.com/Selbosh/selbosh.github.io">this site&rsquo;s GitHub repository</a>.
 For a minimal (non-Travis) blogdown site, see <a href="https://github.com/Selbosh/wrugdown">this example site</a>.</p>
-
 <h2 id="getting-started">Getting started</h2>
-
 <p>Install blogdown with</p>
-
-<pre><code class="language-r">devtools::install_github('rstudio/blogdown')
-</code></pre>
-
-<p>then, in an empty folder, create a site.</p>
-
-<pre><code class="language-r">blogdown::new_site()
-</code></pre>
-
-<p>For a crash course in blogdown and Git for beginners, read my post <a href="http://selbydavid.com/wrugdown/2017/05/10/getting-started-with-blogdown/">Getting started with blogdown</a>.
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">devtools<span style="color:#f92672">::</span><span style="color:#a6e22e">install_github</span>(<span style="color:#e6db74">&#39;rstudio/blogdown&#39;</span>)
+</code></pre></div><p>then, in an empty folder, create a site.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">blogdown<span style="color:#f92672">::</span><span style="color:#a6e22e">new_site</span>()
+</code></pre></div><p>For a crash course in blogdown and Git for beginners, read my post <a href="http://selbydavid.com/wrugdown/2017/05/10/getting-started-with-blogdown/">Getting started with blogdown</a>.
 More complete information is available in the <a href="https://bookdown.org/yihui/blogdown/">official blogdown book</a> as well as the <a href="http://gohugo.io/overview/introduction/">online Hugo documentation</a>.</p>
-
 <p>Want a web site that looks like mine? Run</p>
-
-<pre><code class="language-r">blogdown::install_theme('Selbosh/hugo-tea')
-</code></pre>
-
-<p>then switch your <code>theme</code> to <code>hugo-tea</code> in your <code>config.toml</code> file.</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">blogdown<span style="color:#f92672">::</span><span style="color:#a6e22e">install_theme</span>(<span style="color:#e6db74">&#39;Selbosh/hugo-tea&#39;</span>)
+</code></pre></div><p>then switch your <code>theme</code> to <code>hugo-tea</code> in your <code>config.toml</code> file.</p>
 <h2 id="linking-github-to-travis">Linking GitHub to Travis</h2>
-
 <p>This follows my <a href="https://selbydavid.com/2017/06/16/rmarkdown-jekyll/#linking-github-to-travis">earlier guide</a>.</p>
-
 <p>Create a <a href="https://github.com/settings/tokens">GitHub personal access token</a>, making sure the &ldquo;repo&rdquo; box is ticked so it has permission to push to repositories. Copy the token to your clipboard.</p>
-
-<p><img src="https://selbydavid.com/img/2017/github-pat.png" alt="Creating a GitHub PAT" /></p>
-
+<p><img src="https://selbydavid.com/img/2017/github-pat.png" alt="Creating a GitHub PAT"></p>
 <p>On <a href="https://travis-ci.org/">Travis</a>, enable the GitHub repository corresponding to your blogdown site. In Settings, create a new environment variable called <code>GITHUB_PAT</code> and paste your token into the Value field.</p>
-
-<p><img src="https://selbydavid.com/img/2017/travis-pat.png" alt="Adding a Travis environment variable" /></p>
-
+<p><img src="https://selbydavid.com/img/2017/travis-pat.png" alt="Adding a Travis environment variable"></p>
 <h2 id="configuring-travis">Configuring Travis</h2>
-
 <p>In the root of your directory, create a file called <code>.travis.yml</code> containing the following.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">language</span>: <span style="color:#ae81ff">r</span>
+<span style="color:#f92672">cache</span>: <span style="color:#ae81ff">packages</span>
+<span style="color:#f92672">branches</span>:
+    <span style="color:#f92672">only</span>:
+        - <span style="color:#ae81ff">source</span>
+<span style="color:#f92672">r_github_packages</span>:
+    - <span style="color:#ae81ff">rstudio/blogdown</span>
 
-<pre><code class="language-yaml">language: r
-cache: packages
-branches:
-    only:
-        - source
-r_github_packages:
-    - rstudio/blogdown
+<span style="color:#f92672">before_script</span>:
+    - <span style="color:#ae81ff">Rscript -e &#39;blogdown::install_hugo(version = &#34;0.20.7&#34;)&#39;</span>
 
-before_script:
-    - Rscript -e 'blogdown::install_hugo(version = &quot;0.20.7&quot;)'
+<span style="color:#f92672">script</span>:
+    - <span style="color:#ae81ff">Rscript -e &#39;blogdown::build_site()&#39;</span>
 
-script:
-    - Rscript -e 'blogdown::build_site()'
-
-deploy:
-    provider: pages
-    skip_cleanup: true
-    github_token: $GITHUB_PAT
-    on:
-        branch: source
-    local_dir: public
-    target_branch: master
-</code></pre>
-
-<p>If you are hosting your site on <code>username.github.io</code>&mdash;like <a href="https://github.com/Selbosh/selbosh.github.io">my site</a>&mdash;there is no need to change any of the settings above.
+<span style="color:#f92672">deploy</span>:
+    <span style="color:#f92672">provider</span>: <span style="color:#ae81ff">pages</span>
+    <span style="color:#f92672">skip_cleanup</span>: <span style="color:#66d9ef">true</span>
+    <span style="color:#f92672">github_token</span>: <span style="color:#ae81ff">$GITHUB_PAT</span>
+    <span style="color:#f92672">on</span>:
+        <span style="color:#f92672">branch</span>: <span style="color:#ae81ff">source</span>
+    <span style="color:#f92672">local_dir</span>: <span style="color:#ae81ff">public</span>
+    <span style="color:#f92672">target_branch</span>: <span style="color:#ae81ff">master</span>
+</code></pre></div><p>If you are hosting your site on <code>username.github.io</code>&mdash;like <a href="https://github.com/Selbosh/selbosh.github.io">my site</a>&mdash;there is no need to change any of the settings above.
 You push your code to a branch called <code>source</code> and the compiled site is deployed to <code>master</code>.</p>
-
 <p>If, instead, you have a <a href="https://help.github.com/articles/user-organization-and-project-pages/">Project Page</a> (i.e. if the repository is called anything other than <code>username.github.io</code>), you can replace <code>source</code> with <code>master</code> and <code>master</code> with <code>gh-pages</code>. Or just leave it how it is&mdash;just make sure your repo settings have the <code>target_branch</code> set as the &ldquo;Source&rdquo; for GitHub Pages.</p>
-
 <p>Travis&rsquo;s <a href="https://docs.travis-ci.com/user/languages/r/">R environment</a> was originally designed for <a href="http://r-pkgs.had.co.nz/tests.html">testing</a> R packages, not building web sites.
 As a result, Travis will complain if it doesn&rsquo;t find a <code>DESCRIPTION</code> file&mdash;the minimum requirement of an R package&mdash;in your repository.
 It is enough to add a placeholder <code>DESCRIPTION</code> file with the following arbitrary contents:</p>
-
-<pre><code class="language-yaml">Package: arbitrary
-Title: Does not matter.
-Version: 0.0.1
-</code></pre>
-
-<p>This is enough to convince Travis to proceed.</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">Package</span>: <span style="color:#ae81ff">arbitrary</span>
+<span style="color:#f92672">Title</span>: <span style="color:#ae81ff">Does not matter.</span>
+<span style="color:#f92672">Version</span>: <span style="color:#ae81ff">0.0.1</span>
+</code></pre></div><p>This is enough to convince Travis to proceed.</p>
 <h2 id="get-publishing">Get publishing</h2>
-
 <p>Now, when you push a new commit to the <code>source</code> branch of your GitHub repository, Travis will clone it, build the site and push it to the <code>master</code> branch.
 In my experience it takes about two minutes from pushing changes to the updated site being live.</p>
-
 <p>If you have nothing better to do then you can watch Travis as it tries to deploy your blog. There&rsquo;s no need to monitor it, though: if it fails for any reason, you&rsquo;ll receive an e-mail.</p>
-
-<p><img src="https://selbydavid.com/img/2017/travis-log.png" alt="Travis log for a successful build" title="Travis log for a successful build" /></p>
-
+<p><img src="https://selbydavid.com/img/2017/travis-log.png" alt="Travis log for a successful build" title="Travis log for a successful build"></p>
 <p>Hopefully this guide helps. If you have any questions or feedback, feel free to leave a comment below or <a href="https://selbydavid.com/about">contact me</a>.</p>
 
     </section>
@@ -336,14 +272,17 @@ In my experience it takes about two minutes from pushing changes to the updated 
 
 
     
-<script>
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-11136457-6', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-11136457-6', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
 
   </body>

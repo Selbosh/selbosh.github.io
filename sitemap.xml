@@ -1,9 +1,29 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
     <loc>https://selbydavid.com/2020/12/06/advent-2020/</loc>
+    <lastmod>2020-12-06T17:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://selbydavid.com/categories/</loc>
+    <lastmod>2020-12-06T17:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://selbydavid.com/post/</loc>
+    <lastmod>2020-12-06T17:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://selbydavid.com/categories/r/</loc>
+    <lastmod>2020-12-06T17:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://selbydavid.com/</loc>
     <lastmod>2020-12-06T17:00:00+00:00</lastmod>
   </url>
   
@@ -15,6 +35,11 @@
   <url>
     <loc>https://selbydavid.com/2019/03/27/identity-matrix/</loc>
     <lastmod>2019-03-27T15:50:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://selbydavid.com/categories/france/</loc>
+    <lastmod>2018-07-08T11:00:00+02:00</lastmod>
   </url>
   
   <url>
@@ -33,11 +58,6 @@
   </url>
   
   <url>
-    <loc>https://selbydavid.com/2018/01/09/neural-network/</loc>
-    <lastmod>2018-01-09T10:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://selbydavid.com/2017/12/29/r-android/</loc>
     <lastmod>2017-12-29T15:00:00+00:00</lastmod>
   </url>
@@ -45,11 +65,6 @@
   <url>
     <loc>https://selbydavid.com/2017/06/29/user2017/</loc>
     <lastmod>2017-06-29T18:30:00+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://selbydavid.com/2017/06/25/ggchernoff/</loc>
-    <lastmod>2017-06-25T18:25:00+01:00</lastmod>
   </url>
   
   <url>
@@ -70,11 +85,6 @@
   <url>
     <loc>https://selbydavid.com/2017/06/16/rmarkdown-jekyll/</loc>
     <lastmod>2017-06-16T12:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://selbydavid.com/2016/12/07/santa/</loc>
-    <lastmod>2016-12-07T09:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -127,37 +137,7 @@
   </url>
   
   <url>
-    <loc>https://selbydavid.com/categories/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://selbydavid.com/categories/france/</loc>
-    <lastmod>2018-07-08T11:00:00+02:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://selbydavid.com/post/</loc>
-    <lastmod>2020-12-06T17:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://selbydavid.com/categories/r/</loc>
-    <lastmod>2020-12-06T17:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://selbydavid.com/tags/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://selbydavid.com/</loc>
-    <lastmod>2020-12-06T17:00:00+00:00</lastmod>
-    <priority>0</priority>
   </url>
   
 </urlset>
