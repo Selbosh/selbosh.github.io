@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="author" content="David Selby">
+
+  
+
+
+<title>The unequalled joy of non-equi joins &middot; Tea &amp; Stats</title>
+<meta property="og:title" content="The unequalled joy of non-equi joins" />
+<meta property="og:description" content="A common task in data analysis is to merge or join two tables according to shared keys or values. The operation is perhaps most commonly associated with relational databases and structured query language (SQL) but it’s just as useful in R with data frames.
+Most joins are equi-joins, matching rows according to two columns having exactly equal values. These are easy to perfom in R using the base merge() function, the various join() functions in dplyr and the X[i] syntax of data." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://selbydavid.com/2021/02/13/joins/" />
+<meta property="og:image" content="https://selbydavid.com/img/2021/joins.png" />
+<meta property="article:published_time" content="2021-02-13T16:00:00+00:00" />
+<meta property="article:modified_time" content="2021-02-13T16:00:00+00:00" />
+
+
+<meta itemprop="name" content="The unequalled joy of non-equi joins">
+<meta itemprop="description" content="A common task in data analysis is to merge or join two tables according to shared keys or values. The operation is perhaps most commonly associated with relational databases and structured query language (SQL) but it’s just as useful in R with data frames.
+Most joins are equi-joins, matching rows according to two columns having exactly equal values. These are easy to perfom in R using the base merge() function, the various join() functions in dplyr and the X[i] syntax of data.">
+<meta itemprop="datePublished" content="2021-02-13T16:00:00+00:00" />
+<meta itemprop="dateModified" content="2021-02-13T16:00:00+00:00" />
+<meta itemprop="wordCount" content="1748">
+<meta itemprop="image" content="https://selbydavid.com/img/2021/joins.png">
+
+
+
+<meta itemprop="keywords" content="" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://selbydavid.com/img/2021/joins.png"/>
+
+<meta name="twitter:title" content="The unequalled joy of non-equi joins"/>
+<meta name="twitter:description" content="A common task in data analysis is to merge or join two tables according to shared keys or values. The operation is perhaps most commonly associated with relational databases and structured query language (SQL) but it’s just as useful in R with data frames.
+Most joins are equi-joins, matching rows according to two columns having exactly equal values. These are easy to perfom in R using the base merge() function, the various join() functions in dplyr and the X[i] syntax of data."/>
+<meta name="twitter:site" content="@TeaStats"/>
+
+
+
+  
+    <meta property="article:author" content="https://www.facebook.com/Selbosh" />
+    <meta property="article:publisher" content="https://www.facebook.com/Selbosh" />
+  
+  
+    <meta name="twitter:creator" content="@TeaStats"/>
+  
+
+
+<meta name="theme" content="hugo-tea">
+<meta name="generator" content="Hugo 0.79.1" />
+
+
+
+<link rel="shortcut icon" href="https://selbydavid.com/favicon.ico">
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="https://selbydavid.com/css/main.css" media="all">
+
+<script src="https://use.fontawesome.com/269c7751ba.js"></script>
+
+  </head>
+  <body>
+      
+        <header id="masthead">
+          <img src="https://selbydavid.com/img/logo.svg"
+               width="120"
+               height=""
+               alt="Tea and Stats">
+          <h1><a href="https://selbydavid.com/">Tea &amp; Stats</a></h1>
+          <aside>Data science with David Selby</aside>
+          <nav>
+  <ul>
+    
+      <li><a href="https://selbydavid.com/about/">About</a></li>
+    
+    
+    <li>
+      <a href="https://facebook.com/Selbosh">
+        <i class="fa fa-facebook"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://github.com/Selbosh">
+        <i class="fa fa-github"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://linkedin.com/in/daselby">
+        <i class="fa fa-linkedin"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://twitter.com/TeaStats">
+        <i class="fa fa-twitter"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+
+        </header>
+
+
+<main role="main">
+  <article class="single">
+    <header><h2>The unequalled joy of non-equi joins</h2></header>
+    
+    <footer>
+      <time datetime="2021-02-13 16:00:00 &#43;0000">
+        13 February 2021
+      </time>
+    </footer>
+    
+    <section>
+    
+<script src="https://selbydavid.com/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p>A common task in data analysis is to <em>merge</em> or <em>join</em> two tables according to shared <em>keys</em> or values.
+The operation is perhaps most commonly associated with relational databases and structured query language (<a href="https://en.wikipedia.org/wiki/SQL">SQL</a>) but it’s just as useful in R with data frames.</p>
+<p>Most joins are <em>equi-joins</em>, matching rows according to two columns having exactly equal values.
+These are easy to perfom in R using the base <code>merge()</code> function, the various <code>join()</code> functions in <strong>dplyr</strong> and the <code>X[i]</code> syntax of <strong>data.table</strong>.</p>
+<p>But sometimes we need <em>non-equi joins</em> or <a href="https://en.wikipedia.org/wiki/Relational_algebra#Joins_and_join-like_operators"><span class="math inline">\(\theta\)</span>-joins</a>, where the matching condition is an interval or a set of inequalities.
+Other situations call for a <em>rolling join</em>, used to link records according to their proximity in a time sequence.</p>
+<p>How do you perform non-equi joins and rolling joins in R?</p>
+<div id="motivating-example" class="section level3">
+<h3>Motivating example</h3>
+<p>A famous YouTuber is testing out a new marketing strategy, promoting specific videos on social media.
+They collect daily view counts of old videos and want to summarise these counts in the days following each promotion.</p>
+<p>The tables <code>promos</code> and <code>views</code> are as follows.
+The data span a two-week period, but for certain days and certain videos, the view counts are missing.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">video</th>
+<th align="left">promo_date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-01</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-07</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">2020-04-03</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">2020-04-08</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">2020-04-03</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr class="header">
+<th align="left">video</th>
+<th align="left">view_date</th>
+<th align="right">views</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-01</td>
+<td align="right">992</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-02</td>
+<td align="right">3304</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-03</td>
+<td align="right">1417</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-04</td>
+<td align="right">191</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-05</td>
+<td align="right">2366</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-06</td>
+<td align="right">7318</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-07</td>
+<td align="right">1570</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-08</td>
+<td align="right">2051</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-09</td>
+<td align="right">5958</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-10</td>
+<td align="right">3574</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-11</td>
+<td align="right">6724</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-12</td>
+<td align="right">12043</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-13</td>
+<td align="right">481</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-14</td>
+<td align="right">286</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">2020-04-01</td>
+<td align="right">6270</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">2020-04-02</td>
+<td align="right">1549</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">2020-04-03</td>
+<td align="right">2376</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">2020-04-04</td>
+<td align="right">3111</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">2020-04-05</td>
+<td align="right">6228</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">2020-04-06</td>
+<td align="right">1852</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">2020-04-07</td>
+<td align="right">24314</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">2020-04-08</td>
+<td align="right">3329</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">2020-04-09</td>
+<td align="right">24980</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">2020-04-10</td>
+<td align="right">1118</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">2020-04-11</td>
+<td align="right">6057</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">2020-04-14</td>
+<td align="right">1400</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">2020-04-01</td>
+<td align="right">1156</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">2020-04-02</td>
+<td align="right">6435</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">2020-04-03</td>
+<td align="right">2847</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">2020-04-04</td>
+<td align="right">15093</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">2020-04-05</td>
+<td align="right">2488</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">2020-04-06</td>
+<td align="right">1773</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">2020-04-07</td>
+<td align="right">8782</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">2020-04-08</td>
+<td align="right">3687</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">2020-04-11</td>
+<td align="right">1963</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">2020-04-12</td>
+<td align="right">9510</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">2020-04-13</td>
+<td align="right">3891</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">2020-04-14</td>
+<td align="right">3282</td>
+</tr>
+</tbody>
+</table>
+<p>What are the mean view counts on videos in the three days immediately following promotions for those videos?</p>
+<p>I will show how you might accomplish this task using either non-equi joins or rolling joins in R.</p>
+</div>
+<div id="crossing-filter-with-dplyr" class="section level3">
+<h3>Crossing + filter with dplyr</h3>
+<p>The package <strong>dplyr</strong> has no function for joining on anything other than an equality relation.
+However, you can get the same results (possibly less efficiently) using an outer join or Cartesian product, followed by a filtering operation.</p>
+<pre class="r"><code>library(dplyr)
+views %&gt;%
+  # Crossing
+  full_join(promos) %&gt;%
+  # Filter
+  filter(view_date &gt;= promo_date,
+         view_date &lt;= promo_date + 3) %&gt;%
+  # Aggregate
+  group_by(video) %&gt;%
+  summarise(mean(views), sd(views), `n days` = n())</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">video</th>
+<th align="right">mean(views)</th>
+<th align="right">sd(views)</th>
+<th align="right">n days</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">A</td>
+<td align="right">2382</td>
+<td align="right">1832</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="right">6131</td>
+<td align="right">7836</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="right">5550</td>
+<td align="right">6377</td>
+<td align="right">4</td>
+</tr>
+</tbody>
+</table>
+<p>It would also be possible to compare promoted days with non-promoted days for each video, either by creating a binary indicator (instead of a filter) or by rejoining the table with the original dataset after the filter step.</p>
+</div>
+<div id="non-equi-joins-with-sqldf" class="section level3">
+<h3>Non-equi joins with sqldf</h3>
+<p>The <strong>sqldf</strong> package lets you query R data frames with SQL, as if you were working with a relational database.
+The result of the query is another data frame, and performance is sometimes better than equivalent R functions.</p>
+<pre class="r"><code>library(sqldf)
+sqldf(&#39;SELECT v.video, view_date, views
+       FROM views v
+       JOIN promos p
+       ON v.video = p.video AND
+          view_date BETWEEN promo_date AND promo_date + 3&#39;
+      ) %&gt;%
+  group_by(video) %&gt;%
+  summarise(mean(views), sd(views), `n days` = n())</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">video</th>
+<th align="right">mean(views)</th>
+<th align="right">sd(views)</th>
+<th align="right">n days</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">A</td>
+<td align="right">2382</td>
+<td align="right">1832</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="right">6131</td>
+<td align="right">7836</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="right">5550</td>
+<td align="right">6377</td>
+<td align="right">4</td>
+</tr>
+</tbody>
+</table>
+<p>The aggregation step could also be written in SQL, but it makes sense only to use SQL where it is absolutely needed, and to use native R functions for everything else.</p>
+<p>Having access to this functionality is very powerful, but has the obvious disadvantage that you need to learn a bit of SQL to understand the syntax.</p>
+</div>
+<div id="non-equi-joins-with-data.table" class="section level3">
+<h3>Non-equi joins with data.table</h3>
+<p>The high-performance data manipulation package <strong>data.table</strong> now (as of <a href="https://github.com/Rdatatable/data.table/blob/master/NEWS.0.md#new-features">v1.9.8</a>) supports non-equi joins.</p>
+<p>Non-equi joins are made possible with the <code>X[i]</code> merging syntax and the <code>on</code> argument.
+It’s slightly less flexible than the equivalent SQL, because you can’t just write <code>promo_date + 3</code> in the inequality: instead it needs to be an explicit column in the table.
+You also can’t use the infix <code>%between%</code> operator, so two inequalities have to do instead.
+Otherwise the syntax is similar.
+Like in SQL, a prefix is used to disambiguate the column names: <a href="https://stackoverflow.com/a/44343424">here it’s <code>x.name</code></a>.</p>
+<pre class="r"><code>library(data.table)
+setDT(views)
+setDT(promos)[, promo_end := promo_date + 3]</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">video</th>
+<th align="left">promo_date</th>
+<th align="left">promo_end</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-01</td>
+<td align="left">2020-04-04</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-10</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-06</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">2020-04-08</td>
+<td align="left">2020-04-11</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-06</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>views[promos,
+      .(video, views, x.view_date),
+      # Non equi join:
+      on = .(video,
+             view_date &gt;= promo_date,
+             view_date &lt;= promo_end)
+      ][, # Chain into aggregate:
+        .(mean = mean(views), sd = sd(views), .N),
+        by = video]</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">video</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">N</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">A</td>
+<td align="right">2382</td>
+<td align="right">1832</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="right">6131</td>
+<td align="right">7836</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="right">5550</td>
+<td align="right">6377</td>
+<td align="right">4</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="rolling-joins-with-data.table" class="section level3">
+<h3>Rolling joins with data.table</h3>
+<p>This particular example, since it involves a time variable, is even simpler using a <em>rolling join</em>.
+The concept is a bit confusing, but essentially it attributes records in one table with the most recent preceding records in the second table.
+You can read more about rolling joins in <a href="https://www.r-bloggers.com/2016/06/understanding-data-table-rolling-joins/">this blog post by Robert Norberg</a>.</p>
+<p>When performing rolling joins in <strong>data.table</strong>, one of the joining time columns gets dropped, which can make it hard to identify your records if they don’t have an explicit ID.
+To mitigate this, we will copy each date column to the name <code>join_date</code> and join on that.</p>
+<pre class="r"><code>views[, join_date := view_date]
+promos[, join_date := promo_date]
+
+setkey(views, video, join_date)
+setkey(promos, video, join_date)</code></pre>
+<pre class="r"><code>promos[views, roll = TRUE]</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">video</th>
+<th align="left">promo_date</th>
+<th align="left">join_date</th>
+<th align="left">view_date</th>
+<th align="right">views</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-01</td>
+<td align="left">2020-04-01</td>
+<td align="left">2020-04-01</td>
+<td align="right">992</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-01</td>
+<td align="left">2020-04-02</td>
+<td align="left">2020-04-02</td>
+<td align="right">3304</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-01</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-03</td>
+<td align="right">1417</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-01</td>
+<td align="left">2020-04-04</td>
+<td align="left">2020-04-04</td>
+<td align="right">191</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-01</td>
+<td align="left">2020-04-05</td>
+<td align="left">2020-04-05</td>
+<td align="right">2366</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-01</td>
+<td align="left">2020-04-06</td>
+<td align="left">2020-04-06</td>
+<td align="right">7318</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-07</td>
+<td align="right">1570</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-08</td>
+<td align="left">2020-04-08</td>
+<td align="right">2051</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-09</td>
+<td align="left">2020-04-09</td>
+<td align="right">5958</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-10</td>
+<td align="left">2020-04-10</td>
+<td align="right">3574</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-11</td>
+<td align="left">2020-04-11</td>
+<td align="right">6724</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-12</td>
+<td align="left">2020-04-12</td>
+<td align="right">12043</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-13</td>
+<td align="left">2020-04-13</td>
+<td align="right">481</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-14</td>
+<td align="left">2020-04-14</td>
+<td align="right">286</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">NA</td>
+<td align="left">2020-04-01</td>
+<td align="left">2020-04-01</td>
+<td align="right">6270</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">NA</td>
+<td align="left">2020-04-02</td>
+<td align="left">2020-04-02</td>
+<td align="right">1549</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-03</td>
+<td align="right">2376</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-04</td>
+<td align="left">2020-04-04</td>
+<td align="right">3111</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-05</td>
+<td align="left">2020-04-05</td>
+<td align="right">6228</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-06</td>
+<td align="left">2020-04-06</td>
+<td align="right">1852</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-07</td>
+<td align="right">24314</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">2020-04-08</td>
+<td align="left">2020-04-08</td>
+<td align="left">2020-04-08</td>
+<td align="right">3329</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">2020-04-08</td>
+<td align="left">2020-04-09</td>
+<td align="left">2020-04-09</td>
+<td align="right">24980</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">2020-04-08</td>
+<td align="left">2020-04-10</td>
+<td align="left">2020-04-10</td>
+<td align="right">1118</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">2020-04-08</td>
+<td align="left">2020-04-11</td>
+<td align="left">2020-04-11</td>
+<td align="right">6057</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">2020-04-08</td>
+<td align="left">2020-04-14</td>
+<td align="left">2020-04-14</td>
+<td align="right">1400</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">NA</td>
+<td align="left">2020-04-01</td>
+<td align="left">2020-04-01</td>
+<td align="right">1156</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">NA</td>
+<td align="left">2020-04-02</td>
+<td align="left">2020-04-02</td>
+<td align="right">6435</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-03</td>
+<td align="right">2847</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-04</td>
+<td align="left">2020-04-04</td>
+<td align="right">15093</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-05</td>
+<td align="left">2020-04-05</td>
+<td align="right">2488</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-06</td>
+<td align="left">2020-04-06</td>
+<td align="right">1773</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-07</td>
+<td align="right">8782</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-08</td>
+<td align="left">2020-04-08</td>
+<td align="right">3687</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-11</td>
+<td align="left">2020-04-11</td>
+<td align="right">1963</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-12</td>
+<td align="left">2020-04-12</td>
+<td align="right">9510</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-13</td>
+<td align="left">2020-04-13</td>
+<td align="right">3891</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-14</td>
+<td align="left">2020-04-14</td>
+<td align="right">3282</td>
+</tr>
+</tbody>
+</table>
+<p>The syntax <code>promos[views, roll=TRUE]</code> means “which promotion immediately preceded each viewing date?”
+Conversely, <code>views[promos, roll=TRUE]</code> means “which viewing dates immediately preceded each promotion?”</p>
+<p>In this case, we want something <em>close</em> to the former, but we’re only interested in promos in the past 3 days, whereas by default it’ll extend back into the depths of time looking for the last one, regardless of how long ago.</p>
+<p>By changing <code>roll = TRUE</code> to <code>roll = 3</code> the join will fail to match when the <code>join_date</code> differs by more than three days between the two tables.
+If we wanted to go in the opposite direction in time, we could use <code>roll = -Inf</code> to search forwards in time for future promotions, and <code>roll = -3</code> for only those in the following three days.</p>
+<pre class="r"><code>promos[views, roll = 3]</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">video</th>
+<th align="left">promo_date</th>
+<th align="left">join_date</th>
+<th align="left">view_date</th>
+<th align="right">views</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-01</td>
+<td align="left">2020-04-01</td>
+<td align="left">2020-04-01</td>
+<td align="right">992</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-01</td>
+<td align="left">2020-04-02</td>
+<td align="left">2020-04-02</td>
+<td align="right">3304</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-01</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-03</td>
+<td align="right">1417</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-01</td>
+<td align="left">2020-04-04</td>
+<td align="left">2020-04-04</td>
+<td align="right">191</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">NA</td>
+<td align="left">2020-04-05</td>
+<td align="left">2020-04-05</td>
+<td align="right">2366</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">NA</td>
+<td align="left">2020-04-06</td>
+<td align="left">2020-04-06</td>
+<td align="right">7318</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-07</td>
+<td align="right">1570</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-08</td>
+<td align="left">2020-04-08</td>
+<td align="right">2051</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-09</td>
+<td align="left">2020-04-09</td>
+<td align="right">5958</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-10</td>
+<td align="left">2020-04-10</td>
+<td align="right">3574</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">NA</td>
+<td align="left">2020-04-11</td>
+<td align="left">2020-04-11</td>
+<td align="right">6724</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">NA</td>
+<td align="left">2020-04-12</td>
+<td align="left">2020-04-12</td>
+<td align="right">12043</td>
+</tr>
+<tr class="odd">
+<td align="left">A</td>
+<td align="left">NA</td>
+<td align="left">2020-04-13</td>
+<td align="left">2020-04-13</td>
+<td align="right">481</td>
+</tr>
+<tr class="even">
+<td align="left">A</td>
+<td align="left">NA</td>
+<td align="left">2020-04-14</td>
+<td align="left">2020-04-14</td>
+<td align="right">286</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">NA</td>
+<td align="left">2020-04-01</td>
+<td align="left">2020-04-01</td>
+<td align="right">6270</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">NA</td>
+<td align="left">2020-04-02</td>
+<td align="left">2020-04-02</td>
+<td align="right">1549</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-03</td>
+<td align="right">2376</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-04</td>
+<td align="left">2020-04-04</td>
+<td align="right">3111</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-05</td>
+<td align="left">2020-04-05</td>
+<td align="right">6228</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-06</td>
+<td align="left">2020-04-06</td>
+<td align="right">1852</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">NA</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-07</td>
+<td align="right">24314</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">2020-04-08</td>
+<td align="left">2020-04-08</td>
+<td align="left">2020-04-08</td>
+<td align="right">3329</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">2020-04-08</td>
+<td align="left">2020-04-09</td>
+<td align="left">2020-04-09</td>
+<td align="right">24980</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">2020-04-08</td>
+<td align="left">2020-04-10</td>
+<td align="left">2020-04-10</td>
+<td align="right">1118</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="left">2020-04-08</td>
+<td align="left">2020-04-11</td>
+<td align="left">2020-04-11</td>
+<td align="right">6057</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="left">NA</td>
+<td align="left">2020-04-14</td>
+<td align="left">2020-04-14</td>
+<td align="right">1400</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">NA</td>
+<td align="left">2020-04-01</td>
+<td align="left">2020-04-01</td>
+<td align="right">1156</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">NA</td>
+<td align="left">2020-04-02</td>
+<td align="left">2020-04-02</td>
+<td align="right">6435</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-03</td>
+<td align="right">2847</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-04</td>
+<td align="left">2020-04-04</td>
+<td align="right">15093</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-05</td>
+<td align="left">2020-04-05</td>
+<td align="right">2488</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">2020-04-03</td>
+<td align="left">2020-04-06</td>
+<td align="left">2020-04-06</td>
+<td align="right">1773</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">NA</td>
+<td align="left">2020-04-07</td>
+<td align="left">2020-04-07</td>
+<td align="right">8782</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">NA</td>
+<td align="left">2020-04-08</td>
+<td align="left">2020-04-08</td>
+<td align="right">3687</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">NA</td>
+<td align="left">2020-04-11</td>
+<td align="left">2020-04-11</td>
+<td align="right">1963</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">NA</td>
+<td align="left">2020-04-12</td>
+<td align="left">2020-04-12</td>
+<td align="right">9510</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">NA</td>
+<td align="left">2020-04-13</td>
+<td align="left">2020-04-13</td>
+<td align="right">3891</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">NA</td>
+<td align="left">2020-04-14</td>
+<td align="left">2020-04-14</td>
+<td align="right">3282</td>
+</tr>
+</tbody>
+</table>
+<p>Since the default in <strong>data.table</strong>’s <code>X[i]</code> merge syntax is <code>nomatch = NA</code>, we get all of the <code>views</code> back, with the column <code>promo_date</code> equal to the date of the last promotion (in the last three days), or <code>NA</code> if no such promotion was found.
+If we set <code>nomatch = 0</code> then these non-matching values are dropped from the result.</p>
+<p>So the full operation to calculate the summary figures is</p>
+<pre class="r"><code>promos[views, roll = 3, nomatch = 0
+       ][j = .(mean = mean(views), sd = sd(views), .N),
+         by = video]</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">video</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">N</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">A</td>
+<td align="right">2382</td>
+<td align="right">1832</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="right">6131</td>
+<td align="right">7836</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="right">5550</td>
+<td align="right">6377</td>
+<td align="right">4</td>
+</tr>
+</tbody>
+</table>
+<p>If the intervals needed to be different lengths for each of the campaigns (i.e. not all equal to 3), then you would probably want a non-equi join rather than a rolling join in this case.</p>
+</div>
+<div id="extensions" class="section level3">
+<h3>Extensions</h3>
+<p>Arguably, for these examples you’d want to compare the view counts in promotional periods with those outside promotional periods.
+This does not require a special kind of join; rather you perform the non-equi or rolling join as above and then wrangle the output accordingly.</p>
+<p>If the non-matching rows are filtered out, you need to re-join with the original dataset.
+Otherwise, you need to use some sort of indicator variable for whether the viewing date falls within a promotional period or not.</p>
+<p>In <strong>dplyr</strong>:</p>
+<pre class="r"><code>promos %&gt;%
+  full_join(views) %&gt;%
+  mutate(promo = between(view_date - promo_date, 0, 3)) %&gt;%
+  group_by(video, view_date) %&gt;%
+  summarise(promo = any(promo),
+            views = unique(views)) %&gt;%
+  group_by(promo) %&gt;%
+  summarise(mean(views), sd(views), n = n())</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">promo</th>
+<th align="right">mean(views)</th>
+<th align="right">sd(views)</th>
+<th align="right">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">FALSE</td>
+<td align="right">5637</td>
+<td align="right">5772</td>
+<td align="right">18</td>
+</tr>
+<tr class="even">
+<td align="left">TRUE</td>
+<td align="right">4515</td>
+<td align="right">5790</td>
+<td align="right">20</td>
+</tr>
+</tbody>
+</table>
+<p>In <strong>data.table</strong>:</p>
+<pre class="r"><code>promos[views, roll = 3][
+         j = .(mean = mean(views), sd = sd(views), .N),
+         by = .(promo = !is.na(promo_date))]</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">promo</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">N</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">TRUE</td>
+<td align="right">4515</td>
+<td align="right">5790</td>
+<td align="right">20</td>
+</tr>
+<tr class="even">
+<td align="left">FALSE</td>
+<td align="right">5637</td>
+<td align="right">5772</td>
+<td align="right">18</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+    </section>
+    
+			<section class="comments">
+				<div id="disqus_thread"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'tea-stats';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+			</section>
+		
+  </article>
+</main>
+
+      <footer id="footer">
+        
+        <a href="#">
+          <img src="https://selbydavid.com/img/logo.svg"
+               width="60"
+               height=""
+               alt="Return to top"
+               title="Return to top">
+        </a>
+        
+        © 2016–21 David Selby | <a href='https://github.com/Selbosh/hugo-tea'>Hugo Tea Theme</a>
+      </footer>
+    
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script src="//yihui.org/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-11136457-6', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+  </body>
+</html>
+
