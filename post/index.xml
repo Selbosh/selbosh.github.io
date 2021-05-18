@@ -14,8 +14,45 @@
 		</image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-GB</language>
-    <lastBuildDate>Sat, 13 Feb 2021 16:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 18 May 2021 13:00:00 +0100</lastBuildDate>
     <atom:link href="https://selbydavid.com/post/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>There are now 3 different R pipes</title>
+      <link>https://selbydavid.com/2021/05/18/pipes/</link>
+      <pubDate>Tue, 18 May 2021 13:00:00 +0100</pubDate>
+      
+      <guid>https://selbydavid.com/2021/05/18/pipes/</guid>
+      <description>&lt;p&gt;R 4.1.0 has been released and has a couple of handy &lt;a href=&#34;https://cran.r-project.org/bin/windows/base/NEWS.R-4.1.0.html&#34;&gt;new features&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;One is a shorthand syntax for defining functions.
+Now, instead of writing, for example&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;triple &amp;lt;- function(x) x * 3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;you can use the more concise syntax&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;triple &amp;lt;- \(x) x * 3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;which may come in handy when using anonymous functions in &lt;code&gt;apply&lt;/code&gt;-type calls.&lt;/p&gt;
+&lt;p&gt;More interesting, though, is the addition of a native pipe operator to R, given by &lt;code&gt;|&amp;gt;&lt;/code&gt;, i.e. a pipe and a greater-than sign.
+As of R 4.1.0, the following are equivalent.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;triple(4)
+4 |&amp;gt; triple()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This is similar to the functionality previously provided by the &lt;strong&gt;magrittr&lt;/strong&gt; package (often through &lt;strong&gt;dplyr&lt;/strong&gt; and &lt;strong&gt;tidyr&lt;/strong&gt;):&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(magrittr)
+4 %&amp;gt;% triple
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;but saves you loading any add-on packages.&lt;/p&gt;
+&lt;p&gt;In fact, there already was a pipe of sorts in base R, as &lt;a href=&#34;https://www.youtube.com/watch?v=tphMSLGXuDE&#34;&gt;John Mount points out&lt;/a&gt;: in the form of the &lt;code&gt;-&amp;gt;.;&lt;/code&gt; &amp;lsquo;operator&amp;rsquo; (assign to a variable called &lt;code&gt;.&lt;/code&gt;, then terminate with the rarely-used semicolon):&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;4 -&amp;gt;.; triple(.)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As a result there are now four different ways of writing the same function call as a one-liner in R version 4.1.0:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;triple(4)
+4 %&amp;gt;% triple
+4 -&amp;gt;.; triple(.)
+4 |&amp;gt; triple()
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>The unequalled joy of non-equi joins</title>
