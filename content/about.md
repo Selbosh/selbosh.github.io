@@ -4,10 +4,11 @@ title: About me
 
 <img src="/img/david.jpg" style="border-radius: 50%; width: 15rem;" />
 
-Hello, my name is David Selby and research associate in data science at the University of Manchester, having recently completed a PhD in statistics at the University of Warwick.
+Hello, my name is David Selby and research associate in data science at the University of Manchester, having [completed a PhD in statistics](http://webcat.warwick.ac.uk/record=b3690782) at the University of Warwick.
+In 2022, I start as a postdoctoral researcher in computer science at Technische Universität Kaiserslautern in Germany.
 
 Originally from North Yorkshire, I aim to maintain a reliable supply of Yorkshire Tea.
-I am enthusiastic about [R](https://www.r-project.org/) and helped organise [Warwick R User Group](http://warwick.ac.uk/wrug).
+I am enthusiastic about [R](https://www.r-project.org/) and helped organise [Warwick R User Group](http://warwick.ac.uk/wrug) as well as the [R-thritis Statistical Computing Group](https://personalpages.manchester.ac.uk/staff/david.selby/rthritis.html).
 
 <p style="text-align: center;">
 <a href='mailto:David.Selby@manchester.ac.uk' title="E-mail me">
@@ -52,6 +53,7 @@ Get in touch with me using any of the methods above.
 
 This blog is a collection of non-academic or trivial projects themed around data science, R programming and reproducible research.
 For more information about my academic work, please visit my [Warwick PhD page](http://warwick.ac.uk/dselby) or my [Manchester academic page](https://www.research.manchester.ac.uk/portal/en/researchers/david-selby(3ea65643-2b3b-48ed-ad3c-8fa73fe36e0d).html).
+For teaching resources at the Centre for Epidemiology, see my [Manchester personal page](https://personalpages.manchester.ac.uk/staff/david.selby/index.html).
 
 ### Other Warwick bloggers
 
@@ -69,3 +71,4 @@ For more information about my academic work, please visit my [Warwick PhD page](
 - [R-bloggers](https://www.r-bloggers.com/), a compendium of R-themed blogs
 - [RWeekly.org](https://rweekly.org), more R-themed blogs
 - [Warwick R User Group](http://warwick.ac.uk/wrug), a local group for talks on R
+- [Rthritis Statistical Computing Group](https://personalpages.manchester.ac.uk/staff/david.selby/rthritis.html), an R group in Manchester
