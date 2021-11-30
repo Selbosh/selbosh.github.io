@@ -7,8 +7,6 @@ images: ['/img/2016/santa.jpg']
 ---
 
 <script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
-<link href="/rmarkdown-libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
-<script src="/rmarkdown-libs/anchor-sections/anchor-sections.js"></script>
 
 
 <p>Our office just exchanged presents for <em>Secret Santa</em>, a tradition where each person is randomly assigned someone else to give an anonyous gift. One of the challenges of Secret Santa is keeping the pairs of gift-givers and receivers both random and secret. How can you do this while also taking part yourself? Using R, of course!</p>
@@ -74,11 +72,11 @@ data.frame(sender, recipient)</code></pre>
 ## 7  Harry      Jane
 ## 8    Sam      Dick
 ## 9 Leslie     Harry</code></pre>
-<p>Success! Everybody gives and receives a gift, nobody gives to themselves and there is no particular pattern. (Unlike the first method, Sam gives to Leslie even though Leslie already gives to Sam.)</p>
+<p>Success! Everybody gives and receives a gift, nobody gives to themselves and there is no particular pattern. (Unlike the first method, Alex gives to Chris even though Chris already gives to Alex.)</p>
 <p>If you’re curious, you can find out how many attempts it took to find a valid set of pairs:</p>
 <pre class="r"><code>i</code></pre>
 <pre><code>## [1] 2</code></pre>
-<p>Now, how do you let everybody know who they have been assigned, without revealing it anybody else? (Including you!) We can write a text file for every person, with the name of the file corresponding to the giver and the contents of the file revealing the recipient.</p>
+<p>Now, how do you let everybody know who they have been assigned, without revealing it to anybody else? (Including you!) We can write a text file for every person, with the name of the file corresponding to the giver and the contents of the file revealing the recipient.</p>
 <pre class="r"><code>for (i in seq_along(names)) {
   writeLines(recipient[i], paste0(sender[i], &#39;.txt&#39;))
 }</code></pre>

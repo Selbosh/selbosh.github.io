@@ -72,7 +72,7 @@ while (any(sender == recipient)) {
 data.frame(sender, recipient)
 ```
 
-Success! Everybody gives and receives a gift, nobody gives to themselves and there is no particular pattern. (Unlike the first method, Sam gives to Leslie even though Leslie already gives to Sam.)
+Success! Everybody gives and receives a gift, nobody gives to themselves and there is no particular pattern. (Unlike the first method, Alex gives to Chris even though Chris already gives to Alex.)
 
 If you're curious, you can find out how many attempts it took to find a valid set of pairs:
 
@@ -80,7 +80,7 @@ If you're curious, you can find out how many attempts it took to find a valid se
 i
 ```
 
-Now, how do you let everybody know who they have been assigned, without revealing it anybody else? (Including you!) We can write a text file for every person, with the name of the file corresponding to the giver and the contents of the file revealing the recipient.
+Now, how do you let everybody know who they have been assigned, without revealing it to anybody else? (Including you!) We can write a text file for every person, with the name of the file corresponding to the giver and the contents of the file revealing the recipient.
 
 ```{r output, eval = F}
 for (i in seq_along(names)) {
