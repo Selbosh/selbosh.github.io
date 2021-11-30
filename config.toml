@@ -56,3 +56,7 @@ pygmentsCodeFences = false # Disable Chroma highlighter; it conflicts with hljs
   url = "logo.svg"
   width = 60
   height = ""
+
+# Do not omit raw HTML
+[markup.goldmark.renderer]
+unsafe= true
