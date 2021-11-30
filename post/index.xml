@@ -1222,7 +1222,7 @@ results may differ from mine.&lt;/p&gt;
 &lt;li&gt;&lt;a href=&#34;#day24&#34;&gt;Lobby layout&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day25&#34;&gt;Combo breaker&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#39;day1&#39;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-1---report-repairhttpsadventofcodecom2020day1&#34;&gt;Day 1 - &lt;a href=&#34;https://adventofcode.com/2020/day/1&#34;&gt;Report repair&lt;/a&gt;&lt;/h1&gt;
 &lt;h2 id=&#34;two-numbers&#34;&gt;Two numbers&lt;/h2&gt;
 &lt;p&gt;Find the two entries that sum to 2020, then multiply those two numbers
@@ -1255,7 +1255,7 @@ prod(.[which.max(.$Var3 %in% input), ])
 successively discarding values that could only add up to more than 2020.
 The &lt;code&gt;.&lt;/code&gt; notation is just so I can write this without using
 &lt;code&gt;dplyr&lt;/code&gt;/&lt;code&gt;magrittr&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#39;day2&#39;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-2---password-philosophyhttpsadventofcodecom2020day2&#34;&gt;Day 2 - &lt;a href=&#34;https://adventofcode.com/2020/day/2&#34;&gt;Password philosophy&lt;/a&gt;&lt;/h1&gt;
 &lt;h2 id=&#34;number-of-letters&#34;&gt;Number of letters&lt;/h2&gt;
 &lt;p&gt;How many passwords are valid according to the policies?&lt;/p&gt;
@@ -1305,7 +1305,7 @@ of which must match the given letter.&lt;/p&gt;
 &lt;p&gt;Initially I got caught out here, by misreading the question as ‘at least
 one’ and then wondering why an inclusive or (&lt;code&gt;|&lt;/code&gt;) was returning the
 incorrect answer.&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#39;day3&#39;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-3---toboggan-trajectoryhttpsadventofcodecom2020day3&#34;&gt;Day 3 - &lt;a href=&#34;https://adventofcode.com/2020/day/3&#34;&gt;Toboggan trajectory&lt;/a&gt;&lt;/h1&gt;
 &lt;p&gt;The input looks a bit like this:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;..##.........##.........##.........##.........##.........##.......  ---&amp;gt;
@@ -1351,8 +1351,8 @@ trees(1) * trees(3) * trees(5) * trees(7) * trees(1, 2)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The &lt;code&gt;as.double&lt;/code&gt; bit is necessary only because multiplying large integer
 outputs together can cause an overflow when the product is larger than
-10&lt;!-- raw HTML omitted --&gt;9&lt;!-- raw HTML omitted --&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+10&lt;sup&gt;9&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#39;day4&#39;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-4---passport-processinghttpsadventofcodecom2020day4&#34;&gt;Day 4 - &lt;a href=&#34;https://adventofcode.com/2020/day/4&#34;&gt;Passport processing&lt;/a&gt;&lt;/h1&gt;
 &lt;p&gt;The example input is in this ragged format, where keys and values are
 separated by colons and records are separated by double newlines. The
@@ -1467,7 +1467,7 @@ nrow(valid_passports)
 &lt;p&gt;You could also use a filtering join, though since most of the fields are
 ranges of integer values, you would want to use a &lt;code&gt;data.table&lt;/code&gt;
 &lt;em&gt;non-equi-join&lt;/em&gt; rather than a simple &lt;code&gt;semi_join&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#39;day5&#39;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-5---binary-boardinghttpsadventofcodecom2020day5&#34;&gt;Day 5 - &lt;a href=&#34;https://adventofcode.com/2020/day/5&#34;&gt;Binary boarding&lt;/a&gt;&lt;/h1&gt;
 &lt;h2 id=&#34;highest-seat-id&#34;&gt;Highest seat ID&lt;/h2&gt;
 &lt;p&gt;This task is easy, as soon as you recognise that it is just converting
@@ -1489,7 +1489,7 @@ list.&lt;/p&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;[1] 594
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#39;day6&#39;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-6---custom-customshttpsadventofcodecom2020day6&#34;&gt;Day 6 - &lt;a href=&#34;https://adventofcode.com/2020/day/6&#34;&gt;Custom customs&lt;/a&gt;&lt;/h1&gt;
 &lt;h2 id=&#34;questions-with-any-yes&#34;&gt;Questions with any ‘yes’&lt;/h2&gt;
 &lt;p&gt;Count the number of unique letters in each group, where a ‘group’ is
@@ -1538,7 +1538,7 @@ responses[, .(count = length(Reduce(intersect, questions))),
 &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;[1] 3358
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#39;day7&#39;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-7---handy-haversackshttpsadventofcodecom2020day7&#34;&gt;Day 7 - &lt;a href=&#34;https://adventofcode.com/2020/day/7&#34;&gt;Handy haversacks&lt;/a&gt;&lt;/h1&gt;
 &lt;h2 id=&#34;number-of-bag-colours&#34;&gt;Number of bag colours&lt;/h2&gt;
 &lt;p&gt;Given an input list of rules, how many different colours of bags may
@@ -1631,7 +1631,7 @@ concise way to do it using R.&lt;/p&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;[1] 45018
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#39;day8&#39;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-8---handheld-haltinghttpsadventofcodecom2020day8&#34;&gt;Day 8 - &lt;a href=&#34;https://adventofcode.com/2020/day/8&#34;&gt;Handheld halting&lt;/a&gt;&lt;/h1&gt;
 &lt;h2 id=&#34;infinite-loop&#34;&gt;Infinite loop&lt;/h2&gt;
 &lt;p&gt;Just a simple loop that keeps track of all the places it has been so
@@ -1715,7 +1715,7 @@ brute_force()
 &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;[1] 1543
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#39;day9&#39;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-9---encoding-errorhttpsadventofcodecom2020day9&#34;&gt;Day 9 - &lt;a href=&#34;https://adventofcode.com/2020/day/9&#34;&gt;Encoding error&lt;/a&gt;&lt;/h1&gt;
 &lt;h2 id=&#34;adding-pairs&#34;&gt;Adding pairs&lt;/h2&gt;
 &lt;p&gt;Here the question is how to calculate the sums of pairs of values in a
@@ -1800,7 +1800,7 @@ far.&lt;/li&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;[1] 75678618
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#39;day10&#39;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-10---adapter-arrayhttpsadventofcodecom2020day10&#34;&gt;Day 10 - &lt;a href=&#34;https://adventofcode.com/2020/day/10&#34;&gt;Adapter array&lt;/a&gt;&lt;/h1&gt;
 &lt;h2 id=&#34;lagged-differences&#34;&gt;Lagged differences&lt;/h2&gt;
 &lt;p&gt;This is pretty trivial. Read in the data, append a zero, sort the
@@ -1866,7 +1866,7 @@ prod(sequences$combos)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;[1] &amp;quot;24803586664192&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#39;day11&#39;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-11---seating-systemhttpsadventofcodecom2020day11&#34;&gt;Day 11 - &lt;a href=&#34;https://adventofcode.com/2020/day/11&#34;&gt;Seating system&lt;/a&gt;&lt;/h1&gt;
 &lt;h2 id=&#34;convoluted-solution&#34;&gt;Convoluted solution&lt;/h2&gt;
 &lt;p&gt;This puzzle is effectively applying a &lt;a href=&#34;https://en.wikipedia.org/wiki/Kernel_(image_processing)&#34;&gt;&lt;em&gt;convolution
@@ -2000,7 +2000,7 @@ change_places(line_of_sight, input)
 &lt;p&gt;This was pretty slow, which is to be expected in R. To speed it up, we
 can rewrite the guts in a lower-level programming language. There may
 also be some scope for vectorisation.&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;day12&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-12---rain-riskhttpsadventofcodecom2020day12&#34;&gt;Day 12 - &lt;a href=&#34;https://adventofcode.com/2020/day/12&#34;&gt;Rain risk&lt;/a&gt;&lt;/h1&gt;
 &lt;h2 id=&#34;complex-directions&#34;&gt;Complex directions&lt;/h2&gt;
 &lt;p&gt;I was actually expecting this to be more complicated, with turns in
@@ -2080,7 +2080,7 @@ time there is a turn.&lt;/p&gt;
 we rotate the ship rather than the waypoint, then reverse the rotation
 at the end to get the final position of the ship relative to its
 starting point.&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;day13&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-13---shuttle-searchhttpsadventofcodecom2020day13&#34;&gt;Day 13 - &lt;a href=&#34;https://adventofcode.com/2020/day/13&#34;&gt;Shuttle search&lt;/a&gt;&lt;/h1&gt;
 &lt;h2 id=&#34;earliest-bus&#34;&gt;Earliest bus&lt;/h2&gt;
 &lt;p&gt;A bus’s ID indicates the interval between departures, starting at time
@@ -2163,7 +2163,7 @@ format(find_timetable2(buses), sci = FALSE)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;[1] &amp;quot;408270049879073&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;day14&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-14---docking-datahttpsadventofcodecom2020day14&#34;&gt;Day 14 - &lt;a href=&#34;https://adventofcode.com/2020/day/14&#34;&gt;Docking data&lt;/a&gt;&lt;/h1&gt;
 &lt;h2 id=&#34;bitmask&#34;&gt;Bitmask&lt;/h2&gt;
 &lt;p&gt;The trickiest bit(!) in the first part is reading in the data. I wanted
@@ -2259,7 +2259,7 @@ there wasn’t any actual reason why I needed to compress the binary
 digits into a string representation between operations—other than making
 the tables of values easier to read during debugging. I could have
 stored them as vectors or matrices in list-columns, instead.&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;day15&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-15---rambunctious-recitationhttpsadventofcodecom2020day15&#34;&gt;Day 15 - &lt;a href=&#34;https://adventofcode.com/2020/day/15&#34;&gt;Rambunctious recitation&lt;/a&gt;&lt;/h1&gt;
 &lt;h2 id=&#34;memory-game&#34;&gt;Memory game&lt;/h2&gt;
 &lt;p&gt;The first part is straightforward even with not particularly optimal
@@ -2378,7 +2378,7 @@ logarithmic scale).&lt;/p&gt;
 &lt;p&gt;For &lt;code&gt;n = 30000000&lt;/code&gt;, the C++ function completed in just under one
 second—about ten times faster than my fastest pure-R code. Worth it?
 Possibly not for this one-off exercise, but it’s interesting to note.&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;day16&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-16---ticket-translationhttpsadventofcodecom2020day16&#34;&gt;Day 16 - &lt;a href=&#34;https://adventofcode.com/2020/day/16&#34;&gt;Ticket translation&lt;/a&gt;&lt;/h1&gt;
 &lt;p&gt;The first thing we need to do is parse the input data. Everything can be
 grouped into three sections that are separated by blank lines. As each
@@ -2455,7 +2455,7 @@ format(prod(departures$value), scientific = FALSE)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;[1] &amp;quot;1382443095281&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;day17&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-17---conway-cubeshttpsadventofcodecom2020day17&#34;&gt;Day 17 - &lt;a href=&#34;https://adventofcode.com/2020/day/17&#34;&gt;Conway cubes&lt;/a&gt;&lt;/h1&gt;
 &lt;p&gt;The idea will be to grow the size of our cube by 1 in each of the three
 dimensions, keeping all the data so far in the middle. Actually doing
@@ -2561,7 +2561,7 @@ it runs in a couple of seconds, so presumably it’s what they actually
 expect you to do here. I wouldn’t expect this code to scale well without
 a rewrite in &lt;code&gt;Rcpp&lt;/code&gt; (see &lt;a href=&#34;#day15&#34;&gt;day 15&lt;/a&gt;) or a sparse matrix/tensor
 library.&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;day18&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-18---operation-orderhttpsadventofcodecom2020day18&#34;&gt;Day 18 - &lt;a href=&#34;https://adventofcode.com/2020/day/18&#34;&gt;Operation order&lt;/a&gt;&lt;/h1&gt;
 &lt;p&gt;In an R session, the standard order of arithmetic operations applies:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;1 + 2 * 3 + 4 * 5 + 6
@@ -2634,7 +2634,7 @@ together. (However Hadley Wickham said they would have used a pipe,
 &lt;p&gt;Reassigning addition to another function is also a hilarious prank you
 can play on someone who never clears out their global workspace. It’ll
 teach them the value of starting with clean working environment.&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;day19&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-19---monster-messageshttpsadventofcodecom2020day19&#34;&gt;Day 19 - &lt;a href=&#34;https://adventofcode.com/2020/day/19&#34;&gt;Monster messages&lt;/a&gt;&lt;/h1&gt;
 &lt;p&gt;Consider the first example rule set.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;0: 1 2
@@ -2763,7 +2763,7 @@ which detects pairs of brackets that do not contain other brackets. The
 shortest possible pattern length is one (or maybe two because I didn’t
 enclose single letters in brackets) so this provides a reasonable lower
 bound.&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;day20&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-20---jurassic-jigsawhttpsadventofcodecom2020day20&#34;&gt;Day 20 - &lt;a href=&#34;https://adventofcode.com/2020/day/20&#34;&gt;Jurassic jigsaw&lt;/a&gt;&lt;/h1&gt;
 &lt;p&gt;To match up the puzzle edges, we need to find an edge of each puzzle
 piece that matches up with at least one other puzzle piece. It’s
@@ -3013,7 +3013,7 @@ complex number columns in &lt;code&gt;dplyr&lt;/code&gt;. My workaround was to c
 rotations to their angles in radians (using &lt;code&gt;Arg()&lt;/code&gt;), but in retrospect
 it would have been more robust to convert the numbers to string, or just
 to give each tile rotation a unique ID.&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;day21&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-21---allergen-assessmenthttpsadventofcodecom2020day21&#34;&gt;Day 21 - &lt;a href=&#34;https://adventofcode.com/2020/day/21&#34;&gt;Allergen assessment&lt;/a&gt;&lt;/h1&gt;
 &lt;p&gt;Each allergen is found in exactly one ingredient.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;input &amp;lt;- readLines(&#39;input21.txt&#39;)
@@ -3058,7 +3058,7 @@ matching[V(g)$type] %&amp;gt;%
 &lt;pre&gt;&lt;code&gt;[1] &amp;quot;prxmdlz,ncjv,knprxg,lxjtns,vzzz,clg,cxfz,qdfpq&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Refreshingly straightforward.&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;day22&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-22---crab-combathttpsadventofcodecom2020day22&#34;&gt;Day 22 - &lt;a href=&#34;https://adventofcode.com/2020/day/22&#34;&gt;Crab combat&lt;/a&gt;&lt;/h1&gt;
 &lt;h2 id=&#34;combat&#34;&gt;Combat&lt;/h2&gt;
 &lt;p&gt;Games are independent of one another until cards from previous games
@@ -3222,7 +3222,7 @@ input data).&lt;/p&gt;
 34 seconds to just 250 milliseconds on the full data (and the loop is a
 few ms faster than the double recursion).&lt;/p&gt;
 &lt;p&gt;Also: the crab lost.&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;day23&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-23---crab-cupshttpsadventofcodecom2020day23&#34;&gt;Day 23 - &lt;a href=&#34;https://adventofcode.com/2020/day/23&#34;&gt;Crab cups&lt;/a&gt;&lt;/h1&gt;
 &lt;h2 id=&#34;ten-moves&#34;&gt;Ten moves&lt;/h2&gt;
 &lt;p&gt;In the first part, the key bit to figure out is how to cycle through a
@@ -3346,7 +3346,7 @@ non-integers or strings.&lt;/p&gt;
 &lt;p&gt;However, for this particular example, the conversion back and forth from
 integer to character makes a named vector/list slower than the
 index-based solution above.&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;day24&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-24---lobby-layouthttpsadventofcodecom2020day24&#34;&gt;Day 24 - &lt;a href=&#34;https://adventofcode.com/2020/day/24&#34;&gt;Lobby layout&lt;/a&gt;&lt;/h1&gt;
 &lt;p&gt;The first challenge in this puzzle is parsing the input, which has no
 delimiters between directions. As the directions are &lt;code&gt;e&lt;/code&gt;, &lt;code&gt;se&lt;/code&gt;, &lt;code&gt;sw&lt;/code&gt;,
@@ -3516,7 +3516,7 @@ cat(&#39;Part 2:&#39;, tiles[n %% 2 == 1, .N])
 &lt;p&gt;Once into part 2, it’s back to a tabular solution, but this &lt;code&gt;data.table&lt;/code&gt;
 implementation is much faster than the &lt;code&gt;dplyr&lt;/code&gt; version originally
 implemented above.&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;day25&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&#34;day-25---combo-breakerhttpsadventofcodecom2020day25&#34;&gt;Day 25 - &lt;a href=&#34;https://adventofcode.com/2020/day/25&#34;&gt;Combo breaker&lt;/a&gt;&lt;/h1&gt;
 &lt;ol&gt;
 &lt;li&gt;Set value to itself multiplied by the subject number (&lt;code&gt;7&lt;/code&gt;).&lt;/li&gt;
@@ -5283,7 +5283,7 @@ for (i in seq_along(names)) {
       
       <guid>https://selbydavid.com/2015/05/16/broadband/</guid>
       <description>&lt;p&gt;Despite living in the capital city of Scotland, my home broadband speeds (especially upload speeds) are painfully slow. There is no fibre-optic offered on my road, while my friend two streets over enjoys super-fast internet. It turns out, through the power of data visualisation, that EH16 is a bit of a broadband speed &amp;ldquo;notspot&amp;rdquo; along with a few other slow neighbourhoods throughout Edinburgh. The big empty hole to the east of the city centre is Arthur&amp;rsquo;s Seat and Holyrood Park.&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
+&lt;script type=&#39;text/javascript&#39; src=&#39;https://public.tableau.com/javascripts/api/viz_v1.js&#39;&gt;&lt;/script&gt;&lt;div class=&#39;tableauPlaceholder&#39; style=&#39;width: 100%; height: 400px; margin: 0 auto;&#39;&gt;&lt;noscript&gt;&lt;a href=&#39;#&#39;&gt;&lt;img alt=&#39;Hotspots and Notspots: Edinburgh Home Broadband Speeds &#39; src=&#39;https:&amp;#47;&amp;#47;public.tableau.com&amp;#47;static&amp;#47;images&amp;#47;Ed&amp;#47;EdinburghBroadband&amp;#47;Map&amp;#47;1_rss.png&#39; style=&#39;border: none&#39; /&gt;&lt;/a&gt;&lt;/noscript&gt;&lt;object class=&#39;tableauViz&#39; width=&#39;100%&#39; height=&#39;400px&#39; style=&#39;display:none;&#39;&gt;&lt;param name=&#39;host_url&#39; value=&#39;https%3A%2F%2Fpublic.tableau.com%2F&#39; /&gt; &lt;param name=&#39;site_root&#39; value=&#39;&#39; /&gt;&lt;param name=&#39;name&#39; value=&#39;EdinburghBroadband&amp;#47;Map&#39; /&gt;&lt;param name=&#39;tabs&#39; value=&#39;no&#39; /&gt;&lt;param name=&#39;toolbar&#39; value=&#39;yes&#39; /&gt;&lt;param name=&#39;static_image&#39; value=&#39;https:&amp;#47;&amp;#47;public.tableau.com&amp;#47;static&amp;#47;images&amp;#47;Ed&amp;#47;EdinburghBroadband&amp;#47;Map&amp;#47;1.png&#39; /&gt; &lt;param name=&#39;animate_transition&#39; value=&#39;yes&#39; /&gt;&lt;param name=&#39;display_static_image&#39; value=&#39;yes&#39; /&gt;&lt;param name=&#39;display_spinner&#39; value=&#39;yes&#39; /&gt;&lt;param name=&#39;display_overlay&#39; value=&#39;yes&#39; /&gt;&lt;param name=&#39;display_count&#39; value=&#39;yes&#39; /&gt;&lt;param name=&#39;showVizHome&#39; value=&#39;no&#39; /&gt;&lt;param name=&#39;showTabs&#39; value=&#39;y&#39; /&gt;&lt;param name=&#39;bootstrapWhenNotified&#39; value=&#39;true&#39; /&gt;&lt;/object&gt;&lt;/div&gt;
 &lt;p&gt;Data source: &lt;a href=&#34;http://data.gov.uk/dataset/broadband-coverage/resource/0f6b7671-eb9a-49bd-8913-90d1c07af11d&#34;&gt;Ofcom&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
@@ -5407,8 +5407,7 @@ text = laply(data, function(t) t$getText())
 &lt;blockquote&gt;
 &lt;p&gt;What does a mathematician do when they aren&amp;rsquo;t lecturing students? What kind of questions are they thinking about? What inspired them to study their subject and what do they do when they get stuck on a problem? What are the big questions facing mathematicians today?&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;!-- raw HTML omitted --&gt;
-</description>
+&lt;div data-configid=&#34;0/8134592&#34; style=&#34;height:456px; margin-left:auto; margin-right:auto;&#34; class=&#34;issuuembed&#34;&gt;&lt;/div&gt;&lt;script type=&#34;text/javascript&#34; src=&#34;//e.issuu.com/embed.js&#34; async=&#34;true&#34;&gt;&lt;/script&gt;</description>
     </item>
     
   </channel>

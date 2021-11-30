@@ -170,7 +170,7 @@ results may differ from mine.</p>
 <li><a href="#day24">Lobby layout</a></li>
 <li><a href="#day25">Combo breaker</a></li>
 </ol>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id='day1'></a></p>
 <h1 id="day-1---report-repairhttpsadventofcodecom2020day1">Day 1 - <a href="https://adventofcode.com/2020/day/1">Report repair</a></h1>
 <h2 id="two-numbers">Two numbers</h2>
 <p>Find the two entries that sum to 2020, then multiply those two numbers
@@ -203,7 +203,7 @@ prod(.[which.max(.$Var3 %in% input), ])
 successively discarding values that could only add up to more than 2020.
 The <code>.</code> notation is just so I can write this without using
 <code>dplyr</code>/<code>magrittr</code>.</p>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id='day2'></a></p>
 <h1 id="day-2---password-philosophyhttpsadventofcodecom2020day2">Day 2 - <a href="https://adventofcode.com/2020/day/2">Password philosophy</a></h1>
 <h2 id="number-of-letters">Number of letters</h2>
 <p>How many passwords are valid according to the policies?</p>
@@ -253,7 +253,7 @@ of which must match the given letter.</p>
 <p>Initially I got caught out here, by misreading the question as ‘at least
 one’ and then wondering why an inclusive or (<code>|</code>) was returning the
 incorrect answer.</p>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id='day3'></a></p>
 <h1 id="day-3---toboggan-trajectoryhttpsadventofcodecom2020day3">Day 3 - <a href="https://adventofcode.com/2020/day/3">Toboggan trajectory</a></h1>
 <p>The input looks a bit like this:</p>
 <pre><code>..##.........##.........##.........##.........##.........##.......  ---&gt;
@@ -299,8 +299,8 @@ trees(1) * trees(3) * trees(5) * trees(7) * trees(1, 2)
 </code></pre>
 <p>The <code>as.double</code> bit is necessary only because multiplying large integer
 outputs together can cause an overflow when the product is larger than
-10<!-- raw HTML omitted -->9<!-- raw HTML omitted -->.</p>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+10<sup>9</sup>.</p>
+<p><a id='day4'></a></p>
 <h1 id="day-4---passport-processinghttpsadventofcodecom2020day4">Day 4 - <a href="https://adventofcode.com/2020/day/4">Passport processing</a></h1>
 <p>The example input is in this ragged format, where keys and values are
 separated by colons and records are separated by double newlines. The
@@ -415,7 +415,7 @@ nrow(valid_passports)
 <p>You could also use a filtering join, though since most of the fields are
 ranges of integer values, you would want to use a <code>data.table</code>
 <em>non-equi-join</em> rather than a simple <code>semi_join</code>.</p>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id='day5'></a></p>
 <h1 id="day-5---binary-boardinghttpsadventofcodecom2020day5">Day 5 - <a href="https://adventofcode.com/2020/day/5">Binary boarding</a></h1>
 <h2 id="highest-seat-id">Highest seat ID</h2>
 <p>This task is easy, as soon as you recognise that it is just converting
@@ -437,7 +437,7 @@ list.</p>
 </code></pre>
 <pre><code>[1] 594
 </code></pre>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id='day6'></a></p>
 <h1 id="day-6---custom-customshttpsadventofcodecom2020day6">Day 6 - <a href="https://adventofcode.com/2020/day/6">Custom customs</a></h1>
 <h2 id="questions-with-any-yes">Questions with any ‘yes’</h2>
 <p>Count the number of unique letters in each group, where a ‘group’ is
@@ -486,7 +486,7 @@ responses[, .(count = length(Reduce(intersect, questions))),
 </code></pre>
 <pre><code>[1] 3358
 </code></pre>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id='day7'></a></p>
 <h1 id="day-7---handy-haversackshttpsadventofcodecom2020day7">Day 7 - <a href="https://adventofcode.com/2020/day/7">Handy haversacks</a></h1>
 <h2 id="number-of-bag-colours">Number of bag colours</h2>
 <p>Given an input list of rules, how many different colours of bags may
@@ -579,7 +579,7 @@ concise way to do it using R.</p>
 </code></pre>
 <pre><code>[1] 45018
 </code></pre>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id='day8'></a></p>
 <h1 id="day-8---handheld-haltinghttpsadventofcodecom2020day8">Day 8 - <a href="https://adventofcode.com/2020/day/8">Handheld halting</a></h1>
 <h2 id="infinite-loop">Infinite loop</h2>
 <p>Just a simple loop that keeps track of all the places it has been so
@@ -663,7 +663,7 @@ brute_force()
 </code></pre>
 <pre><code>[1] 1543
 </code></pre>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id='day9'></a></p>
 <h1 id="day-9---encoding-errorhttpsadventofcodecom2020day9">Day 9 - <a href="https://adventofcode.com/2020/day/9">Encoding error</a></h1>
 <h2 id="adding-pairs">Adding pairs</h2>
 <p>Here the question is how to calculate the sums of pairs of values in a
@@ -748,7 +748,7 @@ far.</li>
 </code></pre>
 <pre><code>[1] 75678618
 </code></pre>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id='day10'></a></p>
 <h1 id="day-10---adapter-arrayhttpsadventofcodecom2020day10">Day 10 - <a href="https://adventofcode.com/2020/day/10">Adapter array</a></h1>
 <h2 id="lagged-differences">Lagged differences</h2>
 <p>This is pretty trivial. Read in the data, append a zero, sort the
@@ -814,7 +814,7 @@ prod(sequences$combos)
 </code></pre>
 <pre><code>[1] &quot;24803586664192&quot;
 </code></pre>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id='day11'></a></p>
 <h1 id="day-11---seating-systemhttpsadventofcodecom2020day11">Day 11 - <a href="https://adventofcode.com/2020/day/11">Seating system</a></h1>
 <h2 id="convoluted-solution">Convoluted solution</h2>
 <p>This puzzle is effectively applying a <a href="https://en.wikipedia.org/wiki/Kernel_(image_processing)"><em>convolution
@@ -948,7 +948,7 @@ change_places(line_of_sight, input)
 <p>This was pretty slow, which is to be expected in R. To speed it up, we
 can rewrite the guts in a lower-level programming language. There may
 also be some scope for vectorisation.</p>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id="day12"></a></p>
 <h1 id="day-12---rain-riskhttpsadventofcodecom2020day12">Day 12 - <a href="https://adventofcode.com/2020/day/12">Rain risk</a></h1>
 <h2 id="complex-directions">Complex directions</h2>
 <p>I was actually expecting this to be more complicated, with turns in
@@ -1028,7 +1028,7 @@ time there is a turn.</p>
 we rotate the ship rather than the waypoint, then reverse the rotation
 at the end to get the final position of the ship relative to its
 starting point.</p>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id="day13"></a></p>
 <h1 id="day-13---shuttle-searchhttpsadventofcodecom2020day13">Day 13 - <a href="https://adventofcode.com/2020/day/13">Shuttle search</a></h1>
 <h2 id="earliest-bus">Earliest bus</h2>
 <p>A bus’s ID indicates the interval between departures, starting at time
@@ -1111,7 +1111,7 @@ format(find_timetable2(buses), sci = FALSE)
 </code></pre>
 <pre><code>[1] &quot;408270049879073&quot;
 </code></pre>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id="day14"></a></p>
 <h1 id="day-14---docking-datahttpsadventofcodecom2020day14">Day 14 - <a href="https://adventofcode.com/2020/day/14">Docking data</a></h1>
 <h2 id="bitmask">Bitmask</h2>
 <p>The trickiest bit(!) in the first part is reading in the data. I wanted
@@ -1207,7 +1207,7 @@ there wasn’t any actual reason why I needed to compress the binary
 digits into a string representation between operations—other than making
 the tables of values easier to read during debugging. I could have
 stored them as vectors or matrices in list-columns, instead.</p>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id="day15"></a></p>
 <h1 id="day-15---rambunctious-recitationhttpsadventofcodecom2020day15">Day 15 - <a href="https://adventofcode.com/2020/day/15">Rambunctious recitation</a></h1>
 <h2 id="memory-game">Memory game</h2>
 <p>The first part is straightforward even with not particularly optimal
@@ -1326,7 +1326,7 @@ logarithmic scale).</p>
 <p>For <code>n = 30000000</code>, the C++ function completed in just under one
 second—about ten times faster than my fastest pure-R code. Worth it?
 Possibly not for this one-off exercise, but it’s interesting to note.</p>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id="day16"></a></p>
 <h1 id="day-16---ticket-translationhttpsadventofcodecom2020day16">Day 16 - <a href="https://adventofcode.com/2020/day/16">Ticket translation</a></h1>
 <p>The first thing we need to do is parse the input data. Everything can be
 grouped into three sections that are separated by blank lines. As each
@@ -1403,7 +1403,7 @@ format(prod(departures$value), scientific = FALSE)
 </code></pre>
 <pre><code>[1] &quot;1382443095281&quot;
 </code></pre>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id="day17"></a></p>
 <h1 id="day-17---conway-cubeshttpsadventofcodecom2020day17">Day 17 - <a href="https://adventofcode.com/2020/day/17">Conway cubes</a></h1>
 <p>The idea will be to grow the size of our cube by 1 in each of the three
 dimensions, keeping all the data so far in the middle. Actually doing
@@ -1509,7 +1509,7 @@ it runs in a couple of seconds, so presumably it’s what they actually
 expect you to do here. I wouldn’t expect this code to scale well without
 a rewrite in <code>Rcpp</code> (see <a href="#day15">day 15</a>) or a sparse matrix/tensor
 library.</p>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id="day18"></a></p>
 <h1 id="day-18---operation-orderhttpsadventofcodecom2020day18">Day 18 - <a href="https://adventofcode.com/2020/day/18">Operation order</a></h1>
 <p>In an R session, the standard order of arithmetic operations applies:</p>
 <pre><code class="language-r">1 + 2 * 3 + 4 * 5 + 6
@@ -1582,7 +1582,7 @@ together. (However Hadley Wickham said they would have used a pipe,
 <p>Reassigning addition to another function is also a hilarious prank you
 can play on someone who never clears out their global workspace. It’ll
 teach them the value of starting with clean working environment.</p>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id="day19"></a></p>
 <h1 id="day-19---monster-messageshttpsadventofcodecom2020day19">Day 19 - <a href="https://adventofcode.com/2020/day/19">Monster messages</a></h1>
 <p>Consider the first example rule set.</p>
 <pre><code>0: 1 2
@@ -1711,7 +1711,7 @@ which detects pairs of brackets that do not contain other brackets. The
 shortest possible pattern length is one (or maybe two because I didn’t
 enclose single letters in brackets) so this provides a reasonable lower
 bound.</p>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id="day20"></a></p>
 <h1 id="day-20---jurassic-jigsawhttpsadventofcodecom2020day20">Day 20 - <a href="https://adventofcode.com/2020/day/20">Jurassic jigsaw</a></h1>
 <p>To match up the puzzle edges, we need to find an edge of each puzzle
 piece that matches up with at least one other puzzle piece. It’s
@@ -1961,7 +1961,7 @@ complex number columns in <code>dplyr</code>. My workaround was to convert the
 rotations to their angles in radians (using <code>Arg()</code>), but in retrospect
 it would have been more robust to convert the numbers to string, or just
 to give each tile rotation a unique ID.</p>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id="day21"></a></p>
 <h1 id="day-21---allergen-assessmenthttpsadventofcodecom2020day21">Day 21 - <a href="https://adventofcode.com/2020/day/21">Allergen assessment</a></h1>
 <p>Each allergen is found in exactly one ingredient.</p>
 <pre><code class="language-r">input &lt;- readLines('input21.txt')
@@ -2006,7 +2006,7 @@ matching[V(g)$type] %&gt;%
 <pre><code>[1] &quot;prxmdlz,ncjv,knprxg,lxjtns,vzzz,clg,cxfz,qdfpq&quot;
 </code></pre>
 <p>Refreshingly straightforward.</p>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id="day22"></a></p>
 <h1 id="day-22---crab-combathttpsadventofcodecom2020day22">Day 22 - <a href="https://adventofcode.com/2020/day/22">Crab combat</a></h1>
 <h2 id="combat">Combat</h2>
 <p>Games are independent of one another until cards from previous games
@@ -2170,7 +2170,7 @@ input data).</p>
 34 seconds to just 250 milliseconds on the full data (and the loop is a
 few ms faster than the double recursion).</p>
 <p>Also: the crab lost.</p>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id="day23"></a></p>
 <h1 id="day-23---crab-cupshttpsadventofcodecom2020day23">Day 23 - <a href="https://adventofcode.com/2020/day/23">Crab cups</a></h1>
 <h2 id="ten-moves">Ten moves</h2>
 <p>In the first part, the key bit to figure out is how to cycle through a
@@ -2294,7 +2294,7 @@ non-integers or strings.</p>
 <p>However, for this particular example, the conversion back and forth from
 integer to character makes a named vector/list slower than the
 index-based solution above.</p>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id="day24"></a></p>
 <h1 id="day-24---lobby-layouthttpsadventofcodecom2020day24">Day 24 - <a href="https://adventofcode.com/2020/day/24">Lobby layout</a></h1>
 <p>The first challenge in this puzzle is parsing the input, which has no
 delimiters between directions. As the directions are <code>e</code>, <code>se</code>, <code>sw</code>,
@@ -2464,7 +2464,7 @@ cat('Part 2:', tiles[n %% 2 == 1, .N])
 <p>Once into part 2, it’s back to a tabular solution, but this <code>data.table</code>
 implementation is much faster than the <code>dplyr</code> version originally
 implemented above.</p>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><a id="day25"></a></p>
 <h1 id="day-25---combo-breakerhttpsadventofcodecom2020day25">Day 25 - <a href="https://adventofcode.com/2020/day/25">Combo breaker</a></h1>
 <ol>
 <li>Set value to itself multiplied by the subject number (<code>7</code>).</li>
