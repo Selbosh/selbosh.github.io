@@ -216,13 +216,13 @@ pre {
 .hljs {
   color: #515151; }
 
-p > code {
+p > code, a > code {
   /* In-line code only */
   letter-spacing: -0.05em;
   font-size: inherit;
   /* Space in-line code apart from surrounding words
      (Inspired by GitHub's CSS) */ }
-  p > code::before, p > code::after {
+  p > code::before, p > code::after, a > code::before, a > code::after {
     content: "\00a0";
     /* = non-breaking space */ }
 

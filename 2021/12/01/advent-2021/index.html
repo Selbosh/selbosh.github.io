@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="author" content="David Selby">
+
+  
+
+
+<title>Advent of Code 2021 &middot; Tea &amp; Stats</title>
+<meta property="og:title" content="Advent of Code 2021" />
+<meta property="og:description" content="It’s that time of year again. And not just for Secret Santa—it’s time for the Advent of Code, a series of programming puzzles in the lead-up to Christmas.
+I’m doing the 2021 challenge in R—in the form of an open-source R package, to demonstrate a test-driven workflow.
+   Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://selbydavid.com/2021/12/01/advent-2021/" />
+<meta property="og:image" content="https://selbydavid.com/img/2020/adventofcode.jpg" />
+<meta property="article:published_time" content="2021-12-01T09:00:00+00:00" />
+<meta property="article:modified_time" content="2021-12-01T09:00:00+00:00" />
+
+
+<meta itemprop="name" content="Advent of Code 2021">
+<meta itemprop="description" content="It’s that time of year again. And not just for Secret Santa—it’s time for the Advent of Code, a series of programming puzzles in the lead-up to Christmas.
+I’m doing the 2021 challenge in R—in the form of an open-source R package, to demonstrate a test-driven workflow.
+   Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
+<meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
+<meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
+<meta itemprop="wordCount" content="300">
+<meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
+
+
+
+<meta itemprop="keywords" content="" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://selbydavid.com/img/2020/adventofcode.jpg"/>
+
+<meta name="twitter:title" content="Advent of Code 2021"/>
+<meta name="twitter:description" content="It’s that time of year again. And not just for Secret Santa—it’s time for the Advent of Code, a series of programming puzzles in the lead-up to Christmas.
+I’m doing the 2021 challenge in R—in the form of an open-source R package, to demonstrate a test-driven workflow.
+   Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package."/>
+<meta name="twitter:site" content="@TeaStats"/>
+
+
+
+  
+    <meta property="article:author" content="https://www.facebook.com/Selbosh" />
+    <meta property="article:publisher" content="https://www.facebook.com/Selbosh" />
+  
+  
+    <meta name="twitter:creator" content="@TeaStats"/>
+  
+
+
+<meta name="theme" content="hugo-tea">
+<meta name="generator" content="Hugo 0.79.1" />
+
+
+
+<link rel="shortcut icon" href="https://selbydavid.com/favicon.ico">
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="https://selbydavid.com/css/main.css" media="all">
+
+<script src="https://use.fontawesome.com/269c7751ba.js"></script>
+
+  </head>
+  <body>
+      
+        <header id="masthead">
+          <img src="https://selbydavid.com/img/logo.svg"
+               width="120"
+               height=""
+               alt="Tea and Stats">
+          <h1><a href="https://selbydavid.com/">Tea &amp; Stats</a></h1>
+          <aside>Data science with David Selby</aside>
+          <nav>
+  <ul>
+    
+      <li><a href="https://selbydavid.com/about/">About</a></li>
+    
+    
+    <li>
+      <a href="https://facebook.com/Selbosh">
+        <i class="fa fa-facebook"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://github.com/Selbosh">
+        <i class="fa fa-github"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://linkedin.com/in/daselby">
+        <i class="fa fa-linkedin"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://twitter.com/TeaStats">
+        <i class="fa fa-twitter"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+
+        </header>
+
+
+<main role="main">
+  <article class="single">
+    <header><h2>Advent of Code 2021</h2></header>
+    
+    <footer>
+      <time datetime="2021-12-01 09:00:00 &#43;0000">
+         1 December 2021
+      </time>
+    </footer>
+    
+    <section>
+    
+<script src="https://selbydavid.com/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p>It’s that time of year again.
+And not just for <a href="https://selbydavid.com/2016/12/07/santa/">Secret Santa</a>—it’s time for the <a href="https://adventofcode.com/">Advent of Code</a>, a series of programming
+puzzles in the lead-up to Christmas.</p>
+<p>I’m doing the 2021 challenge in R—in the form of an open-source <a href="https://github.com/Selbosh/adventofcode2021">R package</a>, to demonstrate a <a href="https://personalpages.manchester.ac.uk/staff/david.selby/rthritis/2021-11-19-unittesting/">test-driven</a> workflow.</p>
+<div style="text-align:center;">
+<div class="github-card" data-github="Selbosh/adventofcode2021" data-width="400" data-height="" data-theme="default" style="display:block; margin:0 auto;">
+
+</div>
+</div>
+<script src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+<p>Each puzzle description typically comes with a few simple examples of inputs and outputs.
+We can use these to define expectations for unit tests with the <a href="https://testthat.r-lib.org/"><strong>testthat</strong></a> package.
+Once a function passes the unit tests, it should be ready to try with the main puzzle input.</p>
+<p>Check my <a href="https://github.com/Selbosh/adventofcode2021"><strong>adventofcode2021</strong></a> repository on GitHub for the latest.</p>
+<pre class="r"><code>remotes::install_github(&#39;Selbosh/adventofcode2021&#39;)</code></pre>
+<div id="day-1---sonar-sweep" class="section level2">
+<h2>Day 1 - <a href="https://adventofcode.com/2021/day/1">Sonar Sweep</a></h2>
+<div id="increases" class="section level3">
+<h3>Increases</h3>
+<p>To count the number of times elements are increasing in a vector it’s as simple as</p>
+<pre class="r"><code>depths &lt;- c(199, 200, 208, 210, 200, 207, 240, 269, 260, 263)
+sum(diff(depths) &gt; 0)</code></pre>
+<pre><code>## [1] 7</code></pre>
+<p>for which I defined a function called <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day01.R#L91-L93"><code>increases</code></a>.</p>
+</div>
+<div id="rolling-sum" class="section level3">
+<h3>Rolling sum</h3>
+<p>For part two, we first want to calculate the three-depth moving sum, then we count the increases as in part one.
+There are plenty of solutions in external R packages for getting lagged (and leading) vectors, for instance <code>dplyr::lag()</code> and <code>dplyr::lead()</code>:</p>
+<pre class="r"><code>depths + dplyr::lead(depths) + dplyr::lead(depths, 2)</code></pre>
+<pre><code>##  [1] 607 618 618 617 647 716 769 792  NA  NA</code></pre>
+<p>Or you could even calculate the rolling sum using a pre-made solution in <strong>zoo</strong> (Z’s Ordered Observations, a time-series analysis package).</p>
+<pre class="r"><code>zoo::rollsum(depths, 3)</code></pre>
+<pre><code>## [1] 607 618 618 617 647 716 769 792</code></pre>
+<p>To avoid loading any external packages at this stage, I defined my own base R function called <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day01.R#L99-101"><code>rolling_sum()</code></a>, which uses <code>tail</code> and <code>head</code> with negative lengths to omit the first and last elements of the vector:</p>
+<pre class="r"><code>head(depths, -2) + head(tail(depths, -1), -1) + tail(depths, -2)</code></pre>
+<pre><code>## [1] 607 618 618 617 647 716 769 792</code></pre>
+</div>
+</div>
+
+    </section>
+    
+			<section class="comments">
+				<div id="disqus_thread"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'tea-stats';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+			</section>
+		
+  </article>
+</main>
+
+      <footer id="footer">
+        
+        <a href="#">
+          <img src="https://selbydavid.com/img/logo.svg"
+               width="60"
+               height=""
+               alt="Return to top"
+               title="Return to top">
+        </a>
+        
+        © 2016–21 David Selby | <a href='https://github.com/Selbosh/hugo-tea'>Hugo Tea Theme</a>
+      </footer>
+    
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-11136457-6', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+  </body>
+</html>
+
