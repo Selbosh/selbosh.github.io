@@ -124,7 +124,7 @@ pre {
   color: $colour-copy;
 }
 
-p>code { /* In-line code only */
+p>code, a>code { /* In-line code only */
   letter-spacing: -0.05em;
   font-size: inherit;
   /* Space in-line code apart from surrounding words
