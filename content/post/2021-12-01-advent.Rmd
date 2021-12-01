@@ -55,7 +55,7 @@ Or you could even calculate the rolling sum using a pre-made solution in **zoo**
 zoo::rollsum(depths, 3)
 ```
 
-To avoid loading any external packages at this stage, I defined my own base R function called [`rolling_sum()`](https://github.com/Selbosh/adventofcode2021/blob/main/R/day01.R#L99-101), which uses `tail` and `head` with negative lengths to omit the first and last elements of the vector:
+To avoid loading any external packages at this stage, I defined my own base R function called [`rolling_sum()`](https://github.com/Selbosh/adventofcode2021/blob/main/R/day01.R#L99-L101), which uses `tail` and `head` with negative lengths to omit the first and last elements of the vector:
 
 ```{r}
 head(depths, -2) + head(tail(depths, -1), -1) + tail(depths, -2)
