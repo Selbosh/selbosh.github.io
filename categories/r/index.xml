@@ -61,9 +61,12 @@ There are plenty of solutions in external R packages for getting lagged (and lea
 &lt;p&gt;Or you could even calculate the rolling sum using a pre-made solution in &lt;strong&gt;zoo&lt;/strong&gt; (Z’s Ordered Observations, a time-series analysis package).&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;zoo::rollsum(depths, 3)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## [1] 607 618 618 617 647 716 769 792&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;To avoid loading any external packages at this stage, I defined my own base R function called &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day01.R#L99-101&#34;&gt;&lt;code&gt;rolling_sum()&lt;/code&gt;&lt;/a&gt;, which uses &lt;code&gt;tail&lt;/code&gt; and &lt;code&gt;head&lt;/code&gt; with negative lengths to omit the first and last elements of the vector:&lt;/p&gt;
+&lt;p&gt;To avoid loading any external packages at this stage, I defined my own base R function called &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day01.R#L99-L101&#34;&gt;&lt;code&gt;rolling_sum()&lt;/code&gt;&lt;/a&gt;, which uses &lt;code&gt;tail&lt;/code&gt; and &lt;code&gt;head&lt;/code&gt; with negative lengths to omit the first and last elements of the vector:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;head(depths, -2) + head(tail(depths, -1), -1) + tail(depths, -2)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## [1] 607 618 618 617 647 716 769 792&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As &lt;a href=&#34;https://twitter.com/schochastics/status/1466062839077027845&#34;&gt;David Schoch points out&lt;/a&gt;, you can just use the &lt;code&gt;lag&lt;/code&gt; argument of &lt;code&gt;diff&lt;/code&gt; to make this entire puzzle into a one-liner:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sapply(c(1, 3), \(lag) sum(diff(depths, lag) &amp;gt; 0))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 7 5&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>

@@ -28,7 +28,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
    Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
 <meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="300">
+<meta itemprop="wordCount" content="333">
 <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
@@ -168,9 +168,12 @@ There are plenty of solutions in external R packages for getting lagged (and lea
 <p>Or you could even calculate the rolling sum using a pre-made solution in <strong>zoo</strong> (Z’s Ordered Observations, a time-series analysis package).</p>
 <pre class="r"><code>zoo::rollsum(depths, 3)</code></pre>
 <pre><code>## [1] 607 618 618 617 647 716 769 792</code></pre>
-<p>To avoid loading any external packages at this stage, I defined my own base R function called <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day01.R#L99-101"><code>rolling_sum()</code></a>, which uses <code>tail</code> and <code>head</code> with negative lengths to omit the first and last elements of the vector:</p>
+<p>To avoid loading any external packages at this stage, I defined my own base R function called <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day01.R#L99-L101"><code>rolling_sum()</code></a>, which uses <code>tail</code> and <code>head</code> with negative lengths to omit the first and last elements of the vector:</p>
 <pre class="r"><code>head(depths, -2) + head(tail(depths, -1), -1) + tail(depths, -2)</code></pre>
 <pre><code>## [1] 607 618 618 617 647 716 769 792</code></pre>
+<p>As <a href="https://twitter.com/schochastics/status/1466062839077027845">David Schoch points out</a>, you can just use the <code>lag</code> argument of <code>diff</code> to make this entire puzzle into a one-liner:</p>
+<pre class="r"><code>sapply(c(1, 3), \(lag) sum(diff(depths, lag) &gt; 0))</code></pre>
+<pre><code>## [1] 7 5</code></pre>
 </div>
 </div>
 
@@ -227,6 +230,17 @@ There are plenty of solutions in external R packages for getting lagged (and lea
 
 
     
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script src="//yihui.org/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
 
     
 <script type="application/javascript">
