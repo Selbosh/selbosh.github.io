@@ -27,7 +27,7 @@ Check my [**adventofcode2021**](https://github.com/Selbosh/adventofcode2021) rep
 remotes::install_github('Selbosh/adventofcode2021')
 ```
 
-## Day 1 - [Sonar Sweep](https://adventofcode.com/2021/day/1)
+## Day 1 - [Sonar Sweep](https://adventofcode.com/2021/day/1) {#day1}
 
 ### Increases
 
