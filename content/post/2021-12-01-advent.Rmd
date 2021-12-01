@@ -1,0 +1,63 @@
+---
+title: Advent of Code 2021
+date: '2021-12-01T09:00:00+00:00'
+slug: advent-2021
+categories: ['R']
+images: ['/img/2020/adventofcode.jpg']
+---
+
+It's that time of year again.
+And not just for [Secret Santa](/2016/12/07/santa/)---it's time for the [Advent of Code](https://adventofcode.com/), a series of programming
+puzzles in the lead-up to Christmas.
+
+I'm doing the 2021 challenge in R---in the form of an open-source [R package](https://github.com/Selbosh/adventofcode2021), to demonstrate a [test-driven](https://personalpages.manchester.ac.uk/staff/david.selby/rthritis/2021-11-19-unittesting/) workflow.
+
+<div style="text-align:center;">
+  <div class="github-card" data-github="Selbosh/adventofcode2021" data-width="400" data-height="" data-theme="default" style="display:block; margin:0 auto;"></div>
+</div>
+<script src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+
+Each puzzle description typically comes with a few simple examples of inputs and outputs.
+We can use these to define expectations for unit tests with the [**testthat**](https://testthat.r-lib.org/) package.
+Once a function passes the unit tests, it should be ready to try with the main puzzle input.
+
+Check my [**adventofcode2021**](https://github.com/Selbosh/adventofcode2021) repository on GitHub for the latest.
+
+```r
+remotes::install_github('Selbosh/adventofcode2021')
+```
+
+## Day 1 - [Sonar Sweep](https://adventofcode.com/2021/day/1)
+
+### Increases
+
+To count the number of times elements are increasing in a vector it's as simple as
+
+```{r}
+depths <- c(199, 200, 208, 210, 200, 207, 240, 269, 260, 263)
+sum(diff(depths) > 0)
+```
+
+for which I defined a function called [`increases`](https://github.com/Selbosh/adventofcode2021/blob/main/R/day01.R#L91-L93).
+
+### Rolling sum
+
+For part two, we first want to calculate the three-depth moving sum, then we count the increases as in part one.
+There are plenty of solutions in external R packages for getting lagged (and leading) vectors, for instance `dplyr::lag()` and `dplyr::lead()`: 
+
+```{r, message = FALSE}
+depths + dplyr::lead(depths) + dplyr::lead(depths, 2)
+```
+
+Or you could even calculate the rolling sum using a pre-made solution in **zoo** (Z's Ordered Observations, a time-series analysis package).
+
+```{r}
+zoo::rollsum(depths, 3)
+```
+
+To avoid loading any external packages at this stage, I defined my own base R function called [`rolling_sum()`](https://github.com/Selbosh/adventofcode2021/blob/main/R/day01.R#L99-101), which uses `tail` and `head` with negative lengths to omit the first and last elements of the vector:
+
+```{r}
+head(depths, -2) + head(tail(depths, -1), -1) + tail(depths, -2)
+```
+

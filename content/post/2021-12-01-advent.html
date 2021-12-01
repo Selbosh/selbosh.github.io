@@ -1,0 +1,50 @@
+---
+title: Advent of Code 2021
+date: '2021-12-01T09:00:00+00:00'
+slug: advent-2021
+categories: ['R']
+images: ['/img/2020/adventofcode.jpg']
+---
+
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p>It’s that time of year again.
+And not just for <a href="/2016/12/07/santa/">Secret Santa</a>—it’s time for the <a href="https://adventofcode.com/">Advent of Code</a>, a series of programming
+puzzles in the lead-up to Christmas.</p>
+<p>I’m doing the 2021 challenge in R—in the form of an open-source <a href="https://github.com/Selbosh/adventofcode2021">R package</a>, to demonstrate a <a href="https://personalpages.manchester.ac.uk/staff/david.selby/rthritis/2021-11-19-unittesting/">test-driven</a> workflow.</p>
+<div style="text-align:center;">
+<div class="github-card" data-github="Selbosh/adventofcode2021" data-width="400" data-height="" data-theme="default" style="display:block; margin:0 auto;">
+
+</div>
+</div>
+<script src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+<p>Each puzzle description typically comes with a few simple examples of inputs and outputs.
+We can use these to define expectations for unit tests with the <a href="https://testthat.r-lib.org/"><strong>testthat</strong></a> package.
+Once a function passes the unit tests, it should be ready to try with the main puzzle input.</p>
+<p>Check my <a href="https://github.com/Selbosh/adventofcode2021"><strong>adventofcode2021</strong></a> repository on GitHub for the latest.</p>
+<pre class="r"><code>remotes::install_github(&#39;Selbosh/adventofcode2021&#39;)</code></pre>
+<div id="day-1---sonar-sweep" class="section level2">
+<h2>Day 1 - <a href="https://adventofcode.com/2021/day/1">Sonar Sweep</a></h2>
+<div id="increases" class="section level3">
+<h3>Increases</h3>
+<p>To count the number of times elements are increasing in a vector it’s as simple as</p>
+<pre class="r"><code>depths &lt;- c(199, 200, 208, 210, 200, 207, 240, 269, 260, 263)
+sum(diff(depths) &gt; 0)</code></pre>
+<pre><code>## [1] 7</code></pre>
+<p>for which I defined a function called <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day01.R#L91-L93"><code>increases</code></a>.</p>
+</div>
+<div id="rolling-sum" class="section level3">
+<h3>Rolling sum</h3>
+<p>For part two, we first want to calculate the three-depth moving sum, then we count the increases as in part one.
+There are plenty of solutions in external R packages for getting lagged (and leading) vectors, for instance <code>dplyr::lag()</code> and <code>dplyr::lead()</code>:</p>
+<pre class="r"><code>depths + dplyr::lead(depths) + dplyr::lead(depths, 2)</code></pre>
+<pre><code>##  [1] 607 618 618 617 647 716 769 792  NA  NA</code></pre>
+<p>Or you could even calculate the rolling sum using a pre-made solution in <strong>zoo</strong> (Z’s Ordered Observations, a time-series analysis package).</p>
+<pre class="r"><code>zoo::rollsum(depths, 3)</code></pre>
+<pre><code>## [1] 607 618 618 617 647 716 769 792</code></pre>
+<p>To avoid loading any external packages at this stage, I defined my own base R function called <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day01.R#L99-101"><code>rolling_sum()</code></a>, which uses <code>tail</code> and <code>head</code> with negative lengths to omit the first and last elements of the vector:</p>
+<pre class="r"><code>head(depths, -2) + head(tail(depths, -1), -1) + tail(depths, -2)</code></pre>
+<pre><code>## [1] 607 618 618 617 647 716 769 792</code></pre>
+</div>
+</div>
