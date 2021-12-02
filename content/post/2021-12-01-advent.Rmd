@@ -66,3 +66,32 @@ As [David Schoch points out](https://twitter.com/schochastics/status/14660628390
 ```{r}
 sapply(c(1, 3), \(lag) sum(diff(depths, lag) > 0))
 ```
+
+## Day 2 - [Dive!](https://adventofcode.com/2021/day/2) {#day2}
+
+### Depth sum
+
+Read in the input as a two-column data frame using `read.table()`.
+I gave mine nice column names, `cmd` and `value`, but this isn't essential.
+
+Then take advantage of the fact that `TRUE == 1` and `FALSE == 0` to make a mathematical `ifelse`-type statement for the horizontal and vertical movements.
+In my R package, this is implemented as a function called [`dive()`](https://github.com/Selbosh/adventofcode2021/blob/main/R/day02.R#L70-L76):
+
+```r
+x <- (cmd == 'forward') * value
+y <- ((cmd == 'down') - (cmd == 'up')) * value
+sum(x) * sum(y)
+```
+
+### Cumulative depth sum
+
+Part two is much like part one, but now `y` represents (change in) aim, and (change in) depth is derived from that.
+Don't forget the function `cumsum()`, which can save you writing a loop!
+Here is the body of my function [`dive2()`](https://github.com/Selbosh/adventofcode2021/blob/main/R/day02.R#L80-L87):
+
+```r
+x <- (cmd == 'forward') * value
+y <- ((cmd == 'down') - (cmd == 'up')) * value
+depth <- cumsum(y) * x
+sum(x) * sum(depth)
+```

@@ -51,3 +51,26 @@ There are plenty of solutions in external R packages for getting lagged (and lea
 <pre><code>## [1] 7 5</code></pre>
 </div>
 </div>
+<div id="day2" class="section level2">
+<h2>Day 2 - <a href="https://adventofcode.com/2021/day/2">Dive!</a></h2>
+<div id="depth-sum" class="section level3">
+<h3>Depth sum</h3>
+<p>Read in the input as a two-column data frame using <code>read.table()</code>.
+I gave mine nice column names, <code>cmd</code> and <code>value</code>, but this isn’t essential.</p>
+<p>Then take advantage of the fact that <code>TRUE == 1</code> and <code>FALSE == 0</code> to make a mathematical <code>ifelse</code>-type statement for the horizontal and vertical movements.
+In my R package, this is implemented as a function called <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day02.R#L70-L76"><code>dive()</code></a>:</p>
+<pre class="r"><code>x &lt;- (cmd == &#39;forward&#39;) * value
+y &lt;- ((cmd == &#39;down&#39;) - (cmd == &#39;up&#39;)) * value
+sum(x) * sum(y)</code></pre>
+</div>
+<div id="cumulative-depth-sum" class="section level3">
+<h3>Cumulative depth sum</h3>
+<p>Part two is much like part one, but now <code>y</code> represents (change in) aim, and (change in) depth is derived from that.
+Don’t forget the function <code>cumsum()</code>, which can save you writing a loop!
+Here is the body of my function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day02.R#L80-L87"><code>dive2()</code></a>:</p>
+<pre class="r"><code>x &lt;- (cmd == &#39;forward&#39;) * value
+y &lt;- ((cmd == &#39;down&#39;) - (cmd == &#39;up&#39;)) * value
+depth &lt;- cumsum(y) * x
+sum(x) * sum(depth)</code></pre>
+</div>
+</div>
