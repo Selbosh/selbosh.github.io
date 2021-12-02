@@ -69,6 +69,29 @@ There are plenty of solutions in external R packages for getting lagged (and lea
 &lt;pre&gt;&lt;code&gt;## [1] 7 5&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;div id=&#34;day2&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 2 - &lt;a href=&#34;https://adventofcode.com/2021/day/2&#34;&gt;Dive!&lt;/a&gt;&lt;/h2&gt;
+&lt;div id=&#34;depth-sum&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Depth sum&lt;/h3&gt;
+&lt;p&gt;Read in the input as a two-column data frame using &lt;code&gt;read.table()&lt;/code&gt;.
+I gave mine nice column names, &lt;code&gt;cmd&lt;/code&gt; and &lt;code&gt;value&lt;/code&gt;, but this isn’t essential.&lt;/p&gt;
+&lt;p&gt;Then take advantage of the fact that &lt;code&gt;TRUE == 1&lt;/code&gt; and &lt;code&gt;FALSE == 0&lt;/code&gt; to make a mathematical &lt;code&gt;ifelse&lt;/code&gt;-type statement for the horizontal and vertical movements.
+In my R package, this is implemented as a function called &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day02.R#L70-L76&#34;&gt;&lt;code&gt;dive()&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;x &amp;lt;- (cmd == &amp;#39;forward&amp;#39;) * value
+y &amp;lt;- ((cmd == &amp;#39;down&amp;#39;) - (cmd == &amp;#39;up&amp;#39;)) * value
+sum(x) * sum(y)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;cumulative-depth-sum&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Cumulative depth sum&lt;/h3&gt;
+&lt;p&gt;Part two is much like part one, but now &lt;code&gt;y&lt;/code&gt; represents (change in) aim, and (change in) depth is derived from that.
+Don’t forget the function &lt;code&gt;cumsum()&lt;/code&gt;, which can save you writing a loop!
+Here is the body of my function &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day02.R#L80-L87&#34;&gt;&lt;code&gt;dive2()&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;x &amp;lt;- (cmd == &amp;#39;forward&amp;#39;) * value
+y &amp;lt;- ((cmd == &amp;#39;down&amp;#39;) - (cmd == &amp;#39;up&amp;#39;)) * value
+depth &amp;lt;- cumsum(y) * x
+sum(x) * sum(depth)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 </description>
     </item>
     
