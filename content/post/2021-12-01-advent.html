@@ -74,3 +74,45 @@ depth &lt;- cumsum(y) * x
 sum(x) * sum(depth)</code></pre>
 </div>
 </div>
+<div id="day3" class="section level2">
+<h2>Day 3 - <a href="https://adventofcode.com/2021/day/2">Binary Diagnostic</a></h2>
+<div id="power-consumption" class="section level3">
+<h3>Power consumption</h3>
+<p>There are a few different ways you could approach part one, but my approach was first to read in the data as a data frame of binary integers using the function <code>read.fwf()</code>.
+Then, find the most common value in each column using the base function <code>colMeans()</code> and rounding the result.</p>
+<p>According to the instructions, in the event of a tie you should take 1 to be the most common digit.
+Although this is familiar to real life—0.5 rounds up to 1—computers <a href="https://en.wikipedia.org/wiki/Rounding#Round_half_to_even">don’t work this way</a>: R rounds to even instead (see <code>?round</code>).
+Because zero is even, that means <code>round(0.5)</code> yields 0.
+To get around this, add 1 before rounding, then subtract it again.</p>
+<p>My function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day03.R#L78-L81"><code>power_consumption()</code></a>, which once again takes advantage of <code>TRUE</code> being equivalent to 1 and <code>FALSE</code> to 0:</p>
+<pre class="r"><code>common &lt;- round(colMeans(x) + 1) - 1
+binary_to_int(common) * binary_to_int(!common)</code></pre>
+<p>To convert a vector of binary digits to decimal, I use the following <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day03.R#L104-L106">utility function</a>:</p>
+<pre class="r"><code>binary_to_int &lt;- function(x) {
+  sum(x * 2 ^ rev(seq_along(x) - 1))
+}</code></pre>
+<p>However, if using a string representation then there’s a handy function in base R called <code>strtoi()</code> that you could also use for this (<a href="https://twitter.com/_Riinu_/status/1466681283887648769">thanks to Riinu Pius for that tip</a>).</p>
+</div>
+<div id="life-support" class="section level3">
+<h3>Life support</h3>
+<p>Part two finds the common digits in a successively decreasing set of binary numbers.
+A loop is appropriate here, since we can halt once there is only one number left.
+As this loop will only run (at most) 12 times in total, it shouldn’t be too slow in R.</p>
+<p>Function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day03.R#L85-L98"><code>life_support()</code></a>:</p>
+<pre class="r"><code>life_support &lt;- function(x) {
+  oxygen &lt;- co2 &lt;- x
+  for (j in 1:ncol(x)) {
+    if (nrow(oxygen) &gt; 1) {
+      common &lt;- most_common(oxygen)
+      oxygen &lt;- oxygen[oxygen[, j] == common[j], ]
+    }
+    if (nrow(co2) &gt; 1) {
+      common &lt;- most_common(co2)
+      co2 &lt;- co2[co2[, j] != common[j], ]
+    }
+  }
+  binary_to_int(oxygen) * binary_to_int(co2)
+}</code></pre>
+<p>There might be cleverer ways of doing this.</p>
+</div>
+</div>
