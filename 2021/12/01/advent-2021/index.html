@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="author" content="David Selby">
+
+  
+
+
+<title>Advent of Code 2021 &middot; Tea &amp; Stats</title>
+<meta property="og:title" content="Advent of Code 2021" />
+<meta property="og:description" content="It’s that time of year again. And not just for Secret Santa—it’s time for the Advent of Code, a series of programming puzzles in the lead-up to Christmas.
+I’m doing the 2021 challenge in R—in the form of an open-source R package, to demonstrate a test-driven workflow.
+   Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://selbydavid.com/2021/12/01/advent-2021/" />
+<meta property="og:image" content="https://selbydavid.com/img/2020/adventofcode.jpg" />
+<meta property="article:published_time" content="2021-12-01T09:00:00+00:00" />
+<meta property="article:modified_time" content="2021-12-01T09:00:00+00:00" />
+
+
+<meta itemprop="name" content="Advent of Code 2021">
+<meta itemprop="description" content="It’s that time of year again. And not just for Secret Santa—it’s time for the Advent of Code, a series of programming puzzles in the lead-up to Christmas.
+I’m doing the 2021 challenge in R—in the form of an open-source R package, to demonstrate a test-driven workflow.
+   Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
+<meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
+<meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
+<meta itemprop="wordCount" content="810">
+<meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
+
+
+
+<meta itemprop="keywords" content="" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://selbydavid.com/img/2020/adventofcode.jpg"/>
+
+<meta name="twitter:title" content="Advent of Code 2021"/>
+<meta name="twitter:description" content="It’s that time of year again. And not just for Secret Santa—it’s time for the Advent of Code, a series of programming puzzles in the lead-up to Christmas.
+I’m doing the 2021 challenge in R—in the form of an open-source R package, to demonstrate a test-driven workflow.
+   Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package."/>
+<meta name="twitter:site" content="@TeaStats"/>
+
+
+
+  
+    <meta property="article:author" content="https://www.facebook.com/Selbosh" />
+    <meta property="article:publisher" content="https://www.facebook.com/Selbosh" />
+  
+  
+    <meta name="twitter:creator" content="@TeaStats"/>
+  
+
+
+<meta name="theme" content="hugo-tea">
+<meta name="generator" content="Hugo 0.79.1" />
+
+
+
+<link rel="shortcut icon" href="https://selbydavid.com/favicon.ico">
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="https://selbydavid.com/css/main.css" media="all">
+
+<script src="https://use.fontawesome.com/269c7751ba.js"></script>
+
+  </head>
+  <body>
+      
+        <header id="masthead">
+          <img src="https://selbydavid.com/img/logo.svg"
+               width="120"
+               height=""
+               alt="Tea and Stats">
+          <h1><a href="https://selbydavid.com/">Tea &amp; Stats</a></h1>
+          <aside>Data science with David Selby</aside>
+          <nav>
+  <ul>
+    
+      <li><a href="https://selbydavid.com/about/">About</a></li>
+    
+    
+    <li>
+      <a href="https://facebook.com/Selbosh">
+        <i class="fa fa-facebook"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://github.com/Selbosh">
+        <i class="fa fa-github"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://linkedin.com/in/daselby">
+        <i class="fa fa-linkedin"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://twitter.com/TeaStats">
+        <i class="fa fa-twitter"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+
+        </header>
+
+
+<main role="main">
+  <article class="single">
+    <header><h2>Advent of Code 2021</h2></header>
+    
+    <footer>
+      <time datetime="2021-12-01 09:00:00 &#43;0000">
+         1 December 2021
+      </time>
+    </footer>
+    
+    <section>
+    
+<script src="https://selbydavid.com/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p>It’s that time of year again.
+And not just for <a href="https://selbydavid.com/2016/12/07/santa/">Secret Santa</a>—it’s time for the <a href="https://adventofcode.com/">Advent of Code</a>, a series of programming
+puzzles in the lead-up to Christmas.</p>
+<p>I’m doing the 2021 challenge in R—in the form of an open-source <a href="https://github.com/Selbosh/adventofcode2021">R package</a>, to demonstrate a <a href="https://personalpages.manchester.ac.uk/staff/david.selby/rthritis/2021-11-19-unittesting/">test-driven</a> workflow.</p>
+<div style="text-align:center;">
+<div class="github-card" data-github="Selbosh/adventofcode2021" data-width="400" data-height="" data-theme="default" style="display:block; margin:0 auto;">
+
+</div>
+</div>
+<script src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+<p>Each puzzle description typically comes with a few simple examples of inputs and outputs.
+We can use these to define expectations for unit tests with the <a href="https://testthat.r-lib.org/"><strong>testthat</strong></a> package.
+Once a function passes the unit tests, it should be ready to try with the main puzzle input.</p>
+<p>Check my <a href="https://github.com/Selbosh/adventofcode2021"><strong>adventofcode2021</strong></a> repository on GitHub for the latest.</p>
+<pre class="r"><code>remotes::install_github(&#39;Selbosh/adventofcode2021&#39;)</code></pre>
+<div id="day1" class="section level2">
+<h2>Day 1 - <a href="https://adventofcode.com/2021/day/1">Sonar Sweep</a></h2>
+<div id="increases" class="section level3">
+<h3>Increases</h3>
+<p>To count the number of times elements are increasing in a vector it’s as simple as</p>
+<pre class="r"><code>depths &lt;- c(199, 200, 208, 210, 200, 207, 240, 269, 260, 263)
+sum(diff(depths) &gt; 0)</code></pre>
+<pre><code>## [1] 7</code></pre>
+<p>for which I defined a function called <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day01.R#L91-L93"><code>increases</code></a>.</p>
+</div>
+<div id="rolling-sum" class="section level3">
+<h3>Rolling sum</h3>
+<p>For part two, we first want to calculate the three-depth moving sum, then we count the increases as in part one.
+There are plenty of solutions in external R packages for getting lagged (and leading) vectors, for instance <code>dplyr::lag()</code> and <code>dplyr::lead()</code>:</p>
+<pre class="r"><code>depths + dplyr::lead(depths) + dplyr::lead(depths, 2)</code></pre>
+<pre><code>##  [1] 607 618 618 617 647 716 769 792  NA  NA</code></pre>
+<p>Or you could even calculate the rolling sum using a pre-made solution in <strong>zoo</strong> (Z’s Ordered Observations, a time-series analysis package).</p>
+<pre class="r"><code>zoo::rollsum(depths, 3)</code></pre>
+<pre><code>## [1] 607 618 618 617 647 716 769 792</code></pre>
+<p>To avoid loading any external packages at this stage, I defined my own base R function called <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day01.R#L99-L101"><code>rolling_sum()</code></a>, which uses <code>tail</code> and <code>head</code> with negative lengths to omit the first and last elements of the vector:</p>
+<pre class="r"><code>head(depths, -2) + head(tail(depths, -1), -1) + tail(depths, -2)</code></pre>
+<pre><code>## [1] 607 618 618 617 647 716 769 792</code></pre>
+<p>As <a href="https://twitter.com/schochastics/status/1466062839077027845">David Schoch points out</a>, you can just use the <code>lag</code> argument of <code>diff</code> to make this entire puzzle into a one-liner:</p>
+<pre class="r"><code>sapply(c(1, 3), \(lag) sum(diff(depths, lag) &gt; 0))</code></pre>
+<pre><code>## [1] 7 5</code></pre>
+</div>
+</div>
+<div id="day2" class="section level2">
+<h2>Day 2 - <a href="https://adventofcode.com/2021/day/2">Dive!</a></h2>
+<div id="depth-sum" class="section level3">
+<h3>Depth sum</h3>
+<p>Read in the input as a two-column data frame using <code>read.table()</code>.
+I gave mine nice column names, <code>cmd</code> and <code>value</code>, but this isn’t essential.</p>
+<p>Then take advantage of the fact that <code>TRUE == 1</code> and <code>FALSE == 0</code> to make a mathematical <code>ifelse</code>-type statement for the horizontal and vertical movements.
+In my R package, this is implemented as a function called <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day02.R#L70-L76"><code>dive()</code></a>:</p>
+<pre class="r"><code>x &lt;- (cmd == &#39;forward&#39;) * value
+y &lt;- ((cmd == &#39;down&#39;) - (cmd == &#39;up&#39;)) * value
+sum(x) * sum(y)</code></pre>
+</div>
+<div id="cumulative-depth-sum" class="section level3">
+<h3>Cumulative depth sum</h3>
+<p>Part two is much like part one, but now <code>y</code> represents (change in) aim, and (change in) depth is derived from that.
+Don’t forget the function <code>cumsum()</code>, which can save you writing a loop!
+Here is the body of my function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day02.R#L80-L87"><code>dive2()</code></a>:</p>
+<pre class="r"><code>x &lt;- (cmd == &#39;forward&#39;) * value
+y &lt;- ((cmd == &#39;down&#39;) - (cmd == &#39;up&#39;)) * value
+depth &lt;- cumsum(y) * x
+sum(x) * sum(depth)</code></pre>
+</div>
+</div>
+<div id="day3" class="section level2">
+<h2>Day 3 - <a href="https://adventofcode.com/2021/day/2">Binary Diagnostic</a></h2>
+<div id="power-consumption" class="section level3">
+<h3>Power consumption</h3>
+<p>There are a few different ways you could approach part one, but my approach was first to read in the data as a data frame of binary integers using the function <code>read.fwf()</code>.
+Then, find the most common value in each column using the base function <code>colMeans()</code> and rounding the result.</p>
+<p>According to the instructions, in the event of a tie you should take 1 to be the most common digit.
+Although this is familiar to real life—0.5 rounds up to 1—computers <a href="https://en.wikipedia.org/wiki/Rounding#Round_half_to_even">don’t work this way</a>: R rounds to even instead (see <code>?round</code>).
+Because zero is even, that means <code>round(0.5)</code> yields 0.
+To get around this, add 1 before rounding, then subtract it again.</p>
+<p>My function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day03.R#L78-L81"><code>power_consumption()</code></a>, which once again takes advantage of <code>TRUE</code> being equivalent to 1 and <code>FALSE</code> to 0:</p>
+<pre class="r"><code>common &lt;- round(colMeans(x) + 1) - 1
+binary_to_int(common) * binary_to_int(!common)</code></pre>
+<p>To convert a vector of binary digits to decimal, I use the following <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day03.R#L104-L106">utility function</a>:</p>
+<pre class="r"><code>binary_to_int &lt;- function(x) {
+  sum(x * 2 ^ rev(seq_along(x) - 1))
+}</code></pre>
+<p>However, if using a string representation then there’s a handy function in base R called <code>strtoi()</code> that you could also use for this (<a href="https://twitter.com/_Riinu_/status/1466681283887648769">thanks to Riinu Pius for that tip</a>).</p>
+</div>
+<div id="life-support" class="section level3">
+<h3>Life support</h3>
+<p>Part two finds the common digits in a successively decreasing set of binary numbers.
+A loop is appropriate here, since we can halt once there is only one number left.
+As this loop will only run (at most) 12 times in total, it shouldn’t be too slow in R.</p>
+<p>Function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day03.R#L85-L98"><code>life_support()</code></a>:</p>
+<pre class="r"><code>life_support &lt;- function(x) {
+  oxygen &lt;- co2 &lt;- x
+  for (j in 1:ncol(x)) {
+    if (nrow(oxygen) &gt; 1) {
+      common &lt;- most_common(oxygen)
+      oxygen &lt;- oxygen[oxygen[, j] == common[j], ]
+    }
+    if (nrow(co2) &gt; 1) {
+      common &lt;- most_common(co2)
+      co2 &lt;- co2[co2[, j] != common[j], ]
+    }
+  }
+  binary_to_int(oxygen) * binary_to_int(co2)
+}</code></pre>
+<p>There might be cleverer ways of doing this.</p>
+</div>
+</div>
+
+    </section>
+    
+			<section class="comments">
+				<script src="https://utteranc.es/client.js"
+          repo="Selbosh/selbosh.github.io"
+          issue-term="title"
+          label="comments 💬"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+        </script>
+			</section>
+		
+  </article>
+</main>
+
+      <footer id="footer">
+        
+        <a href="#">
+          <img src="https://selbydavid.com/img/logo.svg"
+               width="60"
+               height=""
+               alt="Return to top"
+               title="Return to top">
+        </a>
+        
+        © 2016–21 David Selby | <a href='https://github.com/Selbosh/hugo-tea'>Hugo Tea Theme</a>
+      </footer>
+    
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script src="//yihui.org/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-11136457-6', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+  </body>
+</html>
+
