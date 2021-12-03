@@ -92,6 +92,48 @@ depth &amp;lt;- cumsum(y) * x
 sum(x) * sum(depth)&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;div id=&#34;day3&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 3 - &lt;a href=&#34;https://adventofcode.com/2021/day/2&#34;&gt;Binary Diagnostic&lt;/a&gt;&lt;/h2&gt;
+&lt;div id=&#34;power-consumption&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Power consumption&lt;/h3&gt;
+&lt;p&gt;There are a few different ways you could approach part one, but my approach was first to read in the data as a data frame of binary integers using the function &lt;code&gt;read.fwf()&lt;/code&gt;.
+Then, find the most common value in each column using the base function &lt;code&gt;colMeans()&lt;/code&gt; and rounding the result.&lt;/p&gt;
+&lt;p&gt;According to the instructions, in the event of a tie you should take 1 to be the most common digit.
+Although this is familiar to real life—0.5 rounds up to 1—computers &lt;a href=&#34;https://en.wikipedia.org/wiki/Rounding#Round_half_to_even&#34;&gt;don’t work this way&lt;/a&gt;: R rounds to even instead (see &lt;code&gt;?round&lt;/code&gt;).
+Because zero is even, that means &lt;code&gt;round(0.5)&lt;/code&gt; yields 0.
+To get around this, add 1 before rounding, then subtract it again.&lt;/p&gt;
+&lt;p&gt;My function &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day03.R#L78-L81&#34;&gt;&lt;code&gt;power_consumption()&lt;/code&gt;&lt;/a&gt;, which once again takes advantage of &lt;code&gt;TRUE&lt;/code&gt; being equivalent to 1 and &lt;code&gt;FALSE&lt;/code&gt; to 0:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;common &amp;lt;- round(colMeans(x) + 1) - 1
+binary_to_int(common) * binary_to_int(!common)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To convert a vector of binary digits to decimal, I use the following &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day03.R#L104-L106&#34;&gt;utility function&lt;/a&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;binary_to_int &amp;lt;- function(x) {
+  sum(x * 2 ^ rev(seq_along(x) - 1))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;However, if using a string representation then there’s a handy function in base R called &lt;code&gt;strtoi()&lt;/code&gt; that you could also use for this (&lt;a href=&#34;https://twitter.com/_Riinu_/status/1466681283887648769&#34;&gt;thanks to Riinu Pius for that tip&lt;/a&gt;).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;life-support&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Life support&lt;/h3&gt;
+&lt;p&gt;Part two finds the common digits in a successively decreasing set of binary numbers.
+A loop is appropriate here, since we can halt once there is only one number left.
+As this loop will only run (at most) 12 times in total, it shouldn’t be too slow in R.&lt;/p&gt;
+&lt;p&gt;Function &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day03.R#L85-L98&#34;&gt;&lt;code&gt;life_support()&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;life_support &amp;lt;- function(x) {
+  oxygen &amp;lt;- co2 &amp;lt;- x
+  for (j in 1:ncol(x)) {
+    if (nrow(oxygen) &amp;gt; 1) {
+      common &amp;lt;- most_common(oxygen)
+      oxygen &amp;lt;- oxygen[oxygen[, j] == common[j], ]
+    }
+    if (nrow(co2) &amp;gt; 1) {
+      common &amp;lt;- most_common(co2)
+      co2 &amp;lt;- co2[co2[, j] != common[j], ]
+    }
+  }
+  binary_to_int(oxygen) * binary_to_int(co2)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There might be cleverer ways of doing this.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 </description>
     </item>
     
