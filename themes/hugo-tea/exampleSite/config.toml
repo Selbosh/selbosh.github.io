@@ -3,7 +3,6 @@ relativeurls = true
 languageCode = "en-GB"
 title = "My New Hugo Site"
 theme = "hugo-tea"
-utterancesRepo = ""
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 pygmentsCodeFences = false # If enabled, will conflict with highlight.js
 
@@ -33,6 +32,9 @@ pygmentsCodeFences = false # If enabled, will conflict with highlight.js
   # Go to http://fontawesome.io/get-started/
   # and enter the ".js" URL you are sent in the embed code via e-mail
   fontawesome = ""
+  
+  # GitHub repository for utteranc.es
+  githubRepo = ""
 
   # options for highlight.js (version, additional languages, and theme)
   highlightjsVersion = "9.11.0"

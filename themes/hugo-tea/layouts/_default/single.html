@@ -13,9 +13,16 @@
     <section>
     {{ .Content }}
     </section>
-    {{ if and .Site.utterancesRepo }}
+    {{ if and .Site.Params.GithubRepo }}
 			<section class="comments">
-				{{ partial "utterances.html" . }}
+				<script src="https://utteranc.es/client.js"
+          repo="{{ .Site.Params.GithubRepo }}"
+          issue-term="title"
+          label="comments 💬"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+        </script>
 			</section>
 		{{ end }}
   </article>

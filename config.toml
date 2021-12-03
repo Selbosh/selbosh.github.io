@@ -5,7 +5,6 @@ theme = "hugo-tea"
 canonifyUrls = true
 Paginate = 30
 googleAnalytics = "UA-11136457-6"
-utterancesRepo = "Selbosh/selbosh.github.io"
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 pygmentsCodeFences = false # Disable Chroma highlighter; it conflicts with hljs
 
@@ -34,6 +33,9 @@ pygmentsCodeFences = false # Disable Chroma highlighter; it conflicts with hljs
   # Go to http://fontawesome.io/get-started/
   # and enter the ".js" URL you are sent in the embed code via e-mail
   fontawesome = "https://use.fontawesome.com/269c7751ba.js"
+  
+  # GitHub repository for utteranc.es
+  githubRepo = "Selbosh/selbosh.github.io"
 
   # options for highlight.js (version, additional languages, and theme)
   highlightjsVersion = "9.12.0"
