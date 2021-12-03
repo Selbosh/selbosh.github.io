@@ -5,7 +5,7 @@ theme = "hugo-tea"
 canonifyUrls = true
 Paginate = 30
 googleAnalytics = "UA-11136457-6"
-disqusShortname = "tea-stats"
+utterancesRepo = "Selbosh/selbosh.github.io"
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 pygmentsCodeFences = false # Disable Chroma highlighter; it conflicts with hljs
 
@@ -23,9 +23,8 @@ pygmentsCodeFences = false # Disable Chroma highlighter; it conflicts with hljs
 [social]
 	twitter 		= "TeaStats"
 	facebook 		= "Selbosh"
-    googleplus 	    = "DavidASelby"
 	github 			= "Selbosh"
-    linkedin 		= "daselby"
+  linkedin 		= "daselby"
 
 [params]
 	description = "Tea, statistics and t-statistics: a data science blog by David Selby."

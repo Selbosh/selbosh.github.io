@@ -13,9 +13,9 @@
     <section>
     {{ .Content }}
     </section>
-    {{ if and .Site.DisqusShortname }}
+    {{ if and .Site.utterancesRepo }}
 			<section class="comments">
-				{{ partial "disqus.html" . }}
+				{{ partial "utterances.html" . }}
 			</section>
 		{{ end }}
   </article>
