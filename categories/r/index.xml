@@ -42,6 +42,12 @@ We can use these to define expectations for unit tests with the &lt;a href=&#34;
 Once a function passes the unit tests, it should be ready to try with the main puzzle input.&lt;/p&gt;
 &lt;p&gt;Check my &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021&#34;&gt;&lt;strong&gt;adventofcode2021&lt;/strong&gt;&lt;/a&gt; repository on GitHub for the latest.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;remotes::install_github(&amp;#39;Selbosh/adventofcode2021&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;a href=&#34;#day1&#34;&gt;Sonar Sweep&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day2&#34;&gt;Dive!&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day3&#34;&gt;Binary Diagnostic&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day4&#34;&gt;Giant Squid&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
 &lt;div id=&#34;day1&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Day 1 - &lt;a href=&#34;https://adventofcode.com/2021/day/1&#34;&gt;Sonar Sweep&lt;/a&gt;&lt;/h2&gt;
 &lt;div id=&#34;increases&#34; class=&#34;section level3&#34;&gt;
@@ -132,6 +138,67 @@ As this loop will only run (at most) 12 times in total, it shouldn’t be too sl
   binary_to_int(oxygen) * binary_to_int(co2)
 }&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;There might be cleverer ways of doing this.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day4&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 4 - &lt;a href=&#34;https://adventofcode.com/2021/day/4&#34;&gt;Giant Squid&lt;/a&gt;&lt;/h2&gt;
+&lt;div id=&#34;bingo&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Bingo&lt;/h3&gt;
+&lt;p&gt;This is one of those problems where half the battle is working out which data structure to use.
+I wrote a function &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day04.R#L80-L84&#34;&gt;&lt;code&gt;read_draws()&lt;/code&gt;&lt;/a&gt; that reads in the first line of the file to get the drawn numbers, then separately reads in the remainder of the file to get the bingo cards stacked as a data frame.
+Later we take advantage of the fact that the bingo cards are square to split the data frame into a list of matrices.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_draws &amp;lt;- function(file) {
+  draws &amp;lt;- scan(file, sep = &amp;#39;,&amp;#39;, nlines = 1, quiet = TRUE)
+  cards &amp;lt;- read.table(file, skip = 1)
+  list(draws = draws, cards = cards)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As numbers are called out, I replace them in the dataset with &lt;code&gt;NA&lt;/code&gt;s.
+Then the helper &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day04.R#L86-L91&#34;&gt;&lt;code&gt;score_card()&lt;/code&gt;&lt;/a&gt; counts the number of &lt;code&gt;NA&lt;/code&gt;s in each row and column.
+If there are not enough, we return zero, else we calculate the score.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;score_card &amp;lt;- function(mat, draw) {
+  marked &amp;lt;- is.na(mat)
+  if (all(c(rowMeans(marked), colMeans(marked)) != 1))
+    return(0)
+  sum(mat, na.rm = TRUE) * draw
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then we put it all together, looping through the draws, replacing numbers with &lt;code&gt;NA&lt;/code&gt; and halting as soon as someone wins.
+Function &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day04.R#L98-L111&#34;&gt;&lt;code&gt;play_bingo()&lt;/code&gt;&lt;/a&gt; is defined as follows, using just base R commands:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;play_bingo &amp;lt;- function(draws, cards) {
+  size &amp;lt;- ncol(cards)
+  ncards &amp;lt;- nrow(cards) / size
+  ids &amp;lt;- rep(1:ncards, each = size)
+
+  for (d in draws) {
+    cards[cards == d] &amp;lt;- NA
+    score &amp;lt;- sapply(split(cards, ids), score_card, draw = d)
+    if (any(score &amp;gt; 0))
+      return(score[score &amp;gt; 0])
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;last-caller&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Last caller&lt;/h3&gt;
+&lt;p&gt;Part two is very similar, but we throw away each winning bingo card as we go to avoid redundant computation, eventually returning the score when there is only one left.
+Here is function &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day04.R#L115-L131&#34;&gt;&lt;code&gt;play_bingo2()&lt;/code&gt;&lt;/a&gt;, which uses the same two utility functions:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;play_bingo2 &amp;lt;- function(draws, cards) {
+  size &amp;lt;- ncol(cards)
+
+  for (d in draws) {
+    ncards &amp;lt;- nrow(cards) / size
+    ids &amp;lt;- rep(1:ncards, each = size)
+    cards[cards == d] &amp;lt;- NA
+    score &amp;lt;- sapply(split(cards, ids), score_card, draw = d)
+    if (any(score &amp;gt; 0)) {
+      if (ncards == 1)
+        return(score[score &amp;gt; 0])
+      cards &amp;lt;- cards[ids %in% which(score == 0), ]
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Further optimizations are possible.
+For example: as written, we calculate every intermediate winner’s score, but we only really need to do it for the first (part 1) and last (part 2) winners.&lt;/p&gt;
+&lt;p&gt;Also, we could draw more than one number at a time, as we know that nobody’s going to win until at least the fifth draw (for 5×5 cards) and from there, increment according to the minimum number of unmarked numbers on any row or column.&lt;/p&gt;
+&lt;p&gt;I didn’t bother implementing either of these, as it already runs quickly enough.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>

@@ -28,7 +28,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
    Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
 <meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="810">
+<meta itemprop="wordCount" content="1263">
 <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
@@ -149,6 +149,12 @@ We can use these to define expectations for unit tests with the <a href="https:/
 Once a function passes the unit tests, it should be ready to try with the main puzzle input.</p>
 <p>Check my <a href="https://github.com/Selbosh/adventofcode2021"><strong>adventofcode2021</strong></a> repository on GitHub for the latest.</p>
 <pre class="r"><code>remotes::install_github(&#39;Selbosh/adventofcode2021&#39;)</code></pre>
+<ol style="list-style-type: decimal">
+<li><a href="#day1">Sonar Sweep</a></li>
+<li><a href="#day2">Dive!</a></li>
+<li><a href="#day3">Binary Diagnostic</a></li>
+<li><a href="#day4">Giant Squid</a></li>
+</ol>
 <div id="day1" class="section level2">
 <h2>Day 1 - <a href="https://adventofcode.com/2021/day/1">Sonar Sweep</a></h2>
 <div id="increases" class="section level3">
@@ -239,6 +245,67 @@ As this loop will only run (at most) 12 times in total, it shouldn’t be too sl
   binary_to_int(oxygen) * binary_to_int(co2)
 }</code></pre>
 <p>There might be cleverer ways of doing this.</p>
+</div>
+</div>
+<div id="day4" class="section level2">
+<h2>Day 4 - <a href="https://adventofcode.com/2021/day/4">Giant Squid</a></h2>
+<div id="bingo" class="section level3">
+<h3>Bingo</h3>
+<p>This is one of those problems where half the battle is working out which data structure to use.
+I wrote a function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day04.R#L80-L84"><code>read_draws()</code></a> that reads in the first line of the file to get the drawn numbers, then separately reads in the remainder of the file to get the bingo cards stacked as a data frame.
+Later we take advantage of the fact that the bingo cards are square to split the data frame into a list of matrices.</p>
+<pre class="r"><code>read_draws &lt;- function(file) {
+  draws &lt;- scan(file, sep = &#39;,&#39;, nlines = 1, quiet = TRUE)
+  cards &lt;- read.table(file, skip = 1)
+  list(draws = draws, cards = cards)
+}</code></pre>
+<p>As numbers are called out, I replace them in the dataset with <code>NA</code>s.
+Then the helper <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day04.R#L86-L91"><code>score_card()</code></a> counts the number of <code>NA</code>s in each row and column.
+If there are not enough, we return zero, else we calculate the score.</p>
+<pre class="r"><code>score_card &lt;- function(mat, draw) {
+  marked &lt;- is.na(mat)
+  if (all(c(rowMeans(marked), colMeans(marked)) != 1))
+    return(0)
+  sum(mat, na.rm = TRUE) * draw
+}</code></pre>
+<p>Then we put it all together, looping through the draws, replacing numbers with <code>NA</code> and halting as soon as someone wins.
+Function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day04.R#L98-L111"><code>play_bingo()</code></a> is defined as follows, using just base R commands:</p>
+<pre class="r"><code>play_bingo &lt;- function(draws, cards) {
+  size &lt;- ncol(cards)
+  ncards &lt;- nrow(cards) / size
+  ids &lt;- rep(1:ncards, each = size)
+
+  for (d in draws) {
+    cards[cards == d] &lt;- NA
+    score &lt;- sapply(split(cards, ids), score_card, draw = d)
+    if (any(score &gt; 0))
+      return(score[score &gt; 0])
+  }
+}</code></pre>
+</div>
+<div id="last-caller" class="section level3">
+<h3>Last caller</h3>
+<p>Part two is very similar, but we throw away each winning bingo card as we go to avoid redundant computation, eventually returning the score when there is only one left.
+Here is function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day04.R#L115-L131"><code>play_bingo2()</code></a>, which uses the same two utility functions:</p>
+<pre class="r"><code>play_bingo2 &lt;- function(draws, cards) {
+  size &lt;- ncol(cards)
+
+  for (d in draws) {
+    ncards &lt;- nrow(cards) / size
+    ids &lt;- rep(1:ncards, each = size)
+    cards[cards == d] &lt;- NA
+    score &lt;- sapply(split(cards, ids), score_card, draw = d)
+    if (any(score &gt; 0)) {
+      if (ncards == 1)
+        return(score[score &gt; 0])
+      cards &lt;- cards[ids %in% which(score == 0), ]
+    }
+  }
+}</code></pre>
+<p>Further optimizations are possible.
+For example: as written, we calculate every intermediate winner’s score, but we only really need to do it for the first (part 1) and last (part 2) winners.</p>
+<p>Also, we could draw more than one number at a time, as we know that nobody’s going to win until at least the fifth draw (for 5×5 cards) and from there, increment according to the minimum number of unmarked numbers on any row or column.</p>
+<p>I didn’t bother implementing either of these, as it already runs quickly enough.</p>
 </div>
 </div>
 
