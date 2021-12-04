@@ -27,6 +27,11 @@ Check my [**adventofcode2021**](https://github.com/Selbosh/adventofcode2021) rep
 remotes::install_github('Selbosh/adventofcode2021')
 ```
 
+1. [Sonar Sweep](#day1)
+2. [Dive!](#day2)
+3. [Binary Diagnostic](#day3)
+4. [Giant Squid](#day4)
+
 ## Day 1 - [Sonar Sweep](https://adventofcode.com/2021/day/1) {#day1}
 
 ### Increases
@@ -151,3 +156,80 @@ life_support <- function(x) {
 ```
 
 There might be cleverer ways of doing this.
+
+## Day 4 - [Giant Squid](https://adventofcode.com/2021/day/4) {#day4}
+
+### Bingo
+
+This is one of those problems where half the battle is working out which data structure to use.
+I wrote a function [`read_draws()`](https://github.com/Selbosh/adventofcode2021/blob/main/R/day04.R#L80-L84) that reads in the first line of the file to get the drawn numbers, then separately reads in the remainder of the file to get the bingo cards stacked as a data frame.
+Later we take advantage of the fact that the bingo cards are square to split the data frame into a list of matrices.
+
+```r
+read_draws <- function(file) {
+  draws <- scan(file, sep = ',', nlines = 1, quiet = TRUE)
+  cards <- read.table(file, skip = 1)
+  list(draws = draws, cards = cards)
+}
+```
+
+As numbers are called out, I replace them in the dataset with `NA`s.
+Then the helper [`score_card()`](https://github.com/Selbosh/adventofcode2021/blob/main/R/day04.R#L86-L91) counts the number of `NA`s in each row and column.
+If there are not enough, we return zero, else we calculate the score.
+
+```r
+score_card <- function(mat, draw) {
+  marked <- is.na(mat)
+  if (all(c(rowMeans(marked), colMeans(marked)) != 1))
+    return(0)
+  sum(mat, na.rm = TRUE) * draw
+}
+```
+
+Then we put it all together, looping through the draws, replacing numbers with `NA` and halting as soon as someone wins.
+Function [`play_bingo()`](https://github.com/Selbosh/adventofcode2021/blob/main/R/day04.R#L98-L111) is defined as follows, using just base R commands:
+
+```r
+play_bingo <- function(draws, cards) {
+  size <- ncol(cards)
+  ncards <- nrow(cards) / size
+  ids <- rep(1:ncards, each = size)
+
+  for (d in draws) {
+    cards[cards == d] <- NA
+    score <- sapply(split(cards, ids), score_card, draw = d)
+    if (any(score > 0))
+      return(score[score > 0])
+  }
+}
+```
+
+### Last caller
+
+Part two is very similar, but we throw away each winning bingo card as we go to avoid redundant computation, eventually returning the score when there is only one left.
+Here is function [`play_bingo2()`](https://github.com/Selbosh/adventofcode2021/blob/main/R/day04.R#L115-L131), which uses the same two utility functions:
+
+```r
+play_bingo2 <- function(draws, cards) {
+  size <- ncol(cards)
+
+  for (d in draws) {
+    ncards <- nrow(cards) / size
+    ids <- rep(1:ncards, each = size)
+    cards[cards == d] <- NA
+    score <- sapply(split(cards, ids), score_card, draw = d)
+    if (any(score > 0)) {
+      if (ncards == 1)
+        return(score[score > 0])
+      cards <- cards[ids %in% which(score == 0), ]
+    }
+  }
+}
+```
+
+Further optimizations are possible.
+For example: as written, we calculate every intermediate winner's score, but we only really need to do it for the first (part 1) and last (part 2) winners.
+
+Also, we could draw more than one number at a time, as we know that nobody's going to win until at least the fifth draw (for 5&times;5 cards) and from there, increment according to the minimum number of unmarked numbers on any row or column.
+
+I didn't bother implementing either of these, as it already runs quickly enough.
