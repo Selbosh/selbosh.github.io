@@ -47,6 +47,7 @@ Once a function passes the unit tests, it should be ready to try with the main p
 &lt;li&gt;&lt;a href=&#34;#day2&#34;&gt;Dive!&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day3&#34;&gt;Binary Diagnostic&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day4&#34;&gt;Giant Squid&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day5&#34;&gt;Hydrothermal Venture&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div id=&#34;day1&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Day 1 - &lt;a href=&#34;https://adventofcode.com/2021/day/1&#34;&gt;Sonar Sweep&lt;/a&gt;&lt;/h2&gt;
@@ -200,6 +201,39 @@ For example: as written, we calculate every intermediate winner’s score, but w
 &lt;p&gt;Also, we could draw more than one number at a time, as we know that nobody’s going to win until at least the fifth draw (for 5×5 cards) and from there, increment according to the minimum number of unmarked numbers on any row or column.&lt;/p&gt;
 &lt;p&gt;I didn’t bother implementing either of these, as it already runs quickly enough.&lt;/p&gt;
 &lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day5&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 5 - &lt;a href=&#34;https://adventofcode.com/2021/day/5&#34;&gt;Hydrothermal Venture&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;For a while I tried to think about clever mathematical ways to solve the system of inequalities, but this gets complicated when working on a grid, and where some segments are collinear.
+In the end it worked out quicker to what seems like a ‘brute force’ approach:
+generate all the points on the line segments and then simply count how many times they appear.&lt;/p&gt;
+&lt;p&gt;This is a problem that really lends itself to use of &lt;strong&gt;tidyr&lt;/strong&gt; functions like &lt;code&gt;separate()&lt;/code&gt; and &lt;code&gt;unnest()&lt;/code&gt;, so naturally I made life harder for myself by doing it in base R, instead.&lt;/p&gt;
+&lt;p&gt;First, read in the coordinates as a data frame with four columns, &lt;code&gt;x1&lt;/code&gt;, &lt;code&gt;y1&lt;/code&gt;, &lt;code&gt;x2&lt;/code&gt; and &lt;code&gt;y2&lt;/code&gt;.
+The &lt;em&gt;nice&lt;/em&gt; way to do this is with &lt;code&gt;tidyr::separate()&lt;/code&gt; but &lt;code&gt;strsplit()&lt;/code&gt; works just fine too.
+Here is my parsing function, &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day05.R#L77-L82&#34;&gt;read_segments()&lt;/a&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_segments &amp;lt;- function(x) {
+  lines &amp;lt;- do.call(rbind, strsplit(readLines(x), &amp;#39;( -&amp;gt; |,)&amp;#39;))
+  storage.mode(lines) &amp;lt;- &amp;#39;numeric&amp;#39;
+  colnames(lines) &amp;lt;- c(&amp;#39;x1&amp;#39;, &amp;#39;y1&amp;#39;, &amp;#39;x2&amp;#39;, &amp;#39;y2&amp;#39;)
+  as.data.frame(lines)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This is one of the few puzzles where the solution to part two is essentially contained in part one.
+Depending on how you implement your home-rolled &lt;code&gt;unnest&lt;/code&gt;-like function, it could just be a case of filtering out the diagonal lines in part one.
+I make liberal use of &lt;code&gt;mapply&lt;/code&gt; for looping over two vectors at once.&lt;/p&gt;
+&lt;p&gt;In the penultimate line, we take advantage of vector broadcasting, which handles all the horizontal and vertical lines where you have multiple coordinates on one axis paired with a single coordinate on the other.
+For the diagonal lines, there is a 1:1 relationship so the coordinates just bind together in pairs.
+Finally, we work out how to count the rows, without using &lt;code&gt;dplyr::count&lt;/code&gt;.
+If you convert to a data frame, then &lt;code&gt;table()&lt;/code&gt; does this for you.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;count_intersections &amp;lt;- function(lines, part2 = FALSE) {
+  if (!part2)
+    lines &amp;lt;- subset(lines, x1 == x2 | y1 == y2)
+  x &amp;lt;- mapply(seq, lines$x1, lines$x2)
+  y &amp;lt;- mapply(seq, lines$y1, lines$y2)
+  xy &amp;lt;- do.call(rbind, mapply(cbind, x, y))
+  sum(table(as.data.frame(xy)) &amp;gt; 1)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I’m fairly pleased to get the main solution down to &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day05.R#L89-L96&#34;&gt;essentially four lines of code&lt;/a&gt;, though I’m certain that there are more computationally efficient ways of tackling this problem—if you value computer time more than your own time.&lt;/p&gt;
+&lt;p&gt;For the tidyverse approach, see &lt;a href=&#34;https://twitter.com/drob/status/1467361848525787138&#34;&gt;David Robinson’s solution&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 </description>
     </item>
