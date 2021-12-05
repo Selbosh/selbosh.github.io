@@ -189,10 +189,10 @@ For example: as written, we calculate every intermediate winner’s score, but w
 <p>For a while I tried to think about clever mathematical ways to solve the system of inequalities, but this gets complicated when working on a grid, and where some segments are collinear.
 In the end it worked out quicker to what seems like a ‘brute force’ approach:
 generate all the points on the line segments and then simply count how many times they appear.</p>
-<p>This is a problem that really lends itself to use of <strong>tidyr</strong> functions like <code>separate()</code> and <code>unnest()</code>, so naturally I made life harder for myself by doing it in base R, instead.</p>
+<p>This is a problem that really lends itself to use of <strong>tidyr</strong> functions like <a href="https://tidyr.tidyverse.org/reference/separate.html"><code>separate()</code></a> and <a href="https://tidyr.tidyverse.org/reference/nest.html"><code>unnest()</code></a>, so naturally I made life harder for myself by doing it in base R, instead.</p>
 <p>First, read in the coordinates as a data frame with four columns, <code>x1</code>, <code>y1</code>, <code>x2</code> and <code>y2</code>.
 The <em>nice</em> way to do this is with <code>tidyr::separate()</code> but <code>strsplit()</code> works just fine too.
-Here is my parsing function, <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day05.R#L77-L82">read_segments()</a>:</p>
+Here is my parsing function, <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day05.R#L77-L82"><code>read_segments()</code></a>:</p>
 <pre class="r"><code>read_segments &lt;- function(x) {
   lines &lt;- do.call(rbind, strsplit(readLines(x), &#39;( -&gt; |,)&#39;))
   storage.mode(lines) &lt;- &#39;numeric&#39;
@@ -204,7 +204,7 @@ Depending on how you implement your home-rolled <code>unnest</code>-like functio
 I make liberal use of <code>mapply</code> for looping over two vectors at once.</p>
 <p>In the penultimate line, we take advantage of vector broadcasting, which handles all the horizontal and vertical lines where you have multiple coordinates on one axis paired with a single coordinate on the other.
 For the diagonal lines, there is a 1:1 relationship so the coordinates just bind together in pairs.
-Finally, we work out how to count the rows, without using <code>dplyr::count</code>.
+Finally, we work out how to count the rows, without using <code>dplyr::count()</code>.
 If you convert to a data frame, then <code>table()</code> does this for you.</p>
 <pre class="r"><code>count_intersections &lt;- function(lines, part2 = FALSE) {
   if (!part2)

@@ -241,11 +241,11 @@ For a while I tried to think about clever mathematical ways to solve the system 
 In the end it worked out quicker to what seems like a 'brute force' approach:
 generate all the points on the line segments and then simply count how many times they appear.
 
-This is a problem that really lends itself to use of **tidyr** functions like `separate()` and `unnest()`, so naturally I made life harder for myself by doing it in base R, instead.
+This is a problem that really lends itself to use of **tidyr** functions like [`separate()`](https://tidyr.tidyverse.org/reference/separate.html) and [`unnest()`](https://tidyr.tidyverse.org/reference/nest.html), so naturally I made life harder for myself by doing it in base R, instead.
 
 First, read in the coordinates as a data frame with four columns, `x1`, `y1`, `x2` and `y2`.
 The _nice_ way to do this is with `tidyr::separate()` but `strsplit()` works just fine too.
-Here is my parsing function, [read_segments()](https://github.com/Selbosh/adventofcode2021/blob/main/R/day05.R#L77-L82):
+Here is my parsing function, [`read_segments()`](https://github.com/Selbosh/adventofcode2021/blob/main/R/day05.R#L77-L82):
 
 ```r
 read_segments <- function(x) {
@@ -262,7 +262,7 @@ I make liberal use of `mapply` for looping over two vectors at once.
 
 In the penultimate line, we take advantage of vector broadcasting, which handles all the horizontal and vertical lines where you have multiple coordinates on one axis paired with a single coordinate on the other.
 For the diagonal lines, there is a 1:1 relationship so the coordinates just bind together in pairs.
-Finally, we work out how to count the rows, without using `dplyr::count`.
+Finally, we work out how to count the rows, without using `dplyr::count()`.
 If you convert to a data frame, then `table()` does this for you.
 
 ```r
