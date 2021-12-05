@@ -29,6 +29,7 @@ Once a function passes the unit tests, it should be ready to try with the main p
 <li><a href="#day2">Dive!</a></li>
 <li><a href="#day3">Binary Diagnostic</a></li>
 <li><a href="#day4">Giant Squid</a></li>
+<li><a href="#day5">Hydrothermal Venture</a></li>
 </ol>
 <div id="day1" class="section level2">
 <h2>Day 1 - <a href="https://adventofcode.com/2021/day/1">Sonar Sweep</a></h2>
@@ -182,4 +183,37 @@ For example: as written, we calculate every intermediate winner’s score, but w
 <p>Also, we could draw more than one number at a time, as we know that nobody’s going to win until at least the fifth draw (for 5×5 cards) and from there, increment according to the minimum number of unmarked numbers on any row or column.</p>
 <p>I didn’t bother implementing either of these, as it already runs quickly enough.</p>
 </div>
+</div>
+<div id="day5" class="section level2">
+<h2>Day 5 - <a href="https://adventofcode.com/2021/day/5">Hydrothermal Venture</a></h2>
+<p>For a while I tried to think about clever mathematical ways to solve the system of inequalities, but this gets complicated when working on a grid, and where some segments are collinear.
+In the end it worked out quicker to what seems like a ‘brute force’ approach:
+generate all the points on the line segments and then simply count how many times they appear.</p>
+<p>This is a problem that really lends itself to use of <strong>tidyr</strong> functions like <code>separate()</code> and <code>unnest()</code>, so naturally I made life harder for myself by doing it in base R, instead.</p>
+<p>First, read in the coordinates as a data frame with four columns, <code>x1</code>, <code>y1</code>, <code>x2</code> and <code>y2</code>.
+The <em>nice</em> way to do this is with <code>tidyr::separate()</code> but <code>strsplit()</code> works just fine too.
+Here is my parsing function, <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day05.R#L77-L82">read_segments()</a>:</p>
+<pre class="r"><code>read_segments &lt;- function(x) {
+  lines &lt;- do.call(rbind, strsplit(readLines(x), &#39;( -&gt; |,)&#39;))
+  storage.mode(lines) &lt;- &#39;numeric&#39;
+  colnames(lines) &lt;- c(&#39;x1&#39;, &#39;y1&#39;, &#39;x2&#39;, &#39;y2&#39;)
+  as.data.frame(lines)
+}</code></pre>
+<p>This is one of the few puzzles where the solution to part two is essentially contained in part one.
+Depending on how you implement your home-rolled <code>unnest</code>-like function, it could just be a case of filtering out the diagonal lines in part one.
+I make liberal use of <code>mapply</code> for looping over two vectors at once.</p>
+<p>In the penultimate line, we take advantage of vector broadcasting, which handles all the horizontal and vertical lines where you have multiple coordinates on one axis paired with a single coordinate on the other.
+For the diagonal lines, there is a 1:1 relationship so the coordinates just bind together in pairs.
+Finally, we work out how to count the rows, without using <code>dplyr::count</code>.
+If you convert to a data frame, then <code>table()</code> does this for you.</p>
+<pre class="r"><code>count_intersections &lt;- function(lines, part2 = FALSE) {
+  if (!part2)
+    lines &lt;- subset(lines, x1 == x2 | y1 == y2)
+  x &lt;- mapply(seq, lines$x1, lines$x2)
+  y &lt;- mapply(seq, lines$y1, lines$y2)
+  xy &lt;- do.call(rbind, mapply(cbind, x, y))
+  sum(table(as.data.frame(xy)) &gt; 1)
+}</code></pre>
+<p>I’m fairly pleased to get the main solution down to <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day05.R#L89-L96">essentially four lines of code</a>, though I’m certain that there are more computationally efficient ways of tackling this problem—if you value computer time more than your own time.</p>
+<p>For the tidyverse approach, see <a href="https://twitter.com/drob/status/1467361848525787138">David Robinson’s solution</a>.</p>
 </div>

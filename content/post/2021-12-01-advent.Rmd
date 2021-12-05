@@ -31,6 +31,7 @@ remotes::install_github('Selbosh/adventofcode2021')
 2. [Dive!](#day2)
 3. [Binary Diagnostic](#day3)
 4. [Giant Squid](#day4)
+5. [Hydrothermal Venture](#day5)
 
 ## Day 1 - [Sonar Sweep](https://adventofcode.com/2021/day/1) {#day1}
 
@@ -233,3 +234,48 @@ For example: as written, we calculate every intermediate winner's score, but we 
 Also, we could draw more than one number at a time, as we know that nobody's going to win until at least the fifth draw (for 5&times;5 cards) and from there, increment according to the minimum number of unmarked numbers on any row or column.
 
 I didn't bother implementing either of these, as it already runs quickly enough.
+
+## Day 5 - [Hydrothermal Venture](https://adventofcode.com/2021/day/5) {#day5}
+
+For a while I tried to think about clever mathematical ways to solve the system of inequalities, but this gets complicated when working on a grid, and where some segments are collinear.
+In the end it worked out quicker to what seems like a 'brute force' approach:
+generate all the points on the line segments and then simply count how many times they appear.
+
+This is a problem that really lends itself to use of **tidyr** functions like `separate()` and `unnest()`, so naturally I made life harder for myself by doing it in base R, instead.
+
+First, read in the coordinates as a data frame with four columns, `x1`, `y1`, `x2` and `y2`.
+The _nice_ way to do this is with `tidyr::separate()` but `strsplit()` works just fine too.
+Here is my parsing function, [read_segments()](https://github.com/Selbosh/adventofcode2021/blob/main/R/day05.R#L77-L82):
+
+```r
+read_segments <- function(x) {
+  lines <- do.call(rbind, strsplit(readLines(x), '( -> |,)'))
+  storage.mode(lines) <- 'numeric'
+  colnames(lines) <- c('x1', 'y1', 'x2', 'y2')
+  as.data.frame(lines)
+}
+```
+
+This is one of the few puzzles where the solution to part two is essentially contained in part one.
+Depending on how you implement your home-rolled `unnest`-like function, it could just be a case of filtering out the diagonal lines in part one.
+I make liberal use of `mapply` for looping over two vectors at once.
+
+In the penultimate line, we take advantage of vector broadcasting, which handles all the horizontal and vertical lines where you have multiple coordinates on one axis paired with a single coordinate on the other.
+For the diagonal lines, there is a 1:1 relationship so the coordinates just bind together in pairs.
+Finally, we work out how to count the rows, without using `dplyr::count`.
+If you convert to a data frame, then `table()` does this for you.
+
+```r
+count_intersections <- function(lines, part2 = FALSE) {
+  if (!part2)
+    lines <- subset(lines, x1 == x2 | y1 == y2)
+  x <- mapply(seq, lines$x1, lines$x2)
+  y <- mapply(seq, lines$y1, lines$y2)
+  xy <- do.call(rbind, mapply(cbind, x, y))
+  sum(table(as.data.frame(xy)) > 1)
+}
+```
+
+I'm fairly pleased to get the main solution down to [essentially four lines of code](https://github.com/Selbosh/adventofcode2021/blob/main/R/day05.R#L89-L96), though I'm certain that there are more computationally efficient ways of tackling this problem---if you value computer time more than your own time.
+
+For the tidyverse approach, see [David Robinson's solution](https://twitter.com/drob/status/1467361848525787138).
