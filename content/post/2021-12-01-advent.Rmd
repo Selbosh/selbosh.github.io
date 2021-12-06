@@ -288,7 +288,7 @@ As the instructions suggest, we will have exponential growth, so it's not a good
 On the other hand, there are only nine possible states for any given fish to be in: the number of days until they next reproduce.
 So we can store a vector that simply tallies the number of fish in each state.
 
-On each day, we can shuffle the fish along the vector, decreasing the number of days for each group of fish by 1, and adding new cohorts of fish at day 6, to represent parent fish resetting their tiemrs, and at day 8 to represent the newly hatched lanternfish.
+On each day, we can shuffle the fish along the vector, decreasing the number of days for each group of fish by 1, and adding new cohorts of fish at day 6, to represent parent fish resetting their timers, and at day 8 to represent the newly hatched lanternfish.
 My short function [`lanternfish()`](https://github.com/Selbosh/adventofcode2021/blob/main/R/day06.R#L72-L77):
 
 ```r
@@ -301,7 +301,7 @@ lanternfish <- function(x, days = 80) {
 ```
 
 Because R indexes from 1 rather than 0, the element `fish[1]` represents the number of fish with 0 days left, `fish[2]` represents the number with 1 day left, and so on.
-If you find this confusing, you can index from zero instead with the new [**index0** package](https://github.com/Selbosh/index0):
+If you find this confusing, you can index from zero instead, thanks to the new [**index0** package](https://github.com/Selbosh/index0):
 
 ```r
 lanternfish0 <- function(x, days = 80) {
