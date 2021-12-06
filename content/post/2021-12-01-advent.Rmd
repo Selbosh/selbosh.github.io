@@ -32,6 +32,7 @@ remotes::install_github('Selbosh/adventofcode2021')
 3. [Binary Diagnostic](#day3)
 4. [Giant Squid](#day4)
 5. [Hydrothermal Venture](#day5)
+6. [Lanternfish](#day6)
 
 ## Day 1 - [Sonar Sweep](https://adventofcode.com/2021/day/1) {#day1}
 
@@ -279,3 +280,59 @@ count_intersections <- function(lines, part2 = FALSE) {
 I'm fairly pleased to get the main solution down to [essentially four lines of code](https://github.com/Selbosh/adventofcode2021/blob/main/R/day05.R#L89-L96), though I'm certain that there are more computationally efficient ways of tackling this problem---if you value computer time more than your own time.
 
 For the tidyverse approach, see [David Robinson's solution](https://twitter.com/drob/status/1467361848525787138).
+
+## Day 6 - [Lanternfish](https://adventofcode.com/2021/day/6) {#day6}
+
+In this problem, we have many fish with internal timers.
+As the instructions suggest, we will have exponential growth, so it's not a good idea to keep track of each individual fish as you'll soon run out of memory.
+On the other hand, there are only nine possible states for any given fish to be in: the number of days until they next reproduce.
+So we can store a vector that simply tallies the number of fish in each state.
+
+On each day, we can shuffle the fish along the vector, decreasing the number of days for each group of fish by 1, and adding new cohorts of fish at day 6, to represent parent fish resetting their tiemrs, and at day 8 to represent the newly hatched lanternfish.
+My short function [`lanternfish()`](https://github.com/Selbosh/adventofcode2021/blob/main/R/day06.R#L72-L77):
+
+```r
+lanternfish <- function(x, days = 80) {
+  fish <- as.double(table(factor(x, levels = 0:8)))
+  for (i in 1:days)
+    fish <- c(fish[2:7], fish[8] + fish[1], fish[9], fish[1])
+  sum(fish)
+}
+```
+
+Because R indexes from 1 rather than 0, the element `fish[1]` represents the number of fish with 0 days left, `fish[2]` represents the number with 1 day left, and so on.
+If you find this confusing, you can index from zero instead with the new [**index0** package](https://github.com/Selbosh/index0):
+
+```r
+lanternfish0 <- function(x, days = 80) {
+  fish <- as.double(table(factor(x, levels = 0:8)))
+  for (i in 1:days) {
+    fish <- index0::index_from_0(fish)
+    fish <- c(fish[1:6], fish[7] + fish[0], fish[8], fish[0])
+   }
+  sum(fish)
+}
+```
+
+There is a slightly different way to perform the updates.
+[David Robinson suggested](https://twitter.com/drob/status/1467727330663534594) an approach based on linear algebra.
+Here we apply the same procedure as above, but via matrix multiplication.
+It takes about the same time to run.
+
+```r
+lanternfish <- function(x, days = 80) {
+  fish <- table(factor(x, levels = 0:8))
+  mat <- matrix(0, 9, 9)
+  mat[cbind(2:9, 1:8)] <- 1 # decrease timer for fish w/ 1-8 days left
+  mat[1, c(7, 9)] <- 1      # add 'new' fish with 6 & 8 days left
+  for (i in 1:days)
+    fish <- fish %*% mat
+  sum(fish)
+}
+```
+
+Day 6 is another puzzle where the solutions for parts one and two are essentially the same.
+The only thing to be careful of on part two is that you don't run into integer overflow.
+If you do, make sure the numbers you're adding together are of type `double`.
+
+
