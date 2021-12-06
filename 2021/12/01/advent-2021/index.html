@@ -28,7 +28,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
    Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
 <meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="1643">
+<meta itemprop="wordCount" content="2041">
 <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
@@ -155,6 +155,7 @@ Once a function passes the unit tests, it should be ready to try with the main p
 <li><a href="#day3">Binary Diagnostic</a></li>
 <li><a href="#day4">Giant Squid</a></li>
 <li><a href="#day5">Hydrothermal Venture</a></li>
+<li><a href="#day6">Lanternfish</a></li>
 </ol>
 <div id="day1" class="section level2">
 <h2>Day 1 - <a href="https://adventofcode.com/2021/day/1">Sonar Sweep</a></h2>
@@ -341,6 +342,47 @@ If you convert to a data frame, then <code>table()</code> does this for you.</p>
 }</code></pre>
 <p>I’m fairly pleased to get the main solution down to <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day05.R#L89-L96">essentially four lines of code</a>, though I’m certain that there are more computationally efficient ways of tackling this problem—if you value computer time more than your own time.</p>
 <p>For the tidyverse approach, see <a href="https://twitter.com/drob/status/1467361848525787138">David Robinson’s solution</a>.</p>
+</div>
+<div id="day6" class="section level2">
+<h2>Day 6 - <a href="https://adventofcode.com/2021/day/6">Lanternfish</a></h2>
+<p>In this problem, we have many fish with internal timers.
+As the instructions suggest, we will have exponential growth, so it’s not a good idea to keep track of each individual fish as you’ll soon run out of memory.
+On the other hand, there are only nine possible states for any given fish to be in: the number of days until they next reproduce.
+So we can store a vector that simply tallies the number of fish in each state.</p>
+<p>On each day, we can shuffle the fish along the vector, decreasing the number of days for each group of fish by 1, and adding new cohorts of fish at day 6, to represent parent fish resetting their tiemrs, and at day 8 to represent the newly hatched lanternfish.
+My short function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day06.R#L72-L77"><code>lanternfish()</code></a>:</p>
+<pre class="r"><code>lanternfish &lt;- function(x, days = 80) {
+  fish &lt;- as.double(table(factor(x, levels = 0:8)))
+  for (i in 1:days)
+    fish &lt;- c(fish[2:7], fish[8] + fish[1], fish[9], fish[1])
+  sum(fish)
+}</code></pre>
+<p>Because R indexes from 1 rather than 0, the element <code>fish[1]</code> represents the number of fish with 0 days left, <code>fish[2]</code> represents the number with 1 day left, and so on.
+If you find this confusing, you can index from zero instead with the new <a href="https://github.com/Selbosh/index0"><strong>index0</strong> package</a>:</p>
+<pre class="r"><code>lanternfish0 &lt;- function(x, days = 80) {
+  fish &lt;- as.double(table(factor(x, levels = 0:8)))
+  for (i in 1:days) {
+    fish &lt;- index0::index_from_0(fish)
+    fish &lt;- c(fish[1:6], fish[7] + fish[0], fish[8], fish[0])
+   }
+  sum(fish)
+}</code></pre>
+<p>There is a slightly different way to perform the updates.
+<a href="https://twitter.com/drob/status/1467727330663534594">David Robinson suggested</a> an approach based on linear algebra.
+Here we have an operator <code>mat</code> that applies the procedure above, but via matrix multiplication.
+It takes about the same time to run as the vector-based function.</p>
+<pre class="r"><code>lanternfish &lt;- function(x, days = 80) {
+  fish &lt;- table(factor(x, levels = 0:8))
+  mat &lt;- matrix(0, 9, 9)
+  mat[cbind(2:9, 1:8)] &lt;- 1 # decrease timer for fish with 1 to 8 days left
+  mat[1, c(7, 9)] &lt;- 1      # add &#39;new&#39; fish with 6 and 8 days left
+  for (i in 1:days)
+    fish &lt;- fish %*% mat
+  sum(fish)
+}</code></pre>
+<p>Day 6 is another puzzle where the solutions for parts one and two are essentially the same.
+The only thing to be careful of on part two is that you don’t run into integer overflow.
+If you do, make sure the numbers you’re adding together are of type <code>double</code>.</p>
 </div>
 
     </section>
