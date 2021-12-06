@@ -28,7 +28,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
    Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
 <meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="2041">
+<meta itemprop="wordCount" content="2033">
 <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
@@ -349,7 +349,7 @@ If you convert to a data frame, then <code>table()</code> does this for you.</p>
 As the instructions suggest, we will have exponential growth, so it’s not a good idea to keep track of each individual fish as you’ll soon run out of memory.
 On the other hand, there are only nine possible states for any given fish to be in: the number of days until they next reproduce.
 So we can store a vector that simply tallies the number of fish in each state.</p>
-<p>On each day, we can shuffle the fish along the vector, decreasing the number of days for each group of fish by 1, and adding new cohorts of fish at day 6, to represent parent fish resetting their tiemrs, and at day 8 to represent the newly hatched lanternfish.
+<p>On each day, we can shuffle the fish along the vector, decreasing the number of days for each group of fish by 1, and adding new cohorts of fish at day 6, to represent parent fish resetting their timers, and at day 8 to represent the newly hatched lanternfish.
 My short function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day06.R#L72-L77"><code>lanternfish()</code></a>:</p>
 <pre class="r"><code>lanternfish &lt;- function(x, days = 80) {
   fish &lt;- as.double(table(factor(x, levels = 0:8)))
@@ -358,7 +358,7 @@ My short function <a href="https://github.com/Selbosh/adventofcode2021/blob/main
   sum(fish)
 }</code></pre>
 <p>Because R indexes from 1 rather than 0, the element <code>fish[1]</code> represents the number of fish with 0 days left, <code>fish[2]</code> represents the number with 1 day left, and so on.
-If you find this confusing, you can index from zero instead with the new <a href="https://github.com/Selbosh/index0"><strong>index0</strong> package</a>:</p>
+If you find this confusing, you can index from zero instead, thanks to the new <a href="https://github.com/Selbosh/index0"><strong>index0</strong> package</a>:</p>
 <pre class="r"><code>lanternfish0 &lt;- function(x, days = 80) {
   fish &lt;- as.double(table(factor(x, levels = 0:8)))
   for (i in 1:days) {
@@ -369,13 +369,13 @@ If you find this confusing, you can index from zero instead with the new <a href
 }</code></pre>
 <p>There is a slightly different way to perform the updates.
 <a href="https://twitter.com/drob/status/1467727330663534594">David Robinson suggested</a> an approach based on linear algebra.
-Here we have an operator <code>mat</code> that applies the procedure above, but via matrix multiplication.
-It takes about the same time to run as the vector-based function.</p>
+Here we apply the same procedure as above, but via matrix multiplication.
+It takes about the same time to run.</p>
 <pre class="r"><code>lanternfish &lt;- function(x, days = 80) {
   fish &lt;- table(factor(x, levels = 0:8))
   mat &lt;- matrix(0, 9, 9)
-  mat[cbind(2:9, 1:8)] &lt;- 1 # decrease timer for fish with 1 to 8 days left
-  mat[1, c(7, 9)] &lt;- 1      # add &#39;new&#39; fish with 6 and 8 days left
+  mat[cbind(2:9, 1:8)] &lt;- 1 # decrease timer for fish w/ 1-8 days left
+  mat[1, c(7, 9)] &lt;- 1      # add &#39;new&#39; fish with 6 &amp; 8 days left
   for (i in 1:days)
     fish &lt;- fish %*% mat
   sum(fish)

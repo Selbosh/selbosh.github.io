@@ -242,7 +242,7 @@ If you convert to a data frame, then &lt;code&gt;table()&lt;/code&gt; does this 
 As the instructions suggest, we will have exponential growth, so it’s not a good idea to keep track of each individual fish as you’ll soon run out of memory.
 On the other hand, there are only nine possible states for any given fish to be in: the number of days until they next reproduce.
 So we can store a vector that simply tallies the number of fish in each state.&lt;/p&gt;
-&lt;p&gt;On each day, we can shuffle the fish along the vector, decreasing the number of days for each group of fish by 1, and adding new cohorts of fish at day 6, to represent parent fish resetting their tiemrs, and at day 8 to represent the newly hatched lanternfish.
+&lt;p&gt;On each day, we can shuffle the fish along the vector, decreasing the number of days for each group of fish by 1, and adding new cohorts of fish at day 6, to represent parent fish resetting their timers, and at day 8 to represent the newly hatched lanternfish.
 My short function &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day06.R#L72-L77&#34;&gt;&lt;code&gt;lanternfish()&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lanternfish &amp;lt;- function(x, days = 80) {
   fish &amp;lt;- as.double(table(factor(x, levels = 0:8)))
@@ -251,7 +251,7 @@ My short function &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/bl
   sum(fish)
 }&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Because R indexes from 1 rather than 0, the element &lt;code&gt;fish[1]&lt;/code&gt; represents the number of fish with 0 days left, &lt;code&gt;fish[2]&lt;/code&gt; represents the number with 1 day left, and so on.
-If you find this confusing, you can index from zero instead with the new &lt;a href=&#34;https://github.com/Selbosh/index0&#34;&gt;&lt;strong&gt;index0&lt;/strong&gt; package&lt;/a&gt;:&lt;/p&gt;
+If you find this confusing, you can index from zero instead, thanks to the new &lt;a href=&#34;https://github.com/Selbosh/index0&#34;&gt;&lt;strong&gt;index0&lt;/strong&gt; package&lt;/a&gt;:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lanternfish0 &amp;lt;- function(x, days = 80) {
   fish &amp;lt;- as.double(table(factor(x, levels = 0:8)))
   for (i in 1:days) {
@@ -262,13 +262,13 @@ If you find this confusing, you can index from zero instead with the new &lt;a h
 }&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;There is a slightly different way to perform the updates.
 &lt;a href=&#34;https://twitter.com/drob/status/1467727330663534594&#34;&gt;David Robinson suggested&lt;/a&gt; an approach based on linear algebra.
-Here we have an operator &lt;code&gt;mat&lt;/code&gt; that applies the procedure above, but via matrix multiplication.
-It takes about the same time to run as the vector-based function.&lt;/p&gt;
+Here we apply the same procedure as above, but via matrix multiplication.
+It takes about the same time to run.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lanternfish &amp;lt;- function(x, days = 80) {
   fish &amp;lt;- table(factor(x, levels = 0:8))
   mat &amp;lt;- matrix(0, 9, 9)
-  mat[cbind(2:9, 1:8)] &amp;lt;- 1 # decrease timer for fish with 1 to 8 days left
-  mat[1, c(7, 9)] &amp;lt;- 1      # add &amp;#39;new&amp;#39; fish with 6 and 8 days left
+  mat[cbind(2:9, 1:8)] &amp;lt;- 1 # decrease timer for fish w/ 1-8 days left
+  mat[1, c(7, 9)] &amp;lt;- 1      # add &amp;#39;new&amp;#39; fish with 6 &amp;amp; 8 days left
   for (i in 1:days)
     fish &amp;lt;- fish %*% mat
   sum(fish)
