@@ -14,8 +14,64 @@
 		</image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-GB</language>
-    <lastBuildDate>Wed, 01 Dec 2021 09:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 06 Dec 2021 10:00:00 +0000</lastBuildDate>
     <atom:link href="https://selbydavid.com/post/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Indexing from zero in R</title>
+      <link>https://selbydavid.com/2021/12/06/indexing/</link>
+      <pubDate>Mon, 06 Dec 2021 10:00:00 +0000</pubDate>
+      
+      <guid>https://selbydavid.com/2021/12/06/indexing/</guid>
+      <description>&lt;p&gt;Everybody knows that R is an inferior programming language, because vector
+indices start from 1, whereas in &lt;em&gt;real&lt;/em&gt; programming languages like C and Python,
+&lt;a href=&#34;https://en.wikipedia.org/wiki/Zero-based_numbering&#34;&gt;array indexing begins from 0&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Sometimes this can be quite annoying if a problem&amp;mdash;be it a mathematical
+algorithm or a &lt;a href=&#34;https://selbydavid.com/2021/12/01/advent-2021/&#34;&gt;coding challenge&lt;/a&gt;&amp;mdash;calls for zero-based indexing.
+You find yourself having to add &lt;code&gt;+ 1&lt;/code&gt; to all your indices and it&amp;rsquo;s easy to
+introduce bugs or mix up values with their positions.&lt;/p&gt;
+&lt;p&gt;Help is at hand.
+I have worked out how to break R so utterly that it starts counting from zero
+instead of from one.
+Someone on Stack Overflow said &lt;strong&gt;&lt;a href=&#34;https://stackoverflow.com/a/25308710&#34;&gt;“just don&amp;rsquo;t do it!”&lt;/a&gt;&lt;/strong&gt; so naturally I&amp;rsquo;ve gone ahead and &lt;em&gt;done it&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;What&amp;rsquo;s the first letter of the alphabet?
+In a normal R session, you get:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;x &amp;lt;- letters
+x[1]
+
+#&amp;gt; [1] &amp;quot;a&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;But with my enhanced version, you get the &lt;em&gt;real&lt;/em&gt; answer:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;x &amp;lt;- index_from_0(letters)
+x[1]
+
+#&amp;gt; &amp;quot;b&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Where&amp;rsquo;s the &amp;ldquo;a&amp;rdquo; then? In the zeroth position, of course:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;x[0]
+
+#&amp;gt; &amp;quot;a&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It works for replacing elements, and for matrices as well:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;m &amp;lt;- index_from_0(matrix(0, 2, 2))
+m[0, 1] &amp;lt;- 42
+m[1] &amp;lt;- 7
+m
+
+#&amp;gt;      [,1] [,2]
+#&amp;gt; [1,]    0   42
+#&amp;gt; [2,]    7    0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This is made possible with some abuse of S3 objects to redefine the &lt;code&gt;`[`&lt;/code&gt;
+and &lt;code&gt;`[&amp;lt;-`&lt;/code&gt; operators such that different methods are used every time you
+subset a vector assigned the special class &lt;code&gt;index0&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Want to try it yourself? Download the R package &lt;a href=&#34;https://cran.r-project.org/package=index0&#34;&gt;&lt;strong&gt;index0&lt;/strong&gt; from CRAN&lt;/a&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;install.packages(&#39;index0&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Or view the source code &lt;a href=&#34;https://github.com/Selbosh/index0&#34;&gt;on GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;m sure you&amp;rsquo;ll agree this will be very useful.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Advent of Code 2021</title>
