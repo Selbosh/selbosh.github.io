@@ -105,6 +105,7 @@ Once a function passes the unit tests, it should be ready to try with the main p
 &lt;li&gt;&lt;a href=&#34;#day4&#34;&gt;Giant Squid&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day5&#34;&gt;Hydrothermal Venture&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day6&#34;&gt;Lanternfish&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day7&#34;&gt;The Treachery of Whales&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div id=&#34;day1&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Day 1 - &lt;a href=&#34;https://adventofcode.com/2021/day/1&#34;&gt;Sonar Sweep&lt;/a&gt;&lt;/h2&gt;
@@ -332,6 +333,45 @@ It takes about the same time to run.&lt;/p&gt;
 &lt;p&gt;Day 6 is another puzzle where the solutions for parts one and two are essentially the same.
 The only thing to be careful of on part two is that you don’t run into integer overflow.
 If you do, make sure the numbers you’re adding together are of type &lt;code&gt;double&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day7&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 7 - &lt;a href=&#34;https://adventofcode.com/2021/day/7&#34;&gt;The Treachery of Whales&lt;/a&gt;&lt;/h2&gt;
+&lt;div id=&#34;median&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Median&lt;/h3&gt;
+&lt;p&gt;While it’s possible to brute-force this puzzle by simply calculating the fuel requirement at every single point (within the range of the inputs), you can do it about 200× faster by treating it as an optimization problem.&lt;/p&gt;
+&lt;p&gt;The total fuel required for any potential position is&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;x &amp;lt;- scan(&amp;#39;input.txt&amp;#39;, sep = &amp;#39;,&amp;#39;)
+f &amp;lt;- function(pos) sum(abs(x - pos))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;where &lt;code&gt;x&lt;/code&gt; are the initial locations of the crabs.
+Then run it through &lt;code&gt;optimize()&lt;/code&gt;, and round to the nearest integer position:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sol &amp;lt;- optimize(f, range(x))$minimum
+f(round(sol))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;However, there is an even faster analytical solution!&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sol &amp;lt;- median(x)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Thanks to &lt;a href=&#34;https://twitter.com/claire_little1&#34;&gt;Claire Little&lt;/a&gt; for pointing this out.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;mean&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Mean&lt;/h3&gt;
+&lt;p&gt;Part two just has a slightly different function to optimize.
+Using the formula for the sum of an &lt;a href=&#34;https://en.wikipedia.org/wiki/Arithmetic_progression&#34;&gt;arithmetic progression&lt;/a&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;f2 &amp;lt;- function(pos) {
+  n &amp;lt;- abs(x - pos)
+  sum(n / 2 * (1 + n))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then we can simply minimize this function as before.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sol &amp;lt;- optimize(f2, range(x))$minimum
+f2(round(sol))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;However, there’s a shortcut for this part as well!
+Calculate the mean of the initial positions, and work out which of the two nearest integers gives the minimum result:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;min(
+  f2(floor(mean(x))),
+  f2(ceiling(mean(x)))
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Thanks to &lt;a href=&#34;https://twitter.com/jonatanpallesen/status/1468165025575624704&#34;&gt;Jonatan Pallesen&lt;/a&gt;.
+This is about 5 times faster than my optimizer.&lt;/p&gt;
+&lt;p&gt;And here is what the functions look like for my input dataset:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2021-12-01-advent_files/figure-html/day7-1.png&#34; width=&#34;576&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 </description>
     </item>
