@@ -31,6 +31,7 @@ Once a function passes the unit tests, it should be ready to try with the main p
 <li><a href="#day4">Giant Squid</a></li>
 <li><a href="#day5">Hydrothermal Venture</a></li>
 <li><a href="#day6">Lanternfish</a></li>
+<li><a href="#day7">The Treachery of Whales</a></li>
 </ol>
 <div id="day1" class="section level2">
 <h2>Day 1 - <a href="https://adventofcode.com/2021/day/1">Sonar Sweep</a></h2>
@@ -258,4 +259,43 @@ It takes about the same time to run.</p>
 <p>Day 6 is another puzzle where the solutions for parts one and two are essentially the same.
 The only thing to be careful of on part two is that you don’t run into integer overflow.
 If you do, make sure the numbers you’re adding together are of type <code>double</code>.</p>
+</div>
+<div id="day7" class="section level2">
+<h2>Day 7 - <a href="https://adventofcode.com/2021/day/7">The Treachery of Whales</a></h2>
+<div id="median" class="section level3">
+<h3>Median</h3>
+<p>While it’s possible to brute-force this puzzle by simply calculating the fuel requirement at every single point (within the range of the inputs), you can do it about 200× faster by treating it as an optimization problem.</p>
+<p>The total fuel required for any potential position is</p>
+<pre class="r"><code>x &lt;- scan(&#39;input.txt&#39;, sep = &#39;,&#39;)
+f &lt;- function(pos) sum(abs(x - pos))</code></pre>
+<p>where <code>x</code> are the initial locations of the crabs.
+Then run it through <code>optimize()</code>, and round to the nearest integer position:</p>
+<pre class="r"><code>sol &lt;- optimize(f, range(x))$minimum
+f(round(sol))</code></pre>
+<p>However, there is an even faster analytical solution!</p>
+<pre class="r"><code>sol &lt;- median(x)</code></pre>
+<p>Thanks to <a href="https://twitter.com/claire_little1">Claire Little</a> for pointing this out.</p>
+</div>
+<div id="mean" class="section level3">
+<h3>Mean</h3>
+<p>Part two just has a slightly different function to optimize.
+Using the formula for the sum of an <a href="https://en.wikipedia.org/wiki/Arithmetic_progression">arithmetic progression</a>:</p>
+<pre class="r"><code>f2 &lt;- function(pos) {
+  n &lt;- abs(x - pos)
+  sum(n / 2 * (1 + n))
+}</code></pre>
+<p>Then we can simply minimize this function as before.</p>
+<pre class="r"><code>sol &lt;- optimize(f2, range(x))$minimum
+f2(round(sol))</code></pre>
+<p>However, there’s a shortcut for this part as well!
+Calculate the mean of the initial positions, and work out which of the two nearest integers gives the minimum result:</p>
+<pre class="r"><code>min(
+  f2(floor(mean(x))),
+  f2(ceiling(mean(x)))
+)</code></pre>
+<p>Thanks to <a href="https://twitter.com/jonatanpallesen/status/1468165025575624704">Jonatan Pallesen</a>.
+This is about 5 times faster than my optimizer.</p>
+<p>And here is what the functions look like for my input dataset:</p>
+<p><img src="/post/2021-12-01-advent_files/figure-html/day7-1.png" width="576" /></p>
+</div>
 </div>
