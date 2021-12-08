@@ -28,7 +28,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
    Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
 <meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="2258">
+<meta itemprop="wordCount" content="2553">
 <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
@@ -157,6 +157,7 @@ Once a function passes the unit tests, it should be ready to try with the main p
 <li><a href="#day5">Hydrothermal Venture</a></li>
 <li><a href="#day6">Lanternfish</a></li>
 <li><a href="#day7">The Treachery of Whales</a></li>
+<li><a href="#day8">Seven Segment Search</a></li>
 </ol>
 <div id="day1" class="section level2">
 <h2>Day 1 - <a href="https://adventofcode.com/2021/day/1">Sonar Sweep</a></h2>
@@ -422,6 +423,67 @@ Calculate the mean of the initial positions, and work out which of the two neare
 This is about 5 times faster than my optimizer.</p>
 <p>And here is what the functions look like for my input dataset:</p>
 <p><img src="https://selbydavid.com/post/2021-12-01-advent_files/figure-html/day7-1.png" width="576" /></p>
+</div>
+</div>
+<div id="day8" class="section level2">
+<h2>Day 8 - <a href="https://adventofcode.com/2021/day/8">Seven Segment Search</a></h2>
+<div id="unique-digits" class="section level3">
+<h3>Unique digits</h3>
+<p>Read in the data and then the first part is just a one-liner:</p>
+<pre class="r"><code>input &lt;- do.call(rbind, strsplit(readLines(input_file(8)), &#39;[^a-z]+&#39;))
+
+count_unique &lt;- function(x) {
+  sum(nchar(x[, -(1:10)]) %in% c(2, 3, 4, 7))
+}</code></pre>
+</div>
+<div id="segment-matching" class="section level3">
+<h3>Segment matching</h3>
+<p>I <em>really</em> wanted to solve part two using graph theory, by representing the puzzle as a maximum bipartite matching problem.
+However, I couldn’t quite get this to work.
+My final solution is instead just a lot of leg work.</p>
+<p>Essentially you solve the problem by hand and then encode the process programmatically.
+Recognize that some digits have segments in common, or not in common, and use this to eliminate the possibilities.
+I stored the solutions in a named vector, which I was able to use to look up the digits found so far.</p>
+<p>The function <code>setdiff()</code> comes in useful.</p>
+<pre class="r"><code>contains &lt;- function(strings, letters) {
+  vapply(strsplit(strings, &#39;&#39;),
+         function(s) all(strsplit(letters, &#39;&#39;)[[1]] %in% s),
+         logical(1))
+}
+
+output_value &lt;- function(vec) {
+  segments &lt;- c(&#39;abcefg&#39;, &#39;cf&#39;, &#39;acdeg&#39;, &#39;acdfg&#39;, &#39;bcdf&#39;,
+                &#39;abdfg&#39;, &#39;abdefg&#39;, &#39;acf&#39;, &#39;abcdefg&#39;, &#39;abcdfg&#39;)
+  nchars &lt;- setNames(nchar(segments), 0:9)
+
+  # Sort the strings
+  vec &lt;- sapply(strsplit(vec, &#39;&#39;), function(d) paste(sort(d), collapse = &#39;&#39;))
+  sgn &lt;- head(vec, 10)
+  out &lt;- tail(vec, 4)
+
+  # Store the known values
+  digits &lt;- setNames(character(10), 0:9)
+  unique &lt;- c(&#39;1&#39;, &#39;4&#39;, &#39;7&#39;, &#39;8&#39;)
+  digits[unique] &lt;- sgn[match(nchars[unique], nchar(sgn))]
+
+  # Remaining digits have 5 or 6 segments:
+  sgn &lt;- setdiff(sgn, digits)
+  digits[&#39;3&#39;] &lt;- sgn[nchar(sgn) == 5 &amp; contains(sgn, digits[&#39;1&#39;])]
+  digits[&#39;6&#39;] &lt;- sgn[nchar(sgn) == 6 &amp; !contains(sgn, digits[&#39;1&#39;])]
+  sgn &lt;- setdiff(sgn, digits)
+  digits[&#39;0&#39;] &lt;- sgn[nchar(sgn) == 6 &amp; !contains(sgn, digits[&#39;4&#39;])]
+  sgn &lt;- setdiff(sgn, digits)
+  digits[&#39;9&#39;] &lt;- sgn[nchar(sgn) == 6]
+  sgn &lt;- setdiff(sgn, digits)
+  digits[&#39;2&#39;] &lt;- sgn[
+    contains(sgn, do.call(setdiff,
+                          unname(strsplit(digits[c(&#39;8&#39;, &#39;6&#39;)], &#39;&#39;))))
+  ]
+  digits[&#39;5&#39;] &lt;- setdiff(sgn, digits)
+
+  # Combine four output digits:
+  as.numeric(paste(match(out, digits) - 1, collapse = &#39;&#39;))
+}</code></pre>
 </div>
 </div>
 
