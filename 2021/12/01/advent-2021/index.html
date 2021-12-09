@@ -28,7 +28,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
    Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
 <meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="2553">
+<meta itemprop="wordCount" content="2857">
 <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
@@ -158,6 +158,7 @@ Once a function passes the unit tests, it should be ready to try with the main p
 <li><a href="#day6">Lanternfish</a></li>
 <li><a href="#day7">The Treachery of Whales</a></li>
 <li><a href="#day8">Seven Segment Search</a></li>
+<li><a href="#day9">Smoke Basin</a></li>
 </ol>
 <div id="day1" class="section level2">
 <h2>Day 1 - <a href="https://adventofcode.com/2021/day/1">Sonar Sweep</a></h2>
@@ -484,6 +485,46 @@ output_value &lt;- function(vec) {
   # Combine four output digits:
   as.numeric(paste(match(out, digits) - 1, collapse = &#39;&#39;))
 }</code></pre>
+</div>
+</div>
+<div id="day-9---smoke-basin" class="section level2">
+<h2>Day 9 - <a href="https://adventofcode.com/2021/day/9">Smoke Basin</a></h2>
+<div id="lowest-points" class="section level3">
+<h3>Lowest points</h3>
+<p>You can find all the lowest points with a one-liner:</p>
+<pre class="r"><code>lowest &lt;- function(h) {
+  h &lt; cbind(h, Inf)[, -1] &amp;          # right
+    h &lt; rbind(h, Inf)[-1, ] &amp;        # down
+    h &lt; cbind(Inf, h[, -ncol(h)]) &amp;  # left
+    h &lt; rbind(Inf, h[-nrow(h), ])    # up
+}</code></pre>
+<p>Then do <code>sum(h[lowest(h)])</code> to get the result, where <code>h</code> is a numeric matrix of the input data.</p>
+</div>
+<div id="basins" class="section level3">
+<h3>Basins</h3>
+<p>The second part is harder and doesn’t immediately lead from the first.
+Initially I thought of replacing each lowest point with <code>Inf</code>, then finding the new lowest points and repeating the process until all the basins are found.
+However, the basins are simply all points where the height is <code>&lt; 9</code>, so you can find the basins in a single step.</p>
+<p>The tricky part is labelling them separately, so you can count up their respective sizes.</p>
+<p>The boring way of doing this is just to loop over the indices and label the points that neighbour already-labelled ones (starting with the lowest points as the initial labels), doing several passes until everything (except the 9s) is labelled.</p>
+<pre class="r"><code>basins &lt;- function(h) {
+  l &lt;- lowest(h)
+  h[] &lt;- ifelse(h &lt; 9, NA, Inf)
+  h[l] &lt;- 1:sum(l)
+  while (anyNA(h)) {
+    for (i in 1:nrow(h)) for (j in 1:ncol(h)) {
+      if (is.na(h[i, j])) {
+        nbrs &lt;- h[cbind(c(pmax(i - 1, 1), pmin(i + 1, nrow(h)), i, i),
+                        c(j, j, pmax(j - 1, 1), pmin(j + 1, ncol(h))))]
+        if (any(is.finite(nbrs)))
+          h[i, j] &lt;- nbrs[is.finite(nbrs)][1]
+      }
+    }
+  }
+  sizes &lt;- table(h[is.finite(h)])
+  head(sort(sizes, decreasing = TRUE), 3)
+}</code></pre>
+<p>However, you can also <a href="https://twitter.com/rappa753/status/1468876602016735233">formulate this as an image analysis problem</a>, effectively treating each basin as an area of similar colour to select, or you can <a href="https://twitter.com/babeheim/status/1468898580408811525">treat it as a network theory problem and apply the <strong>igraph</strong> package</a> to find graph components.</p>
 </div>
 </div>
 

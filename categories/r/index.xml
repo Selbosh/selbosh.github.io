@@ -107,6 +107,7 @@ Once a function passes the unit tests, it should be ready to try with the main p
 &lt;li&gt;&lt;a href=&#34;#day6&#34;&gt;Lanternfish&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day7&#34;&gt;The Treachery of Whales&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day8&#34;&gt;Seven Segment Search&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day9&#34;&gt;Smoke Basin&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div id=&#34;day1&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Day 1 - &lt;a href=&#34;https://adventofcode.com/2021/day/1&#34;&gt;Sonar Sweep&lt;/a&gt;&lt;/h2&gt;
@@ -433,6 +434,46 @@ output_value &amp;lt;- function(vec) {
   # Combine four output digits:
   as.numeric(paste(match(out, digits) - 1, collapse = &amp;#39;&amp;#39;))
 }&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day-9---smoke-basin&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 9 - &lt;a href=&#34;https://adventofcode.com/2021/day/9&#34;&gt;Smoke Basin&lt;/a&gt;&lt;/h2&gt;
+&lt;div id=&#34;lowest-points&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Lowest points&lt;/h3&gt;
+&lt;p&gt;You can find all the lowest points with a one-liner:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lowest &amp;lt;- function(h) {
+  h &amp;lt; cbind(h, Inf)[, -1] &amp;amp;          # right
+    h &amp;lt; rbind(h, Inf)[-1, ] &amp;amp;        # down
+    h &amp;lt; cbind(Inf, h[, -ncol(h)]) &amp;amp;  # left
+    h &amp;lt; rbind(Inf, h[-nrow(h), ])    # up
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then do &lt;code&gt;sum(h[lowest(h)])&lt;/code&gt; to get the result, where &lt;code&gt;h&lt;/code&gt; is a numeric matrix of the input data.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;basins&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Basins&lt;/h3&gt;
+&lt;p&gt;The second part is harder and doesn’t immediately lead from the first.
+Initially I thought of replacing each lowest point with &lt;code&gt;Inf&lt;/code&gt;, then finding the new lowest points and repeating the process until all the basins are found.
+However, the basins are simply all points where the height is &lt;code&gt;&amp;lt; 9&lt;/code&gt;, so you can find the basins in a single step.&lt;/p&gt;
+&lt;p&gt;The tricky part is labelling them separately, so you can count up their respective sizes.&lt;/p&gt;
+&lt;p&gt;The boring way of doing this is just to loop over the indices and label the points that neighbour already-labelled ones (starting with the lowest points as the initial labels), doing several passes until everything (except the 9s) is labelled.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;basins &amp;lt;- function(h) {
+  l &amp;lt;- lowest(h)
+  h[] &amp;lt;- ifelse(h &amp;lt; 9, NA, Inf)
+  h[l] &amp;lt;- 1:sum(l)
+  while (anyNA(h)) {
+    for (i in 1:nrow(h)) for (j in 1:ncol(h)) {
+      if (is.na(h[i, j])) {
+        nbrs &amp;lt;- h[cbind(c(pmax(i - 1, 1), pmin(i + 1, nrow(h)), i, i),
+                        c(j, j, pmax(j - 1, 1), pmin(j + 1, ncol(h))))]
+        if (any(is.finite(nbrs)))
+          h[i, j] &amp;lt;- nbrs[is.finite(nbrs)][1]
+      }
+    }
+  }
+  sizes &amp;lt;- table(h[is.finite(h)])
+  head(sort(sizes, decreasing = TRUE), 3)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;However, you can also &lt;a href=&#34;https://twitter.com/rappa753/status/1468876602016735233&#34;&gt;formulate this as an image analysis problem&lt;/a&gt;, effectively treating each basin as an area of similar colour to select, or you can &lt;a href=&#34;https://twitter.com/babeheim/status/1468898580408811525&#34;&gt;treat it as a network theory problem and apply the &lt;strong&gt;igraph&lt;/strong&gt; package&lt;/a&gt; to find graph components.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>
