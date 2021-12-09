@@ -28,7 +28,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
    Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
 <meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="2857">
+<meta itemprop="wordCount" content="2994">
 <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
@@ -487,7 +487,7 @@ output_value &lt;- function(vec) {
 }</code></pre>
 </div>
 </div>
-<div id="day-9---smoke-basin" class="section level2">
+<div id="day9" class="section level2">
 <h2>Day 9 - <a href="https://adventofcode.com/2021/day/9">Smoke Basin</a></h2>
 <div id="lowest-points" class="section level3">
 <h3>Lowest points</h3>
@@ -514,8 +514,8 @@ However, the basins are simply all points where the height is <code>&lt; 9</code
   while (anyNA(h)) {
     for (i in 1:nrow(h)) for (j in 1:ncol(h)) {
       if (is.na(h[i, j])) {
-        nbrs &lt;- h[cbind(c(pmax(i - 1, 1), pmin(i + 1, nrow(h)), i, i),
-                        c(j, j, pmax(j - 1, 1), pmin(j + 1, ncol(h))))]
+        nbrs &lt;- h[cbind(c(max(i - 1, 1), min(i + 1, nrow(h)), i, i),
+                        c(j, j, max(j - 1, 1), min(j + 1, ncol(h))))]
         if (any(is.finite(nbrs)))
           h[i, j] &lt;- nbrs[is.finite(nbrs)][1]
       }
@@ -524,7 +524,30 @@ However, the basins are simply all points where the height is <code>&lt; 9</code
   sizes &lt;- table(h[is.finite(h)])
   head(sort(sizes, decreasing = TRUE), 3)
 }</code></pre>
-<p>However, you can also <a href="https://twitter.com/rappa753/status/1468876602016735233">formulate this as an image analysis problem</a>, effectively treating each basin as an area of similar colour to select, or you can <a href="https://twitter.com/babeheim/status/1468898580408811525">treat it as a network theory problem and apply the <strong>igraph</strong> package</a> to find graph components.</p>
+<p>To vectorize this in the same way as part one, we define a new binary (infix) operator <code>%c%</code>, analogous to <code>dplyr::coalesce()</code>.
+What this does is replace an <code>NA</code> value (a basin not yet assigned a label) with its finite neighbour, while leaving <code>Inf</code>s (marking basin edges) alone.</p>
+<pre class="r"><code>&quot;%c%&quot; &lt;- function(x, y) {
+  ifelse(is.infinite(x), x,
+         ifelse(!is.na(x), x,
+                ifelse(!is.infinite(y), y, x)))
+}</code></pre>
+<p>Then the new function for part two is as follows.
+It is five times faster to run than the nested loop above.</p>
+<pre class="r"><code>basins2 &lt;- function(h) {
+  l &lt;- lowest(h)
+  h[] &lt;- ifelse(h &lt; 9, NA, Inf)
+  h[l] &lt;- 1:sum(l)
+  while(anyNA(h)) {
+    h &lt;- h %c%
+      cbind(h, NA)[, -1] %c%        # right
+      rbind(h, NA)[-1, ] %c%        # down
+      cbind(NA, h[, -ncol(h)]) %c%  # left
+      rbind(NA, h[-nrow(h), ])      # up
+  }
+  sizes &lt;- table(h[is.finite(h)])
+  head(sort(sizes, decreasing = TRUE), 3)
+}</code></pre>
+<p>You can also <a href="https://twitter.com/rappa753/status/1468876602016735233">formulate this as an image analysis problem</a>, effectively treating each basin as an area of similar colour to select, or you can <a href="https://twitter.com/babeheim/status/1468898580408811525">treat it as a network theory problem and apply the <strong>igraph</strong> package</a> to find graph components.</p>
 </div>
 </div>
 

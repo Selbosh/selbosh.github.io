@@ -436,7 +436,7 @@ output_value &amp;lt;- function(vec) {
 }&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;day-9---smoke-basin&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;day9&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Day 9 - &lt;a href=&#34;https://adventofcode.com/2021/day/9&#34;&gt;Smoke Basin&lt;/a&gt;&lt;/h2&gt;
 &lt;div id=&#34;lowest-points&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;Lowest points&lt;/h3&gt;
@@ -463,8 +463,8 @@ However, the basins are simply all points where the height is &lt;code&gt;&amp;l
   while (anyNA(h)) {
     for (i in 1:nrow(h)) for (j in 1:ncol(h)) {
       if (is.na(h[i, j])) {
-        nbrs &amp;lt;- h[cbind(c(pmax(i - 1, 1), pmin(i + 1, nrow(h)), i, i),
-                        c(j, j, pmax(j - 1, 1), pmin(j + 1, ncol(h))))]
+        nbrs &amp;lt;- h[cbind(c(max(i - 1, 1), min(i + 1, nrow(h)), i, i),
+                        c(j, j, max(j - 1, 1), min(j + 1, ncol(h))))]
         if (any(is.finite(nbrs)))
           h[i, j] &amp;lt;- nbrs[is.finite(nbrs)][1]
       }
@@ -473,7 +473,30 @@ However, the basins are simply all points where the height is &lt;code&gt;&amp;l
   sizes &amp;lt;- table(h[is.finite(h)])
   head(sort(sizes, decreasing = TRUE), 3)
 }&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;However, you can also &lt;a href=&#34;https://twitter.com/rappa753/status/1468876602016735233&#34;&gt;formulate this as an image analysis problem&lt;/a&gt;, effectively treating each basin as an area of similar colour to select, or you can &lt;a href=&#34;https://twitter.com/babeheim/status/1468898580408811525&#34;&gt;treat it as a network theory problem and apply the &lt;strong&gt;igraph&lt;/strong&gt; package&lt;/a&gt; to find graph components.&lt;/p&gt;
+&lt;p&gt;To vectorize this in the same way as part one, we define a new binary (infix) operator &lt;code&gt;%c%&lt;/code&gt;, analogous to &lt;code&gt;dplyr::coalesce()&lt;/code&gt;.
+What this does is replace an &lt;code&gt;NA&lt;/code&gt; value (a basin not yet assigned a label) with its finite neighbour, while leaving &lt;code&gt;Inf&lt;/code&gt;s (marking basin edges) alone.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;quot;%c%&amp;quot; &amp;lt;- function(x, y) {
+  ifelse(is.infinite(x), x,
+         ifelse(!is.na(x), x,
+                ifelse(!is.infinite(y), y, x)))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then the new function for part two is as follows.
+It is five times faster to run than the nested loop above.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;basins2 &amp;lt;- function(h) {
+  l &amp;lt;- lowest(h)
+  h[] &amp;lt;- ifelse(h &amp;lt; 9, NA, Inf)
+  h[l] &amp;lt;- 1:sum(l)
+  while(anyNA(h)) {
+    h &amp;lt;- h %c%
+      cbind(h, NA)[, -1] %c%        # right
+      rbind(h, NA)[-1, ] %c%        # down
+      cbind(NA, h[, -ncol(h)]) %c%  # left
+      rbind(NA, h[-nrow(h), ])      # up
+  }
+  sizes &amp;lt;- table(h[is.finite(h)])
+  head(sort(sizes, decreasing = TRUE), 3)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can also &lt;a href=&#34;https://twitter.com/rappa753/status/1468876602016735233&#34;&gt;formulate this as an image analysis problem&lt;/a&gt;, effectively treating each basin as an area of similar colour to select, or you can &lt;a href=&#34;https://twitter.com/babeheim/status/1468898580408811525&#34;&gt;treat it as a network theory problem and apply the &lt;strong&gt;igraph&lt;/strong&gt; package&lt;/a&gt; to find graph components.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>
