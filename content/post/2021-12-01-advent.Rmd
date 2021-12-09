@@ -35,6 +35,7 @@ remotes::install_github('Selbosh/adventofcode2021')
 6. [Lanternfish](#day6)
 7. [The Treachery of Whales](#day7)
 8. [Seven Segment Search](#day8)
+9. [Smoke Basin](#day9)
 
 ## Day 1 - [Sonar Sweep](https://adventofcode.com/2021/day/1) {#day1}
 
@@ -521,3 +522,55 @@ output_value <- function(vec) {
   as.numeric(paste(match(out, digits) - 1, collapse = ''))
 }
 ```
+
+## Day 9 - [Smoke Basin](https://adventofcode.com/2021/day/9) {#day9}
+
+### Lowest points
+
+You can find all the lowest points with a one-liner:
+
+```r
+lowest <- function(h) {
+  h < cbind(h, Inf)[, -1] &          # right
+    h < rbind(h, Inf)[-1, ] &        # down
+    h < cbind(Inf, h[, -ncol(h)]) &  # left
+    h < rbind(Inf, h[-nrow(h), ])    # up
+}
+```
+
+Then do `sum(h[lowest(h)])` to get the result, where `h` is a numeric matrix of the input data.
+
+### Basins
+
+The second part is harder and doesn't immediately lead from the first.
+Initially I thought of replacing each lowest point with `Inf`, then finding the new lowest points and repeating the process until all the basins are found.
+However, the basins are simply all points where the height is `< 9`, so you can find the basins in a single step.
+
+The tricky part is labelling them separately, so you can count up their respective sizes.
+
+The boring way of doing this is just to loop over the indices and label the points that neighbour already-labelled ones (starting with the lowest points as the initial labels), doing several passes until everything (except the 9s) is labelled.
+
+```r
+basins <- function(h) {
+  l <- lowest(h)
+  h[] <- ifelse(h < 9, NA, Inf)
+  h[l] <- 1:sum(l)
+  while (anyNA(h)) {
+    for (i in 1:nrow(h)) for (j in 1:ncol(h)) {
+      if (is.na(h[i, j])) {
+        nbrs <- h[cbind(c(pmax(i - 1, 1), pmin(i + 1, nrow(h)), i, i),
+                        c(j, j, pmax(j - 1, 1), pmin(j + 1, ncol(h))))]
+        if (any(is.finite(nbrs)))
+          h[i, j] <- nbrs[is.finite(nbrs)][1]
+      }
+    }
+  }
+  sizes <- table(h[is.finite(h)])
+  head(sort(sizes, decreasing = TRUE), 3)
+}
+```
+
+There may be a way of vectorizing the inner loops here by using a vector of coordinates.
+The function `which(..., arr.ind = TRUE)` might be handy for such an approach.
+
+You can also [formulate this as an image analysis problem](https://twitter.com/rappa753/status/1468876602016735233), effectively treating each basin as an area of similar colour to select, or you can [treat it as a network theory problem and apply the **igraph** package](https://twitter.com/babeheim/status/1468898580408811525) to find graph components.
