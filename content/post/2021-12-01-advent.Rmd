@@ -558,8 +558,8 @@ basins <- function(h) {
   while (anyNA(h)) {
     for (i in 1:nrow(h)) for (j in 1:ncol(h)) {
       if (is.na(h[i, j])) {
-        nbrs <- h[cbind(c(pmax(i - 1, 1), pmin(i + 1, nrow(h)), i, i),
-                        c(j, j, pmax(j - 1, 1), pmin(j + 1, ncol(h))))]
+        nbrs <- h[cbind(c(max(i - 1, 1), min(i + 1, nrow(h)), i, i),
+                        c(j, j, max(j - 1, 1), min(j + 1, ncol(h))))]
         if (any(is.finite(nbrs)))
           h[i, j] <- nbrs[is.finite(nbrs)][1]
       }
@@ -570,7 +570,35 @@ basins <- function(h) {
 }
 ```
 
-There may be a way of vectorizing the inner loops here by using a vector of coordinates.
-The function `which(..., arr.ind = TRUE)` might be handy for such an approach.
+To vectorize this in the same way as part one, we define a new binary (infix) operator `%c%`, analogous to `dplyr::coalesce()`.
+What this does is replace an `NA` value (a basin not yet assigned a label) with its finite neighbour, while leaving `Inf`s (marking basin edges) alone.
+
+```r
+"%c%" <- function(x, y) {
+  ifelse(is.infinite(x), x,
+         ifelse(!is.na(x), x,
+                ifelse(!is.infinite(y), y, x)))
+}
+```
+
+Then the new function for part two is as follows.
+It is five times faster to run than the nested loop above.
+
+```r
+basins2 <- function(h) {
+  l <- lowest(h)
+  h[] <- ifelse(h < 9, NA, Inf)
+  h[l] <- 1:sum(l)
+  while(anyNA(h)) {
+    h <- h %c%
+      cbind(h, NA)[, -1] %c%        # right
+      rbind(h, NA)[-1, ] %c%        # down
+      cbind(NA, h[, -ncol(h)]) %c%  # left
+      rbind(NA, h[-nrow(h), ])      # up
+  }
+  sizes <- table(h[is.finite(h)])
+  head(sort(sizes, decreasing = TRUE), 3)
+}
+```
 
 You can also [formulate this as an image analysis problem](https://twitter.com/rappa753/status/1468876602016735233), effectively treating each basin as an area of similar colour to select, or you can [treat it as a network theory problem and apply the **igraph** package](https://twitter.com/babeheim/status/1468898580408811525) to find graph components.
