@@ -511,11 +511,10 @@ Then, get the first closing bracket (if any), using &lt;code&gt;regmatches()&lt;
 These are the illegal characters.&lt;/p&gt;
 &lt;p&gt;My function &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day10.R#L122-L128&#34;&gt;&lt;code&gt;syntax_score()&lt;/code&gt;&lt;/a&gt; is implemented as follows:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lines &amp;lt;- readLines(&amp;#39;input.txt&amp;#39;)
-
-nc &amp;lt;- -1
-while (nc != (nc &amp;lt;- sum(nchar(lines))))
-  lines &amp;lt;- gsub(&amp;#39;\\(\\)|&amp;lt;&amp;gt;|\\{\\}|\\[\\]&amp;#39;, &amp;#39;&amp;#39;, lines)
-illegals &amp;lt;- regmatches(lines, regexpr(&amp;#39;\\)|&amp;gt;|\\}|\\]&amp;#39;, lines))&lt;/code&gt;&lt;/pre&gt;
+old &amp;lt;- &amp;#39;&amp;#39;
+while (!identical(old, lines -&amp;gt; old))
+  lines &amp;lt;- gsub(r&amp;#39;(\(\)|&amp;lt;&amp;gt;|\{\}|\[\])&amp;#39;, &amp;#39;&amp;#39;, lines)
+illegals &amp;lt;- regmatches(lines, regexpr(r&amp;#39;(\)|&amp;gt;|\}|\])&amp;#39;, lines))&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The syntax score is calculated using a named vector as a lookup table.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;illegal_score &amp;lt;- c(&amp;#39;)&amp;#39; = 3, &amp;#39;]&amp;#39; = 57, &amp;#39;}&amp;#39; = 1197, &amp;#39;&amp;gt;&amp;#39; = 25137)
 sum(illegal_score[illegals])&lt;/code&gt;&lt;/pre&gt;
@@ -523,7 +522,7 @@ sum(illegal_score[illegals])&lt;/code&gt;&lt;/pre&gt;
 &lt;div id=&#34;autocomplete&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;Autocomplete&lt;/h3&gt;
 &lt;p&gt;Part two starts the same, but instead of extracting the illegal characters we just throw away those lines that contain them.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;illegals &amp;lt;- grep(&amp;#39;\\)|&amp;gt;|\\}|\\]&amp;#39;, lines)
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;illegals &amp;lt;- grep(r&amp;#39;(\)|&amp;gt;|\}|\])&amp;#39;, lines)
 chars &amp;lt;- strsplit(lines[-illegals], &amp;#39;&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;From here, we can calculate the scores using a &lt;code&gt;Reduce&lt;/code&gt; operation (from right to left) with another lookup table.
 The final answer is the median score.&lt;/p&gt;
