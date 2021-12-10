@@ -36,6 +36,7 @@ remotes::install_github('Selbosh/adventofcode2021')
 7. [The Treachery of Whales](#day7)
 8. [Seven Segment Search](#day8)
 9. [Smoke Basin](#day9)
+10. [Syntax Scoring](#day10)
 
 ## Day 1 - [Sonar Sweep](https://adventofcode.com/2021/day/1) {#day1}
 
@@ -602,3 +603,48 @@ basins2 <- function(h) {
 ```
 
 You can also [formulate this as an image analysis problem](https://twitter.com/rappa753/status/1468876602016735233), effectively treating each basin as an area of similar colour to select, or you can [treat it as a network theory problem and apply the **igraph** package](https://twitter.com/babeheim/status/1468898580408811525) to find graph components.
+
+## Day 10 - [Syntax Scoring](https://adventofcode.com/2021/day/10) {#day10}
+
+### Corrupt characters
+
+Whilst it's probably possible to do the first part with some very fancy [recursive regular expressions](https://www.php.net/manual/en/regexp.reference.recursive.php), I don't know how to use them.
+
+Instead, my method of finding unmatched brackets is simply to search for empty pairs of brackets and successively strip them from the string.
+Keep doing this until the strings stop changing.
+Then, get the first closing bracket (if any), using `regmatches()`.
+These are the illegal characters.
+
+My function [`syntax_score()`](https://github.com/Selbosh/adventofcode2021/blob/main/R/day10.R#L122-L128) is implemented as follows:
+
+```r
+lines <- readLines('input.txt')
+
+nc <- -1
+while (nc != (nc <- sum(nchar(lines))))
+  lines <- gsub('\\(\\)|<>|\\{\\}|\\[\\]', '', lines)
+illegals <- regmatches(lines, regexpr('\\)|>|\\}|\\]', lines))
+```
+The syntax score is calculated using a named vector as a lookup table.
+```r
+illegal_score <- c(')' = 3, ']' = 57, '}' = 1197, '>' = 25137)
+sum(illegal_score[illegals])
+```
+
+### Autocomplete
+
+Part two starts the same, but instead of extracting the illegal characters we just throw away those lines that contain them.
+
+```r
+illegals <- grep('\\)|>|\\}|\\]', lines)
+chars <- strsplit(lines[-illegals], '')
+```
+From here, we can calculate the scores using a `Reduce` operation (from right to left) with another lookup table.
+The final answer is the median score.
+```r
+complete_score <- c('(' = 1, '[' = 2, '{' = 3, '<' = 4)
+scores <- sapply(chars, Reduce, init = 0, right = TRUE,
+                 f = \(s, c) 5 * s + complete_score[c])
+median(scores)
+```
+The function [`autocomplete()`](https://github.com/Selbosh/adventofcode2021/blob/main/R/day10.R#L132-L141) wraps it all together.
