@@ -28,7 +28,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
    Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
 <meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="2994">
+<meta itemprop="wordCount" content="3226">
 <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
@@ -159,6 +159,7 @@ Once a function passes the unit tests, it should be ready to try with the main p
 <li><a href="#day7">The Treachery of Whales</a></li>
 <li><a href="#day8">Seven Segment Search</a></li>
 <li><a href="#day9">Smoke Basin</a></li>
+<li><a href="#day10">Syntax Scoring</a></li>
 </ol>
 <div id="day1" class="section level2">
 <h2>Day 1 - <a href="https://adventofcode.com/2021/day/1">Sonar Sweep</a></h2>
@@ -548,6 +549,40 @@ It is five times faster to run than the nested loop above.</p>
   head(sort(sizes, decreasing = TRUE), 3)
 }</code></pre>
 <p>You can also <a href="https://twitter.com/rappa753/status/1468876602016735233">formulate this as an image analysis problem</a>, effectively treating each basin as an area of similar colour to select, or you can <a href="https://twitter.com/babeheim/status/1468898580408811525">treat it as a network theory problem and apply the <strong>igraph</strong> package</a> to find graph components.</p>
+</div>
+</div>
+<div id="day10" class="section level2">
+<h2>Day 10 - <a href="https://adventofcode.com/2021/day/10">Syntax Scoring</a></h2>
+<div id="corrupt-characters" class="section level3">
+<h3>Corrupt characters</h3>
+<p>Whilst it’s probably possible to do the first part with some very fancy <a href="https://www.php.net/manual/en/regexp.reference.recursive.php">recursive regular expressions</a>, I don’t know how to use them.</p>
+<p>Instead, my method of finding unmatched brackets is simply to search for empty pairs of brackets and successively strip them from the string.
+Keep doing this until the strings stop changing.
+Then, get the first closing bracket (if any), using <code>regmatches()</code>.
+These are the illegal characters.</p>
+<p>My function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day10.R#L122-L128"><code>syntax_score()</code></a> is implemented as follows:</p>
+<pre class="r"><code>lines &lt;- readLines(&#39;input.txt&#39;)
+
+nc &lt;- -1
+while (nc != (nc &lt;- sum(nchar(lines))))
+  lines &lt;- gsub(&#39;\\(\\)|&lt;&gt;|\\{\\}|\\[\\]&#39;, &#39;&#39;, lines)
+illegals &lt;- regmatches(lines, regexpr(&#39;\\)|&gt;|\\}|\\]&#39;, lines))</code></pre>
+<p>The syntax score is calculated using a named vector as a lookup table.</p>
+<pre class="r"><code>illegal_score &lt;- c(&#39;)&#39; = 3, &#39;]&#39; = 57, &#39;}&#39; = 1197, &#39;&gt;&#39; = 25137)
+sum(illegal_score[illegals])</code></pre>
+</div>
+<div id="autocomplete" class="section level3">
+<h3>Autocomplete</h3>
+<p>Part two starts the same, but instead of extracting the illegal characters we just throw away those lines that contain them.</p>
+<pre class="r"><code>illegals &lt;- grep(&#39;\\)|&gt;|\\}|\\]&#39;, lines)
+chars &lt;- strsplit(lines[-illegals], &#39;&#39;)</code></pre>
+<p>From here, we can calculate the scores using a <code>Reduce</code> operation (from right to left) with another lookup table.
+The final answer is the median score.</p>
+<pre class="r"><code>complete_score &lt;- c(&#39;(&#39; = 1, &#39;[&#39; = 2, &#39;{&#39; = 3, &#39;&lt;&#39; = 4)
+scores &lt;- sapply(chars, Reduce, init = 0, right = TRUE,
+                 f = \(s, c) 5 * s + complete_score[c])
+median(scores)</code></pre>
+<p>The function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day10.R#L132-L141"><code>autocomplete()</code></a> wraps it all together.</p>
 </div>
 </div>
 

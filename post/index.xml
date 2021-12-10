@@ -108,6 +108,7 @@ Once a function passes the unit tests, it should be ready to try with the main p
 &lt;li&gt;&lt;a href=&#34;#day7&#34;&gt;The Treachery of Whales&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day8&#34;&gt;Seven Segment Search&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day9&#34;&gt;Smoke Basin&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day10&#34;&gt;Syntax Scoring&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div id=&#34;day1&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Day 1 - &lt;a href=&#34;https://adventofcode.com/2021/day/1&#34;&gt;Sonar Sweep&lt;/a&gt;&lt;/h2&gt;
@@ -497,6 +498,40 @@ It is five times faster to run than the nested loop above.&lt;/p&gt;
   head(sort(sizes, decreasing = TRUE), 3)
 }&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;You can also &lt;a href=&#34;https://twitter.com/rappa753/status/1468876602016735233&#34;&gt;formulate this as an image analysis problem&lt;/a&gt;, effectively treating each basin as an area of similar colour to select, or you can &lt;a href=&#34;https://twitter.com/babeheim/status/1468898580408811525&#34;&gt;treat it as a network theory problem and apply the &lt;strong&gt;igraph&lt;/strong&gt; package&lt;/a&gt; to find graph components.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day10&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 10 - &lt;a href=&#34;https://adventofcode.com/2021/day/10&#34;&gt;Syntax Scoring&lt;/a&gt;&lt;/h2&gt;
+&lt;div id=&#34;corrupt-characters&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Corrupt characters&lt;/h3&gt;
+&lt;p&gt;Whilst it’s probably possible to do the first part with some very fancy &lt;a href=&#34;https://www.php.net/manual/en/regexp.reference.recursive.php&#34;&gt;recursive regular expressions&lt;/a&gt;, I don’t know how to use them.&lt;/p&gt;
+&lt;p&gt;Instead, my method of finding unmatched brackets is simply to search for empty pairs of brackets and successively strip them from the string.
+Keep doing this until the strings stop changing.
+Then, get the first closing bracket (if any), using &lt;code&gt;regmatches()&lt;/code&gt;.
+These are the illegal characters.&lt;/p&gt;
+&lt;p&gt;My function &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day10.R#L122-L128&#34;&gt;&lt;code&gt;syntax_score()&lt;/code&gt;&lt;/a&gt; is implemented as follows:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lines &amp;lt;- readLines(&amp;#39;input.txt&amp;#39;)
+
+nc &amp;lt;- -1
+while (nc != (nc &amp;lt;- sum(nchar(lines))))
+  lines &amp;lt;- gsub(&amp;#39;\\(\\)|&amp;lt;&amp;gt;|\\{\\}|\\[\\]&amp;#39;, &amp;#39;&amp;#39;, lines)
+illegals &amp;lt;- regmatches(lines, regexpr(&amp;#39;\\)|&amp;gt;|\\}|\\]&amp;#39;, lines))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The syntax score is calculated using a named vector as a lookup table.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;illegal_score &amp;lt;- c(&amp;#39;)&amp;#39; = 3, &amp;#39;]&amp;#39; = 57, &amp;#39;}&amp;#39; = 1197, &amp;#39;&amp;gt;&amp;#39; = 25137)
+sum(illegal_score[illegals])&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;autocomplete&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Autocomplete&lt;/h3&gt;
+&lt;p&gt;Part two starts the same, but instead of extracting the illegal characters we just throw away those lines that contain them.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;illegals &amp;lt;- grep(&amp;#39;\\)|&amp;gt;|\\}|\\]&amp;#39;, lines)
+chars &amp;lt;- strsplit(lines[-illegals], &amp;#39;&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;From here, we can calculate the scores using a &lt;code&gt;Reduce&lt;/code&gt; operation (from right to left) with another lookup table.
+The final answer is the median score.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;complete_score &amp;lt;- c(&amp;#39;(&amp;#39; = 1, &amp;#39;[&amp;#39; = 2, &amp;#39;{&amp;#39; = 3, &amp;#39;&amp;lt;&amp;#39; = 4)
+scores &amp;lt;- sapply(chars, Reduce, init = 0, right = TRUE,
+                 f = \(s, c) 5 * s + complete_score[c])
+median(scores)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The function &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day10.R#L132-L141&#34;&gt;&lt;code&gt;autocomplete()&lt;/code&gt;&lt;/a&gt; wraps it all together.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>
