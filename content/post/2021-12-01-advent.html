@@ -455,7 +455,7 @@ chars &lt;- strsplit(lines[-illegals], &#39;&#39;)</code></pre>
 The final answer is the median score.</p>
 <pre class="r"><code>complete_score &lt;- c(&#39;(&#39; = 1, &#39;[&#39; = 2, &#39;{&#39; = 3, &#39;&lt;&#39; = 4)
 scores &lt;- sapply(chars, Reduce, init = 0, right = TRUE,
-                 f = \(s, c) 5 * s + complete_score[c])
+                 f = \(c, s) 5 * s + complete_score[c])
 median(scores)</code></pre>
 <p>The function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day10.R#L132-L141"><code>autocomplete()</code></a> wraps it all together.</p>
 </div>

@@ -644,7 +644,7 @@ The final answer is the median score.
 ```r
 complete_score <- c('(' = 1, '[' = 2, '{' = 3, '<' = 4)
 scores <- sapply(chars, Reduce, init = 0, right = TRUE,
-                 f = \(s, c) 5 * s + complete_score[c])
+                 f = \(c, s) 5 * s + complete_score[c])
 median(scores)
 ```
 The function [`autocomplete()`](https://github.com/Selbosh/adventofcode2021/blob/main/R/day10.R#L132-L141) wraps it all together.
