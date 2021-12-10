@@ -437,11 +437,10 @@ Then, get the first closing bracket (if any), using <code>regmatches()</code>.
 These are the illegal characters.</p>
 <p>My function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day10.R#L122-L128"><code>syntax_score()</code></a> is implemented as follows:</p>
 <pre class="r"><code>lines &lt;- readLines(&#39;input.txt&#39;)
-
-nc &lt;- -1
-while (nc != (nc &lt;- sum(nchar(lines))))
-  lines &lt;- gsub(&#39;\\(\\)|&lt;&gt;|\\{\\}|\\[\\]&#39;, &#39;&#39;, lines)
-illegals &lt;- regmatches(lines, regexpr(&#39;\\)|&gt;|\\}|\\]&#39;, lines))</code></pre>
+old &lt;- &#39;&#39;
+while (!identical(old, lines -&gt; old))
+  lines &lt;- gsub(r&#39;(\(\)|&lt;&gt;|\{\}|\[\])&#39;, &#39;&#39;, lines)
+illegals &lt;- regmatches(lines, regexpr(r&#39;(\)|&gt;|\}|\])&#39;, lines))</code></pre>
 <p>The syntax score is calculated using a named vector as a lookup table.</p>
 <pre class="r"><code>illegal_score &lt;- c(&#39;)&#39; = 3, &#39;]&#39; = 57, &#39;}&#39; = 1197, &#39;&gt;&#39; = 25137)
 sum(illegal_score[illegals])</code></pre>
@@ -449,7 +448,7 @@ sum(illegal_score[illegals])</code></pre>
 <div id="autocomplete" class="section level3">
 <h3>Autocomplete</h3>
 <p>Part two starts the same, but instead of extracting the illegal characters we just throw away those lines that contain them.</p>
-<pre class="r"><code>illegals &lt;- grep(&#39;\\)|&gt;|\\}|\\]&#39;, lines)
+<pre class="r"><code>illegals &lt;- grep(r&#39;(\)|&gt;|\}|\])&#39;, lines)
 chars &lt;- strsplit(lines[-illegals], &#39;&#39;)</code></pre>
 <p>From here, we can calculate the scores using a <code>Reduce</code> operation (from right to left) with another lookup table.
 The final answer is the median score.</p>

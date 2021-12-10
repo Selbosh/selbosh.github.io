@@ -619,11 +619,10 @@ My function [`syntax_score()`](https://github.com/Selbosh/adventofcode2021/blob/
 
 ```r
 lines <- readLines('input.txt')
-
-nc <- -1
-while (nc != (nc <- sum(nchar(lines))))
-  lines <- gsub('\\(\\)|<>|\\{\\}|\\[\\]', '', lines)
-illegals <- regmatches(lines, regexpr('\\)|>|\\}|\\]', lines))
+old <- ''
+while (!identical(old, lines -> old))
+  lines <- gsub(r'(\(\)|<>|\{\}|\[\])', '', lines)
+illegals <- regmatches(lines, regexpr(r'(\)|>|\}|\])', lines))
 ```
 The syntax score is calculated using a named vector as a lookup table.
 ```r
@@ -636,7 +635,7 @@ sum(illegal_score[illegals])
 Part two starts the same, but instead of extracting the illegal characters we just throw away those lines that contain them.
 
 ```r
-illegals <- grep('\\)|>|\\}|\\]', lines)
+illegals <- grep(r'(\)|>|\}|\])', lines)
 chars <- strsplit(lines[-illegals], '')
 ```
 From here, we can calculate the scores using a `Reduce` operation (from right to left) with another lookup table.
