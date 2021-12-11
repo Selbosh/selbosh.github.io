@@ -28,7 +28,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
    Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
 <meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="3225">
+<meta itemprop="wordCount" content="3581">
 <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
@@ -160,6 +160,7 @@ Once a function passes the unit tests, it should be ready to try with the main p
 <li><a href="#day8">Seven Segment Search</a></li>
 <li><a href="#day9">Smoke Basin</a></li>
 <li><a href="#day10">Syntax Scoring</a></li>
+<li><a href="#day11">Dumbo Octopus</a></li>
 </ol>
 <div id="day1" class="section level2">
 <h2>Day 1 - <a href="https://adventofcode.com/2021/day/1">Sonar Sweep</a></h2>
@@ -582,6 +583,54 @@ scores &lt;- sapply(chars, Reduce, init = 0, right = TRUE,
                  f = \(c, s) 5 * s + complete_score[c])
 median(scores)</code></pre>
 <p>The function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day10.R#L132-L141"><code>autocomplete()</code></a> wraps it all together.</p>
+</div>
+</div>
+<div id="day11" class="section level2">
+<h2>Day 11 - <a href="https://adventofcode.com/2021/day/11">Dumbo Octopus</a></h2>
+<div id="convoluted-octopuses" class="section level3">
+<h3>Convoluted octopuses</h3>
+<p>This is the first problem this year in which I’ve resorted to using an external package; everything has been in base R so far.</p>
+<p>The process of updating the energy levels can be described using a <a href="https://en.wikipedia.org/wiki/Kernel_(image_processing)"><em>convolution matrix</em></a>.
+While I could probably write a function to do this, it’s easier—<a href="https://selbydavid.com/2020/12/06/advent-2020/#day11">like on Day 11 last year</a>—to use a ready-made solution from an image analysis package, namely <code>OpenImageR::convolution()</code>.</p>
+<p>The convolution matrix, or <em>kernel</em> is
+<span class="math display">\[\begin{bmatrix}1  &amp;  1  &amp;  1 \\1  &amp;   0  &amp;  1 \\1  &amp;  1  &amp;  1\end{bmatrix},\]</span>
+to be applied on an indicator matrix of ‘flashing’ octopuses, and then added to the result.
+In R,</p>
+<pre class="r"><code>kernel &lt;- matrix(1:9 != 5, 3, 3)</code></pre>
+<p>So we define a function, <code>step1()</code>, that applies a single step of the energy level updating process.
+Since each octopus can only flash once in a given step, we keep track of those that have already flashed, as well as those currently flashing.
+A short <code>while()</code> loop repeats until no more octopuses flash.</p>
+<pre class="r"><code>step1 &lt;- function(x) {
+  x &lt;- x + 1
+  flashing &lt;- flashed &lt;- x == 10
+  while (any(flashing)) {
+    x &lt;- x + OpenImageR::convolution(flashing, kernel)
+    flashing &lt;- x &gt; 9 &amp; !flashed
+    flashed &lt;- flashing | flashed
+  }
+  x[x &gt; 9] &lt;- 0
+  x
+}</code></pre>
+</div>
+<div id="counting-flashes" class="section level3">
+<h3>Counting flashes</h3>
+<p>We then solve both parts one and two with a single function that repeatedly applies the updating step and counts the flashes (number of zeros) each time.</p>
+<p>By default, it simply completes <code>iter</code> steps and then returns cumulative total number of flashes.</p>
+<p>In <code>part2</code> mode, the function will terminate early if it encounters a step where all the octopuses are flashing and return the iteration number, otherwise it will generate a warning.</p>
+<pre class="r"><code>count_flashes &lt;- function(x, iter = 100, part2 = FALSE) {
+  count &lt;- 0
+  for (i in 1:iter) {
+    x &lt;- step1(x)
+    nflashes &lt;- sum(x == 0)
+    if (part2 &amp; nflashes == prod(dim(x)))
+      return(i)
+    count &lt;- count + nflashes
+  }
+  if (part2)
+    warning(&#39;No synchronization detected in &#39;, iter, &#39; steps&#39;)
+  count
+}</code></pre>
+<p>The whole thing runs in about 20 milliseconds on my input dataset.</p>
 </div>
 </div>
 

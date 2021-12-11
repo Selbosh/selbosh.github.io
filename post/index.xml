@@ -109,6 +109,7 @@ Once a function passes the unit tests, it should be ready to try with the main p
 &lt;li&gt;&lt;a href=&#34;#day8&#34;&gt;Seven Segment Search&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day9&#34;&gt;Smoke Basin&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day10&#34;&gt;Syntax Scoring&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day11&#34;&gt;Dumbo Octopus&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div id=&#34;day1&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Day 1 - &lt;a href=&#34;https://adventofcode.com/2021/day/1&#34;&gt;Sonar Sweep&lt;/a&gt;&lt;/h2&gt;
@@ -531,6 +532,54 @@ scores &amp;lt;- sapply(chars, Reduce, init = 0, right = TRUE,
                  f = \(c, s) 5 * s + complete_score[c])
 median(scores)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The function &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day10.R#L132-L141&#34;&gt;&lt;code&gt;autocomplete()&lt;/code&gt;&lt;/a&gt; wraps it all together.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day11&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 11 - &lt;a href=&#34;https://adventofcode.com/2021/day/11&#34;&gt;Dumbo Octopus&lt;/a&gt;&lt;/h2&gt;
+&lt;div id=&#34;convoluted-octopuses&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Convoluted octopuses&lt;/h3&gt;
+&lt;p&gt;This is the first problem this year in which I’ve resorted to using an external package; everything has been in base R so far.&lt;/p&gt;
+&lt;p&gt;The process of updating the energy levels can be described using a &lt;a href=&#34;https://en.wikipedia.org/wiki/Kernel_(image_processing)&#34;&gt;&lt;em&gt;convolution matrix&lt;/em&gt;&lt;/a&gt;.
+While I could probably write a function to do this, it’s easier—&lt;a href=&#34;https://selbydavid.com/2020/12/06/advent-2020/#day11&#34;&gt;like on Day 11 last year&lt;/a&gt;—to use a ready-made solution from an image analysis package, namely &lt;code&gt;OpenImageR::convolution()&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The convolution matrix, or &lt;em&gt;kernel&lt;/em&gt; is
+&lt;span class=&#34;math display&#34;&gt;\[\begin{bmatrix}1  &amp;amp;  1  &amp;amp;  1 \\1  &amp;amp;   0  &amp;amp;  1 \\1  &amp;amp;  1  &amp;amp;  1\end{bmatrix},\]&lt;/span&gt;
+to be applied on an indicator matrix of ‘flashing’ octopuses, and then added to the result.
+In R,&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;kernel &amp;lt;- matrix(1:9 != 5, 3, 3)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;So we define a function, &lt;code&gt;step1()&lt;/code&gt;, that applies a single step of the energy level updating process.
+Since each octopus can only flash once in a given step, we keep track of those that have already flashed, as well as those currently flashing.
+A short &lt;code&gt;while()&lt;/code&gt; loop repeats until no more octopuses flash.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;step1 &amp;lt;- function(x) {
+  x &amp;lt;- x + 1
+  flashing &amp;lt;- flashed &amp;lt;- x == 10
+  while (any(flashing)) {
+    x &amp;lt;- x + OpenImageR::convolution(flashing, kernel)
+    flashing &amp;lt;- x &amp;gt; 9 &amp;amp; !flashed
+    flashed &amp;lt;- flashing | flashed
+  }
+  x[x &amp;gt; 9] &amp;lt;- 0
+  x
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;counting-flashes&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Counting flashes&lt;/h3&gt;
+&lt;p&gt;We then solve both parts one and two with a single function that repeatedly applies the updating step and counts the flashes (number of zeros) each time.&lt;/p&gt;
+&lt;p&gt;By default, it simply completes &lt;code&gt;iter&lt;/code&gt; steps and then returns cumulative total number of flashes.&lt;/p&gt;
+&lt;p&gt;In &lt;code&gt;part2&lt;/code&gt; mode, the function will terminate early if it encounters a step where all the octopuses are flashing and return the iteration number, otherwise it will generate a warning.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;count_flashes &amp;lt;- function(x, iter = 100, part2 = FALSE) {
+  count &amp;lt;- 0
+  for (i in 1:iter) {
+    x &amp;lt;- step1(x)
+    nflashes &amp;lt;- sum(x == 0)
+    if (part2 &amp;amp; nflashes == prod(dim(x)))
+      return(i)
+    count &amp;lt;- count + nflashes
+  }
+  if (part2)
+    warning(&amp;#39;No synchronization detected in &amp;#39;, iter, &amp;#39; steps&amp;#39;)
+  count
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The whole thing runs in about 20 milliseconds on my input dataset.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>
