@@ -37,6 +37,7 @@ remotes::install_github('Selbosh/adventofcode2021')
 8. [Seven Segment Search](#day8)
 9. [Smoke Basin](#day9)
 10. [Syntax Scoring](#day10)
+11. [Dumbo Octopus](#day11)
 
 ## Day 1 - [Sonar Sweep](https://adventofcode.com/2021/day/1) {#day1}
 
@@ -647,3 +648,64 @@ scores <- sapply(chars, Reduce, init = 0, right = TRUE,
 median(scores)
 ```
 The function [`autocomplete()`](https://github.com/Selbosh/adventofcode2021/blob/main/R/day10.R#L132-L141) wraps it all together.
+
+## Day 11 - [Dumbo Octopus](https://adventofcode.com/2021/day/11) {#day11}
+
+### Convoluted octopuses
+
+This is the first problem this year in which I've resorted to using an external package; everything has been in base R so far.
+
+The process of updating the energy levels can be described using a [_convolution matrix_](https://en.wikipedia.org/wiki/Kernel_(image_processing)).
+While I could probably write a function to do this, it's easier---[like on Day 11 last year](https://selbydavid.com/2020/12/06/advent-2020/#day11)---to use a ready-made solution from an image analysis package, namely `OpenImageR::convolution()`.
+
+The convolution matrix, or _kernel_ is
+\[\begin{bmatrix}1  &  1  &  1 \\1  &   0  &  1 \\1  &  1  &  1\end{bmatrix},\]
+to be applied on an indicator matrix of 'flashing' octopuses, and then added to the result.
+In R,
+```r
+kernel <- matrix(1:9 != 5, 3, 3)
+```
+
+So we define a function, `step1()`, that applies a single step of the energy level updating process.
+Since each octopus can only flash once in a given step, we keep track of those that have already flashed, as well as those currently flashing.
+A short `while()` loop repeats until no more octopuses flash.
+
+```r
+step1 <- function(x) {
+  x <- x + 1
+  flashing <- flashed <- x == 10
+  while (any(flashing)) {
+    x <- x + OpenImageR::convolution(flashing, kernel)
+    flashing <- x > 9 & !flashed
+    flashed <- flashing | flashed
+  }
+  x[x > 9] <- 0
+  x
+}
+```
+
+### Counting flashes
+
+We then solve both parts one and two with a single function that repeatedly applies the updating step and counts the flashes (number of zeros) each time.
+
+By default, it simply completes `iter` steps and then returns cumulative total number of flashes.
+
+In `part2` mode, the function will terminate early if it encounters a step where all the octopuses are flashing and return the iteration number, otherwise it will generate a warning.
+
+```r
+count_flashes <- function(x, iter = 100, part2 = FALSE) {
+  count <- 0
+  for (i in 1:iter) {
+    x <- step1(x)
+    nflashes <- sum(x == 0)
+    if (part2 & nflashes == prod(dim(x)))
+      return(i)
+    count <- count + nflashes
+  }
+  if (part2)
+    warning('No synchronization detected in ', iter, ' steps')
+  count
+}
+```
+
+The whole thing runs in about 20 milliseconds on my input dataset.
