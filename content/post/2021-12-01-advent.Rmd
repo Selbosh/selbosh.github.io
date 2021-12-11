@@ -653,10 +653,8 @@ The function [`autocomplete()`](https://github.com/Selbosh/adventofcode2021/blob
 
 ### Convoluted octopuses
 
-This is the first problem this year in which I've resorted to using an external package; everything has been in base R so far.
-
 The process of updating the energy levels can be described using a [_convolution matrix_](https://en.wikipedia.org/wiki/Kernel_(image_processing)).
-While I could probably write a function to do this, it's easier---[like on Day 11 last year](https://selbydavid.com/2020/12/06/advent-2020/#day11)---to use a ready-made solution from an image analysis package, namely `OpenImageR::convolution()`.
+It's easy---[like on Day 11 last year](https://selbydavid.com/2020/12/06/advent-2020/#day11)---to use a ready-made solution from an image analysis package for this, namely `OpenImageR::convolution()`.
 
 The convolution matrix, or _kernel_ is
 \[\begin{bmatrix}1  &  1  &  1 \\1  &   0  &  1 \\1  &  1  &  1\end{bmatrix},\]
@@ -684,6 +682,23 @@ step1 <- function(x) {
 }
 ```
 
+However, there is a base R alternative to `OpenImageR::convolution()` that you can substitute in, for negligible speed penalty (despite that package being written in C).
+
+```r
+add_neighbours <- function(x) {
+  I <- nrow(x)
+  J <- ncol(x)
+  cbind(x[, -1], 0) +  # Right
+  rbind(x[-1, ], 0) +  # Down
+  cbind(0, x[, -J]) +  # Left
+  rbind(0, x[-I, ]) +  # Up
+  rbind(cbind(x[-1, -1], 0), 0) + # SE
+  rbind(0, cbind(x[-I, -1], 0)) + # NE
+  rbind(cbind(0, x[-1, -J]), 0) + # SW
+  rbind(0, cbind(0, x[-I, -J]))   # NW
+}
+```
+
 ### Counting flashes
 
 We then solve both parts one and two with a single function that repeatedly applies the updating step and counts the flashes (number of zeros) each time.
@@ -708,4 +723,4 @@ count_flashes <- function(x, iter = 100, part2 = FALSE) {
 }
 ```
 
-The whole thing runs in about 20 milliseconds on my input dataset.
+The whole thing runs in about 20 milliseconds on my input dataset, or 60 milliseconds using the base R convolution function.
