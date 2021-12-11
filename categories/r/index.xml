@@ -538,9 +538,8 @@ median(scores)&lt;/code&gt;&lt;/pre&gt;
 &lt;h2&gt;Day 11 - &lt;a href=&#34;https://adventofcode.com/2021/day/11&#34;&gt;Dumbo Octopus&lt;/a&gt;&lt;/h2&gt;
 &lt;div id=&#34;convoluted-octopuses&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;Convoluted octopuses&lt;/h3&gt;
-&lt;p&gt;This is the first problem this year in which I’ve resorted to using an external package; everything has been in base R so far.&lt;/p&gt;
 &lt;p&gt;The process of updating the energy levels can be described using a &lt;a href=&#34;https://en.wikipedia.org/wiki/Kernel_(image_processing)&#34;&gt;&lt;em&gt;convolution matrix&lt;/em&gt;&lt;/a&gt;.
-While I could probably write a function to do this, it’s easier—&lt;a href=&#34;https://selbydavid.com/2020/12/06/advent-2020/#day11&#34;&gt;like on Day 11 last year&lt;/a&gt;—to use a ready-made solution from an image analysis package, namely &lt;code&gt;OpenImageR::convolution()&lt;/code&gt;.&lt;/p&gt;
+It’s easy—&lt;a href=&#34;https://selbydavid.com/2020/12/06/advent-2020/#day11&#34;&gt;like on Day 11 last year&lt;/a&gt;—to use a ready-made solution from an image analysis package for this, namely &lt;code&gt;OpenImageR::convolution()&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;The convolution matrix, or &lt;em&gt;kernel&lt;/em&gt; is
 &lt;span class=&#34;math display&#34;&gt;\[\begin{bmatrix}1  &amp;amp;  1  &amp;amp;  1 \\1  &amp;amp;   0  &amp;amp;  1 \\1  &amp;amp;  1  &amp;amp;  1\end{bmatrix},\]&lt;/span&gt;
 to be applied on an indicator matrix of ‘flashing’ octopuses, and then added to the result.
@@ -559,6 +558,19 @@ A short &lt;code&gt;while()&lt;/code&gt; loop repeats until no more octopuses fl
   }
   x[x &amp;gt; 9] &amp;lt;- 0
   x
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;However, there is a base R alternative to &lt;code&gt;OpenImageR::convolution()&lt;/code&gt; that you can substitute in, for negligible speed penalty (despite that package being written in C).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;add_neighbours &amp;lt;- function(x) {
+  I &amp;lt;- nrow(x)
+  J &amp;lt;- ncol(x)
+  cbind(x[, -1], 0) +  # Right
+  rbind(x[-1, ], 0) +  # Down
+  cbind(0, x[, -J]) +  # Left
+  rbind(0, x[-I, ]) +  # Up
+  rbind(cbind(x[-1, -1], 0), 0) + # SE
+  rbind(0, cbind(x[-I, -1], 0)) + # NE
+  rbind(cbind(0, x[-1, -J]), 0) + # SW
+  rbind(0, cbind(0, x[-I, -J]))   # NW
 }&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;counting-flashes&#34; class=&#34;section level3&#34;&gt;
@@ -579,7 +591,7 @@ A short &lt;code&gt;while()&lt;/code&gt; loop repeats until no more octopuses fl
     warning(&amp;#39;No synchronization detected in &amp;#39;, iter, &amp;#39; steps&amp;#39;)
   count
 }&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The whole thing runs in about 20 milliseconds on my input dataset.&lt;/p&gt;
+&lt;p&gt;The whole thing runs in about 20 milliseconds on my input dataset, or 60 milliseconds using the base R convolution function.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>

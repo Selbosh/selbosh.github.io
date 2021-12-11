@@ -28,7 +28,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
    Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
 <meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="3581">
+<meta itemprop="wordCount" content="3645">
 <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
@@ -589,9 +589,8 @@ median(scores)</code></pre>
 <h2>Day 11 - <a href="https://adventofcode.com/2021/day/11">Dumbo Octopus</a></h2>
 <div id="convoluted-octopuses" class="section level3">
 <h3>Convoluted octopuses</h3>
-<p>This is the first problem this year in which I’ve resorted to using an external package; everything has been in base R so far.</p>
 <p>The process of updating the energy levels can be described using a <a href="https://en.wikipedia.org/wiki/Kernel_(image_processing)"><em>convolution matrix</em></a>.
-While I could probably write a function to do this, it’s easier—<a href="https://selbydavid.com/2020/12/06/advent-2020/#day11">like on Day 11 last year</a>—to use a ready-made solution from an image analysis package, namely <code>OpenImageR::convolution()</code>.</p>
+It’s easy—<a href="https://selbydavid.com/2020/12/06/advent-2020/#day11">like on Day 11 last year</a>—to use a ready-made solution from an image analysis package for this, namely <code>OpenImageR::convolution()</code>.</p>
 <p>The convolution matrix, or <em>kernel</em> is
 <span class="math display">\[\begin{bmatrix}1  &amp;  1  &amp;  1 \\1  &amp;   0  &amp;  1 \\1  &amp;  1  &amp;  1\end{bmatrix},\]</span>
 to be applied on an indicator matrix of ‘flashing’ octopuses, and then added to the result.
@@ -610,6 +609,19 @@ A short <code>while()</code> loop repeats until no more octopuses flash.</p>
   }
   x[x &gt; 9] &lt;- 0
   x
+}</code></pre>
+<p>However, there is a base R alternative to <code>OpenImageR::convolution()</code> that you can substitute in, for negligible speed penalty (despite that package being written in C).</p>
+<pre class="r"><code>add_neighbours &lt;- function(x) {
+  I &lt;- nrow(x)
+  J &lt;- ncol(x)
+  cbind(x[, -1], 0) +  # Right
+  rbind(x[-1, ], 0) +  # Down
+  cbind(0, x[, -J]) +  # Left
+  rbind(0, x[-I, ]) +  # Up
+  rbind(cbind(x[-1, -1], 0), 0) + # SE
+  rbind(0, cbind(x[-I, -1], 0)) + # NE
+  rbind(cbind(0, x[-1, -J]), 0) + # SW
+  rbind(0, cbind(0, x[-I, -J]))   # NW
 }</code></pre>
 </div>
 <div id="counting-flashes" class="section level3">
@@ -630,7 +642,7 @@ A short <code>while()</code> loop repeats until no more octopuses flash.</p>
     warning(&#39;No synchronization detected in &#39;, iter, &#39; steps&#39;)
   count
 }</code></pre>
-<p>The whole thing runs in about 20 milliseconds on my input dataset.</p>
+<p>The whole thing runs in about 20 milliseconds on my input dataset, or 60 milliseconds using the base R convolution function.</p>
 </div>
 </div>
 
