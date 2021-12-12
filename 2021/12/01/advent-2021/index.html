@@ -28,7 +28,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
    Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
 <meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="3645">
+<meta itemprop="wordCount" content="4057">
 <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
@@ -161,6 +161,7 @@ Once a function passes the unit tests, it should be ready to try with the main p
 <li><a href="#day9">Smoke Basin</a></li>
 <li><a href="#day10">Syntax Scoring</a></li>
 <li><a href="#day11">Dumbo Octopus</a></li>
+<li><a href="#day12">Passage Pathing</a></li>
 </ol>
 <div id="day1" class="section level2">
 <h2>Day 1 - <a href="https://adventofcode.com/2021/day/1">Sonar Sweep</a></h2>
@@ -643,6 +644,58 @@ A short <code>while()</code> loop repeats until no more octopuses flash.</p>
   count
 }</code></pre>
 <p>The whole thing runs in about 20 milliseconds on my input dataset, or 60 milliseconds using the base R convolution function.</p>
+</div>
+</div>
+<div id="day12" class="section level2">
+<h2>Day 12 - <a href="Passage%20Pathing">Passage Pathing</a></h2>
+<div id="counting-paths" class="section level3">
+<h3>Counting paths</h3>
+<p>Today’s puzzle is very obviously a graph theory problem, so it would seem intuitive to break out <strong>igraph</strong> for this.
+However, the functions in that package are mainly designed for finding the <em>shortest</em> paths from A to B, not a complete list of all possible paths.</p>
+<p>Therefore, it’s easier (as far as I can tell) to solve this with your own data structure and a recursive function or two.</p>
+<p><a href="https://twitter.com/antoine_fabri/status/1469989831522541574">Antoine Fabri</a> suggested a rather neat solution of describing the graph with a named list, where the names of the elements describe a node, and the vector contained therein list the other nodes reachable from that point.</p>
+<p>We can read in the data as follows:</p>
+<pre class="r"><code>read_edges &lt;- function(file) {
+  edges &lt;- read.table(file, sep = &#39;-&#39;, col.names = c(&#39;from&#39;, &#39;to&#39;))
+  edges &lt;- rbind(edges, setNames(edges, rev(colnames(edges))))
+  edges &lt;- edges[edges$to != &#39;start&#39;, ]
+  split(edges$to, edges$from)
+}</code></pre>
+<p>Then we solve part one with a recursive function that, starting from <code>start</code>, traverses a path all the way to <code>end</code> and increments a counter.
+To avoid revisiting small caves, we discard any edges to vertices with lowercase names, with the aid of <code>tolower()</code>.</p>
+<pre class="r"><code>count_paths &lt;- function(edgelist, node = &#39;start&#39;) {
+  if (node == &#39;end&#39;)
+    return(1)
+  if (!length(edgelist[[node]]))
+    return(0)
+  if (node == tolower(node))
+    edgelist &lt;- lapply(edgelist, \(v) v[node != v])
+  sum(vapply(edgelist[[node]], count_paths, e = edgelist,
+             FUN.VALUE = numeric(1)))
+}</code></pre>
+</div>
+<div id="revisiting-caves" class="section level3">
+<h3>Revisiting caves</h3>
+<p>Part two is just a slight adaptation.
+This time we can’t simply delete small caves as soon as we visit them, so we need to keep track of those visited so far, while keeping the graph intact.
+Once we find ourselves on a node that we have already visited, it means we are visiting it for the second time, so at this point we can delete all the visited nodes and switch over to the function from part one.</p>
+<pre class="r"><code>count_paths2 &lt;- function(edgelist, node = &#39;start&#39;, visited = NULL) {
+  if (node == &#39;end&#39;)
+    return(1)
+  if (node == tolower(node)) {
+    if (node %in% visited) {
+      edgelist &lt;- lapply(edgelist, \(v) v[!v %in% visited])
+      return(count_paths(edgelist, node))
+    }
+    visited &lt;- union(visited, node)
+  }
+  if (!length(edgelist[[node]]))
+    return(0)
+  sum(vapply(edgelist[[node]], count_paths2, e = edgelist, visited,
+             FUN.VALUE = numeric(1)))
+}</code></pre>
+<p>R is quite slow at recursion, so this second function takes about 6 seconds to run on my full input data.
+It may be possible to optimize this further, but that might require the use of <strong>igraph</strong>, which is written in C, rather than a base R solution.</p>
 </div>
 </div>
 
