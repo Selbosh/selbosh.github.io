@@ -39,6 +39,7 @@ remotes::install_github('Selbosh/adventofcode2021')
 10. [Syntax Scoring](#day10)
 11. [Dumbo Octopus](#day11)
 12. [Passage Pathing](#day12)
+13. [Transparent Origami](#day13)
 
 ## Day 1 - [Sonar Sweep](https://adventofcode.com/2021/day/1) {#day1}
 
@@ -790,3 +791,90 @@ count_paths2 <- function(edgelist, node = 'start', visited = NULL) {
 
 R is quite slow at recursion, so this second function takes about 6 seconds to run on my full input data.
 It may be possible to optimize this further, but that might require the use of **igraph**, which is written in C, rather than a base R solution.
+
+## Day 13 - [Transparent Origami](https://adventofcode.com/2021/day/13) {#day13}
+
+### Folding paper
+
+The hardest bit about this puzzle is reading in the data, since we have two different data structures in the same file.
+
+The neatest way of doing this is to find the separator (a blank line) in the middle of the file, then read through the parts of the file before and after this separately.
+Since there's only one file to read, you could of course just inspect it in a text editor and find out this line number by hand.
+But here's a programmatic method.
+
+```r
+n <- which(readLines('input.txt') == '')
+paper <- read.table('input.txt', sep = ',', nrows = n - 1,
+                    col.names = c('x', 'y'))
+folds <- read.table('input.txt', sep = '=', skip = n)
+```
+
+Next, we need a function that'll fold the paper in half once.
+My initial solution, which works perfectly well, is to convert the `x` and `y` coordinates to a matrix representation, then simply update the matrix using subset operations.
+
+```r
+mat <- with(paper, matrix(0, max(x) + 1, max(y) + 1))
+mat[data.matrix(paper) + 1] <- 1
+```
+
+Watch out for R's [one-based indexing](/2021/12/06/indexing/).
+We want to fold along the coordinate `f`, which is at index `f + 1`, and so the indices either side are `f` and `f + 2`.
+
+```r
+fold_once <- function(x, dir, f) {
+  if (dir == 'fold along y') {
+    x[, 1:f] | x[, ncol(x):(f + 2)]
+  } else {
+    x[1:f, ] | x[nrow(x):(f + 2), ]
+  }
+}
+```
+
+At this point you might notice that the paper is always being folded exactly in half every time.
+So the value after the `=` in the input is actually redundant; it's always the middle of the matrix.
+For instance, in the example data, the matrix has dimension 15&times;11 and we fold along $y=7$ (i.e. index 8), which is half of 15.
+The next instruction $x=5$ (index 6) is half of the other dimension.
+
+From here, loop over the directions and then plot the final matrix using `image()`.
+
+### Tidy origami
+
+Why do they give us the values to `fold along` if it's always the middle value?
+Because it's not actually very efficient to store these sparse coordinates in a matrix.
+Instead, recognize, as pointed out by [Riinu Pius](https://twitter.com/_Riinu_/status/1470320577340755972) and [Antoine Fabri](https://twitter.com/antoine_fabri/status/1470294716000485376), that you can just keep the coordinates in a long format and fold them as follows:
+
+```r
+fold_once <- function(x, d, f) {
+  x[, d] <- ifelse(x[, d] >= f, 2 * f - x[, d], x[, d])
+  x[!duplicated(x), ]
+}
+```
+
+Then loop over all the instructions with:
+
+```r
+fold_paper <- function(x, folds, n = nrow(folds)) {
+  for (i in 1:n)
+    x <- fold_once(x, folds[i, 1], folds[i, 2])
+  x
+}
+```
+
+And finally you can plot the result using **ggplot2**.
+
+```{r day13, fig.width = 6, fig.height = 2}
+library(adventofcode2021)
+input <- read_origami(input_file(13))
+input$n <- nrow(input[[2]])
+folded <- do.call(fold_paper, input)
+
+library(ggplot2)
+ggplot(folded) +
+  aes(x, y) +
+  geom_tile(fill = '#f5c966') +
+  coord_fixed() +
+  scale_y_reverse() +
+  theme_void()
+```
+
+
