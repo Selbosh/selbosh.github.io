@@ -111,6 +111,7 @@ Once a function passes the unit tests, it should be ready to try with the main p
 &lt;li&gt;&lt;a href=&#34;#day10&#34;&gt;Syntax Scoring&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day11&#34;&gt;Dumbo Octopus&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day12&#34;&gt;Passage Pathing&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day13&#34;&gt;Transparent Origami&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div id=&#34;day1&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Day 1 - &lt;a href=&#34;https://adventofcode.com/2021/day/1&#34;&gt;Sonar Sweep&lt;/a&gt;&lt;/h2&gt;
@@ -645,6 +646,68 @@ Once we find ourselves on a node that we have already visited, it means we are v
 }&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;R is quite slow at recursion, so this second function takes about 6 seconds to run on my full input data.
 It may be possible to optimize this further, but that might require the use of &lt;strong&gt;igraph&lt;/strong&gt;, which is written in C, rather than a base R solution.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day13&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 13 - &lt;a href=&#34;https://adventofcode.com/2021/day/13&#34;&gt;Transparent Origami&lt;/a&gt;&lt;/h2&gt;
+&lt;div id=&#34;folding-paper&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Folding paper&lt;/h3&gt;
+&lt;p&gt;The hardest bit about this puzzle is reading in the data, since we have two different data structures in the same file.&lt;/p&gt;
+&lt;p&gt;The neatest way of doing this is to find the separator (a blank line) in the middle of the file, then read through the parts of the file before and after this separately.
+Since there’s only one file to read, you could of course just inspect it in a text editor and find out this line number by hand.
+But here’s a programmatic method.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;n &amp;lt;- which(readLines(&amp;#39;input.txt&amp;#39;) == &amp;#39;&amp;#39;)
+paper &amp;lt;- read.table(&amp;#39;input.txt&amp;#39;, sep = &amp;#39;,&amp;#39;, nrows = n - 1,
+                    col.names = c(&amp;#39;x&amp;#39;, &amp;#39;y&amp;#39;))
+folds &amp;lt;- read.table(&amp;#39;input.txt&amp;#39;, sep = &amp;#39;=&amp;#39;, skip = n)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Next, we need a function that’ll fold the paper in half once.
+My initial solution, which works perfectly well, is to convert the &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; coordinates to a matrix representation, then simply update the matrix using subset operations.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mat &amp;lt;- with(paper, matrix(0, max(x) + 1, max(y) + 1))
+mat[data.matrix(paper) + 1] &amp;lt;- 1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Watch out for R’s &lt;a href=&#34;https://selbydavid.com/2021/12/06/indexing/&#34;&gt;one-based indexing&lt;/a&gt;.
+We want to fold along the coordinate &lt;code&gt;f&lt;/code&gt;, which is at index &lt;code&gt;f + 1&lt;/code&gt;, and so the indices either side are &lt;code&gt;f&lt;/code&gt; and &lt;code&gt;f + 2&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;fold_once &amp;lt;- function(x, dir, f) {
+  if (dir == &amp;#39;fold along y&amp;#39;) {
+    x[, 1:f] | x[, ncol(x):(f + 2)]
+  } else {
+    x[1:f, ] | x[nrow(x):(f + 2), ]
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;At this point you might notice that the paper is always being folded exactly in half every time.
+So the value after the &lt;code&gt;=&lt;/code&gt; in the input is actually redundant; it’s always the middle of the matrix.
+For instance, in the example data, the matrix has dimension 15×11 and we fold along &lt;span class=&#34;math inline&#34;&gt;\(y=7\)&lt;/span&gt; (i.e. index 8), which is half of 15.
+The next instruction &lt;span class=&#34;math inline&#34;&gt;\(x=5\)&lt;/span&gt; (index 6) is half of the other dimension.&lt;/p&gt;
+&lt;p&gt;From here, loop over the directions and then plot the final matrix using &lt;code&gt;image()&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tidy-origami&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Tidy origami&lt;/h3&gt;
+&lt;p&gt;Why do they give us the values to &lt;code&gt;fold along&lt;/code&gt; if it’s always the middle value?
+Because it’s not actually very efficient to store these sparse coordinates in a matrix.
+Instead, recognize, as pointed out by &lt;a href=&#34;https://twitter.com/_Riinu_/status/1470320577340755972&#34;&gt;Riinu Pius&lt;/a&gt; and &lt;a href=&#34;https://twitter.com/antoine_fabri/status/1470294716000485376&#34;&gt;Antoine Fabri&lt;/a&gt;, that you can just keep the coordinates in a long format and fold them as follows:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;fold_once &amp;lt;- function(x, d, f) {
+  x[, d] &amp;lt;- ifelse(x[, d] &amp;gt;= f, 2 * f - x[, d], x[, d])
+  x[!duplicated(x), ]
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then loop over all the instructions with:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;fold_paper &amp;lt;- function(x, folds, n = nrow(folds)) {
+  for (i in 1:n)
+    x &amp;lt;- fold_once(x, folds[i, 1], folds[i, 2])
+  x
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And finally you can plot the result using &lt;strong&gt;ggplot2&lt;/strong&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(adventofcode2021)
+input &amp;lt;- read_origami(input_file(13))
+input$n &amp;lt;- nrow(input[[2]])
+folded &amp;lt;- do.call(fold_paper, input)
+
+library(ggplot2)
+ggplot(folded) +
+  aes(x, y) +
+  geom_tile(fill = &amp;#39;#f5c966&amp;#39;) +
+  coord_fixed() +
+  scale_y_reverse() +
+  theme_void()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2021-12-01-advent_files/figure-html/day13-1.png&#34; width=&#34;576&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>

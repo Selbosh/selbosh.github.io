@@ -28,7 +28,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
    Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
 <meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="4057">
+<meta itemprop="wordCount" content="4533">
 <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
@@ -162,6 +162,7 @@ Once a function passes the unit tests, it should be ready to try with the main p
 <li><a href="#day10">Syntax Scoring</a></li>
 <li><a href="#day11">Dumbo Octopus</a></li>
 <li><a href="#day12">Passage Pathing</a></li>
+<li><a href="#day13">Transparent Origami</a></li>
 </ol>
 <div id="day1" class="section level2">
 <h2>Day 1 - <a href="https://adventofcode.com/2021/day/1">Sonar Sweep</a></h2>
@@ -696,6 +697,68 @@ Once we find ourselves on a node that we have already visited, it means we are v
 }</code></pre>
 <p>R is quite slow at recursion, so this second function takes about 6 seconds to run on my full input data.
 It may be possible to optimize this further, but that might require the use of <strong>igraph</strong>, which is written in C, rather than a base R solution.</p>
+</div>
+</div>
+<div id="day13" class="section level2">
+<h2>Day 13 - <a href="https://adventofcode.com/2021/day/13">Transparent Origami</a></h2>
+<div id="folding-paper" class="section level3">
+<h3>Folding paper</h3>
+<p>The hardest bit about this puzzle is reading in the data, since we have two different data structures in the same file.</p>
+<p>The neatest way of doing this is to find the separator (a blank line) in the middle of the file, then read through the parts of the file before and after this separately.
+Since there’s only one file to read, you could of course just inspect it in a text editor and find out this line number by hand.
+But here’s a programmatic method.</p>
+<pre class="r"><code>n &lt;- which(readLines(&#39;input.txt&#39;) == &#39;&#39;)
+paper &lt;- read.table(&#39;input.txt&#39;, sep = &#39;,&#39;, nrows = n - 1,
+                    col.names = c(&#39;x&#39;, &#39;y&#39;))
+folds &lt;- read.table(&#39;input.txt&#39;, sep = &#39;=&#39;, skip = n)</code></pre>
+<p>Next, we need a function that’ll fold the paper in half once.
+My initial solution, which works perfectly well, is to convert the <code>x</code> and <code>y</code> coordinates to a matrix representation, then simply update the matrix using subset operations.</p>
+<pre class="r"><code>mat &lt;- with(paper, matrix(0, max(x) + 1, max(y) + 1))
+mat[data.matrix(paper) + 1] &lt;- 1</code></pre>
+<p>Watch out for R’s <a href="https://selbydavid.com/2021/12/06/indexing/">one-based indexing</a>.
+We want to fold along the coordinate <code>f</code>, which is at index <code>f + 1</code>, and so the indices either side are <code>f</code> and <code>f + 2</code>.</p>
+<pre class="r"><code>fold_once &lt;- function(x, dir, f) {
+  if (dir == &#39;fold along y&#39;) {
+    x[, 1:f] | x[, ncol(x):(f + 2)]
+  } else {
+    x[1:f, ] | x[nrow(x):(f + 2), ]
+  }
+}</code></pre>
+<p>At this point you might notice that the paper is always being folded exactly in half every time.
+So the value after the <code>=</code> in the input is actually redundant; it’s always the middle of the matrix.
+For instance, in the example data, the matrix has dimension 15×11 and we fold along <span class="math inline">\(y=7\)</span> (i.e. index 8), which is half of 15.
+The next instruction <span class="math inline">\(x=5\)</span> (index 6) is half of the other dimension.</p>
+<p>From here, loop over the directions and then plot the final matrix using <code>image()</code>.</p>
+</div>
+<div id="tidy-origami" class="section level3">
+<h3>Tidy origami</h3>
+<p>Why do they give us the values to <code>fold along</code> if it’s always the middle value?
+Because it’s not actually very efficient to store these sparse coordinates in a matrix.
+Instead, recognize, as pointed out by <a href="https://twitter.com/_Riinu_/status/1470320577340755972">Riinu Pius</a> and <a href="https://twitter.com/antoine_fabri/status/1470294716000485376">Antoine Fabri</a>, that you can just keep the coordinates in a long format and fold them as follows:</p>
+<pre class="r"><code>fold_once &lt;- function(x, d, f) {
+  x[, d] &lt;- ifelse(x[, d] &gt;= f, 2 * f - x[, d], x[, d])
+  x[!duplicated(x), ]
+}</code></pre>
+<p>Then loop over all the instructions with:</p>
+<pre class="r"><code>fold_paper &lt;- function(x, folds, n = nrow(folds)) {
+  for (i in 1:n)
+    x &lt;- fold_once(x, folds[i, 1], folds[i, 2])
+  x
+}</code></pre>
+<p>And finally you can plot the result using <strong>ggplot2</strong>.</p>
+<pre class="r"><code>library(adventofcode2021)
+input &lt;- read_origami(input_file(13))
+input$n &lt;- nrow(input[[2]])
+folded &lt;- do.call(fold_paper, input)
+
+library(ggplot2)
+ggplot(folded) +
+  aes(x, y) +
+  geom_tile(fill = &#39;#f5c966&#39;) +
+  coord_fixed() +
+  scale_y_reverse() +
+  theme_void()</code></pre>
+<p><img src="https://selbydavid.com/post/2021-12-01-advent_files/figure-html/day13-1.png" width="576" /></p>
 </div>
 </div>
 
