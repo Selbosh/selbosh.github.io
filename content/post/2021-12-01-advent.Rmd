@@ -40,6 +40,7 @@ remotes::install_github('Selbosh/adventofcode2021')
 11. [Dumbo Octopus](#day11)
 12. [Passage Pathing](#day12)
 13. [Transparent Origami](#day13)
+14. [Extended Polymerization](#day14)
 
 ## Day 1 - [Sonar Sweep](https://adventofcode.com/2021/day/1) {#day1}
 
@@ -877,4 +878,109 @@ ggplot(folded) +
   theme_void()
 ```
 
+## Day 14 - [Extended Polymerization](https://adventofcode.com/2021/day/14) {#day14}
 
+### Inserting letters
+
+The initial approach to this problem is to perform the insertions and build up an ever-lengthening string.
+There might be a way to do this using regular expressions, but I used an approach based on table joins.
+
+First, read in the data:
+
+```r
+template <- strsplit(readLines('input.txt', n = 1), '')[[1]]
+template <- data.frame(first = head(template, -1),
+                       second = tail(template, -1))
+rules <- read.table('input.txt', skip = 1)
+rules <- data.frame(first  = substr(rules[, 1], 1, 1),
+                    second = substr(rules[, 1], 2, 2),
+                    insert = rules[, 3])
+```
+
+This should give you two data frames that look something like this:
+
+```
+  first second
+1     N      N
+2     N      C
+3     C      B
+
+   first second insert
+1      C      H      B
+2      H      H      N
+3      C      B      H
+4      N      H      C
+5      H      B      C
+6      H      C      B
+7      H      N      C
+8      N      N      C
+9      B      H      H
+10     N      C      B
+11     N      B      B
+12     B      N      B
+13     B      B      N
+14     B      C      B
+15     C      C      N
+16     C      N      C
+```
+
+From here, the method is straightforward.
+Join the `template` with the `rules` and produce a new `template` comprised of the pairs `first -> insert` and `insert -> second`.
+
+```r
+template <- with(merge(template, rules),
+                 data.frame(first = c(first, insert),
+                            second = c(insert, second)))
+```
+
+Repeat this process the required number of times and we will have a data frame containing all the pairs of letters.
+
+There's a problem, though: `merge()` does not preserve row order, so we've lost track of which letters are the first and the last in the sequence.
+This means counting up the letters in either column `first` or `second` is going to undercount by 1.
+We could just refer back to the original input, since the first and last letters won't change.
+
+However, there's another neat solution, which takes advantage of the fact that all the middle characters will appear in both columns, but the first and last values, if different, will appear an odd number of times.
+
+```r
+counts <- (table(unlist(template)) + 1) %/% 2
+```
+
+From here, the difference between the minimum and maximum counts is given by:
+
+```r
+diff(range(counts))
+```
+
+### Scalable insertion
+
+The above approach works for part one, but once we increase the iteration count to 40, the data frame or string representation is far too long to store in memory.
+It simply doesn't scale.
+
+Rather than keep the entire sequence and then count up the letters at the end, we can instead store pair frequencies.
+To do this, we can call `dplyr::count()` or use a base R approach.
+
+Add a frequency column to the original data frame:
+```r
+template <- data.frame(first  = head(template, -1),
+                       second = tail(template, -1),
+                       n = 1)
+```
+or if you want to aggregate on initialization, you could use:
+```r
+template <- as.data.frame(table(template), stringsAsFactors = FALSE))
+```
+
+Then after each insertion operation, `aggregate()` the counts:
+```r
+data <- with(merge(template, rules),
+             data.frame(first = c(first, insert),
+                        second = c(insert, second)))
+template <- aggregate(n ~ first + second, data, sum)
+```
+
+Finally, the total letter counts are given by:
+
+```r
+tab <- xtabs(n ~ first + second, template)
+(rowSums(tab) + colSums(tab) + 1) %/% 2
+```
