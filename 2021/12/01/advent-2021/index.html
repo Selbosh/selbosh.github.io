@@ -28,7 +28,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
    Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
 <meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="4533">
+<meta itemprop="wordCount" content="5055">
 <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
@@ -163,6 +163,7 @@ Once a function passes the unit tests, it should be ready to try with the main p
 <li><a href="#day11">Dumbo Octopus</a></li>
 <li><a href="#day12">Passage Pathing</a></li>
 <li><a href="#day13">Transparent Origami</a></li>
+<li><a href="#day14">Extended Polymerization</a></li>
 </ol>
 <div id="day1" class="section level2">
 <h2>Day 1 - <a href="https://adventofcode.com/2021/day/1">Sonar Sweep</a></h2>
@@ -759,6 +760,79 @@ ggplot(folded) +
   scale_y_reverse() +
   theme_void()</code></pre>
 <p><img src="https://selbydavid.com/post/2021-12-01-advent_files/figure-html/day13-1.png" width="576" /></p>
+</div>
+</div>
+<div id="day14" class="section level2">
+<h2>Day 14 - <a href="https://adventofcode.com/2021/day/14">Extended Polymerization</a></h2>
+<div id="inserting-letters" class="section level3">
+<h3>Inserting letters</h3>
+<p>The initial approach to this problem is to perform the insertions and build up an ever-lengthening string.
+There might be a way to do this using regular expressions, but I used an approach based on table joins.</p>
+<p>First, read in the data:</p>
+<pre class="r"><code>template &lt;- strsplit(readLines(&#39;input.txt&#39;, n = 1), &#39;&#39;)[[1]]
+template &lt;- data.frame(first = head(template, -1),
+                       second = tail(template, -1))
+rules &lt;- read.table(&#39;input.txt&#39;, skip = 1)
+rules &lt;- data.frame(first  = substr(rules[, 1], 1, 1),
+                    second = substr(rules[, 1], 2, 2),
+                    insert = rules[, 3])</code></pre>
+<p>This should give you two data frames that look something like this:</p>
+<pre><code>  first second
+1     N      N
+2     N      C
+3     C      B
+
+   first second insert
+1      C      H      B
+2      H      H      N
+3      C      B      H
+4      N      H      C
+5      H      B      C
+6      H      C      B
+7      H      N      C
+8      N      N      C
+9      B      H      H
+10     N      C      B
+11     N      B      B
+12     B      N      B
+13     B      B      N
+14     B      C      B
+15     C      C      N
+16     C      N      C</code></pre>
+<p>From here, the method is straightforward.
+Join the <code>template</code> with the <code>rules</code> and produce a new <code>template</code> comprised of the pairs <code>first -&gt; insert</code> and <code>insert -&gt; second</code>.</p>
+<pre class="r"><code>template &lt;- with(merge(template, rules),
+                 data.frame(first = c(first, insert),
+                            second = c(insert, second)))</code></pre>
+<p>Repeat this process the required number of times and we will have a data frame containing all the pairs of letters.</p>
+<p>There’s a problem, though: <code>merge()</code> does not preserve row order, so we’ve lost track of which letters are the first and the last in the sequence.
+This means counting up the letters in either column <code>first</code> or <code>second</code> is going to undercount by 1.
+We could just refer back to the original input, since the first and last letters won’t change.</p>
+<p>However, there’s another neat solution, which takes advantage of the fact that all the middle characters will appear in both columns, but the first and last values, if different, will appear an odd number of times.</p>
+<pre class="r"><code>counts &lt;- (table(unlist(template)) + 1) %/% 2</code></pre>
+<p>From here, the difference between the minimum and maximum counts is given by:</p>
+<pre class="r"><code>diff(range(counts))</code></pre>
+</div>
+<div id="scalable-insertion" class="section level3">
+<h3>Scalable insertion</h3>
+<p>The above approach works for part one, but once we increase the iteration count to 40, the data frame or string representation is far too long to store in memory.
+It simply doesn’t scale.</p>
+<p>Rather than keep the entire sequence and then count up the letters at the end, we can instead store pair frequencies.
+To do this, we can call <code>dplyr::count()</code> or use a base R approach.</p>
+<p>Add a frequency column to the original data frame:</p>
+<pre class="r"><code>template &lt;- data.frame(first  = head(template, -1),
+                       second = tail(template, -1),
+                       n = 1)</code></pre>
+<p>or if you want to aggregate on initialization, you could use:</p>
+<pre class="r"><code>template &lt;- as.data.frame(table(template), stringsAsFactors = FALSE))</code></pre>
+<p>Then after each insertion operation, <code>aggregate()</code> the counts:</p>
+<pre class="r"><code>data &lt;- with(merge(template, rules),
+             data.frame(first = c(first, insert),
+                        second = c(insert, second)))
+template &lt;- aggregate(n ~ first + second, data, sum)</code></pre>
+<p>Finally, the total letter counts are given by:</p>
+<pre class="r"><code>tab &lt;- xtabs(n ~ first + second, template)
+(rowSums(tab) + colSums(tab) + 1) %/% 2</code></pre>
 </div>
 </div>
 

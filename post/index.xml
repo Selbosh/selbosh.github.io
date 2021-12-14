@@ -112,6 +112,7 @@ Once a function passes the unit tests, it should be ready to try with the main p
 &lt;li&gt;&lt;a href=&#34;#day11&#34;&gt;Dumbo Octopus&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day12&#34;&gt;Passage Pathing&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day13&#34;&gt;Transparent Origami&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day14&#34;&gt;Extended Polymerization&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div id=&#34;day1&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Day 1 - &lt;a href=&#34;https://adventofcode.com/2021/day/1&#34;&gt;Sonar Sweep&lt;/a&gt;&lt;/h2&gt;
@@ -708,6 +709,79 @@ ggplot(folded) +
   scale_y_reverse() +
   theme_void()&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;https://selbydavid.com/post/2021-12-01-advent_files/figure-html/day13-1.png&#34; width=&#34;576&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day14&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 14 - &lt;a href=&#34;https://adventofcode.com/2021/day/14&#34;&gt;Extended Polymerization&lt;/a&gt;&lt;/h2&gt;
+&lt;div id=&#34;inserting-letters&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Inserting letters&lt;/h3&gt;
+&lt;p&gt;The initial approach to this problem is to perform the insertions and build up an ever-lengthening string.
+There might be a way to do this using regular expressions, but I used an approach based on table joins.&lt;/p&gt;
+&lt;p&gt;First, read in the data:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;template &amp;lt;- strsplit(readLines(&amp;#39;input.txt&amp;#39;, n = 1), &amp;#39;&amp;#39;)[[1]]
+template &amp;lt;- data.frame(first = head(template, -1),
+                       second = tail(template, -1))
+rules &amp;lt;- read.table(&amp;#39;input.txt&amp;#39;, skip = 1)
+rules &amp;lt;- data.frame(first  = substr(rules[, 1], 1, 1),
+                    second = substr(rules[, 1], 2, 2),
+                    insert = rules[, 3])&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This should give you two data frames that look something like this:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;  first second
+1     N      N
+2     N      C
+3     C      B
+
+   first second insert
+1      C      H      B
+2      H      H      N
+3      C      B      H
+4      N      H      C
+5      H      B      C
+6      H      C      B
+7      H      N      C
+8      N      N      C
+9      B      H      H
+10     N      C      B
+11     N      B      B
+12     B      N      B
+13     B      B      N
+14     B      C      B
+15     C      C      N
+16     C      N      C&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;From here, the method is straightforward.
+Join the &lt;code&gt;template&lt;/code&gt; with the &lt;code&gt;rules&lt;/code&gt; and produce a new &lt;code&gt;template&lt;/code&gt; comprised of the pairs &lt;code&gt;first -&amp;gt; insert&lt;/code&gt; and &lt;code&gt;insert -&amp;gt; second&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;template &amp;lt;- with(merge(template, rules),
+                 data.frame(first = c(first, insert),
+                            second = c(insert, second)))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Repeat this process the required number of times and we will have a data frame containing all the pairs of letters.&lt;/p&gt;
+&lt;p&gt;There’s a problem, though: &lt;code&gt;merge()&lt;/code&gt; does not preserve row order, so we’ve lost track of which letters are the first and the last in the sequence.
+This means counting up the letters in either column &lt;code&gt;first&lt;/code&gt; or &lt;code&gt;second&lt;/code&gt; is going to undercount by 1.
+We could just refer back to the original input, since the first and last letters won’t change.&lt;/p&gt;
+&lt;p&gt;However, there’s another neat solution, which takes advantage of the fact that all the middle characters will appear in both columns, but the first and last values, if different, will appear an odd number of times.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;counts &amp;lt;- (table(unlist(template)) + 1) %/% 2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;From here, the difference between the minimum and maximum counts is given by:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;diff(range(counts))&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;scalable-insertion&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Scalable insertion&lt;/h3&gt;
+&lt;p&gt;The above approach works for part one, but once we increase the iteration count to 40, the data frame or string representation is far too long to store in memory.
+It simply doesn’t scale.&lt;/p&gt;
+&lt;p&gt;Rather than keep the entire sequence and then count up the letters at the end, we can instead store pair frequencies.
+To do this, we can call &lt;code&gt;dplyr::count()&lt;/code&gt; or use a base R approach.&lt;/p&gt;
+&lt;p&gt;Add a frequency column to the original data frame:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;template &amp;lt;- data.frame(first  = head(template, -1),
+                       second = tail(template, -1),
+                       n = 1)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;or if you want to aggregate on initialization, you could use:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;template &amp;lt;- as.data.frame(table(template), stringsAsFactors = FALSE))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then after each insertion operation, &lt;code&gt;aggregate()&lt;/code&gt; the counts:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data &amp;lt;- with(merge(template, rules),
+             data.frame(first = c(first, insert),
+                        second = c(insert, second)))
+template &amp;lt;- aggregate(n ~ first + second, data, sum)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally, the total letter counts are given by:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tab &amp;lt;- xtabs(n ~ first + second, template)
+(rowSums(tab) + colSums(tab) + 1) %/% 2&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>
