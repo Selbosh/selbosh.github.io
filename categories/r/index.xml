@@ -773,8 +773,8 @@ To do this, we can call &lt;code&gt;dplyr::count()&lt;/code&gt; or use a base R 
                        second = tail(template, -1),
                        n = 1)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;or if you want to aggregate on initialization, you could use:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;template &amp;lt;- as.data.frame(table(template), stringsAsFactors = FALSE))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Then after each insertion operation, &lt;code&gt;aggregate()&lt;/code&gt; the counts:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;template &amp;lt;- as.data.frame(table(template), stringsAsFactors = FALSE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then after each round of insertions, &lt;code&gt;aggregate()&lt;/code&gt; the counts:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data &amp;lt;- with(merge(template, rules),
              data.frame(first = c(first, insert),
                         second = c(insert, second)))

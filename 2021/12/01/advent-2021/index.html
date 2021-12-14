@@ -28,7 +28,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
    Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
 <meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="5055">
+<meta itemprop="wordCount" content="5056">
 <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
@@ -824,8 +824,8 @@ To do this, we can call <code>dplyr::count()</code> or use a base R approach.</p
                        second = tail(template, -1),
                        n = 1)</code></pre>
 <p>or if you want to aggregate on initialization, you could use:</p>
-<pre class="r"><code>template &lt;- as.data.frame(table(template), stringsAsFactors = FALSE))</code></pre>
-<p>Then after each insertion operation, <code>aggregate()</code> the counts:</p>
+<pre class="r"><code>template &lt;- as.data.frame(table(template), stringsAsFactors = FALSE)</code></pre>
+<p>Then after each round of insertions, <code>aggregate()</code> the counts:</p>
 <pre class="r"><code>data &lt;- with(merge(template, rules),
              data.frame(first = c(first, insert),
                         second = c(insert, second)))
