@@ -967,10 +967,10 @@ template <- data.frame(first  = head(template, -1),
 ```
 or if you want to aggregate on initialization, you could use:
 ```r
-template <- as.data.frame(table(template), stringsAsFactors = FALSE))
+template <- as.data.frame(table(template), stringsAsFactors = FALSE)
 ```
 
-Then after each insertion operation, `aggregate()` the counts:
+Then after each round of insertions, `aggregate()` the counts:
 ```r
 data <- with(merge(template, rules),
              data.frame(first = c(first, insert),

@@ -699,8 +699,8 @@ To do this, we can call <code>dplyr::count()</code> or use a base R approach.</p
                        second = tail(template, -1),
                        n = 1)</code></pre>
 <p>or if you want to aggregate on initialization, you could use:</p>
-<pre class="r"><code>template &lt;- as.data.frame(table(template), stringsAsFactors = FALSE))</code></pre>
-<p>Then after each insertion operation, <code>aggregate()</code> the counts:</p>
+<pre class="r"><code>template &lt;- as.data.frame(table(template), stringsAsFactors = FALSE)</code></pre>
+<p>Then after each round of insertions, <code>aggregate()</code> the counts:</p>
 <pre class="r"><code>data &lt;- with(merge(template, rules),
              data.frame(first = c(first, insert),
                         second = c(insert, second)))
