@@ -28,7 +28,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
    Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
 <meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="5056">
+<meta itemprop="wordCount" content="6745">
 <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
@@ -164,6 +164,9 @@ Once a function passes the unit tests, it should be ready to try with the main p
 <li><a href="#day12">Passage Pathing</a></li>
 <li><a href="#day13">Transparent Origami</a></li>
 <li><a href="#day14">Extended Polymerization</a></li>
+<li><a href="#day15">Chiton</a></li>
+<li><a href="#day16">Packet Decoder</a></li>
+<li><a href="#day17">Trick Shot</a></li>
 </ol>
 <div id="day1" class="section level2">
 <h2>Day 1 - <a href="https://adventofcode.com/2021/day/1">Sonar Sweep</a></h2>
@@ -834,6 +837,228 @@ template &lt;- aggregate(n ~ first + second, data, sum)</code></pre>
 <pre class="r"><code>tab &lt;- xtabs(n ~ first + second, template)
 (rowSums(tab) + colSums(tab) + 1) %/% 2</code></pre>
 </div>
+</div>
+<div id="day15" class="section level2">
+<h2>Day 15 - <a href="https://adventofcode.com/2021/day/15">Chiton</a></h2>
+<p>The answer is <a href="https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm">Dijkstra’s algorithm</a>, whether you’re aware of it or not.
+That is, the problem is a weighted, directed graph and you’ve been tasked with finding the shortest path between two points.</p>
+<p>You could write your own implementation in R, but it’ll be slow, so I am going to use the off-the-shelf solution in the <strong>igraph</strong> package.
+The hardest task is converting from a matrix into a 2-dimensional lattice graph.</p>
+<pre class="r"><code>lattice_from_matrix &lt;- function(m) {
+  edges &lt;- data.frame(node1 = c(which(row(m) &lt; nrow(m)),
+                                which(col(m) &lt; ncol(m))),
+                      node2 = c(which(row(m) &gt; 1),
+                                which(col(m) &gt; 1)))
+  edges &lt;- rbind(edges, setNames(edges, c(&#39;node2&#39;, &#39;node1&#39;)))
+  edges$weight &lt;- m[edges$node2]
+  igraph::graph_from_data_frame(edges)
+}</code></pre>
+<p>Then, just let the algorithm do the work.</p>
+<pre class="r"><code>lowest_total_risk &lt;- function(g) {
+  as.vector(igraph::distances(g, v = 1, to = igraph::vcount(g),
+                              mode = &#39;out&#39;, algorithm = &#39;dijkstra&#39;))
+}</code></pre>
+<p>For part two, we need to tile the input and then rerun the code again.</p>
+<pre class="r"><code>tile_matrix &lt;- function(m, times = 5) {
+  m &lt;- Reduce(cbind, lapply(seq_len(times) - 1, &#39;+&#39;, m))
+  m &lt;- Reduce(rbind, lapply(seq_len(times) - 1, &#39;+&#39;, m))
+  m[m &gt; 9] &lt;- m[m &gt; 9] %% 10 + 1
+  m
+}</code></pre>
+<p>The final search takes about 0.8 seconds, which is faster than any base-R Dijkstra loop would be.</p>
+</div>
+<div id="day16" class="section level2">
+<h2>Day 16 - <a href="https://adventofcode.com/2021/day/15">Packet Decoder</a></h2>
+<div id="versions" class="section level3">
+<h3>Versions</h3>
+<p>This puzzle takes a long time to read.
+The solution involves recursive functions that read through the packets and subpackets in turn.
+My approach takes the bits and throws them away as they are processed, until there are none left (or, for sub-packets, if we have finished parsing the requisite number).</p>
+<p>We are working between bases here, so you want a couple of utility functions to convert to and from integers.</p>
+<pre class="r"><code>to_bits &lt;- function(x) {
+  ints &lt;- strtoi(strsplit(x, &#39;&#39;)[[1]], 16)
+  bits &lt;- sapply(ints, \(n) tail(rev(as.numeric(intToBits(n))), 4))
+  as.vector(bits)
+}</code></pre>
+<p>Unfortunately, <code>strtoi</code> is not your friend for the binary-to-integer conversion, because it will almost surely silently introduce integer overflow on your main input data.
+Here’s one I prepared earlier that uses floating point numbers so it won’t overflow.</p>
+<pre class="r"><code>binary_to_int &lt;- function(x) {
+  sum(x * 2 ^ rev(seq_along(x) - 1))
+}</code></pre>
+<p>Now here’s the main recursion.</p>
+<pre class="r"><code>packet_versions &lt;- function(bits, depth = 0, rem_subs = Inf, eval = FALSE) {
+  acc &lt;- 0
+  while (any(bits &gt; 0) &amp; rem_subs &gt; 0) {
+    rem_subs &lt;- rem_subs - 1
+    version &lt;- binary_to_int(bits[1:3])
+    acc &lt;- acc + version
+    type &lt;- binary_to_int(bits[4:6])
+    bits &lt;- tail(bits, -6)
+    if (type == 4) { # literal value
+      n_groups &lt;- which.min(bits[seq(1, length(bits), 5)])
+      sub &lt;- head(bits, n_groups * 5)
+      sub &lt;- sub[(seq_along(sub) - 1) %% 5 &gt; 0]
+      # literal_value &lt;- binary_to_int(sub)
+      bits &lt;- tail(bits, -n_groups * 5)
+      next
+    }
+    # Operator mode:
+    lentype &lt;- bits[1]
+    bits &lt;- bits[-1]
+    if (lentype == 0) {
+      sub_length &lt;- binary_to_int(bits[1:15])
+      bits &lt;- tail(bits, -15)
+      sub  &lt;- head(bits, sub_length)
+      acc &lt;- acc + packet_versions(sub, depth + 1)[[&#39;acc&#39;]]
+      bits &lt;- tail(bits, -sub_length)
+    } else {
+      n_subs &lt;- binary_to_int(bits[1:11])
+      bits &lt;- tail(bits, -11)
+      sub_result &lt;- packet_versions(bits, depth + 1, n_subs)
+      acc &lt;- acc + sub_result[[&#39;acc&#39;]]
+      bits &lt;- tail(bits, sub_result[[&#39;length&#39;]])
+    }
+  }
+  if (depth)
+    acc &lt;- c(acc = acc, length = length(bits))
+  acc
+}</code></pre>
+<p>Be careful with length type ID 1, because you need to save the number of bits you’ve parsed and then send this number back to the main function.
+Similarly, it’s a good idea to keep track of how deep in the recursion you are at any given time.</p>
+</div>
+<div id="evaluation" class="section level3">
+<h3>Evaluation</h3>
+<p>The second part is tricky. I decided to adapt my function from part one to generate syntactically-valid R expressions, so that final step is simply evaluating machine-generated code.</p>
+<pre class="r"><code>packet_decode &lt;- function(bits, depth = 0, rem_subs = Inf) {
+  acc &lt;- NULL
+  while (any(bits &gt; 0) &amp; rem_subs &gt; 0) {
+    rem_subs &lt;- rem_subs - 1
+    type &lt;- binary_to_int(bits[4:6])
+    bits &lt;- tail(bits, -6)
+    op &lt;- c(&#39;sum&#39;, &#39;prod&#39;, &#39;min&#39;, &#39;max&#39;, &#39;c&#39;, &#39;`&gt;`&#39;, &#39;`&lt;`&#39;, &#39;`==`&#39;)[type + 1]
+    if (type == 4) { # literal value
+      n_groups &lt;- which.min(bits[seq(1, length(bits), 5)])
+      sub &lt;- head(bits, n_groups * 5)
+      sub &lt;- sub[(seq_along(sub) - 1) %% 5 &gt; 0]
+      literal_value &lt;- binary_to_int(sub)
+      acc$expr &lt;- c(acc$expr, literal_value)
+      bits &lt;- tail(bits, -n_groups * 5)
+      next
+    }
+    # Operator mode:
+    lentype &lt;- bits[1]
+    bits &lt;- bits[-1]
+    if (lentype == 0) {
+      sub_length &lt;- binary_to_int(bits[1:15])
+      bits &lt;- tail(bits, -15)
+      sub  &lt;- head(bits, sub_length)
+      sub_result &lt;- packet_decode(sub, depth + 1)
+      subexpr &lt;- c(op, sub_result[[&#39;expr&#39;]])
+      acc$expr &lt;- c(acc$expr, list(subexpr))
+      bits &lt;- tail(bits, -sub_length)
+    } else {
+      n_subs &lt;- binary_to_int(bits[1:11])
+      bits &lt;- tail(bits, -11)
+      sub_result &lt;- packet_decode(bits, depth + 1, n_subs)
+      subexpr &lt;- c(op, sub_result[[&#39;expr&#39;]])
+      acc$expr &lt;- c(acc$expr, list(subexpr))
+      bits &lt;- tail(bits, sub_result[[&#39;length&#39;]])
+    }
+  }
+  if (depth)
+    acc$length &lt;- length(bits)
+  acc
+}</code></pre>
+<p>The structure of the function is essentially the same, and the result is a deeply nested list representing the hierarchical tree of expressions.
+From here we want to convert it from a tree into some code, and the function <code>combine_expr</code> does this for us:</p>
+<pre class="r"><code>combine_expr &lt;- function(node, eval = FALSE) {
+  if (length(node) == 1)
+    return(node)
+  expr &lt;- sprintf(&#39;%s(%s)&#39;, node[1], paste(node[-1], collapse = &#39;, &#39;))
+  if (!eval)
+    return(expr)
+  eval(str2expression(expr))
+}</code></pre>
+<p>However, it will only work on leaves of the tree.
+How can we correctly operate on the entire tree and turn it into a single expression?
+That requires more recursion.
+Annoyingly, the function <code>rapply</code> doesn’t quite do what’s needed, so we introduce yet another function, called <code>packet_parse</code>:</p>
+<pre class="r"><code>packet_parse &lt;- function(tree, eval = FALSE) {
+  if (!is.list(tree))
+    return(combine_expr(tree, eval))
+  expr &lt;- packet_parse(unlist(lapply(tree, packet_parse, eval), use.names = F))
+  if (eval &amp; is.character(expr))
+    return(eval(parse(text = expr)))
+  expr
+}</code></pre>
+<p>You can choose to view the expression, or evaluate it.
+Here is my final expression generated by <code>packet_parse</code>:</p>
+<pre class="r"><code>sum(prod(425542, `&lt;`(247, 247)), sum(121, 21236), prod(`&gt;`(sum(11, 12, 11), sum(7, 10, 7)), 32566), prod(`&lt;`(sum(8, 7, 15), sum(6, 11, 10)), 4507180), min(prod(prod(sum(prod(max(prod(min(prod(min(prod(max(sum(sum(max(sum(sum(min(prod(prod(130)))))))))))))))))))), 139930778832, prod(`&gt;`(52, 667118), 10), 602147, max(62199), prod(14849899, `&lt;`(11716, 26963)), prod(4083, `&gt;`(135, 135)), prod(135, 217, 224), 73, prod(sum(13, 4, 9), sum(12, 15, 7), sum(13, 10, 9)), min(194), prod(182, 197, 136, 2, 242), prod(226, 142, 34, 124), max(4025, 186042), min(30059, 126119002), min(9, 260, 162), prod(`&lt;`(4, 4), 28699), prod(1945, `==`(1714, 1714)), prod(7, `&lt;`(1545, 108)), sum(12), prod(200, `&gt;`(31050, 655605)), 3154, prod(3, `&lt;`(64896, 116)), 3055, prod(13), min(48082, 226938, 1175, 68077774919), sum(66, 15, 181, 1380642642, 11831587), prod(241, 59), prod(150, `&gt;`(2742, 113)), 37007908601, max(52444, 11, 13008816, 2935), 20723, 8, prod(5, `&gt;`(6241732, 759708)), sum(prod(15, 7, 4), prod(14, 2, 12), prod(13, 6, 6)), sum(2877, 229333, 655820, 1020971), sum(39581, 2, 14), max(982557, 44, 31), 68, prod(`==`(11530, 3492), 41177), prod(`==`(236, 918711093), 3937), max(903466, 228, 6, 25989131, 4028), 229, min(299875, 10969849, 11481, 2281, 13), prod(55300721, `&gt;`(63, 63)), prod(244, `&gt;`(sum(7, 13, 7), sum(12, 5, 14))), prod(4494263, `==`(sum(4, 15, 4), sum(3, 3, 14))), prod(`&lt;`(45, 3307915), 58514), prod(3596530693, `&lt;`(sum(3, 12, 4), sum(9, 11, 2))))</code></pre>
+<p>Which yields the answer <code>184487454837</code> when evaluated.</p>
+</div>
+</div>
+<div id="day17" class="section level2">
+<h2>Day 17 - <a href="https://adventofcode.com/2021/day/15">Trick Shot</a></h2>
+<p>A little bit of secondary-school mathematics can help your search for the highest trajectory, and for the total number of trajectories.
+Key is that the <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> movements are essentially independent.</p>
+<p>Remember the formula
+<span class="math display">\[
+v = u + at
+\]</span>
+gives velocity <span class="math inline">\(v\)</span> at time <span class="math inline">\(t\)</span> for initial velocity <span class="math inline">\(u\)</span> and average acceleration <span class="math inline">\(a\)</span>.
+How long does it take to reach the peak?
+Rearranging and plugging in values:
+<span class="math display">\[t = \frac{v - u} a = \frac{0 - u}{-1} = u,\]</span>
+which tells us that the probe launched with vertical velocity <span class="math inline">\(u\)</span> <em>always</em> reaches its peak at time <span class="math inline">\(t = u\)</span> (except if pointed downwards: then its highest point is the launch position 0).
+At that time, the sum of the arithmetic progression is
+<span class="math display">\[
+x = \frac{t}2 \Bigl(2u + (t - 1)a\Bigr) = u^2 + \frac{u - u^2}2 = \frac{u(u+1)}{2},
+\]</span>
+for any launch velocity <span class="math inline">\(u\)</span>, the peak of the curve is <span class="math inline">\(\max\{0, u_y(u_y + 1) / 2\}\)</span> where <span class="math inline">\(u_y\)</span> is the vertical component of <span class="math inline">\(u\)</span>.</p>
+<p>Other insights to narrow the search space:</p>
+<ul>
+<li><p>At time <span class="math inline">\(t\)</span>, the probe is at position <span class="math display">\[x = \frac{t}2\left(2u - 1+t)\right)\]</span> (using the formula above), so there is no need to loop through successive time points.</p></li>
+<li><p>Rearrange that formula to get the time it takes for a probe with initial velocity <span class="math inline">\(u\)</span> to reach point <span class="math inline">\(x\)</span>: <span class="math display">\[t = \frac12\left(\sqrt{4u^2+4u-8x+1} + 2u + 1\right)\]</span>.</p></li>
+<li><p>The maximum horizontal velocity <span class="math inline">\(u_x\)</span> is equal to the right-most edge of the target area. Any faster and the probe will immediately overshoot.</p></li>
+<li><p>It takes <span class="math inline">\(t = u_x(u_x+1)/2\)</span> time points for the probe to be slowed down by drag to zero horizontal velocity. This gives us a lower bound <span class="math display">\[u_x &gt; \frac12 \left(\sqrt{8x_1+1} - 1\right),\]</span> because if the initial is any less than this then the probe will never reach the left edge of the target area.</p></li>
+</ul>
+<p>In the end I didn’t use all these facts, because a ‘brute force’ type search over several points seems to be fast enough and less fiddly to get the formulae right.
+But it could certainly be faster if using these points.</p>
+<pre class="r"><code>search_trajectories &lt;- function(target, trick = TRUE) {
+  max_x &lt;- target[&#39;x2&#39;]
+  min_x &lt;- ceiling((sqrt(8 * target[&#39;x1&#39;] + 1) - 1) / 2)
+  max_y &lt;- -target[&#39;y1&#39;] - 1
+  min_y &lt;- target[&#39;y1&#39;]
+  n &lt;- 0
+  for (y in max_y:min_y) {
+    end_time &lt;- time_to_reach(y, target[&#39;y1&#39;]) - y
+    y_seq &lt;- -cumsum(-y:end_time)
+    if (min(y_seq) &gt; target[&#39;y1&#39;])
+      warning(&#39;sequence too short for y = &#39;, y)
+    for (x in max_x:min_x) {
+      x_seq &lt;- cumsum(x:0)
+      if (x &lt; end_time + y) {
+        x_seq &lt;- c(x_seq, rep(x_seq[x], end_time + y - x))
+      } else x_seq &lt;- head(x_seq, end_time + y + 1)
+      if (any(x_seq &gt;= target[&#39;x1&#39;] &amp; x_seq &lt;= target[&#39;x2&#39;] &amp;
+              y_seq &gt;= target[&#39;y1&#39;] &amp; y_seq &lt;= target[&#39;y2&#39;])) {
+        if (trick)
+          return(y * (y + 1) / 2)
+        n &lt;- n + 1
+      }
+    }
+  }
+  n
+}</code></pre>
+<p>In principle—though I couldn’t quite get it to work—we could avoid the loops by calculating the times it takes the probe’s <span class="math inline">\(y\)</span>-position to reach the top/bottom of the target area, using. Then plug those times into the position formula to see if the <span class="math inline">\(x\)</span>-coordinate is also within the target area at those times.
+If so, then it hits the target.</p>
+<pre class="r"><code>position &lt;- function(u, t) {
+  t / 2 * (2 * u + (t - 1) * -1)
+}
+
+time_to_reach &lt;- function(u, x) {
+  round(1/2 * (sqrt(4 * u^2 + 4 * u - 8 * x) + 2 * u + 1))
+}</code></pre>
 </div>
 
     </section>
