@@ -963,13 +963,14 @@ At that time, the sum of the arithmetic progression is
 &lt;span class=&#34;math display&#34;&gt;\[
 x = \frac{t}2 \Bigl(2u + (t - 1)a\Bigr) = u^2 + \frac{u - u^2}2 = \frac{u(u+1)}{2},
 \]&lt;/span&gt;
-for any launch velocity &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt;, the peak of the curve is &lt;span class=&#34;math inline&#34;&gt;\(\max\{0, u_y(u_y + 1) / 2\}\)&lt;/span&gt; where &lt;span class=&#34;math inline&#34;&gt;\(u_y\)&lt;/span&gt; is the vertical component of &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt;.&lt;/p&gt;
+for any launch velocity &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt;.
+Hence, the peak of the curve is always &lt;span class=&#34;math inline&#34;&gt;\(\max\{0, u_y(u_y + 1) / 2\}\)&lt;/span&gt; where &lt;span class=&#34;math inline&#34;&gt;\(u_y\)&lt;/span&gt; is the vertical component of &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt;.&lt;/p&gt;
 &lt;p&gt;Other insights to narrow the search space:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;At time &lt;span class=&#34;math inline&#34;&gt;\(t\)&lt;/span&gt;, the probe is at position &lt;span class=&#34;math display&#34;&gt;\[x = \frac{t}2\left(2u - 1+t)\right)\]&lt;/span&gt; (using the formula above), so there is no need to loop through successive time points.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Rearrange that formula to get the time it takes for a probe with initial velocity &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; to reach point &lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt;: &lt;span class=&#34;math display&#34;&gt;\[t = \frac12\left(\sqrt{4u^2+4u-8x+1} + 2u + 1\right)\]&lt;/span&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Rearrange that formula to get the time it takes for a probe with initial velocity &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; to reach point &lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt;: &lt;span class=&#34;math display&#34;&gt;\[t = \frac12\left(\sqrt{4u^2+4u-8x+1} + 2u + 1\right).\]&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;The maximum horizontal velocity &lt;span class=&#34;math inline&#34;&gt;\(u_x\)&lt;/span&gt; is equal to the right-most edge of the target area. Any faster and the probe will immediately overshoot.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;It takes &lt;span class=&#34;math inline&#34;&gt;\(t = u_x(u_x+1)/2\)&lt;/span&gt; time points for the probe to be slowed down by drag to zero horizontal velocity. This gives us a lower bound &lt;span class=&#34;math display&#34;&gt;\[u_x &amp;gt; \frac12 \left(\sqrt{8x_1+1} - 1\right),\]&lt;/span&gt; because if the initial is any less than this then the probe will never reach the left edge of the target area.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;It takes &lt;span class=&#34;math inline&#34;&gt;\(t = u_x(u_x+1)/2\)&lt;/span&gt; time points for the probe to be slowed down by drag to zero horizontal velocity. This gives us a lower bound &lt;span class=&#34;math display&#34;&gt;\[u_x &amp;gt; \frac12 \left(\sqrt{8x_1+1} - 1\right),\]&lt;/span&gt; because if the initial velocity is any less than this then the probe will never reach the left edge of the target area.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;In the end I didn’t use all these facts, because a ‘brute force’ type search over several points seems to be fast enough and less fiddly to get the formulae right.
 But it could certainly be faster if using these points.&lt;/p&gt;

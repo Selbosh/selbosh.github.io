@@ -28,7 +28,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
    Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
 <meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="6745">
+<meta itemprop="wordCount" content="6748">
 <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
@@ -1014,13 +1014,14 @@ At that time, the sum of the arithmetic progression is
 <span class="math display">\[
 x = \frac{t}2 \Bigl(2u + (t - 1)a\Bigr) = u^2 + \frac{u - u^2}2 = \frac{u(u+1)}{2},
 \]</span>
-for any launch velocity <span class="math inline">\(u\)</span>, the peak of the curve is <span class="math inline">\(\max\{0, u_y(u_y + 1) / 2\}\)</span> where <span class="math inline">\(u_y\)</span> is the vertical component of <span class="math inline">\(u\)</span>.</p>
+for any launch velocity <span class="math inline">\(u\)</span>.
+Hence, the peak of the curve is always <span class="math inline">\(\max\{0, u_y(u_y + 1) / 2\}\)</span> where <span class="math inline">\(u_y\)</span> is the vertical component of <span class="math inline">\(u\)</span>.</p>
 <p>Other insights to narrow the search space:</p>
 <ul>
 <li><p>At time <span class="math inline">\(t\)</span>, the probe is at position <span class="math display">\[x = \frac{t}2\left(2u - 1+t)\right)\]</span> (using the formula above), so there is no need to loop through successive time points.</p></li>
-<li><p>Rearrange that formula to get the time it takes for a probe with initial velocity <span class="math inline">\(u\)</span> to reach point <span class="math inline">\(x\)</span>: <span class="math display">\[t = \frac12\left(\sqrt{4u^2+4u-8x+1} + 2u + 1\right)\]</span>.</p></li>
+<li><p>Rearrange that formula to get the time it takes for a probe with initial velocity <span class="math inline">\(u\)</span> to reach point <span class="math inline">\(x\)</span>: <span class="math display">\[t = \frac12\left(\sqrt{4u^2+4u-8x+1} + 2u + 1\right).\]</span></p></li>
 <li><p>The maximum horizontal velocity <span class="math inline">\(u_x\)</span> is equal to the right-most edge of the target area. Any faster and the probe will immediately overshoot.</p></li>
-<li><p>It takes <span class="math inline">\(t = u_x(u_x+1)/2\)</span> time points for the probe to be slowed down by drag to zero horizontal velocity. This gives us a lower bound <span class="math display">\[u_x &gt; \frac12 \left(\sqrt{8x_1+1} - 1\right),\]</span> because if the initial is any less than this then the probe will never reach the left edge of the target area.</p></li>
+<li><p>It takes <span class="math inline">\(t = u_x(u_x+1)/2\)</span> time points for the probe to be slowed down by drag to zero horizontal velocity. This gives us a lower bound <span class="math display">\[u_x &gt; \frac12 \left(\sqrt{8x_1+1} - 1\right),\]</span> because if the initial velocity is any less than this then the probe will never reach the left edge of the target area.</p></li>
 </ul>
 <p>In the end I didn’t use all these facts, because a ‘brute force’ type search over several points seems to be fast enough and less fiddly to get the formulae right.
 But it could certainly be faster if using these points.</p>
