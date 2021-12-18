@@ -116,6 +116,7 @@ Once a function passes the unit tests, it should be ready to try with the main p
 &lt;li&gt;&lt;a href=&#34;#day15&#34;&gt;Chiton&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day16&#34;&gt;Packet Decoder&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day17&#34;&gt;Trick Shot&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day18&#34;&gt;Snailfish&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div id=&#34;day1&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Day 1 - &lt;a href=&#34;https://adventofcode.com/2021/day/1&#34;&gt;Sonar Sweep&lt;/a&gt;&lt;/h2&gt;
@@ -1009,6 +1010,82 @@ If so, then it hits the target.&lt;/p&gt;
 time_to_reach &amp;lt;- function(u, x) {
   round(1/2 * (sqrt(4 * u^2 + 4 * u - 8 * x) + 2 * u + 1))
 }&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day18&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 18 - &lt;a href=&#34;https://adventofcode.com/2021/day/18&#34;&gt;Snailfish&lt;/a&gt;&lt;/h2&gt;
+&lt;div id=&#34;reduction&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reduction&lt;/h3&gt;
+&lt;p&gt;I decided (for better or for worse) to convert the square brackets into &lt;code&gt;list(...)&lt;/code&gt; expressions, then parse the input as nested lists.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_sf &amp;lt;- function(input) {
+    out &amp;lt;- lapply(input, function(string) {
+        expr &amp;lt;- gsub(&amp;#39;\\]&amp;#39;, &amp;#39;)&amp;#39;, gsub(&amp;#39;\\[&amp;#39;, &amp;#39;list(&amp;#39;, string))
+        eval(parse(text = expr))
+    })
+    if (length(out) == 1) return(unlist(out, FALSE)) else out
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then we need to perform the reductions on our list structures.
+Splitting is easy, but it’s important that we split only the first node we find and then stop.
+I used a counter called &lt;code&gt;done&lt;/code&gt; to ensure the &lt;code&gt;rapply&lt;/code&gt; loop terminates early.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sf_split &amp;lt;- function(lst) {
+    done &amp;lt;- FALSE
+    rapply(lst, \(n) {
+        if (n &amp;lt;= 9 | done) return(n)
+        done &amp;lt;&amp;lt;- TRUE
+        list(floor(n / 2), ceiling(n / 2))
+    }, how = &amp;#39;replace&amp;#39;)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To explode, it’s a bit trickier because you need several nodes to interact with one another.
+I wrote some recursive functions to find the depth of the list, to mark the appropriate node with an &lt;code&gt;NA&lt;/code&gt; and then to replace it.&lt;/p&gt;
+&lt;p&gt;I also discovered the &lt;code&gt;relist&lt;/code&gt; function, which makes it possible to flatten a list, do some vector operations (handy for getting the indices just before and after our exploded pair) and then return the data to the original nested structure.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;depths &amp;lt;- function(lst, depth = 0) {
+    if (!is.list(lst)) return(depth)
+    unlist(sapply(lst, depths, depth + 1))
+}
+
+replaceNA &amp;lt;- function(lst, replacement) {
+    if (all(is.na(lst))) return(replacement)
+    if (!is.list(lst)) return(lst)
+    lapply(lst, replaceNA, replacement)
+}
+
+sf_explode &amp;lt;- function(lst) {
+    i &amp;lt;- which(depths(lst) &amp;gt; 4)
+    L &amp;lt;- i[1]; R &amp;lt;- i[2]
+    x &amp;lt;- unlist(lst)
+    if (L &amp;gt; 1)
+        x[L - 1] &amp;lt;- x[L - 1] + x[L]
+    if (R &amp;lt; length(x))
+        x[R + 1] &amp;lt;- x[R] + x[R + 1]
+    x[c(L, R)] &amp;lt;- NA
+    replaceNA(relist(x, lst), 0)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then we put it all together as reduce operations.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sf_reduce &amp;lt;- function(lst) {
+    Reduce(\(a, b) list(sf_reduce1(a), b), lst) |&amp;gt; sf_reduce1()
+}
+
+sf_reduce1 &amp;lt;- function(lst) {
+    if (max(depths(lst)) &amp;gt; 4) lst &amp;lt;- Recall(sf_explode(lst))
+    if (any(unlist(lst) &amp;gt; 9)) lst &amp;lt;- Recall(sf_split(lst))
+    lst
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you try to reduce the whole list in one operation, you’ll definitely get a stack overflow with the larger input datasets.
+Thus it’s important to reduce from the left until it’s as simple as possible, then combine it with the next line.&lt;/p&gt;
+&lt;p&gt;My code is quite slow; it might be more sensible to rewrite this as a &lt;code&gt;repeat&lt;/code&gt; loop rather than doing all this recursion.&lt;/p&gt;
+&lt;p&gt;Finally, calculate the magnitude.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;magnitude &amp;lt;- function(lst) {
+    if (!is.list(lst)) return(lst)
+    Reduce(\(a, b) 3 * magnitude(a) + 2 * magnitude(b), lst)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;pairs&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Pairs&lt;/h3&gt;
+&lt;p&gt;There might be a clever way of finding the biggest pair but I use brute force:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;combos &amp;lt;- t(combn(length(input), 2))
+combos &amp;lt;- rbind(combos, combos[, 2:1])
+magnitudes &amp;lt;- apply(combos, 1, \(i) magnitude(sf_reduce(input[i])))
+max(magnitudes)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 </description>
     </item>
