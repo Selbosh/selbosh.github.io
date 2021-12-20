@@ -28,7 +28,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
    Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
 <meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="8290">
+<meta itemprop="wordCount" content="8293">
 <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
@@ -1054,7 +1054,8 @@ But it could certainly be faster if using these points.</p>
   }
   n
 }</code></pre>
-<p>In principle—though I couldn’t quite get it to work—we could avoid the loops by calculating the times it takes the probe’s <span class="math inline">\(y\)</span>-position to reach the top/bottom of the target area, using. Then plug those times into the position formula to see if the <span class="math inline">\(x\)</span>-coordinate is also within the target area at those times.
+<p>In principle—though I couldn’t quite get it to work—we could avoid the loops by calculating the times it takes the probe’s <span class="math inline">\(y\)</span>-position to reach the top/bottom of the target area, using the <code>time_to_reach</code> formula.
+Then plug those times into the position formula to see if the <span class="math inline">\(x\)</span>-coordinate is also within the target area at those times.
 If so, then it hits the target.</p>
 <pre class="r"><code>position &lt;- function(u, t) {
   t / 2 * (2 * u + (t - 1) * -1)
