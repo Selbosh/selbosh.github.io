@@ -1153,15 +1153,102 @@ There are supposed to be 24 different transformations but I ended up with 48.&lt
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dist2 &amp;lt;- function(X, Y) {
   apply(X, 1, \(x) apply(Y, 1, \(y) paste(y - x, collapse = &amp;#39; &amp;#39;)))
 }&lt;/code&gt;&lt;/pre&gt;
-&lt;!--### Faster way
+&lt;/div&gt;
+&lt;div id=&#34;linear-regression&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Linear regression&lt;/h3&gt;
+&lt;p&gt;It’s not particularly satisfactory having a solution that takes over 10 seconds to run for part one, and systematically checking every rotation and reflection seems rather too much like brute force.&lt;/p&gt;
+&lt;p&gt;The next day, I refactored Ryan McCorvie’s linear regression solution as follows.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_scanners &amp;lt;- function(file) {
+  input &amp;lt;- read.csv(file, header = FALSE, col.names = c(&amp;#39;x&amp;#39;, &amp;#39;y&amp;#39;, &amp;#39;z&amp;#39;))
+  split(input, cumsum(is.na(input$z))) |&amp;gt;
+    lapply(&amp;#39;[&amp;#39;, -1, ) |&amp;gt;
+    lapply(type.convert, as.is = TRUE)
+}
+scanners &amp;lt;- read_scanners(input_file(19))
 
-It&#39;s not particularly satisfactory having a solution that takes over 10 seconds to run for part one.
-Using the various garnered tips, here is my streamlined method.
+# Compute pairwise distances among beacons *within* each scanner.
+distances &amp;lt;- lapply(scanners, dist)
 
-```r
-# Coming soon
-```
---&gt;
+# How many such distances does each pair of scanners have in common?
+similarity &amp;lt;- combn(distances, 2, \(x) Reduce(intersect, x), simplify = F)
+
+# Using this information, which scanners appear to overlap?
+overlaps &amp;lt;- lengths(similarity) &amp;gt;= 12 * (12 - 1) / 2
+
+# Just keep those pairs.
+similarity &amp;lt;- similarity[overlaps &amp;gt; 0]
+
+# But it helps if we can remember which they are.
+pairs &amp;lt;- t(combn(length(scanners), 2)[, overlaps &amp;gt; 0])
+
+# Match up those beacons that two scanners have in common.
+match_beacons &amp;lt;- function(s1, s2) {
+  m1 &amp;lt;- as.matrix(distances[[s1]])
+  m2 &amp;lt;- as.matrix(distances[[s2]])
+  matching &amp;lt;- c()
+  for (j1 in 1:ncol(m1)) {
+    done &amp;lt;- FALSE
+    for (j2 in 1:ncol(m2)) {
+      if (length(intersect(m1[, j1], m2[, j2])) &amp;gt;= 12) {
+        matching &amp;lt;- rbind(matching, cbind(s1 = j1, s2 = j2))
+        done &amp;lt;- TRUE
+        break
+      }
+    }
+    if (done) next
+  }
+  matching
+}
+
+# For two scanners, how can we orientate the 2nd to match the 1st?
+align_scanners &amp;lt;- function(s1, s2) {
+  match &amp;lt;- match_beacons(s1, s2)
+
+  # Time for a bit of linear regression!
+  LHS &amp;lt;- scanners[[s1]][match[, &amp;#39;s1&amp;#39;], , drop = F]
+  RHS &amp;lt;- scanners[[s2]][match[, &amp;#39;s2&amp;#39;], , drop = F]
+  lm_x &amp;lt;- lm(LHS$x ~ x + y + z, RHS)
+  lm_y &amp;lt;- lm(LHS$y ~ x + y + z, RHS)
+  lm_z &amp;lt;- lm(LHS$z ~ x + y + z, RHS)
+  
+  # The predictions gives the beacon coordinates.
+  beacon_coords &amp;lt;- as.data.frame(apply(cbind(
+    x = predict(lm_x, scanners[[s2]]),
+    y = predict(lm_y, scanners[[s2]]),
+    z = predict(lm_z, scanners[[s2]])), 2, round))
+
+  # The model intercept is the translation / the scanner position!
+  scanner_coords &amp;lt;- apply(cbind(x = coef(lm_x)[1],
+                                y = coef(lm_y)[1],
+                                z = coef(lm_z)[1]), 2, round)
+
+  # Globally update
+  scanners[[s2]] &amp;lt;&amp;lt;- beacon_coords
+  beacons &amp;lt;&amp;lt;- unique(rbind(beacons, beacon_coords))
+  scanner_locations &amp;lt;&amp;lt;- rbind(scanner_locations, scanner_coords)
+}
+
+# Do the search.
+found &amp;lt;- 1
+to_find &amp;lt;- 2:length(scanners)
+scanner_locations &amp;lt;- c(0, 0, 0)
+beacons &amp;lt;- scanners[[1]]
+while (length(to_find)) {
+  overlaps_with_found &amp;lt;- pairs[xor(pairs[, 1] %in% found,
+                                   pairs[, 2] %in% found), , drop = F]
+  for (i in 1:nrow(overlaps_with_found)) {
+    # Let s1 be the already-aligned scanner.
+    s1 &amp;lt;- intersect(overlaps_with_found[i, ], found)
+    if (length(s1) &amp;gt; 1) next
+    s2 &amp;lt;- setdiff(overlaps_with_found[i, ], s1)
+    message(&amp;#39;Joining &amp;#39;, s1, &amp;#39; and &amp;#39;, s2)
+    align_scanners(s1, s2)
+    found &amp;lt;- c(found, s2)
+    to_find &amp;lt;- setdiff(to_find, found)
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As well as being elegant, it’s also &lt;em&gt;far&lt;/em&gt; quicker than my initial approach.
+You can see &lt;a href=&#34;https://github.com/mccorvie/advent-of-code-2021/blob/main/Dec%2019%20Beacon%20Scanner.R&#34;&gt;Ryan’s original code on GitHub&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;manhattan-distance&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;Manhattan distance&lt;/h3&gt;
