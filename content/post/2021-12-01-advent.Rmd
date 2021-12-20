@@ -1254,7 +1254,8 @@ search_trajectories <- function(target, trick = TRUE) {
 }
 ```
 
-In principle---though I couldn't quite get it to work---we could avoid the loops by calculating the times it takes the probe's $y$-position to reach the top/bottom of the target area, using. Then plug those times into the position formula to see if the $x$-coordinate is also within the target area at those times.
+In principle---though I couldn't quite get it to work---we could avoid the loops by calculating the times it takes the probe's $y$-position to reach the top/bottom of the target area, using the `time_to_reach` formula.
+Then plug those times into the position formula to see if the $x$-coordinate is also within the target area at those times.
 If so, then it hits the target.
 
 ```r

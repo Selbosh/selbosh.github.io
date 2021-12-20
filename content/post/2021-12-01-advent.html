@@ -929,7 +929,8 @@ But it could certainly be faster if using these points.</p>
   }
   n
 }</code></pre>
-<p>In principle—though I couldn’t quite get it to work—we could avoid the loops by calculating the times it takes the probe’s <span class="math inline">\(y\)</span>-position to reach the top/bottom of the target area, using. Then plug those times into the position formula to see if the <span class="math inline">\(x\)</span>-coordinate is also within the target area at those times.
+<p>In principle—though I couldn’t quite get it to work—we could avoid the loops by calculating the times it takes the probe’s <span class="math inline">\(y\)</span>-position to reach the top/bottom of the target area, using the <code>time_to_reach</code> formula.
+Then plug those times into the position formula to see if the <span class="math inline">\(x\)</span>-coordinate is also within the target area at those times.
 If so, then it hits the target.</p>
 <pre class="r"><code>position &lt;- function(u, t) {
   t / 2 * (2 * u + (t - 1) * -1)
