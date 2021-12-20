@@ -1451,15 +1451,106 @@ dist2 <- function(X, Y) {
 }
 ```
 
-<!--### Faster way
+### Linear regression
 
-It's not particularly satisfactory having a solution that takes over 10 seconds to run for part one.
-Using the various garnered tips, here is my streamlined method.
+It's not particularly satisfactory having a solution that takes over 10 seconds to run for part one, and systematically checking every rotation and reflection seems rather too much like brute force.
+
+The next day, I refactored Ryan McCorvie's linear regression solution as follows.
 
 ```r
-# Coming soon
+read_scanners <- function(file) {
+  input <- read.csv(file, header = FALSE, col.names = c('x', 'y', 'z'))
+  split(input, cumsum(is.na(input$z))) |>
+    lapply('[', -1, ) |>
+    lapply(type.convert, as.is = TRUE)
+}
+scanners <- read_scanners(input_file(19))
+
+# Compute pairwise distances among beacons *within* each scanner.
+distances <- lapply(scanners, dist)
+
+# How many such distances does each pair of scanners have in common?
+similarity <- combn(distances, 2, \(x) Reduce(intersect, x), simplify = F)
+
+# Using this information, which scanners appear to overlap?
+overlaps <- lengths(similarity) >= 12 * (12 - 1) / 2
+
+# Just keep those pairs.
+similarity <- similarity[overlaps > 0]
+
+# But it helps if we can remember which they are.
+pairs <- t(combn(length(scanners), 2)[, overlaps > 0])
+
+# Match up those beacons that two scanners have in common.
+match_beacons <- function(s1, s2) {
+  m1 <- as.matrix(distances[[s1]])
+  m2 <- as.matrix(distances[[s2]])
+  matching <- c()
+  for (j1 in 1:ncol(m1)) {
+    done <- FALSE
+    for (j2 in 1:ncol(m2)) {
+      if (length(intersect(m1[, j1], m2[, j2])) >= 12) {
+        matching <- rbind(matching, cbind(s1 = j1, s2 = j2))
+        done <- TRUE
+        break
+      }
+    }
+    if (done) next
+  }
+  matching
+}
+
+# For two scanners, how can we orientate the 2nd to match the 1st?
+align_scanners <- function(s1, s2) {
+  match <- match_beacons(s1, s2)
+
+  # Time for a bit of linear regression!
+  LHS <- scanners[[s1]][match[, 's1'], , drop = F]
+  RHS <- scanners[[s2]][match[, 's2'], , drop = F]
+  lm_x <- lm(LHS$x ~ x + y + z, RHS)
+  lm_y <- lm(LHS$y ~ x + y + z, RHS)
+  lm_z <- lm(LHS$z ~ x + y + z, RHS)
+  
+  # The predictions gives the beacon coordinates.
+  beacon_coords <- as.data.frame(apply(cbind(
+    x = predict(lm_x, scanners[[s2]]),
+    y = predict(lm_y, scanners[[s2]]),
+    z = predict(lm_z, scanners[[s2]])), 2, round))
+
+  # The model intercept is the translation / the scanner position!
+  scanner_coords <- apply(cbind(x = coef(lm_x)[1],
+                                y = coef(lm_y)[1],
+                                z = coef(lm_z)[1]), 2, round)
+
+  # Globally update
+  scanners[[s2]] <<- beacon_coords
+  beacons <<- unique(rbind(beacons, beacon_coords))
+  scanner_locations <<- rbind(scanner_locations, scanner_coords)
+}
+
+# Do the search.
+found <- 1
+to_find <- 2:length(scanners)
+scanner_locations <- c(0, 0, 0)
+beacons <- scanners[[1]]
+while (length(to_find)) {
+  overlaps_with_found <- pairs[xor(pairs[, 1] %in% found,
+                                   pairs[, 2] %in% found), , drop = F]
+  for (i in 1:nrow(overlaps_with_found)) {
+    # Let s1 be the already-aligned scanner.
+    s1 <- intersect(overlaps_with_found[i, ], found)
+    if (length(s1) > 1) next
+    s2 <- setdiff(overlaps_with_found[i, ], s1)
+    message('Joining ', s1, ' and ', s2)
+    align_scanners(s1, s2)
+    found <- c(found, s2)
+    to_find <- setdiff(to_find, found)
+  }
+}
 ```
--->
+
+As well as being elegant, it's also _far_ quicker than my initial approach.
+You can see [Ryan's original code on GitHub](https://github.com/mccorvie/advent-of-code-2021/blob/main/Dec%2019%20Beacon%20Scanner.R).
 
 ### Manhattan distance
 
