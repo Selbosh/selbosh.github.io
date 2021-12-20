@@ -117,6 +117,8 @@ Once a function passes the unit tests, it should be ready to try with the main p
 &lt;li&gt;&lt;a href=&#34;#day16&#34;&gt;Packet Decoder&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day17&#34;&gt;Trick Shot&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day18&#34;&gt;Snailfish&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day19&#34;&gt;Beacon Scanner&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day20&#34;&gt;Trench Map&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div id=&#34;day1&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Day 1 - &lt;a href=&#34;https://adventofcode.com/2021/day/1&#34;&gt;Sonar Sweep&lt;/a&gt;&lt;/h2&gt;
@@ -1086,6 +1088,137 @@ combos &amp;lt;- rbind(combos, combos[, 2:1])
 magnitudes &amp;lt;- apply(combos, 1, \(i) magnitude(sf_reduce(input[i])))
 max(magnitudes)&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day19&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 19 - &lt;a href=&#34;https://adventofcode.com/2021/day/19&#34;&gt;Beacon Scanner&lt;/a&gt;&lt;/h2&gt;
+&lt;div id=&#34;transformers&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Transformers&lt;/h3&gt;
+&lt;p&gt;This was the hardest problem yet.
+There were a few ideas I had about how to solve the problem quickly, possibly without even having to find any of the actual coordinates.
+However, I could not work out how to implement them in the end and resorted to the ‘slow’ way: iterating through the scanners one by one and trying the rotations and reflections in turn until they fit into place.&lt;/p&gt;
+&lt;p&gt;One key insight is that pairwise Euclidean distances &lt;em&gt;within&lt;/em&gt; a scanner’s beacons are invariant to translations and rotations.
+Thus, if we compute within-scanner distance matrix for each one, we know that adjacent scanners must have at least &lt;span class=&#34;math inline&#34;&gt;\(12 * (12 - 1) / 2 = 66\)&lt;/span&gt; distance pairs in common.
+This is a good way to set up the initial search strategy.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://twitter.com/drob/status/1472748122275291137&#34;&gt;David Robinson&lt;/a&gt; offers a neat solution which finds the rotations and reflections mathematically, rather than by trial and error.&lt;/p&gt;
+&lt;p&gt;The clever solution, which I suspect I had been looking for but never quite reached, is to think like a statistician should, and &lt;a href=&#34;https://twitter.com/mccorvie/status/1472684849123102720&#34;&gt;find the transformations using linear regression&lt;/a&gt;.
+Thanks to Ryan McCorvie.&lt;/p&gt;
+&lt;p&gt;Whatever method you go for, read in the data, with judicious handling of &lt;code&gt;NA&lt;/code&gt;s to divide up the scanners.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_scanners &amp;lt;- function(file) {
+  input &amp;lt;- read.csv(file, header = FALSE, col.names = c(&amp;#39;x&amp;#39;, &amp;#39;y&amp;#39;, &amp;#39;z&amp;#39;))
+  input$scanner &amp;lt;- cumsum(is.na(input$z))
+  type.convert(na.omit(input), as.is = TRUE)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here is an initial solution, partly inspired by &lt;a href=&#34;https://twitter.com/ashbaldry_/status/1472566622535798785&#34;&gt;Ashley Baldry&lt;/a&gt;.
+Generate copies of every scanner’s beacons in the various orientations.
+There are supposed to be 24 different transformations but I ended up with 48.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;orientate_scanners &amp;lt;- function(input) {
+  mirror &amp;lt;- expand.grid(x = c(1, -1), y = c(1, -1), z = c(1, -1))
+  rotate &amp;lt;- expand.grid(x = 1:3, y = 1:3, z = 1:3)
+  rotate &amp;lt;- rotate[apply(rotate, 1, \(x) length(unique(x)) == 3), ]
+  lapply(split(input, input$scanner), function(s) {
+    s &amp;lt;- as.matrix(s)[, 1:3]
+    apply(rotate, 1, \(r) s[, r], simplify = F) |&amp;gt;
+      lapply(\(m) apply(mirror, 1, \(r) sweep(m, 2, r, &amp;#39;*&amp;#39;), simplify = F)) |&amp;gt;
+      unlist(recursive = F, use.names = F)
+  })
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then loop through the scanners and keep rotating them until the &lt;em&gt;between-scanner&lt;/em&gt; distance matrix contains ≥12 common distances, implying that the beacons are in the right orientation and just need translating (by this distance).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;locate_scanners &amp;lt;- function(input) {
+  scanners &amp;lt;- orientate_scanners(input)
+  scanner_coords &amp;lt;- rep(0, 3)
+  beacons &amp;lt;- scanners[[1]][[1]]
+  scanners &amp;lt;- scanners[-1]
+  while (length(scanners)) {
+    for (scanner in scanners) {
+      done &amp;lt;- FALSE
+      for (orientation in scanner) {
+        dtbl &amp;lt;- table(dist2(orientation, beacons))
+        if (any(dtbl &amp;gt;= 12)) {
+          done &amp;lt;- TRUE
+          break
+        }
+      }
+      if (!done) next
+      scanners &amp;lt;- setdiff(scanners, list(scanner))
+      trans &amp;lt;- names(dtbl)[dtbl &amp;gt;= 12]
+      trans &amp;lt;- scan(textConnection(trans), quiet = TRUE)
+      scanner_coords &amp;lt;- rbind(scanner_coords, trans)
+      beacons &amp;lt;- unique(rbind(beacons, sweep(orientation, 2, trans, &amp;#39;+&amp;#39;)))
+    }
+  }
+  list(beacons = beacons, scanners = scanner_coords)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The helper function &lt;code&gt;dist2&lt;/code&gt; stores the multi-dimensional pairwise distances as a string, and the most common one is then parsed back into a 3-vector using &lt;code&gt;scan&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dist2 &amp;lt;- function(X, Y) {
+  apply(X, 1, \(x) apply(Y, 1, \(y) paste(y - x, collapse = &amp;#39; &amp;#39;)))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;!--### Faster way
+
+It&#39;s not particularly satisfactory having a solution that takes over 10 seconds to run for part one.
+Using the various garnered tips, here is my streamlined method.
+
+```r
+# Coming soon
+```
+--&gt;
+&lt;/div&gt;
+&lt;div id=&#34;manhattan-distance&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Manhattan distance&lt;/h3&gt;
+&lt;p&gt;Part two, assuming you’ve been keeping track of the scanner locations or translations, is a one-liner.
+Distance matrices are a built-in feature of R!&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;max(dist(result$scanners, &amp;#39;manhattan&amp;#39;))&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day20&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 20 - &lt;a href=&#34;https://adventofcode.com/2021/day/20&#34;&gt;Trench Map&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;My test-driven development strategy was caught out here because there are some key qualities of the test dataset that are not found in any of the examples given in the puzzle description.&lt;/p&gt;
+&lt;p&gt;Eric repeatedly emphasizes that the image space is meant to be &lt;em&gt;infinite&lt;/em&gt;, but it’s easy to overlook this and assume it just means the output image will be larger in size than the input image, possibly with coordinate indices below zero.&lt;/p&gt;
+&lt;p&gt;Firstly, read in the data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_pixels &amp;lt;- function(file) {
+  input &amp;lt;- readLines(file)
+  algorithm &amp;lt;- strsplit(input[1], &amp;#39;&amp;#39;)[[1]] == &amp;#39;#&amp;#39;
+  img &amp;lt;- do.call(rbind, strsplit(tail(input, -2), &amp;#39;&amp;#39;)) == &amp;#39;#&amp;#39;
+  list(image = img, algorithm = algorithm)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This produces a logical matrix as the input image and a logical vector (of length 512) for the algorithm.
+Next, we need a way of finding the codes from each pixel’s neighbours.
+Here is my neat vectorized solution.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;binary_neighbours_to_int &amp;lt;- function(x, pad = 0) {
+    I &amp;lt;- nrow(x)
+    J &amp;lt;- ncol(x)
+    . &amp;lt;- pad
+    2^8 * rbind(., cbind(., x[-I, -J])) +    # NW
+      2^7 * rbind(., x[-I, ]) +              # N
+      2^6 * rbind(., cbind(x[-I, -1], .)) +  # NE
+      2^5 * cbind(., x[, -J]) +              # W
+      2^4 * x +                              # .
+      2^3 * cbind(x[, -1], .) +              # E
+      2^2 * rbind(cbind(., x[-1, -J]), .) +  # SW
+      2^1 * rbind(x[-1, ], .) +              # S
+      2^0 * rbind(cbind(x[-1, -1], .), .)    # SE
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now we need to run the algorithm itself.
+At this point you’ll come up against something that’s easy to overlook: the two end bits of the algorithm.
+In the example data, &lt;code&gt;algorithm[1]&lt;/code&gt; is equal to zero, so any isolated dark pixels (without any neighbours) that would have a neighbour-sum of zero remain dark.&lt;/p&gt;
+&lt;p&gt;However, in the test dataset, we have &lt;code&gt;algorithm[1] = 1&lt;/code&gt;, which means any empty areas are completely filled (on odd iterations).
+Combine this with the fact that &lt;code&gt;algorithm[512] = 0&lt;/code&gt;, which switches those pixels off again on every second step.&lt;/p&gt;
+&lt;p&gt;In fact, it’s not possible for anybody’s puzzle input to have both end bits equal to 1, because then the number of light pixels would be infinite after every single image enhancement step.&lt;/p&gt;
+&lt;p&gt;How do we use this information?
+By padding out the image area with the appropriate values—1s or 0s—to model the interaction of the borders of the ‘interesting’ part of the image with the surrounding infinite canvas.
+There’s no need to count up the pixels we can’t see (since there are infinitely many of them), but we need to anticipate new ones joining the image as it grows.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;enhance_image &amp;lt;- function(image, algorithm, n = 1) {
+  . &amp;lt;- algorithm[1]
+  for (i in 1:n) {
+    if (algorithm[1]) . &amp;lt;- !.
+    image &amp;lt;- b &amp;lt;- binary_neighbours_to_int(
+      cbind(., ., rbind(., ., image, ., .), ., .), pad = .)
+    image[] &amp;lt;- algorithm[b + 1]
+  }
+  image
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The argument &lt;code&gt;pad&lt;/code&gt; (which in the main function is abbreviated to &lt;code&gt;.&lt;/code&gt; for readability) alternates between &lt;code&gt;0&lt;/code&gt; and &lt;code&gt;1&lt;/code&gt; each step, if (and only if) the first bit of &lt;code&gt;algorithm&lt;/code&gt; is equal to 1, which triggers this switching behaviour.&lt;/p&gt;
+&lt;p&gt;It might seem like a lot of matrix operations but &lt;code&gt;enhance_image()&lt;/code&gt; completes all 50 steps in less than 200 milliseconds.&lt;/p&gt;
+&lt;p&gt;The final answer is just the &lt;code&gt;sum()&lt;/code&gt; of the output image.&lt;/p&gt;
 &lt;/div&gt;
 </description>
     </item>
