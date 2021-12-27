@@ -1,178 +1,108 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
   <url>
     <loc>https://selbydavid.com/categories/</loc>
     <lastmod>2021-12-06T10:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2021/12/06/indexing/</loc>
     <lastmod>2021-12-06T10:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/post/</loc>
     <lastmod>2021-12-06T10:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/categories/r/</loc>
     <lastmod>2021-12-06T10:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/</loc>
     <lastmod>2021-12-06T10:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2021/12/01/advent-2021/</loc>
     <lastmod>2021-12-01T09:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2021/05/18/pipes/</loc>
     <lastmod>2021-05-18T13:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2021/02/13/joins/</loc>
     <lastmod>2021-02-13T16:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2020/12/06/advent-2020/</loc>
     <lastmod>2020-12-06T17:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2020/05/06/films/</loc>
     <lastmod>2020-05-06T12:55:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2019/03/27/identity-matrix/</loc>
     <lastmod>2019-03-27T15:50:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/categories/france/</loc>
     <lastmod>2018-07-08T11:00:00+02:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2018/07/08/milk/</loc>
     <lastmod>2018-07-08T11:00:00+02:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2018/05/29/paris/</loc>
     <lastmod>2018-05-29T15:00:00+02:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2018/03/07/influence/</loc>
     <lastmod>2018-03-07T15:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2018/01/09/neural-network/</loc>
     <lastmod>2018-01-09T10:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2017/12/29/r-android/</loc>
     <lastmod>2017-12-29T15:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2017/06/29/user2017/</loc>
     <lastmod>2017-06-29T18:30:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2017/06/25/ggchernoff/</loc>
     <lastmod>2017-06-25T18:25:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2017/06/22/blogdown-travis/</loc>
     <lastmod>2017-06-22T08:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2017/06/20/cloudy/</loc>
     <lastmod>2017-06-20T12:30:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2017/06/18/rmarkdown-alerts/</loc>
     <lastmod>2017-06-18T13:15:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2017/06/16/rmarkdown-jekyll/</loc>
     <lastmod>2017-06-16T12:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2016/12/07/santa/</loc>
     <lastmod>2016-12-07T09:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2016/12/02/ima-poster/</loc>
     <lastmod>2016-12-02T09:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2015/09/30/warwick/</loc>
     <lastmod>2015-09-30T09:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2015/05/16/broadband/</loc>
     <lastmod>2015-05-16T09:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2015/02/17/lego/</loc>
     <lastmod>2015-02-17T09:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2014/06/14/world-cup/</loc>
     <lastmod>2014-06-14T09:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2014/06/07/tea-bieber/</loc>
     <lastmod>2014-06-07T09:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2014/06/05/t-set/</loc>
     <lastmod>2014-06-05T09:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2014/06/04/t-pot/</loc>
     <lastmod>2014-06-04T09:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/2014/06/04/contours/</loc>
     <lastmod>2014-06-04T08:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/about/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://selbydavid.com/tags/</loc>
   </url>
-  
 </urlset>

@@ -6878,7 +6878,7 @@ If anything is unclear, have a look at my &lt;a href=&#34;https://github.com/Sel
 &lt;hr&gt;
 &lt;ol&gt;
 &lt;li id=&#34;fn:1&#34; role=&#34;doc-endnote&#34;&gt;
-&lt;p&gt;Yihui has since turned his attention to the &lt;a href=&#34;https://bookdown.org/yihui/blogdown/&#34;&gt;blogdown&lt;/a&gt; package, which is much more fleshed-out project based on the Hugo static site generator&amp;mdash;a rival to Jekyll. (I will explain how to set up blogdown with Travis in a future post.) &lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Yihui has since turned his attention to the &lt;a href=&#34;https://bookdown.org/yihui/blogdown/&#34;&gt;blogdown&lt;/a&gt; package, which is much more fleshed-out project based on the Hugo static site generator&amp;mdash;a rival to Jekyll. (I will explain how to set up blogdown with Travis in a future post.)&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;/section&gt;
@@ -7087,18 +7087,18 @@ text = laply(data, function(t) t$getText())
 &lt;hr&gt;
 &lt;ol&gt;
 &lt;li id=&#34;fn:1&#34; role=&#34;doc-endnote&#34;&gt;
-&lt;p&gt;Jeff Gentry (2013). &lt;a href=&#34;http://CRAN.R-project.org/package=twitteR&#34;&gt;&lt;em&gt;twitteR: R based Twitter client&lt;/em&gt;&lt;/a&gt;. R package version 1.1.7. &lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Jeff Gentry (2013). &lt;a href=&#34;http://CRAN.R-project.org/package=twitteR&#34;&gt;&lt;em&gt;twitteR: R based Twitter client&lt;/em&gt;&lt;/a&gt;. R package version 1.1.7.&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li id=&#34;fn:2&#34; role=&#34;doc-endnote&#34;&gt;
-&lt;p&gt;Ingo Feinerer and Kurt Hornik (2014). &lt;a href=&#34;http://CRAN.R-project.org/package=tm&#34;&gt;&lt;em&gt;tm: Text Mining Package&lt;/em&gt;&lt;/a&gt;. R package version 0.5-10. &lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Ingo Feinerer and Kurt Hornik (2014). &lt;a href=&#34;http://CRAN.R-project.org/package=tm&#34;&gt;&lt;em&gt;tm: Text Mining Package&lt;/em&gt;&lt;/a&gt;. R package version 0.5-10.&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li id=&#34;fn:3&#34; role=&#34;doc-endnote&#34;&gt;
-&lt;p&gt;Ian Fellows (2013). &lt;a href=&#34;http://CRAN.R-project.org/package=wordcloud&#34;&gt;&lt;em&gt;wordcloud: Word Clouds&lt;/em&gt;&lt;/a&gt;. R package version 2.4. &lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Ian Fellows (2013). &lt;a href=&#34;http://CRAN.R-project.org/package=wordcloud&#34;&gt;&lt;em&gt;wordcloud: Word Clouds&lt;/em&gt;&lt;/a&gt;. R package version 2.4.&amp;#160;&lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li id=&#34;fn:4&#34; role=&#34;doc-endnote&#34;&gt;
 &lt;pre&gt;&lt;code&gt;Jeffrey Breen (2011). [*R by example: mining Twitter for consumer attitudes towards airlines.*](http://www.slideshare.net/jeffreybreen/r-by-example-mining-twitter-for)
 &lt;/code&gt;&lt;/pre&gt;
- &lt;a href=&#34;#fnref:4&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/li&gt;
+&amp;#160;&lt;a href=&#34;#fnref:4&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/section&gt;
 </description>
