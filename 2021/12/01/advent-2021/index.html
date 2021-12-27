@@ -12,30 +12,36 @@
 
 <title>Advent of Code 2021 &middot; Tea &amp; Stats</title>
 <meta property="og:title" content="Advent of Code 2021" />
-<meta property="og:description" content="It’s that time of year again.And not just for Secret Santa—it’s time for the Advent of Code, a series of programmingpuzzles in the lead-up to Christmas.
+<meta property="og:description" content="It’s that time of year again. And not just for Secret Santa—it’s time for the Advent of Code, a series of programming puzzles in the lead-up to Christmas.
 I’m doing the 2021 challenge in R—in the form of an open-source R package, to demonstrate a test-driven workflow.
-Each puzzle description typically comes with a few simple examples of inputs and outputs.We can use these to define expectations for unit tests with the testthat package." />
+   Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://selbydavid.com/2021/12/01/advent-2021/" /><meta property="og:image" content="https://selbydavid.com/img/2020/adventofcode.jpg" /><meta property="article:section" content="post" />
+<meta property="og:url" content="https://selbydavid.com/2021/12/01/advent-2021/" />
+<meta property="og:image" content="https://selbydavid.com/img/2020/adventofcode.jpg" />
 <meta property="article:published_time" content="2021-12-01T09:00:00+00:00" />
 <meta property="article:modified_time" content="2021-12-01T09:00:00+00:00" />
 
 
-
 <meta itemprop="name" content="Advent of Code 2021">
-<meta itemprop="description" content="It’s that time of year again.And not just for Secret Santa—it’s time for the Advent of Code, a series of programmingpuzzles in the lead-up to Christmas.
+<meta itemprop="description" content="It’s that time of year again. And not just for Secret Santa—it’s time for the Advent of Code, a series of programming puzzles in the lead-up to Christmas.
 I’m doing the 2021 challenge in R—in the form of an open-source R package, to demonstrate a test-driven workflow.
-Each puzzle description typically comes with a few simple examples of inputs and outputs.We can use these to define expectations for unit tests with the testthat package."><meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
+   Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
+<meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="11658"><meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
+<meta itemprop="wordCount" content="11654">
+<meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
+
+
+
 <meta itemprop="keywords" content="" />
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://selbydavid.com/img/2020/adventofcode.jpg"/>
 
 <meta name="twitter:title" content="Advent of Code 2021"/>
-<meta name="twitter:description" content="It’s that time of year again.And not just for Secret Santa—it’s time for the Advent of Code, a series of programmingpuzzles in the lead-up to Christmas.
+<meta name="twitter:description" content="It’s that time of year again. And not just for Secret Santa—it’s time for the Advent of Code, a series of programming puzzles in the lead-up to Christmas.
 I’m doing the 2021 challenge in R—in the form of an open-source R package, to demonstrate a test-driven workflow.
-Each puzzle description typically comes with a few simple examples of inputs and outputs.We can use these to define expectations for unit tests with the testthat package."/>
+   Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package."/>
 <meta name="twitter:site" content="@TeaStats"/>
 
 
@@ -50,7 +56,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
 
 
 <meta name="theme" content="hugo-tea">
-<meta name="generator" content="Hugo 0.91.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 
@@ -1431,7 +1437,7 @@ Rather than look after one row for every cube (or at least every switched-on cub
      |____B_|             |___|     |__|   } B2             |___|   |__| B3
 </code></pre>
 <p>I decided to use object-orientated programming for this, through the <strong>R6</strong> package.
-This allows me to define a new <code>Cuboid</code> class, with fields describing the <code>x</code>, <code>y</code> and <code>z</code> ranges, and to write methods to, if an instance of a cuboid is overlapping with another, how to divide the two into a set of non-overlapping ones to perform the necessary set operations.</p>
+This allows me to define a new <code>Cuboid</code> class, with fields describing the <code>x</code>, <code>y</code> and <code>z</code> ranges, and to write methods to—if an instance of a cuboid is overlapping with another—divide the two into a set of non-overlapping ones to perform the necessary set operations.</p>
 <pre class="r"><code>Cuboid &lt;- R6::R6Class(&#39;Cuboid&#39;,
     public = list(
         x = NULL, y = NULL, z = NULL,
@@ -1861,6 +1867,7 @@ if (!doNotTrack) {
 	ga('send', 'pageview');
 }
 </script>
+
   </body>
 </html>
 
