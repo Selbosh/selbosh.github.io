@@ -1729,7 +1729,7 @@ For example, consider, in two dimensions, two cuboids `A` and `B`:
 ```
 
 I decided to use object-orientated programming for this, through the **R6** package.
-This allows me to define a new `Cuboid` class, with fields describing the `x`, `y` and `z` ranges, and to write methods to, if an instance of a cuboid is overlapping with another, how to divide the two into a set of non-overlapping ones to perform the necessary set operations.
+This allows me to define a new `Cuboid` class, with fields describing the `x`, `y` and `z` ranges, and to write methods to---if an instance of a cuboid is overlapping with another---divide the two into a set of non-overlapping ones to perform the necessary set operations.
 
 ```r
 Cuboid <- R6::R6Class('Cuboid',

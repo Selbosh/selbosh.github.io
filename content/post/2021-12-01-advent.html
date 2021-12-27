@@ -1312,7 +1312,7 @@ Rather than look after one row for every cube (or at least every switched-on cub
      |____B_|             |___|     |__|   } B2             |___|   |__| B3
 </code></pre>
 <p>I decided to use object-orientated programming for this, through the <strong>R6</strong> package.
-This allows me to define a new <code>Cuboid</code> class, with fields describing the <code>x</code>, <code>y</code> and <code>z</code> ranges, and to write methods to, if an instance of a cuboid is overlapping with another, how to divide the two into a set of non-overlapping ones to perform the necessary set operations.</p>
+This allows me to define a new <code>Cuboid</code> class, with fields describing the <code>x</code>, <code>y</code> and <code>z</code> ranges, and to write methods to—if an instance of a cuboid is overlapping with another—divide the two into a set of non-overlapping ones to perform the necessary set operations.</p>
 <pre class="r"><code>Cuboid &lt;- R6::R6Class(&#39;Cuboid&#39;,
     public = list(
         x = NULL, y = NULL, z = NULL,
