@@ -2038,7 +2038,7 @@ eql x 0    # stack.pop() - 11 != input
 ```
 
 Remember we need $x = 0$ at the final line, so the final expression needs to be `FALSE`.
-In other words, the penulatimate expression must be `TRUE`: the top value of the stack, plus 11, is equal to the most recent input value (`w`).
+In other words, the penultimate expression must be `TRUE`: the top value of the stack, minus 11 ($\delta x$), is equal to the most recent input value (`w`).
 $$\text{stack}_1 = w - \delta x$$
 
 So what is the top value of the stack?
@@ -2052,6 +2052,7 @@ mul y x    # (x is 0 or 1 at this stage)
 add z y    # push input(i-1) + 8 onto the stack
 ```
 
+The value 8 corresponds to $\delta y$ but for the previous chunk; let's call it $\delta y_{i-1} = 8$.
 Putting it all together, we get
 
 $$w_{i-1} + \delta y_{i-1} = w_{i} - \delta x_1.$$
