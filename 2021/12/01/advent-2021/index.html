@@ -28,7 +28,7 @@ I’m doing the 2021 challenge in R—in the form of an open-source R package, t
    Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
 <meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
-<meta itemprop="wordCount" content="11654">
+<meta itemprop="wordCount" content="11675">
 <meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
 
 
@@ -1700,7 +1700,7 @@ add x -11  # dx &lt;- -11
 eql x w    # stack.pop() - 11 == input
 eql x 0    # stack.pop() - 11 != input</code></pre>
 <p>Remember we need <span class="math inline">\(x = 0\)</span> at the final line, so the final expression needs to be <code>FALSE</code>.
-In other words, the penulatimate expression must be <code>TRUE</code>: the top value of the stack, plus 11, is equal to the most recent input value (<code>w</code>).
+In other words, the penultimate expression must be <code>TRUE</code>: the top value of the stack, minus 11 (<span class="math inline">\(\delta x\)</span>), is equal to the most recent input value (<code>w</code>).
 <span class="math display">\[\text{stack}_1 = w - \delta x\]</span></p>
 <p>So what is the top value of the stack?
 At the end of the previous (<span class="math inline">\(i-1\)</span>st) chunk:</p>
@@ -1709,7 +1709,8 @@ add y w    # y &lt;- input
 add y 8    # input(i-1) + 8
 mul y x    # (x is 0 or 1 at this stage)
 add z y    # push input(i-1) + 8 onto the stack</code></pre>
-<p>Putting it all together, we get</p>
+<p>The value 8 corresponds to <span class="math inline">\(\delta y\)</span> but for the previous chunk; let’s call it <span class="math inline">\(\delta y_{i-1} = 8\)</span>.
+Putting it all together, we get</p>
 <p><span class="math display">\[w_{i-1} + \delta y_{i-1} = w_{i} - \delta x_1.\]</span>
 where <span class="math inline">\(i\)</span> is the current chunk where the stack is being popped, and <span class="math inline">\((i-1)\)</span> represents the last time that something was added to the stack (which could be several chunks before).</p>
 <p>Our code, then, just has to pick input values that satisfy these pairs of equations, for each pair of chunks, while maximizing or minimizing the 14-digit input number.</p>

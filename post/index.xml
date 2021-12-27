@@ -1649,7 +1649,7 @@ add x -11  # dx &amp;lt;- -11
 eql x w    # stack.pop() - 11 == input
 eql x 0    # stack.pop() - 11 != input&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Remember we need &lt;span class=&#34;math inline&#34;&gt;\(x = 0\)&lt;/span&gt; at the final line, so the final expression needs to be &lt;code&gt;FALSE&lt;/code&gt;.
-In other words, the penulatimate expression must be &lt;code&gt;TRUE&lt;/code&gt;: the top value of the stack, plus 11, is equal to the most recent input value (&lt;code&gt;w&lt;/code&gt;).
+In other words, the penultimate expression must be &lt;code&gt;TRUE&lt;/code&gt;: the top value of the stack, minus 11 (&lt;span class=&#34;math inline&#34;&gt;\(\delta x\)&lt;/span&gt;), is equal to the most recent input value (&lt;code&gt;w&lt;/code&gt;).
 &lt;span class=&#34;math display&#34;&gt;\[\text{stack}_1 = w - \delta x\]&lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;So what is the top value of the stack?
 At the end of the previous (&lt;span class=&#34;math inline&#34;&gt;\(i-1\)&lt;/span&gt;st) chunk:&lt;/p&gt;
@@ -1658,7 +1658,8 @@ add y w    # y &amp;lt;- input
 add y 8    # input(i-1) + 8
 mul y x    # (x is 0 or 1 at this stage)
 add z y    # push input(i-1) + 8 onto the stack&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Putting it all together, we get&lt;/p&gt;
+&lt;p&gt;The value 8 corresponds to &lt;span class=&#34;math inline&#34;&gt;\(\delta y\)&lt;/span&gt; but for the previous chunk; let’s call it &lt;span class=&#34;math inline&#34;&gt;\(\delta y_{i-1} = 8\)&lt;/span&gt;.
+Putting it all together, we get&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[w_{i-1} + \delta y_{i-1} = w_{i} - \delta x_1.\]&lt;/span&gt;
 where &lt;span class=&#34;math inline&#34;&gt;\(i\)&lt;/span&gt; is the current chunk where the stack is being popped, and &lt;span class=&#34;math inline&#34;&gt;\((i-1)\)&lt;/span&gt; represents the last time that something was added to the stack (which could be several chunks before).&lt;/p&gt;
 &lt;p&gt;Our code, then, just has to pick input values that satisfy these pairs of equations, for each pair of chunks, while maximizing or minimizing the 14-digit input number.&lt;/p&gt;
