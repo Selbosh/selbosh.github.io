@@ -119,6 +119,11 @@ Once a function passes the unit tests, it should be ready to try with the main p
 &lt;li&gt;&lt;a href=&#34;#day18&#34;&gt;Snailfish&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day19&#34;&gt;Beacon Scanner&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#day20&#34;&gt;Trench Map&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day21&#34;&gt;Dirac Dice&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day22&#34;&gt;Reactor Reboot&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day23&#34;&gt;Amphipod&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day24&#34;&gt;Arithmetic Logic Unit&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day25&#34;&gt;Sea Cucumber&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div id=&#34;day1&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Day 1 - &lt;a href=&#34;https://adventofcode.com/2021/day/1&#34;&gt;Sonar Sweep&lt;/a&gt;&lt;/h2&gt;
@@ -1307,6 +1312,439 @@ There’s no need to count up the pixels we can’t see (since there are infinit
 &lt;p&gt;The argument &lt;code&gt;pad&lt;/code&gt; (which in the main function is abbreviated to &lt;code&gt;.&lt;/code&gt; for readability) alternates between &lt;code&gt;0&lt;/code&gt; and &lt;code&gt;1&lt;/code&gt; each step, if (and only if) the first bit of &lt;code&gt;algorithm&lt;/code&gt; is equal to 1, which triggers this switching behaviour.&lt;/p&gt;
 &lt;p&gt;It might seem like a lot of matrix operations but &lt;code&gt;enhance_image()&lt;/code&gt; completes all 50 steps in less than 200 milliseconds.&lt;/p&gt;
 &lt;p&gt;The final answer is just the &lt;code&gt;sum()&lt;/code&gt; of the output image.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day21&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 21 - &lt;a href=&#34;https://adventofcode.com/2021/day/21&#34;&gt;Dirac Dice&lt;/a&gt;&lt;/h2&gt;
+&lt;div id=&#34;deterministic-dice&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Deterministic dice&lt;/h3&gt;
+&lt;p&gt;For part one, we simply have to play the game.
+Just write a &lt;code&gt;while&lt;/code&gt; or &lt;code&gt;repeat&lt;/code&gt; loop to keep going until someone achieves a score of 1000.
+The following code is more verbose than it needs to be:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;deterministic_dice &amp;lt;- function(player1, player2) {
+  score1 &amp;lt;- score2 &amp;lt;- nrolls &amp;lt;- 0
+  dice &amp;lt;- 1:3
+  repeat {
+    player1 &amp;lt;- (player1 + sum(dice) - 1) %% 10 + 1
+    score1 &amp;lt;- score1 + player1
+    nrolls &amp;lt;- nrolls + 3
+    if (score1 &amp;gt;= 1000) break
+
+    player2 &amp;lt;- (player2 + sum(dice + 3) - 1) %% 10 + 1
+    score2 &amp;lt;- score2 + player2
+    nrolls &amp;lt;- nrolls + 3
+    if (score2 &amp;gt;= 1000) break
+
+    dice &amp;lt;- (dice + 6 - 1) %% 100 + 1
+  }
+  prod(nrolls, min(score1, score2))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;quantum-states&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Quantum states&lt;/h3&gt;
+&lt;p&gt;Part two calls for recursion, and with some optimization if you want your code to run in any reasonable time frame.
+This means that at every opportunity, if there is room to ignore or delete universes that are redundant, we should do so.&lt;/p&gt;
+&lt;p&gt;Each player is still rolling the die three times, but there are only 7 possible unique sums of the values 1, 2 and 3:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rolls &amp;lt;- table(rowSums(expand.grid(1:3, 1:3, 1:3)))
+rolls &amp;lt;- mapply(c, sum = as.numeric(names(rolls)), n = rolls, SIMPLIFY = F)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then, at each set of rolls, we recursively count up the number of wins associated with each player for the sum of those rolls.
+We only need one function to do this: for player 2’s wins, we can just swap the players and accumulated scores around and pretend that player 2 is now player 1.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dirac_dice &amp;lt;- function(player1, player2) {
+  count_wins &amp;lt;- memoise::memoise(
+    function(player1, player2, score1, score2) {
+      Reduce(
+        \(wins, roll) {
+          player1 &amp;lt;- (player1 + roll[&amp;#39;sum&amp;#39;] - 1) %% 10 + 1
+          score1 &amp;lt;- score1 + player1
+          if (score1 &amp;gt;= 21) {
+            return(wins + c(roll[&amp;#39;n&amp;#39;], 0))
+          } else
+            wins + roll[&amp;#39;n&amp;#39;] *
+            rev(count_wins(player2, player1, score2, score1))
+        },
+        rolls,
+        init = c(w1 = 0, w2 = 0))
+    })
+  max(count_wins(player1, player2, 0, 0))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To avoid revisiting universes, some caching is useful, so we can look up the value of any function call that has already been made.
+You could store and look up these results in a named vector, or you could do it the lazy way like I did and use the package &lt;strong&gt;memoise&lt;/strong&gt;, which simply does this for you behind the scenes.&lt;/p&gt;
+&lt;p&gt;My code takes about two minutes to run for part two.
+Not quick, but R isn’t very fast at recursive function calls.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day22&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 22 - &lt;a href=&#34;https://adventofcode.com/2021/day/22&#34;&gt;Reactor Reboot&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;On day 22, it’s pretty obvious from the outset that the ‘obvious’ solution to part one—explicitly keeping track of all the cubes—is not going to work at all when the problem scales up for part two.&lt;/p&gt;
+&lt;p&gt;I won’t even bother to show the ‘slow’ method here, and we can focus on the scalable solution.
+Rather than look after one row for every cube (or at least every switched-on cube) in the reactor, we need to store the boundaries of the cuboids only, in a similar format to how they are given in the input.&lt;/p&gt;
+&lt;p&gt;The tricky part here is that the union or difference of two overlapping cuboids (or more generally, 3-dimensional intervals) cannot, in general be described as two cuboids: the new shape is non-convex.&lt;/p&gt;
+&lt;p&gt;What we need to do is partition the two input cuboids into a several smaller non-overlapping ones, and then do the union operation (making sure not to double-count the intersection) or the set-difference operation (subtracting the intersection from the first cuboid).&lt;/p&gt;
+&lt;p&gt;For example, consider, in two dimensions, two cuboids &lt;code&gt;A&lt;/code&gt; and &lt;code&gt;B&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt; ________           ____             ___              ____           ___
+| A   __|____      | A1|   ____     |__| } A2        | A1|   ____   |__| A3  ___
+|____|__|   |  =   |___|  | B1|  +  |__| } }      =  |___|  | B1|    ___    |__| C
+     |____B_|             |___|     |__|   } B2             |___|   |__| B3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I decided to use object-orientated programming for this, through the &lt;strong&gt;R6&lt;/strong&gt; package.
+This allows me to define a new &lt;code&gt;Cuboid&lt;/code&gt; class, with fields describing the &lt;code&gt;x&lt;/code&gt;, &lt;code&gt;y&lt;/code&gt; and &lt;code&gt;z&lt;/code&gt; ranges, and to write methods to, if an instance of a cuboid is overlapping with another, how to divide the two into a set of non-overlapping ones to perform the necessary set operations.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;Cuboid &amp;lt;- R6::R6Class(&amp;#39;Cuboid&amp;#39;,
+    public = list(
+        x = NULL, y = NULL, z = NULL,
+        initialize = function(x, y, z) {
+            self$x &amp;lt;- x
+            self$y &amp;lt;- y
+            self$z &amp;lt;- z
+        },
+        volume = function() {
+            (diff(self$x) + 1) *
+            (diff(self$y) + 1) *
+            (diff(self$z) + 1)
+        },
+        cubes = function() { # for debugging purposes
+            expand.grid(self$x[1]:self$x[2],
+                        self$y[1]:self$y[2],
+                        self$z[1]:self$z[2])
+        },
+        is_overlapping = function(that) {
+            is_overlapping(self$x, that$x) &amp;amp;&amp;amp;
+            is_overlapping(self$y, that$y) &amp;amp;&amp;amp;
+            is_overlapping(self$z, that$z)
+        },
+        remove = function(that) {
+            stopifnot(is.R6(that))
+            if (!self$is_overlapping(that))
+              return(list(self))
+            x &amp;lt;- self$x
+            y &amp;lt;- self$y
+            z &amp;lt;- self$z
+            olx &amp;lt;- interval_intersect(x, that$x)
+            oly &amp;lt;- interval_intersect(y, that$y)
+            setdiff &amp;lt;- list(
+                if (that$x[1] &amp;gt; x[1])
+                    Cuboid$new(c(x[1], that$x[1] - 1), y, z),
+                if (that$y[1] &amp;gt; y[1])
+                    Cuboid$new(olx, c(y[1], that$y[1] - 1), z),
+                if (that$y[2] &amp;lt; y[2])
+                    Cuboid$new(olx, c(that$y[2] + 1, y[2]), z),
+                if (that$z[1] &amp;gt; z[1])
+                    Cuboid$new(olx, oly, c(z[1], that$z[1] - 1)),
+                if (that$z[2] &amp;lt; z[2])
+                    Cuboid$new(olx, oly, c(that$z[2] + 1, z[2])),
+                if (that$x[2] &amp;lt; x[2])
+                    Cuboid$new(c(that$x[2] + 1, x[2]), y, z)
+            )
+            setdiff[lengths(setdiff) &amp;gt; 0]
+        }
+    )
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We only need a &lt;code&gt;remove()&lt;/code&gt; method, because to get the union of two cuboids &lt;code&gt;A&lt;/code&gt; and &lt;code&gt;B&lt;/code&gt;, we can remove &lt;code&gt;B&lt;/code&gt; from &lt;code&gt;A&lt;/code&gt;, then add &lt;code&gt;B&lt;/code&gt; again and the intersection will only be counted once.&lt;/p&gt;
+&lt;p&gt;Then our data import functions are:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_cubes &amp;lt;- function(file) {
+    input &amp;lt;- gsub(&amp;quot;[xyz]=&amp;quot;, &amp;quot;&amp;quot;, readLines(file))
+    input &amp;lt;- strsplit(input, &amp;quot;[ ,]|\\.{2}&amp;quot;)
+    out &amp;lt;- type.convert(as.data.frame(do.call(rbind, input)), as.is = TRUE)
+    setNames(out, c(&amp;quot;mode&amp;quot;, &amp;quot;x1&amp;quot;, &amp;quot;x2&amp;quot;, &amp;quot;y1&amp;quot;, &amp;quot;y2&amp;quot;, &amp;quot;z1&amp;quot;, &amp;quot;z2&amp;quot;))
+}
+
+cuboid_list &amp;lt;- function(reactor) {
+    # Generate list of R6 &amp;#39;Cuboid&amp;#39; class objects.
+    cuboids &amp;lt;- apply(reactor[, -1], 1, \(i)
+        list(set = list(Cuboid$new(i[c(&amp;#39;x1&amp;#39;, &amp;#39;x2&amp;#39;)],
+                                   i[c(&amp;#39;y1&amp;#39;, &amp;#39;y2&amp;#39;)],
+                                   i[c(&amp;#39;z1&amp;#39;, &amp;#39;z2&amp;#39;)]))),
+                                   simplify = FALSE)
+    # Label with the modes.
+    mapply(c, cuboids, reactor$mode, SIMPLIFY = FALSE)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And, with the help of a few utilities:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cuboid_setdiff &amp;lt;- function(set, x) {
+  unlist(lapply(set, \(y) y$remove(x)))
+}
+
+interval_intersect &amp;lt;- function(a, b) {
+    c(max(a[1], b[1]), min(a[2], b[2]))
+}
+
+is_overlapping &amp;lt;- function(a, b) {
+    a[1] &amp;lt;= b[2] &amp;amp;&amp;amp; a[2] &amp;gt;= b[1]
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can then call our main function:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;reboot_reactor &amp;lt;- function(reactor, init = FALSE) {
+    if (init)
+      reactor &amp;lt;- reactor[abs(reactor$x1) &amp;lt;= 50 &amp;amp;
+                         abs(reactor$x2) &amp;lt;= 50, ]
+    cuboids &amp;lt;- cuboid_list(reactor)
+    rebooted &amp;lt;-
+        Reduce(cuboids, f = \(a, b) {
+               setdiff &amp;lt;- cuboid_setdiff(a$set, b$set[[1]])
+               if (b[[2]] == &amp;#39;off&amp;#39;)
+                   return(list(set = setdiff))
+               list(set = union(setdiff, b$set))
+        })
+    sum(sapply(rebooted$set, \(x) x$volume()))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This is surprisingly quick, at least by R standards.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day23&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 23 - &lt;a href=&#34;https://adventofcode.com/2021/day/23&#34;&gt;Amphipod&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Day 23 was where everything went a bit off the rails, because many people in the AoC community were able to solve the puzzle by hand without any coding.
+However, some starting positions were harder to solve than others, and some people (including me) are simply not very good at puzzles like this.&lt;/p&gt;
+&lt;p&gt;At that point it’s slightly dispiriting when, if you look online for hints, you don’t find any because everyone just says they solved theirs by hand.
+It also, arguably, departs from a test-driven development paradigm and the idea that solutions are scalable and applicable to any input dataset.&lt;/p&gt;
+&lt;p&gt;Long story short: I couldn’t solve mine by hand initially and so had to write some code!&lt;/p&gt;
+&lt;p&gt;The complete program is quite long as it includes lots of tedious stuff like defining the distances between all the points on the grid and all the pathways along hallways from one amphipod room to another.
+You can &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/R/day23.R&#34;&gt;read it in full on GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;As yesterday, I employed R6 classes to store the states, and as on the day before, used a form of caching to get rid of previously-visited or suboptimal states.
+Specifically, each state describes the positions of all the amphipods, and at each step we explore all the possible states you could go to from here, and their associated costs.&lt;/p&gt;
+&lt;p&gt;Here is the main loop:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;min_amphipod_energy &amp;lt;- function(start) {
+  states &amp;lt;- list(start)
+  best_score &amp;lt;- Inf
+  while (length(states)) {
+    new_states &amp;lt;- list()
+    for (state in states) {
+      if (is.finite(best_score))
+        message(&amp;#39;Best score: &amp;#39;, best_score)
+      for (move in valid_moves(state)) {
+        if (move$finished) {
+          best_score &amp;lt;- min(best_score, move$score)
+        } else if (move$score &amp;lt; best_score) {
+          if (move$key %in% names(new_states)) {
+            old_score &amp;lt;- new_states[[move$key]]$score
+            if (old_score &amp;gt; move$score)
+              new_states[[move$key]]$score &amp;lt;- move$score
+          } else new_states[[move$key]] &amp;lt;- move
+        }
+      }
+    }
+    message(&amp;#39;Exploring &amp;#39;, length(new_states), &amp;#39; new states&amp;#39;)
+    states &amp;lt;- new_states
+  }
+  best_score
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This relies on my custom &lt;code&gt;State&lt;/code&gt; class:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;State &amp;lt;- R6::R6Class(
+  &amp;#39;State&amp;#39;,
+  public = list(
+    rooms = NULL,     # named vector, A1, A2, B1, B2, C1, C2, D1, D2
+    hallways = NULL,  # vector of length 7. Unnamed but order is important.
+    score = NULL,
+    finished = NULL,
+    key = NULL,
+    initialize = function(rooms, hallways = NULL, score = 0) {
+      self$rooms &amp;lt;- rooms
+      self$hallways &amp;lt;- if(!is.null(hallways)) hallways else rep(&amp;#39;.&amp;#39;, 7)
+      self$score &amp;lt;- score
+      self$finished &amp;lt;- all(self$hallways == &amp;#39;.&amp;#39;) &amp;amp;&amp;amp;
+        all(self$rooms == rep(LETTERS[1:4], each = length(rooms) / 4))
+      self$key = paste(c(hallways, rooms), collapse = &amp;#39;,&amp;#39;)
+    },
+    move = function(from, to, from_hallway, score) {
+      rooms &amp;lt;- self$rooms
+      hallways &amp;lt;- self$hallways
+      if (from_hallway) {
+        rooms[to] &amp;lt;- hallways[from]
+        hallways[from] &amp;lt;- &amp;#39;.&amp;#39;
+      } else {
+        hallways[to] &amp;lt;- rooms[from]
+        rooms[from] &amp;lt;- &amp;#39;.&amp;#39;
+      }
+      State$new(rooms, hallways, score)
+    })
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And the bulk of the code is in the method that enumerates all the possible valid moves from any given starting position.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;valid_moves &amp;lt;- function(state) {
+  room_depth &amp;lt;- length(state$rooms) / 4
+  if (room_depth == 4)
+    distance &amp;lt;- distance2
+  moves &amp;lt;- NULL
+  for (i in seq_along(state$hallways)) {
+    amphipod &amp;lt;- state$hallways[i]
+    # If this spot is empty, nothing to move.
+    if (amphipod == &amp;#39;.&amp;#39;)
+      next
+    dest &amp;lt;- paste0(amphipod, seq_len(room_depth))
+    # If destination room contains other, different amphipods.
+    if (any(setdiff(LETTERS[1:4], amphipod) %in% state$rooms[dest]))
+      next
+    # If any hallway between here and destination is blocked.
+    path &amp;lt;- hallway_paths[[i]][[amphipod]]
+    if (any(state$hallways[path] != &amp;#39;.&amp;#39;))
+      next
+    # Move to the deepest available space in destination room.
+    dest &amp;lt;- dest[max(which(state$rooms[dest] == &amp;#39;.&amp;#39;))]
+    score &amp;lt;- state$score + distance[i, dest] * move_cost[amphipod]
+    moves &amp;lt;- c(moves, state$move(from = i,
+                                 to = dest,
+                                 from_hallway = TRUE,
+                                 score = score))
+  }
+  for (i in seq_along(state$rooms)) {
+    amphipod &amp;lt;- state$rooms[i]
+    room_cell &amp;lt;- names(amphipod)
+    room &amp;lt;- substring(room_cell, 1, 1)
+    pos_in_room &amp;lt;- as.integer(substring(room_cell, 2, 2))
+    # If this spot is empty, nothing to move.
+    if (amphipod == &amp;#39;.&amp;#39;)
+      next
+    # Can&amp;#39;t leave this room if our exit is blocked by another amphipod.
+    if (pos_in_room &amp;gt; 1 &amp;amp;&amp;amp; state$rooms[i - 1] != &amp;#39;.&amp;#39;)
+      next
+    # No point in leaving destination room except to let other types out.
+    if (room == amphipod &amp;amp;&amp;amp;
+        all(state$rooms[paste0(room, pos_in_room:room_depth)] == amphipod))
+      next
+    # Which hallway tile should we move to?
+    empty_hallways &amp;lt;- which(state$hallways == &amp;#39;.&amp;#39;)
+    for (h in empty_hallways) {
+      if (all(hallway_paths[[h]][[room]] %in% empty_hallways)) { # not blocked
+        score &amp;lt;- state$score + distance[h, room_cell] * move_cost[amphipod]
+        moves &amp;lt;- c(moves, state$move(from = i,
+                                     to = h,
+                                     from_hallway = FALSE,
+                                     score = score))
+      }
+    }
+  }
+  moves[order(sapply(moves, \(s) s$score))]
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Final solution runs in about two minutes, for both parts.
+The code above works for both, with a slight tweak to the definitions of the starting position and of the &lt;code&gt;distance&lt;/code&gt; matrix for part two.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day24&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 24 - &lt;a href=&#34;https://adventofcode.com/2021/day/24&#34;&gt;Arithmetic Logic Unit&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;You can’t brute-force your way out of this one simply by parsing the code into R syntax and evaluating it for all the &lt;span class=&#34;math inline&#34;&gt;\(9^{14}\)&lt;/span&gt; different input permutations.&lt;/p&gt;
+&lt;p&gt;This was another puzzle I didn’t really like, because you can’t solve it through test-driven development (except to check the validity of your final answer).
+Essentially, the whole puzzle is in the &lt;code&gt;input.txt&lt;/code&gt; file rather than the instructions on the web site.
+It’s also not immediately obvious what your input dataset has in common with other people’s, so the definition of a ‘general purpose’ solution becomes quite nebulous.&lt;/p&gt;
+&lt;p&gt;Peek at the &lt;code&gt;input.txt&lt;/code&gt; file and work backwards from the bottom.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;mul y 0
+add y w
+add y 5
+mul y x
+add z y&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here the value &lt;code&gt;+5&lt;/code&gt; on the middle line will probably be different for your input (call it &lt;span class=&#34;math inline&#34;&gt;\(\delta y\)&lt;/span&gt;), but everything else should be about the same.&lt;/p&gt;
+&lt;p&gt;For the programme to be valid, the final value assigned to &lt;code&gt;z&lt;/code&gt; must be equal to zero.
+We have &lt;span class=&#34;math inline&#34;&gt;\(z_\text{end} \leftarrow z + y = 0\)&lt;/span&gt;.
+The line &lt;code&gt;mul y 0&lt;/code&gt; resets &lt;code&gt;y&lt;/code&gt; to zero (irrespective of its previous value) so the final equation can be rewritten as
+&lt;span class=&#34;math display&#34;&gt;\[z + (w + 5)x = 0.\]&lt;/span&gt;
+Browse through the rest of the programme and you should soon infer the following key points.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The code is split into 14 chunks of equal length.&lt;/li&gt;
+&lt;li&gt;Each starts with &lt;code&gt;w&lt;/code&gt; being assigned an input value.&lt;/li&gt;
+&lt;li&gt;The variable &lt;code&gt;w&lt;/code&gt; is never manipulated apart from this.&lt;/li&gt;
+&lt;li&gt;The symbols &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; are auxiliary variables.&lt;/li&gt;
+&lt;li&gt;The variable &lt;code&gt;z&lt;/code&gt; represents a &lt;a href=&#34;https://en.wikipedia.org/wiki/Stack_(abstract_data_type)&#34;&gt;stack&lt;/a&gt;, which is “popped” every time we see &lt;code&gt;z div 26&lt;/code&gt; and is “pushed” by a value of &lt;code&gt;y&lt;/code&gt; each time we see &lt;code&gt;add z y&lt;/code&gt;. Exactly one of these operations happens per chunk.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Now, refer to the equation above.
+Since &lt;code&gt;w&lt;/code&gt; is equal to an input digit, we have &lt;span class=&#34;math inline&#34;&gt;\(1 \leq w \leq 9\)&lt;/span&gt;, therefore the expression inside the brackets is strictly positive and the equation can &lt;em&gt;only&lt;/em&gt; hold when &lt;span class=&#34;math inline&#34;&gt;\(x = 0\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;So what is &lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt;?
+Work a bit further back through the code to the start of chunk 14 and we see:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;inp w
+mul x 0    # reset memory of x
+add x z
+mod x 26   # stack.pop()
+div z 26
+add x -11  # dx &amp;lt;- -11
+eql x w    # stack.pop() - 11 == input
+eql x 0    # stack.pop() - 11 != input&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Remember we need &lt;span class=&#34;math inline&#34;&gt;\(x = 0\)&lt;/span&gt; at the final line, so the final expression needs to be &lt;code&gt;FALSE&lt;/code&gt;.
+In other words, the penulatimate expression must be &lt;code&gt;TRUE&lt;/code&gt;: the top value of the stack, plus 11, is equal to the most recent input value (&lt;code&gt;w&lt;/code&gt;).
+&lt;span class=&#34;math display&#34;&gt;\[\text{stack}_1 = w - \delta x\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;So what is the top value of the stack?
+At the end of the previous (&lt;span class=&#34;math inline&#34;&gt;\(i-1\)&lt;/span&gt;st) chunk:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;mul y 0    # reset memory of y
+add y w    # y &amp;lt;- input
+add y 8    # input(i-1) + 8
+mul y x    # (x is 0 or 1 at this stage)
+add z y    # push input(i-1) + 8 onto the stack&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Putting it all together, we get&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[w_{i-1} + \delta y_{i-1} = w_{i} - \delta x_1.\]&lt;/span&gt;
+where &lt;span class=&#34;math inline&#34;&gt;\(i\)&lt;/span&gt; is the current chunk where the stack is being popped, and &lt;span class=&#34;math inline&#34;&gt;\((i-1)\)&lt;/span&gt; represents the last time that something was added to the stack (which could be several chunks before).&lt;/p&gt;
+&lt;p&gt;Our code, then, just has to pick input values that satisfy these pairs of equations, for each pair of chunks, while maximizing or minimizing the 14-digit input number.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_alu &amp;lt;- function(file) {
+    instr &amp;lt;- read.table(file, fill = NA,
+                        col.names = c(&amp;#39;op&amp;#39;, &amp;#39;lhs&amp;#39;, &amp;#39;val&amp;#39;), row.names = NULL)
+    instr$op &amp;lt;- sub(&amp;#39;mul&amp;#39;, &amp;#39;*&amp;#39;, instr$op)
+    instr$op &amp;lt;- sub(&amp;#39;add&amp;#39;, &amp;#39;+&amp;#39;, instr$op)
+    instr$op &amp;lt;- sub(&amp;#39;eql&amp;#39;, &amp;#39;==&amp;#39;, instr$op)
+    instr$op &amp;lt;- sub(&amp;#39;div&amp;#39;, &amp;#39;%/%&amp;#39;, instr$op)
+    instr$op &amp;lt;- sub(&amp;#39;mod&amp;#39;, &amp;#39;%%&amp;#39;, instr$op)
+    instr$rhs &amp;lt;- ifelse(instr$op == &amp;#39;inp&amp;#39;, &amp;#39;&amp;#39;, instr$lhs)
+    instr$op &amp;lt;- sub(&amp;#39;inp&amp;#39;, &amp;#39;inputs[1]; inputs &amp;lt;- inputs[-1]&amp;#39;, instr$op)
+    instr$expr &amp;lt;- with(instr, paste(lhs, &amp;#39;&amp;lt;-&amp;#39;, rhs, op, val))
+    instr$chunk &amp;lt;- cumsum(instr$val == &amp;#39;&amp;#39;)
+    instr
+}
+
+alu_model_number &amp;lt;- function(instructions, minimize = FALSE) {
+  digits &amp;lt;- integer(14)
+  chunks &amp;lt;- split(instructions, instructions$chunk)
+  z_stack &amp;lt;- c()
+  for (i in seq_along(chunks)) {
+    dx &amp;lt;- as.integer(chunks[[i]]$val[6])  # where x + val
+    dy &amp;lt;- as.integer(chunks[[i]]$val[16]) # where y + val (&amp;amp; val != 25)
+    pop &amp;lt;- chunks[[i]]$val[5] == 26 # z %% val
+    if (!pop) { # &amp;#39;Push&amp;#39; (append) a value onto the stack.
+      z_stack &amp;lt;- c(list(c(dy = dy, pushed = i)), z_stack)
+    } else { # &amp;#39;Pop&amp;#39; (extract) the last value from the stack.
+      dy &amp;lt;- z_stack[[1]][&amp;#39;dy&amp;#39;]
+      pushed &amp;lt;- z_stack[[1]][&amp;#39;pushed&amp;#39;]
+      z_stack &amp;lt;- z_stack[-1]
+      w &amp;lt;- (1:9)[(1:9 + dx + dy) %in% 1:9]
+      w &amp;lt;- if (minimize) min(w) else max(w)
+      digits[pushed] &amp;lt;- w
+      digits[i] &amp;lt;- w + dx + dy
+    }
+  }
+  paste(digits, collapse = &amp;#39;&amp;#39;)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can check your working &lt;a href=&#34;https://github.com/Selbosh/adventofcode2021/blob/main/tests/testthat/test-day24.R&#34;&gt;with a unit test&lt;/a&gt; that simply evaluates the ALU code with the input values:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;alu &amp;lt;- read_alu(input_file(24))
+model_number &amp;lt;- alu_model_number(alu)
+inputs &amp;lt;- as.numeric(strsplit(model_number, &amp;#39;&amp;#39;)[[1]])
+w &amp;lt;- x &amp;lt;- y &amp;lt;- z &amp;lt;- 0
+eval(str2expression(alu$expr))
+expect_equal(z, 0)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day25&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 25 - &lt;a href=&#34;https://adventofcode.com/2021/day/25&#34;&gt;Sea Cucumber&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;We finish on a relatively easy one.
+Using a similar style to earlier puzzles, we can find the neighbours in a grid through clever use of &lt;code&gt;rbind()&lt;/code&gt; and &lt;code&gt;cbind()&lt;/code&gt;.
+It’s easy to adapt so that one side of the map wraps around to the other.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;move_cucumbers &amp;lt;- function(cucumbers) {
+  old &amp;lt;- cucumbers
+  i &amp;lt;- 0
+  repeat {
+    new &amp;lt;- move_cucumbers_once(old)
+    i &amp;lt;- i + 1
+    if (identical(new, old))
+      break
+    old &amp;lt;- new
+  }
+  return(i)
+}
+
+move_cucumbers_once &amp;lt;- function(x) {
+  # First move west to east.
+  next_state &amp;lt;- x
+  west  &amp;lt;- cbind(x[, ncol(x)], x[, -ncol(x)])
+  east  &amp;lt;- cbind(x[, -1], x[, 1])
+  # Create an empty spot as cucumbers leave it.
+  next_state[x == &amp;#39;&amp;gt;&amp;#39; &amp;amp; east == &amp;#39;.&amp;#39;] &amp;lt;- &amp;#39;.&amp;#39;
+  # Occupy the empty spot as cucumbers enter it.
+  next_state[x == &amp;#39;.&amp;#39; &amp;amp; west == &amp;#39;&amp;gt;&amp;#39;] &amp;lt;- &amp;#39;&amp;gt;&amp;#39;
+
+  # Now move north to south.
+  x &amp;lt;- next_state
+  north &amp;lt;- rbind(x[nrow(x), ], x[-nrow(x), ])
+  south &amp;lt;- rbind(x[-1, ], x[1, ])
+  next_state[x == &amp;#39;v&amp;#39; &amp;amp; south == &amp;#39;.&amp;#39;] &amp;lt;- &amp;#39;.&amp;#39;
+  next_state[x == &amp;#39;.&amp;#39; &amp;amp; north == &amp;#39;v&amp;#39;] &amp;lt;- &amp;#39;v&amp;#39;
+
+  return(next_state)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There is no part two for day 25: the second star is awarded for completing all of the other stars.&lt;/p&gt;
 &lt;/div&gt;
 </description>
     </item>
