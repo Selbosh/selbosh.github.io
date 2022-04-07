@@ -4,14 +4,13 @@ title: About me
 
 <img src="/img/david.jpg" style="border-radius: 50%; width: 15rem;" />
 
-Hello, my name is David Selby and research associate in data science at the University of Manchester, having [completed a PhD in statistics](http://webcat.warwick.ac.uk/record=b3690782) at the University of Warwick.
-In 2022, I start as a postdoctoral researcher in computer science at Technische Universität Kaiserslautern in Germany.
+Hello, my name is David Selby and I am a researcher at the German Research Center for Artificial Intelligence (DFKI) and University of Kaiserslautern. I previously worked as research associate in data science at the Centre for Epidemiology Versus Arthritis, University of Manchester, and [completed my PhD in statistics](http://webcat.warwick.ac.uk/record=b3690782) at the University of Warwick under the supervision of Prof David Firth.
 
 Originally from North Yorkshire, I aim to maintain a reliable supply of Yorkshire Tea.
 I am enthusiastic about [R](https://www.r-project.org/) and helped organise [Warwick R User Group](http://warwick.ac.uk/wrug) as well as the [R-thritis Statistical Computing Group](https://personalpages.manchester.ac.uk/staff/david.selby/rthritis.html).
 
 <p style="text-align: center;">
-<a href='mailto:David.Selby@manchester.ac.uk' title="E-mail me">
+<a href='mailto:selby@informatik.uni-kl.de' title="E-mail me">
   <span class="fa-stack fa-lg">
   <i class="fa fa-circle fa-stack-2x"></i>
   <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
