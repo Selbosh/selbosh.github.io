@@ -12,7 +12,7 @@
 
 <title>World Cup 2022 predictions &middot; Tea &amp; Stats</title>
 <meta property="og:title" content="World Cup 2022 predictions" />
-<meta property="og:description" content="Sports prediction has exploded in the last couple of decades with entire journals , conferences and books devoted to it. Much of this focuses on utilising ever-greater amounts of data, with soccer, for example, now providing sub-second ball and player tracking data. But sometimes it is nice to try to do more with less. Here we (Ian Hamilton, Stefan Stein and David Selby) describe a method that we applied to predict the results (indeed all possible match outcomes) of the Euro 2020 football tournament, that took just 120 data points and two linear regressions, yet managed to beat the market over the course of the tournament (based on the accumulated log-loss of match outcomes against predictions taken from the market odds immediately prior to the match)." />
+<meta property="og:description" content="Sports prediction has exploded in the last couple of decades with entire journals, conferences and books devoted to it. Much of this focuses on utilising ever-greater amounts of data, with soccer, for example, now providing sub-second ball and player tracking data. But sometimes it is nice to try to do more with less. Here we (Ian Hamilton, Stefan Stein and David Selby) describe a method that we applied to predict the results (indeed all possible match outcomes) of the Euro 2020 football tournament, that took just 120 data points and two linear regressions, yet managed to beat the market over the course of the tournament (based on the accumulated log-loss of match outcomes against predictions taken from the market odds immediately prior to the match)." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://selbydavid.com/2022/11/20/world-cup-2022/" />
 <meta property="og:image" content="https://selbydavid.com/img/2022/knockout_stage.png" />
@@ -21,10 +21,10 @@
 
 
 <meta itemprop="name" content="World Cup 2022 predictions">
-<meta itemprop="description" content="Sports prediction has exploded in the last couple of decades with entire journals , conferences and books devoted to it. Much of this focuses on utilising ever-greater amounts of data, with soccer, for example, now providing sub-second ball and player tracking data. But sometimes it is nice to try to do more with less. Here we (Ian Hamilton, Stefan Stein and David Selby) describe a method that we applied to predict the results (indeed all possible match outcomes) of the Euro 2020 football tournament, that took just 120 data points and two linear regressions, yet managed to beat the market over the course of the tournament (based on the accumulated log-loss of match outcomes against predictions taken from the market odds immediately prior to the match).">
+<meta itemprop="description" content="Sports prediction has exploded in the last couple of decades with entire journals, conferences and books devoted to it. Much of this focuses on utilising ever-greater amounts of data, with soccer, for example, now providing sub-second ball and player tracking data. But sometimes it is nice to try to do more with less. Here we (Ian Hamilton, Stefan Stein and David Selby) describe a method that we applied to predict the results (indeed all possible match outcomes) of the Euro 2020 football tournament, that took just 120 data points and two linear regressions, yet managed to beat the market over the course of the tournament (based on the accumulated log-loss of match outcomes against predictions taken from the market odds immediately prior to the match).">
 <meta itemprop="datePublished" content="2022-11-20T22:15:00+01:00" />
 <meta itemprop="dateModified" content="2022-11-20T22:15:00+01:00" />
-<meta itemprop="wordCount" content="1384">
+<meta itemprop="wordCount" content="1383">
 <meta itemprop="image" content="https://selbydavid.com/img/2022/knockout_stage.png">
 
 
@@ -35,7 +35,7 @@
 <meta name="twitter:image" content="https://selbydavid.com/img/2022/knockout_stage.png"/>
 
 <meta name="twitter:title" content="World Cup 2022 predictions"/>
-<meta name="twitter:description" content="Sports prediction has exploded in the last couple of decades with entire journals , conferences and books devoted to it. Much of this focuses on utilising ever-greater amounts of data, with soccer, for example, now providing sub-second ball and player tracking data. But sometimes it is nice to try to do more with less. Here we (Ian Hamilton, Stefan Stein and David Selby) describe a method that we applied to predict the results (indeed all possible match outcomes) of the Euro 2020 football tournament, that took just 120 data points and two linear regressions, yet managed to beat the market over the course of the tournament (based on the accumulated log-loss of match outcomes against predictions taken from the market odds immediately prior to the match)."/>
+<meta name="twitter:description" content="Sports prediction has exploded in the last couple of decades with entire journals, conferences and books devoted to it. Much of this focuses on utilising ever-greater amounts of data, with soccer, for example, now providing sub-second ball and player tracking data. But sometimes it is nice to try to do more with less. Here we (Ian Hamilton, Stefan Stein and David Selby) describe a method that we applied to predict the results (indeed all possible match outcomes) of the Euro 2020 football tournament, that took just 120 data points and two linear regressions, yet managed to beat the market over the course of the tournament (based on the accumulated log-loss of match outcomes against predictions taken from the market odds immediately prior to the match)."/>
 <meta name="twitter:site" content="@TeaStats"/>
 
 
@@ -119,7 +119,7 @@
     </footer>
     
     <section>
-    <p>Sports prediction has exploded in the last couple of decades with entire journals , conferences and books devoted to it.
+    <p>Sports prediction has exploded in the last couple of decades with entire journals, conferences and books devoted to it.
 Much of this focuses on utilising ever-greater amounts of data, with soccer, for example, now providing sub-second ball and player tracking data.
 But sometimes it is nice to try to do more with less.
 Here we (Ian Hamilton, Stefan Stein and David Selby) describe a method that we applied to predict the results (indeed all possible match outcomes) of the Euro 2020 football tournament, that took just 120 data points and two linear regressions, yet managed to beat the market over the course of the tournament (based on the accumulated log-loss of match outcomes against predictions taken from the market odds immediately prior to the match).</p>
@@ -136,13 +136,13 @@ So how can we use what we do know to construct those probabilities?</p>
 First described by Ernst Zermelo in 1929, he made the crucial error of publishing the relevant article in German, allowing two upstart Americans to nab the glory nearly a quarter of a century later and have the model named after them.
 Thus it is known now as the Bradley&ndash;Terry model.
 It expresses the probability that a team $i$ beats a team $j$ as
-[
+$$
 p_{ij} = \frac{\pi_i}{\pi_i + \pi_j},
-]
+$$
 where $\pi_i$ is the &lsquo;strength&rsquo; of $i$. It can also be represented as a generalised linear model
-[
-\text{logit}(p_{ij})= \lambda_i - \lambda_j,
-]
+$$
+\text{logit}(p_{ij}) = \lambda_i - \lambda_j,
+$$
 where $\lambda_i = \log (\pi_i)$.</p>
 <p>The Bradley&ndash;Terry model has some appealing statistical features such as being the unique model for which the number of wins for each team is a sufficient statistic for the strength parameters (consistent with round robin ranking), and being the entropy and likelihood maximising model subject to the (highly plausible) constraint that the expected number of wins for a team given the matches observed is equal to the actual wins observed.
 As Stob (1984) put it, &ldquo;What sort of a claim is it that a team solely on the basis of the results should have expected to win more games than they did?&rdquo;
@@ -150,9 +150,9 @@ This might be seen as failing to appreciate the bias present from finite observa
 Nevertheless, it reflects the intuitive appeal of the condition.</p>
 <p>Typically the Bradley&ndash;Terry model is applied to a set of results, for the purpose of prediction or ranking.
 Strength parameters can be estimated for each team by maximum likelihood estimation, using the likelihood function
-[
+$$
 L(\boldsymbol{\lambda}) = \prod_{i&lt;j}\binom{m_{ij}}{c_{ij}}p_{ij}^{c_{ij}}(1-p_{ij})^{m_{ij}-c_{ij}},
-]
+$$
 where $c_{ij}$ is the number of times $i$ beats $j$ and $m_{ij}= c_{ij}+c_{ji}$ is the number of matches between $i$ and $j$.</p>
 <p>We could apply that method here based on historic performances, but:</p>
 <ol>
@@ -161,49 +161,45 @@ where $c_{ij}$ is the number of times $i$ beats $j$ and $m_{ij}= c_{ij}+c_{ji}$ 
 <li>this doesn&rsquo;t account for draws.</li>
 </ol>
 <p>Addressing the last of these first, the model was extended to account for draws by Davidson (1970), and later by David Firth to take account of the standard football point scheme of three for a win, one for a draw, to give,
-[
-\begin{aligned}
-\mathbb{P}(i \text{ beats } j) &amp;= \frac{\pi_i}{\pi_i + \pi_j + \nu(\pi_i \pi_j)^{\frac{1}{3}}} \<br>
-\mathbb{P}(i \text{ draws with } j) &amp;= \frac{\nu(\pi_i \pi_j)^{\frac{1}{3}}}{\pi_i + \pi_j + \nu(\pi_i \pi_j)^{\frac{1}{3}}}
-\end{aligned}
-]</p>
+$$
+\mathbb{P}(i \text{ beats } j) = \frac{\pi_i}{\pi_i + \pi_j + \nu(\pi_i \pi_j)^{\frac{1}{3}}},
+$$
+$$
+\mathbb{P}(i \text{ draws with } j) = \frac{\nu(\pi_i \pi_j)^{\frac{1}{3}}}{\pi_i + \pi_j + \nu(\pi_i \pi_j)^{\frac{1}{3}}}.
+$$</p>
 <p>Note that even with draws,
-[
-\frac{p_{ij}}{p_{ji}} = \frac{\pi_i}{\pi_j} \quad \text{ or } \quad \text{logit}(p_{ij})= \lambda_i - \lambda_j.
-]</p>
+$$ \frac{p_{ij}}{p_{ji}} = \frac{\pi_i}{\pi_j} \quad \text{ or } \quad \text{logit}(p_{ij})= \lambda_i - \lambda_j. $$</p>
 <p>In the present situation, we can estimate the intra-group log-strengths $r_i=\log s_i$ by linear regression:
-[
-\log \left(\frac{p_{ij}}{p_{ji}}\right) = r_i - r_j,
-]
+$$ \log \left(\frac{p_{ij}}{p_{ji}}\right) = r_i - r_j, $$
 since $p_{ij}$ are known from market odds.</p>
 <p>So now we have an estimate for the strength of a team relative to other teams in its group, but to be able to predict any possible match we need to know the strength of a team relative to all other teams.
 In order to do this, we make some assumptions:</p>
 <ol>
 <li>Team $i$&rsquo;s overall strength $\pi_i$ is a scaling of its intra-group strength $s_i$ by a factor dependent on its group $\gamma_{G(i)}$ 
-[ \pi_i = \gamma_{G(i)} s_i \quad \text{ or equivalently   } \quad \lambda_i = \log\gamma_{G(i)} + r_i ]</li>
+$$ \pi_i = \gamma_{G(i)} s_i \quad \text{ or equivalently   } \quad \lambda_i = \log\gamma_{G(i)} + r_i $$</li>
 <li>The strength of every team&rsquo;s unknown final opponent is the same
-[ p_{io} = \mathbb{P}(i \text{ winning tournament} \mid i \text{ reaches final}) 
-= \frac{\pi_i}{\pi_i + \pi_o}, ]
+$$ p_{io} = \mathbb{P}(i \text{ winning tournament} \mid i \text{ reaches final}) 
+= \frac{\pi_i}{\pi_i + \pi_o}, $$
 where $\pi_o$ is the strength of the unknown final opponent.</li>
 </ol>
 <p>We can calculate $p_{io}$ from market odds since
-[ p_{io}
-= \frac{\mathbb{P}(i \text{ winning tournament})}{\mathbb{P}(i \text{ reaches final})} ]
+$$ p_{io}
+= \frac{\mathbb{P}(i \text{ winning tournament})}{\mathbb{P}(i \text{ reaches final})} $$
 and both these odds &mdash; outright winner and reaching the final &mdash; are available pre-tournament. Then we have that
-[ \log \left(\frac{p_{io}}{p_{oi}}\right) = \lambda_i - \lambda_o = \log\gamma_{G(i)} + r_i - \lambda_o, ]
-and we can estimate $\log\gamma_{G(i)}$ and $\lambda_o$ through linear regression.
-One thing to look out for here is that some of these odds are very large and not well-calibrated.
+$$ \log \left(\frac{p_{io}}{p_{oi}}\right) = \lambda_i - \lambda_o = \log\gamma_{G(i)} + r_i - \lambda_o, $$
+and we can estimate $\log\gamma_{G(i)}$ and $\lambda_o$ through linear regression.</p>
+<p>One thing to look out for here is that some of these odds are very large and not well-calibrated.
 For example, according to oddschecker.com the odds of Qatar winning the tournament are 500/1 and the odds of them reaching the final are 500/1, so conditional on them reaching the final the market says they have a 100% chance of winning!
 This is clearly nonsense, and is due to the fact that for the more unlikely winning teams, these odds are not well-calibrated and so should be discarded.
 Exactly which ones to discard is a matter of judgement.
-For Euro 2022 we arbitrarily excluded teams where the outright win odds were greater than 100/1.
-For the World Cup we graphed $\log \left(\mathbb{P} \left[i \text{ winning tournament} \mid i \text{ reaches final} \right] \right)$ against $\log\left (\mathbb{P}\left[i \text{ winning tournament}\right] \right)$ and excluded at the point where a consistent relationship seemed to start to break down.
+For Euro 2022 we arbitrarily excluded teams where the outright win odds were greater than 100/1.</p>
+<p>For the World Cup we graphed $\log \left(\mathbb{P} \left[i \text{ winning tournament} \mid i \text{ reaches final} \right] \right)$ against $\log\left (\mathbb{P}\left[i \text{ winning tournament}\right] \right)$ and excluded at the point where a consistent relationship seemed to start to break down.
 For the World Cup we have included up to and including Denmark, the tenth ranked team, with a probability of winning the tournament of 30/1.</p>
 <p><img src="https://selbydavid.com/img/2022/probability_of_winning.png" alt=""></p>
 <p>Now we can calculate the strengths of each team
-[ \pi_i = \gamma_{G(i)} s_i, ]
+$$ \pi_i = \gamma_{G(i)} s_i, $$
 and apply these through the Bradley-Terry model to predict the KO match results by applying
-[ p_{ij} = \frac{\pi_i}{\pi_i + \pi_j}. ]</p>
+$$ p_{ij} = \frac{\pi_i}{\pi_i + \pi_j}. $$</p>
 <p>So what do we find, well here are our headline predictions:</p>
 <p><img src="https://selbydavid.com/img/2022/knockout_stage.png" alt=""></p>
 <p>As with any model, there are limitations.

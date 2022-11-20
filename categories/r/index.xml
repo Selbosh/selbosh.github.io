@@ -5515,7 +5515,6 @@ Export it to a csv file and you can search and sort it to your heart&amp;rsquo;s
       <guid>https://selbydavid.com/2019/03/27/identity-matrix/</guid>
       <description>&lt;p&gt;How many different ways are there to create an identity matrix in R?
 This was an interesting little challenge set by &lt;a href=&#34;https://twitter.com/ordrespontane&#34;&gt;Guillaume Nicoulaud&lt;/a&gt; on Twitter.&lt;/p&gt;
-
 &lt;p&gt;In &lt;a href=&#34;https://en.wikipedia.org/wiki/Code_golf&#34;&gt;code golf&lt;/a&gt;, programmers try to write an algorithm using the shortest programme possible, often exploiting lesser-known eccentricies of each programming language.&lt;/p&gt;
 &lt;p&gt;This R challenge is less about minimising your golf handicap, however, and more about showing off some features and functions in R that others might not know about.
 Taking the scenic route and learning along the way.
