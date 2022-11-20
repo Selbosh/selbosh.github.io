@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="author" content="David Selby">
+
+  
+
+
+<title>Advent of Code 2021 &middot; Tea &amp; Stats</title>
+<meta property="og:title" content="Advent of Code 2021" />
+<meta property="og:description" content="It’s that time of year again. And not just for Secret Santa—it’s time for the Advent of Code, a series of programming puzzles in the lead-up to Christmas.
+I’m doing the 2021 challenge in R—in the form of an open-source R package, to demonstrate a test-driven workflow.
+   Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://selbydavid.com/2021/12/01/advent-2021/" />
+<meta property="og:image" content="https://selbydavid.com/img/2020/adventofcode.jpg" />
+<meta property="article:published_time" content="2021-12-01T09:00:00+00:00" />
+<meta property="article:modified_time" content="2021-12-01T09:00:00+00:00" />
+
+
+<meta itemprop="name" content="Advent of Code 2021">
+<meta itemprop="description" content="It’s that time of year again. And not just for Secret Santa—it’s time for the Advent of Code, a series of programming puzzles in the lead-up to Christmas.
+I’m doing the 2021 challenge in R—in the form of an open-source R package, to demonstrate a test-driven workflow.
+   Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package.">
+<meta itemprop="datePublished" content="2021-12-01T09:00:00+00:00" />
+<meta itemprop="dateModified" content="2021-12-01T09:00:00+00:00" />
+<meta itemprop="wordCount" content="11675">
+<meta itemprop="image" content="https://selbydavid.com/img/2020/adventofcode.jpg">
+
+
+
+<meta itemprop="keywords" content="" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://selbydavid.com/img/2020/adventofcode.jpg"/>
+
+<meta name="twitter:title" content="Advent of Code 2021"/>
+<meta name="twitter:description" content="It’s that time of year again. And not just for Secret Santa—it’s time for the Advent of Code, a series of programming puzzles in the lead-up to Christmas.
+I’m doing the 2021 challenge in R—in the form of an open-source R package, to demonstrate a test-driven workflow.
+   Each puzzle description typically comes with a few simple examples of inputs and outputs. We can use these to define expectations for unit tests with the testthat package."/>
+<meta name="twitter:site" content="@TeaStats"/>
+
+
+
+  
+    <meta property="article:author" content="https://www.facebook.com/Selbosh" />
+    <meta property="article:publisher" content="https://www.facebook.com/Selbosh" />
+  
+  
+    <meta name="twitter:creator" content="@TeaStats"/>
+  
+
+
+<meta name="theme" content="hugo-tea">
+<meta name="generator" content="Hugo 0.79.1" />
+
+
+
+<link rel="shortcut icon" href="https://selbydavid.com/favicon.ico">
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="https://selbydavid.com/css/main.css" media="all">
+
+<script src="https://use.fontawesome.com/269c7751ba.js"></script>
+
+  </head>
+  <body>
+      
+        <header id="masthead">
+          <img src="https://selbydavid.com/img/logo.svg"
+               width="120"
+               height=""
+               alt="Tea and Stats">
+          <h1><a href="https://selbydavid.com/">Tea &amp; Stats</a></h1>
+          <aside>Data science with David Selby</aside>
+          <nav>
+  <ul>
+    
+      <li><a href="https://selbydavid.com/about/">About</a></li>
+    
+    
+    <li>
+      <a href="https://facebook.com/Selbosh">
+        <i class="fa fa-facebook"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://github.com/Selbosh">
+        <i class="fa fa-github"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://linkedin.com/in/daselby">
+        <i class="fa fa-linkedin"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://twitter.com/TeaStats">
+        <i class="fa fa-twitter"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+
+        </header>
+
+
+<main role="main">
+  <article class="single">
+    <header><h2>Advent of Code 2021</h2></header>
+    
+    <footer>
+      <time datetime="2021-12-01 09:00:00 &#43;0000">
+         1 December 2021
+      </time>
+    </footer>
+    
+    <section>
+    
+<script src="https://selbydavid.com/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p>It’s that time of year again.
+And not just for <a href="https://selbydavid.com/2016/12/07/santa/">Secret Santa</a>—it’s time for the <a href="https://adventofcode.com/">Advent of Code</a>, a series of programming
+puzzles in the lead-up to Christmas.</p>
+<p>I’m doing the 2021 challenge in R—in the form of an open-source <a href="https://github.com/Selbosh/adventofcode2021">R package</a>, to demonstrate a <a href="https://personalpages.manchester.ac.uk/staff/david.selby/rthritis/2021-11-19-unittesting/">test-driven</a> workflow.</p>
+<div style="text-align:center;">
+<div class="github-card" data-github="Selbosh/adventofcode2021" data-width="400" data-height="" data-theme="default" style="display:block; margin:0 auto;">
+
+</div>
+</div>
+<script src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+<p>Each puzzle description typically comes with a few simple examples of inputs and outputs.
+We can use these to define expectations for unit tests with the <a href="https://testthat.r-lib.org/"><strong>testthat</strong></a> package.
+Once a function passes the unit tests, it should be ready to try with the main puzzle input.</p>
+<p>Check my <a href="https://github.com/Selbosh/adventofcode2021"><strong>adventofcode2021</strong></a> repository on GitHub for the latest.</p>
+<pre class="r"><code>remotes::install_github(&#39;Selbosh/adventofcode2021&#39;)</code></pre>
+<ol style="list-style-type: decimal">
+<li><a href="#day1">Sonar Sweep</a></li>
+<li><a href="#day2">Dive!</a></li>
+<li><a href="#day3">Binary Diagnostic</a></li>
+<li><a href="#day4">Giant Squid</a></li>
+<li><a href="#day5">Hydrothermal Venture</a></li>
+<li><a href="#day6">Lanternfish</a></li>
+<li><a href="#day7">The Treachery of Whales</a></li>
+<li><a href="#day8">Seven Segment Search</a></li>
+<li><a href="#day9">Smoke Basin</a></li>
+<li><a href="#day10">Syntax Scoring</a></li>
+<li><a href="#day11">Dumbo Octopus</a></li>
+<li><a href="#day12">Passage Pathing</a></li>
+<li><a href="#day13">Transparent Origami</a></li>
+<li><a href="#day14">Extended Polymerization</a></li>
+<li><a href="#day15">Chiton</a></li>
+<li><a href="#day16">Packet Decoder</a></li>
+<li><a href="#day17">Trick Shot</a></li>
+<li><a href="#day18">Snailfish</a></li>
+<li><a href="#day19">Beacon Scanner</a></li>
+<li><a href="#day20">Trench Map</a></li>
+<li><a href="#day21">Dirac Dice</a></li>
+<li><a href="#day22">Reactor Reboot</a></li>
+<li><a href="#day23">Amphipod</a></li>
+<li><a href="#day24">Arithmetic Logic Unit</a></li>
+<li><a href="#day25">Sea Cucumber</a></li>
+</ol>
+<div id="day1" class="section level2">
+<h2>Day 1 - <a href="https://adventofcode.com/2021/day/1">Sonar Sweep</a></h2>
+<div id="increases" class="section level3">
+<h3>Increases</h3>
+<p>To count the number of times elements are increasing in a vector it’s as simple as</p>
+<pre class="r"><code>depths &lt;- c(199, 200, 208, 210, 200, 207, 240, 269, 260, 263)
+sum(diff(depths) &gt; 0)</code></pre>
+<pre><code>## [1] 7</code></pre>
+<p>for which I defined a function called <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day01.R#L91-L93"><code>increases</code></a>.</p>
+</div>
+<div id="rolling-sum" class="section level3">
+<h3>Rolling sum</h3>
+<p>For part two, we first want to calculate the three-depth moving sum, then we count the increases as in part one.
+There are plenty of solutions in external R packages for getting lagged (and leading) vectors, for instance <code>dplyr::lag()</code> and <code>dplyr::lead()</code>:</p>
+<pre class="r"><code>depths + dplyr::lead(depths) + dplyr::lead(depths, 2)</code></pre>
+<pre><code>##  [1] 607 618 618 617 647 716 769 792  NA  NA</code></pre>
+<p>Or you could even calculate the rolling sum using a pre-made solution in <strong>zoo</strong> (Z’s Ordered Observations, a time-series analysis package).</p>
+<pre class="r"><code>zoo::rollsum(depths, 3)</code></pre>
+<pre><code>## [1] 607 618 618 617 647 716 769 792</code></pre>
+<p>To avoid loading any external packages at this stage, I defined my own base R function called <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day01.R#L99-L101"><code>rolling_sum()</code></a>, which uses <code>tail</code> and <code>head</code> with negative lengths to omit the first and last elements of the vector:</p>
+<pre class="r"><code>head(depths, -2) + head(tail(depths, -1), -1) + tail(depths, -2)</code></pre>
+<pre><code>## [1] 607 618 618 617 647 716 769 792</code></pre>
+<p>As <a href="https://twitter.com/schochastics/status/1466062839077027845">David Schoch points out</a>, you can just use the <code>lag</code> argument of <code>diff</code> to make this entire puzzle into a one-liner:</p>
+<pre class="r"><code>sapply(c(1, 3), \(lag) sum(diff(depths, lag) &gt; 0))</code></pre>
+<pre><code>## [1] 7 5</code></pre>
+</div>
+</div>
+<div id="day2" class="section level2">
+<h2>Day 2 - <a href="https://adventofcode.com/2021/day/2">Dive!</a></h2>
+<div id="depth-sum" class="section level3">
+<h3>Depth sum</h3>
+<p>Read in the input as a two-column data frame using <code>read.table()</code>.
+I gave mine nice column names, <code>cmd</code> and <code>value</code>, but this isn’t essential.</p>
+<p>Then take advantage of the fact that <code>TRUE == 1</code> and <code>FALSE == 0</code> to make a mathematical <code>ifelse</code>-type statement for the horizontal and vertical movements.
+In my R package, this is implemented as a function called <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day02.R#L70-L76"><code>dive()</code></a>:</p>
+<pre class="r"><code>x &lt;- (cmd == &#39;forward&#39;) * value
+y &lt;- ((cmd == &#39;down&#39;) - (cmd == &#39;up&#39;)) * value
+sum(x) * sum(y)</code></pre>
+</div>
+<div id="cumulative-depth-sum" class="section level3">
+<h3>Cumulative depth sum</h3>
+<p>Part two is much like part one, but now <code>y</code> represents (change in) aim, and (change in) depth is derived from that.
+Don’t forget the function <code>cumsum()</code>, which can save you writing a loop!
+Here is the body of my function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day02.R#L80-L87"><code>dive2()</code></a>:</p>
+<pre class="r"><code>x &lt;- (cmd == &#39;forward&#39;) * value
+y &lt;- ((cmd == &#39;down&#39;) - (cmd == &#39;up&#39;)) * value
+depth &lt;- cumsum(y) * x
+sum(x) * sum(depth)</code></pre>
+</div>
+</div>
+<div id="day3" class="section level2">
+<h2>Day 3 - <a href="https://adventofcode.com/2021/day/2">Binary Diagnostic</a></h2>
+<div id="power-consumption" class="section level3">
+<h3>Power consumption</h3>
+<p>There are a few different ways you could approach part one, but my approach was first to read in the data as a data frame of binary integers using the function <code>read.fwf()</code>.
+Then, find the most common value in each column using the base function <code>colMeans()</code> and rounding the result.</p>
+<p>According to the instructions, in the event of a tie you should take 1 to be the most common digit.
+Although this is familiar to real life—0.5 rounds up to 1—computers <a href="https://en.wikipedia.org/wiki/Rounding#Round_half_to_even">don’t work this way</a>: R rounds to even instead (see <code>?round</code>).
+Because zero is even, that means <code>round(0.5)</code> yields 0.
+To get around this, add 1 before rounding, then subtract it again.</p>
+<p>My function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day03.R#L78-L81"><code>power_consumption()</code></a>, which once again takes advantage of <code>TRUE</code> being equivalent to 1 and <code>FALSE</code> to 0:</p>
+<pre class="r"><code>common &lt;- round(colMeans(x) + 1) - 1
+binary_to_int(common) * binary_to_int(!common)</code></pre>
+<p>To convert a vector of binary digits to decimal, I use the following <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day03.R#L104-L106">utility function</a>:</p>
+<pre class="r"><code>binary_to_int &lt;- function(x) {
+  sum(x * 2 ^ rev(seq_along(x) - 1))
+}</code></pre>
+<p>However, if using a string representation then there’s a handy function in base R called <code>strtoi()</code> that you could also use for this (<a href="https://twitter.com/_Riinu_/status/1466681283887648769">thanks to Riinu Pius for that tip</a>).</p>
+</div>
+<div id="life-support" class="section level3">
+<h3>Life support</h3>
+<p>Part two finds the common digits in a successively decreasing set of binary numbers.
+A loop is appropriate here, since we can halt once there is only one number left.
+As this loop will only run (at most) 12 times in total, it shouldn’t be too slow in R.</p>
+<p>Function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day03.R#L85-L98"><code>life_support()</code></a>:</p>
+<pre class="r"><code>life_support &lt;- function(x) {
+  oxygen &lt;- co2 &lt;- x
+  for (j in 1:ncol(x)) {
+    if (nrow(oxygen) &gt; 1) {
+      common &lt;- most_common(oxygen)
+      oxygen &lt;- oxygen[oxygen[, j] == common[j], ]
+    }
+    if (nrow(co2) &gt; 1) {
+      common &lt;- most_common(co2)
+      co2 &lt;- co2[co2[, j] != common[j], ]
+    }
+  }
+  binary_to_int(oxygen) * binary_to_int(co2)
+}</code></pre>
+<p>There might be cleverer ways of doing this.</p>
+</div>
+</div>
+<div id="day4" class="section level2">
+<h2>Day 4 - <a href="https://adventofcode.com/2021/day/4">Giant Squid</a></h2>
+<div id="bingo" class="section level3">
+<h3>Bingo</h3>
+<p>This is one of those problems where half the battle is working out which data structure to use.
+I wrote a function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day04.R#L80-L84"><code>read_draws()</code></a> that reads in the first line of the file to get the drawn numbers, then separately reads in the remainder of the file to get the bingo cards stacked as a data frame.
+Later we take advantage of the fact that the bingo cards are square to split the data frame into a list of matrices.</p>
+<pre class="r"><code>read_draws &lt;- function(file) {
+  draws &lt;- scan(file, sep = &#39;,&#39;, nlines = 1, quiet = TRUE)
+  cards &lt;- read.table(file, skip = 1)
+  list(draws = draws, cards = cards)
+}</code></pre>
+<p>As numbers are called out, I replace them in the dataset with <code>NA</code>s.
+Then the helper <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day04.R#L86-L91"><code>score_card()</code></a> counts the number of <code>NA</code>s in each row and column.
+If there are not enough, we return zero, else we calculate the score.</p>
+<pre class="r"><code>score_card &lt;- function(mat, draw) {
+  marked &lt;- is.na(mat)
+  if (all(c(rowMeans(marked), colMeans(marked)) != 1))
+    return(0)
+  sum(mat, na.rm = TRUE) * draw
+}</code></pre>
+<p>Then we put it all together, looping through the draws, replacing numbers with <code>NA</code> and halting as soon as someone wins.
+Function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day04.R#L98-L111"><code>play_bingo()</code></a> is defined as follows, using just base R commands:</p>
+<pre class="r"><code>play_bingo &lt;- function(draws, cards) {
+  size &lt;- ncol(cards)
+  ncards &lt;- nrow(cards) / size
+  ids &lt;- rep(1:ncards, each = size)
+
+  for (d in draws) {
+    cards[cards == d] &lt;- NA
+    score &lt;- sapply(split(cards, ids), score_card, draw = d)
+    if (any(score &gt; 0))
+      return(score[score &gt; 0])
+  }
+}</code></pre>
+</div>
+<div id="last-caller" class="section level3">
+<h3>Last caller</h3>
+<p>Part two is very similar, but we throw away each winning bingo card as we go to avoid redundant computation, eventually returning the score when there is only one left.
+Here is function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day04.R#L115-L131"><code>play_bingo2()</code></a>, which uses the same two utility functions:</p>
+<pre class="r"><code>play_bingo2 &lt;- function(draws, cards) {
+  size &lt;- ncol(cards)
+
+  for (d in draws) {
+    ncards &lt;- nrow(cards) / size
+    ids &lt;- rep(1:ncards, each = size)
+    cards[cards == d] &lt;- NA
+    score &lt;- sapply(split(cards, ids), score_card, draw = d)
+    if (any(score &gt; 0)) {
+      if (ncards == 1)
+        return(score[score &gt; 0])
+      cards &lt;- cards[ids %in% which(score == 0), ]
+    }
+  }
+}</code></pre>
+<p>Further optimizations are possible.
+For example: as written, we calculate every intermediate winner’s score, but we only really need to do it for the first (part 1) and last (part 2) winners.</p>
+<p>Also, we could draw more than one number at a time, as we know that nobody’s going to win until at least the fifth draw (for 5×5 cards) and from there, increment according to the minimum number of unmarked numbers on any row or column.</p>
+<p>I didn’t bother implementing either of these, as it already runs quickly enough.</p>
+</div>
+</div>
+<div id="day5" class="section level2">
+<h2>Day 5 - <a href="https://adventofcode.com/2021/day/5">Hydrothermal Venture</a></h2>
+<p>For a while I tried to think about clever mathematical ways to solve the system of inequalities, but this gets complicated when working on a grid, and where some segments are collinear.
+In the end it worked out quicker to what seems like a ‘brute force’ approach:
+generate all the points on the line segments and then simply count how many times they appear.</p>
+<p>This is a problem that really lends itself to use of <strong>tidyr</strong> functions like <a href="https://tidyr.tidyverse.org/reference/separate.html"><code>separate()</code></a> and <a href="https://tidyr.tidyverse.org/reference/nest.html"><code>unnest()</code></a>, so naturally I made life harder for myself by doing it in base R, instead.</p>
+<p>First, read in the coordinates as a data frame with four columns, <code>x1</code>, <code>y1</code>, <code>x2</code> and <code>y2</code>.
+The <em>nice</em> way to do this is with <code>tidyr::separate()</code> but <code>strsplit()</code> works just fine too.
+Here is my parsing function, <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day05.R#L77-L82"><code>read_segments()</code></a>:</p>
+<pre class="r"><code>read_segments &lt;- function(x) {
+  lines &lt;- do.call(rbind, strsplit(readLines(x), &#39;( -&gt; |,)&#39;))
+  storage.mode(lines) &lt;- &#39;numeric&#39;
+  colnames(lines) &lt;- c(&#39;x1&#39;, &#39;y1&#39;, &#39;x2&#39;, &#39;y2&#39;)
+  as.data.frame(lines)
+}</code></pre>
+<p>This is one of the few puzzles where the solution to part two is essentially contained in part one.
+Depending on how you implement your home-rolled <code>unnest</code>-like function, it could just be a case of filtering out the diagonal lines in part one.
+I make liberal use of <code>mapply</code> for looping over two vectors at once.</p>
+<p>In the penultimate line, we take advantage of vector broadcasting, which handles all the horizontal and vertical lines where you have multiple coordinates on one axis paired with a single coordinate on the other.
+For the diagonal lines, there is a 1:1 relationship so the coordinates just bind together in pairs.
+Finally, we work out how to count the rows, without using <code>dplyr::count()</code>.
+If you convert to a data frame, then <code>table()</code> does this for you.</p>
+<pre class="r"><code>count_intersections &lt;- function(lines, part2 = FALSE) {
+  if (!part2)
+    lines &lt;- subset(lines, x1 == x2 | y1 == y2)
+  x &lt;- mapply(seq, lines$x1, lines$x2)
+  y &lt;- mapply(seq, lines$y1, lines$y2)
+  xy &lt;- do.call(rbind, mapply(cbind, x, y))
+  sum(table(as.data.frame(xy)) &gt; 1)
+}</code></pre>
+<p>I’m fairly pleased to get the main solution down to <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day05.R#L89-L96">essentially four lines of code</a>, though I’m certain that there are more computationally efficient ways of tackling this problem—if you value computer time more than your own time.</p>
+<p>For the tidyverse approach, see <a href="https://twitter.com/drob/status/1467361848525787138">David Robinson’s solution</a>.</p>
+</div>
+<div id="day6" class="section level2">
+<h2>Day 6 - <a href="https://adventofcode.com/2021/day/6">Lanternfish</a></h2>
+<p>In this problem, we have many fish with internal timers.
+As the instructions suggest, we will have exponential growth, so it’s not a good idea to keep track of each individual fish as you’ll soon run out of memory.
+On the other hand, there are only nine possible states for any given fish to be in: the number of days until they next reproduce.
+So we can store a vector that simply tallies the number of fish in each state.</p>
+<p>On each day, we can shuffle the fish along the vector, decreasing the number of days for each group of fish by 1, and adding new cohorts of fish at day 6, to represent parent fish resetting their timers, and at day 8 to represent the newly hatched lanternfish.
+My short function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day06.R#L72-L77"><code>lanternfish()</code></a>:</p>
+<pre class="r"><code>lanternfish &lt;- function(x, days = 80) {
+  fish &lt;- as.double(table(factor(x, levels = 0:8)))
+  for (i in 1:days)
+    fish &lt;- c(fish[2:7], fish[8] + fish[1], fish[9], fish[1])
+  sum(fish)
+}</code></pre>
+<p>Because R indexes from 1 rather than 0, the element <code>fish[1]</code> represents the number of fish with 0 days left, <code>fish[2]</code> represents the number with 1 day left, and so on.
+If you find this confusing, you can index from zero instead, thanks to the new <a href="https://github.com/Selbosh/index0"><strong>index0</strong> package</a>:</p>
+<pre class="r"><code>lanternfish0 &lt;- function(x, days = 80) {
+  fish &lt;- as.double(table(factor(x, levels = 0:8)))
+  for (i in 1:days) {
+    fish &lt;- index0::index_from_0(fish)
+    fish &lt;- c(fish[1:6], fish[7] + fish[0], fish[8], fish[0])
+   }
+  sum(fish)
+}</code></pre>
+<p>There is a slightly different way to perform the updates.
+<a href="https://twitter.com/drob/status/1467727330663534594">David Robinson suggested</a> an approach based on linear algebra.
+Here we apply the same procedure as above, but via matrix multiplication.
+It takes about the same time to run.</p>
+<pre class="r"><code>lanternfish &lt;- function(x, days = 80) {
+  fish &lt;- table(factor(x, levels = 0:8))
+  mat &lt;- matrix(0, 9, 9)
+  mat[cbind(2:9, 1:8)] &lt;- 1 # decrease timer for fish w/ 1-8 days left
+  mat[1, c(7, 9)] &lt;- 1      # add &#39;new&#39; fish with 6 &amp; 8 days left
+  for (i in 1:days)
+    fish &lt;- fish %*% mat
+  sum(fish)
+}</code></pre>
+<p>Day 6 is another puzzle where the solutions for parts one and two are essentially the same.
+The only thing to be careful of on part two is that you don’t run into integer overflow.
+If you do, make sure the numbers you’re adding together are of type <code>double</code>.</p>
+</div>
+<div id="day7" class="section level2">
+<h2>Day 7 - <a href="https://adventofcode.com/2021/day/7">The Treachery of Whales</a></h2>
+<div id="median" class="section level3">
+<h3>Median</h3>
+<p>While it’s possible to brute-force this puzzle by simply calculating the fuel requirement at every single point (within the range of the inputs), you can do it about 200× faster by treating it as an optimization problem.</p>
+<p>The total fuel required for any potential position is</p>
+<pre class="r"><code>x &lt;- scan(&#39;input.txt&#39;, sep = &#39;,&#39;)
+f &lt;- function(pos) sum(abs(x - pos))</code></pre>
+<p>where <code>x</code> are the initial locations of the crabs.
+Then run it through <code>optimize()</code>, and round to the nearest integer position:</p>
+<pre class="r"><code>sol &lt;- optimize(f, range(x))$minimum
+f(round(sol))</code></pre>
+<p>However, there is an even faster analytical solution!</p>
+<pre class="r"><code>sol &lt;- median(x)</code></pre>
+<p>Thanks to <a href="https://twitter.com/claire_little1">Claire Little</a> for pointing this out.</p>
+</div>
+<div id="mean" class="section level3">
+<h3>Mean</h3>
+<p>Part two just has a slightly different function to optimize.
+Using the formula for the sum of an <a href="https://en.wikipedia.org/wiki/Arithmetic_progression">arithmetic progression</a>:</p>
+<pre class="r"><code>f2 &lt;- function(pos) {
+  n &lt;- abs(x - pos)
+  sum(n / 2 * (1 + n))
+}</code></pre>
+<p>Then we can simply minimize this function as before.</p>
+<pre class="r"><code>sol &lt;- optimize(f2, range(x))$minimum
+f2(round(sol))</code></pre>
+<p>However, there’s a shortcut for this part as well!
+Calculate the mean of the initial positions, and work out which of the two nearest integers gives the minimum result:</p>
+<pre class="r"><code>min(
+  f2(floor(mean(x))),
+  f2(ceiling(mean(x)))
+)</code></pre>
+<p>Thanks to <a href="https://twitter.com/jonatanpallesen/status/1468165025575624704">Jonatan Pallesen</a>.
+This is about 5 times faster than my optimizer.</p>
+<p>And here is what the functions look like for my input dataset:</p>
+<p><img src="https://selbydavid.com/post/2021-12-01-advent_files/figure-html/day7-1.png" width="576" /></p>
+</div>
+</div>
+<div id="day8" class="section level2">
+<h2>Day 8 - <a href="https://adventofcode.com/2021/day/8">Seven Segment Search</a></h2>
+<div id="unique-digits" class="section level3">
+<h3>Unique digits</h3>
+<p>Read in the data and then the first part is just a one-liner:</p>
+<pre class="r"><code>input &lt;- do.call(rbind, strsplit(readLines(input_file(8)), &#39;[^a-z]+&#39;))
+
+count_unique &lt;- function(x) {
+  sum(nchar(x[, -(1:10)]) %in% c(2, 3, 4, 7))
+}</code></pre>
+</div>
+<div id="segment-matching" class="section level3">
+<h3>Segment matching</h3>
+<p>I <em>really</em> wanted to solve part two using graph theory, by representing the puzzle as a maximum bipartite matching problem.
+However, I couldn’t quite get this to work.
+My final solution is instead just a lot of leg work.</p>
+<p>Essentially you solve the problem by hand and then encode the process programmatically.
+Recognize that some digits have segments in common, or not in common, and use this to eliminate the possibilities.
+I stored the solutions in a named vector, which I was able to use to look up the digits found so far.</p>
+<p>The function <code>setdiff()</code> comes in useful.</p>
+<pre class="r"><code>contains &lt;- function(strings, letters) {
+  vapply(strsplit(strings, &#39;&#39;),
+         function(s) all(strsplit(letters, &#39;&#39;)[[1]] %in% s),
+         logical(1))
+}
+
+output_value &lt;- function(vec) {
+  segments &lt;- c(&#39;abcefg&#39;, &#39;cf&#39;, &#39;acdeg&#39;, &#39;acdfg&#39;, &#39;bcdf&#39;,
+                &#39;abdfg&#39;, &#39;abdefg&#39;, &#39;acf&#39;, &#39;abcdefg&#39;, &#39;abcdfg&#39;)
+  nchars &lt;- setNames(nchar(segments), 0:9)
+
+  # Sort the strings
+  vec &lt;- sapply(strsplit(vec, &#39;&#39;), function(d) paste(sort(d), collapse = &#39;&#39;))
+  sgn &lt;- head(vec, 10)
+  out &lt;- tail(vec, 4)
+
+  # Store the known values
+  digits &lt;- setNames(character(10), 0:9)
+  unique &lt;- c(&#39;1&#39;, &#39;4&#39;, &#39;7&#39;, &#39;8&#39;)
+  digits[unique] &lt;- sgn[match(nchars[unique], nchar(sgn))]
+
+  # Remaining digits have 5 or 6 segments:
+  sgn &lt;- setdiff(sgn, digits)
+  digits[&#39;3&#39;] &lt;- sgn[nchar(sgn) == 5 &amp; contains(sgn, digits[&#39;1&#39;])]
+  digits[&#39;6&#39;] &lt;- sgn[nchar(sgn) == 6 &amp; !contains(sgn, digits[&#39;1&#39;])]
+  sgn &lt;- setdiff(sgn, digits)
+  digits[&#39;0&#39;] &lt;- sgn[nchar(sgn) == 6 &amp; !contains(sgn, digits[&#39;4&#39;])]
+  sgn &lt;- setdiff(sgn, digits)
+  digits[&#39;9&#39;] &lt;- sgn[nchar(sgn) == 6]
+  sgn &lt;- setdiff(sgn, digits)
+  digits[&#39;2&#39;] &lt;- sgn[
+    contains(sgn, do.call(setdiff,
+                          unname(strsplit(digits[c(&#39;8&#39;, &#39;6&#39;)], &#39;&#39;))))
+  ]
+  digits[&#39;5&#39;] &lt;- setdiff(sgn, digits)
+
+  # Combine four output digits:
+  as.numeric(paste(match(out, digits) - 1, collapse = &#39;&#39;))
+}</code></pre>
+</div>
+</div>
+<div id="day9" class="section level2">
+<h2>Day 9 - <a href="https://adventofcode.com/2021/day/9">Smoke Basin</a></h2>
+<div id="lowest-points" class="section level3">
+<h3>Lowest points</h3>
+<p>You can find all the lowest points with a one-liner:</p>
+<pre class="r"><code>lowest &lt;- function(h) {
+  h &lt; cbind(h, Inf)[, -1] &amp;          # right
+    h &lt; rbind(h, Inf)[-1, ] &amp;        # down
+    h &lt; cbind(Inf, h[, -ncol(h)]) &amp;  # left
+    h &lt; rbind(Inf, h[-nrow(h), ])    # up
+}</code></pre>
+<p>Then do <code>sum(h[lowest(h)])</code> to get the result, where <code>h</code> is a numeric matrix of the input data.</p>
+</div>
+<div id="basins" class="section level3">
+<h3>Basins</h3>
+<p>The second part is harder and doesn’t immediately lead from the first.
+Initially I thought of replacing each lowest point with <code>Inf</code>, then finding the new lowest points and repeating the process until all the basins are found.
+However, the basins are simply all points where the height is <code>&lt; 9</code>, so you can find the basins in a single step.</p>
+<p>The tricky part is labelling them separately, so you can count up their respective sizes.</p>
+<p>The boring way of doing this is just to loop over the indices and label the points that neighbour already-labelled ones (starting with the lowest points as the initial labels), doing several passes until everything (except the 9s) is labelled.</p>
+<pre class="r"><code>basins &lt;- function(h) {
+  l &lt;- lowest(h)
+  h[] &lt;- ifelse(h &lt; 9, NA, Inf)
+  h[l] &lt;- 1:sum(l)
+  while (anyNA(h)) {
+    for (i in 1:nrow(h)) for (j in 1:ncol(h)) {
+      if (is.na(h[i, j])) {
+        nbrs &lt;- h[cbind(c(max(i - 1, 1), min(i + 1, nrow(h)), i, i),
+                        c(j, j, max(j - 1, 1), min(j + 1, ncol(h))))]
+        if (any(is.finite(nbrs)))
+          h[i, j] &lt;- nbrs[is.finite(nbrs)][1]
+      }
+    }
+  }
+  sizes &lt;- table(h[is.finite(h)])
+  head(sort(sizes, decreasing = TRUE), 3)
+}</code></pre>
+<p>To vectorize this in the same way as part one, we define a new binary (infix) operator <code>%c%</code>, analogous to <code>dplyr::coalesce()</code>.
+What this does is replace an <code>NA</code> value (a basin not yet assigned a label) with its finite neighbour, while leaving <code>Inf</code>s (marking basin edges) alone.</p>
+<pre class="r"><code>&quot;%c%&quot; &lt;- function(x, y) {
+  ifelse(is.infinite(x), x,
+         ifelse(!is.na(x), x,
+                ifelse(!is.infinite(y), y, x)))
+}</code></pre>
+<p>Then the new function for part two is as follows.
+It is five times faster to run than the nested loop above.</p>
+<pre class="r"><code>basins2 &lt;- function(h) {
+  l &lt;- lowest(h)
+  h[] &lt;- ifelse(h &lt; 9, NA, Inf)
+  h[l] &lt;- 1:sum(l)
+  while(anyNA(h)) {
+    h &lt;- h %c%
+      cbind(h, NA)[, -1] %c%        # right
+      rbind(h, NA)[-1, ] %c%        # down
+      cbind(NA, h[, -ncol(h)]) %c%  # left
+      rbind(NA, h[-nrow(h), ])      # up
+  }
+  sizes &lt;- table(h[is.finite(h)])
+  head(sort(sizes, decreasing = TRUE), 3)
+}</code></pre>
+<p>You can also <a href="https://twitter.com/rappa753/status/1468876602016735233">formulate this as an image analysis problem</a>, effectively treating each basin as an area of similar colour to select, or you can <a href="https://twitter.com/babeheim/status/1468898580408811525">treat it as a network theory problem and apply the <strong>igraph</strong> package</a> to find graph components.</p>
+</div>
+</div>
+<div id="day10" class="section level2">
+<h2>Day 10 - <a href="https://adventofcode.com/2021/day/10">Syntax Scoring</a></h2>
+<div id="corrupt-characters" class="section level3">
+<h3>Corrupt characters</h3>
+<p>Whilst it’s probably possible to do the first part with some very fancy <a href="https://www.php.net/manual/en/regexp.reference.recursive.php">recursive regular expressions</a>, I don’t know how to use them.</p>
+<p>Instead, my method of finding unmatched brackets is simply to search for empty pairs of brackets and successively strip them from the string.
+Keep doing this until the strings stop changing.
+Then, get the first closing bracket (if any), using <code>regmatches()</code>.
+These are the illegal characters.</p>
+<p>My function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day10.R#L122-L128"><code>syntax_score()</code></a> is implemented as follows:</p>
+<pre class="r"><code>lines &lt;- readLines(&#39;input.txt&#39;)
+old &lt;- &#39;&#39;
+while (!identical(old, lines -&gt; old))
+  lines &lt;- gsub(r&#39;(\(\)|&lt;&gt;|\{\}|\[\])&#39;, &#39;&#39;, lines)
+illegals &lt;- regmatches(lines, regexpr(r&#39;(\)|&gt;|\}|\])&#39;, lines))</code></pre>
+<p>The syntax score is calculated using a named vector as a lookup table.</p>
+<pre class="r"><code>illegal_score &lt;- c(&#39;)&#39; = 3, &#39;]&#39; = 57, &#39;}&#39; = 1197, &#39;&gt;&#39; = 25137)
+sum(illegal_score[illegals])</code></pre>
+</div>
+<div id="autocomplete" class="section level3">
+<h3>Autocomplete</h3>
+<p>Part two starts the same, but instead of extracting the illegal characters we just throw away those lines that contain them.</p>
+<pre class="r"><code>illegals &lt;- grep(r&#39;(\)|&gt;|\}|\])&#39;, lines)
+chars &lt;- strsplit(lines[-illegals], &#39;&#39;)</code></pre>
+<p>From here, we can calculate the scores using a <code>Reduce</code> operation (from right to left) with another lookup table.
+The final answer is the median score.</p>
+<pre class="r"><code>complete_score &lt;- c(&#39;(&#39; = 1, &#39;[&#39; = 2, &#39;{&#39; = 3, &#39;&lt;&#39; = 4)
+scores &lt;- sapply(chars, Reduce, init = 0, right = TRUE,
+                 f = \(c, s) 5 * s + complete_score[c])
+median(scores)</code></pre>
+<p>The function <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day10.R#L132-L141"><code>autocomplete()</code></a> wraps it all together.</p>
+</div>
+</div>
+<div id="day11" class="section level2">
+<h2>Day 11 - <a href="https://adventofcode.com/2021/day/11">Dumbo Octopus</a></h2>
+<div id="convoluted-octopuses" class="section level3">
+<h3>Convoluted octopuses</h3>
+<p>The process of updating the energy levels can be described using a <a href="https://en.wikipedia.org/wiki/Kernel_(image_processing)"><em>convolution matrix</em></a>.
+It’s easy—<a href="https://selbydavid.com/2020/12/06/advent-2020/#day11">like on Day 11 last year</a>—to use a ready-made solution from an image analysis package for this, namely <code>OpenImageR::convolution()</code>.</p>
+<p>The convolution matrix, or <em>kernel</em> is
+<span class="math display">\[\begin{bmatrix}1  &amp;  1  &amp;  1 \\1  &amp;   0  &amp;  1 \\1  &amp;  1  &amp;  1\end{bmatrix},\]</span>
+to be applied on an indicator matrix of ‘flashing’ octopuses, and then added to the result.
+In R,</p>
+<pre class="r"><code>kernel &lt;- matrix(1:9 != 5, 3, 3)</code></pre>
+<p>So we define a function, <code>step1()</code>, that applies a single step of the energy level updating process.
+Since each octopus can only flash once in a given step, we keep track of those that have already flashed, as well as those currently flashing.
+A short <code>while()</code> loop repeats until no more octopuses flash.</p>
+<pre class="r"><code>step1 &lt;- function(x) {
+  x &lt;- x + 1
+  flashing &lt;- flashed &lt;- x == 10
+  while (any(flashing)) {
+    x &lt;- x + OpenImageR::convolution(flashing, kernel)
+    flashing &lt;- x &gt; 9 &amp; !flashed
+    flashed &lt;- flashing | flashed
+  }
+  x[x &gt; 9] &lt;- 0
+  x
+}</code></pre>
+<p>However, there is a base R alternative to <code>OpenImageR::convolution()</code> that you can substitute in, for negligible speed penalty (despite that package being written in C).</p>
+<pre class="r"><code>add_neighbours &lt;- function(x) {
+  I &lt;- nrow(x)
+  J &lt;- ncol(x)
+  cbind(x[, -1], 0) +  # Right
+  rbind(x[-1, ], 0) +  # Down
+  cbind(0, x[, -J]) +  # Left
+  rbind(0, x[-I, ]) +  # Up
+  rbind(cbind(x[-1, -1], 0), 0) + # SE
+  rbind(0, cbind(x[-I, -1], 0)) + # NE
+  rbind(cbind(0, x[-1, -J]), 0) + # SW
+  rbind(0, cbind(0, x[-I, -J]))   # NW
+}</code></pre>
+</div>
+<div id="counting-flashes" class="section level3">
+<h3>Counting flashes</h3>
+<p>We then solve both parts one and two with a single function that repeatedly applies the updating step and counts the flashes (number of zeros) each time.</p>
+<p>By default, it simply completes <code>iter</code> steps and then returns cumulative total number of flashes.</p>
+<p>In <code>part2</code> mode, the function will terminate early if it encounters a step where all the octopuses are flashing and return the iteration number, otherwise it will generate a warning.</p>
+<pre class="r"><code>count_flashes &lt;- function(x, iter = 100, part2 = FALSE) {
+  count &lt;- 0
+  for (i in 1:iter) {
+    x &lt;- step1(x)
+    nflashes &lt;- sum(x == 0)
+    if (part2 &amp; nflashes == prod(dim(x)))
+      return(i)
+    count &lt;- count + nflashes
+  }
+  if (part2)
+    warning(&#39;No synchronization detected in &#39;, iter, &#39; steps&#39;)
+  count
+}</code></pre>
+<p>The whole thing runs in about 20 milliseconds on my input dataset, or 60 milliseconds using the base R convolution function.</p>
+</div>
+</div>
+<div id="day12" class="section level2">
+<h2>Day 12 - <a href="Passage%20Pathing">Passage Pathing</a></h2>
+<div id="counting-paths" class="section level3">
+<h3>Counting paths</h3>
+<p>Today’s puzzle is very obviously a graph theory problem, so it would seem intuitive to break out <strong>igraph</strong> for this.
+However, the functions in that package are mainly designed for finding the <em>shortest</em> paths from A to B, not a complete list of all possible paths.</p>
+<p>Therefore, it’s easier (as far as I can tell) to solve this with your own data structure and a recursive function or two.</p>
+<p><a href="https://twitter.com/antoine_fabri/status/1469989831522541574">Antoine Fabri</a> suggested a rather neat solution of describing the graph with a named list, where the names of the elements describe a node, and the vector contained therein list the other nodes reachable from that point.</p>
+<p>We can read in the data as follows:</p>
+<pre class="r"><code>read_edges &lt;- function(file) {
+  edges &lt;- read.table(file, sep = &#39;-&#39;, col.names = c(&#39;from&#39;, &#39;to&#39;))
+  edges &lt;- rbind(edges, setNames(edges, rev(colnames(edges))))
+  edges &lt;- edges[edges$to != &#39;start&#39;, ]
+  split(edges$to, edges$from)
+}</code></pre>
+<p>Then we solve part one with a recursive function that, starting from <code>start</code>, traverses a path all the way to <code>end</code> and increments a counter.
+To avoid revisiting small caves, we discard any edges to vertices with lowercase names, with the aid of <code>tolower()</code>.</p>
+<pre class="r"><code>count_paths &lt;- function(edgelist, node = &#39;start&#39;) {
+  if (node == &#39;end&#39;)
+    return(1)
+  if (!length(edgelist[[node]]))
+    return(0)
+  if (node == tolower(node))
+    edgelist &lt;- lapply(edgelist, \(v) v[node != v])
+  sum(vapply(edgelist[[node]], count_paths, e = edgelist,
+             FUN.VALUE = numeric(1)))
+}</code></pre>
+</div>
+<div id="revisiting-caves" class="section level3">
+<h3>Revisiting caves</h3>
+<p>Part two is just a slight adaptation.
+This time we can’t simply delete small caves as soon as we visit them, so we need to keep track of those visited so far, while keeping the graph intact.
+Once we find ourselves on a node that we have already visited, it means we are visiting it for the second time, so at this point we can delete all the visited nodes and switch over to the function from part one.</p>
+<pre class="r"><code>count_paths2 &lt;- function(edgelist, node = &#39;start&#39;, visited = NULL) {
+  if (node == &#39;end&#39;)
+    return(1)
+  if (node == tolower(node)) {
+    if (node %in% visited) {
+      edgelist &lt;- lapply(edgelist, \(v) v[!v %in% visited])
+      return(count_paths(edgelist, node))
+    }
+    visited &lt;- union(visited, node)
+  }
+  if (!length(edgelist[[node]]))
+    return(0)
+  sum(vapply(edgelist[[node]], count_paths2, e = edgelist, visited,
+             FUN.VALUE = numeric(1)))
+}</code></pre>
+<p>R is quite slow at recursion, so this second function takes about 6 seconds to run on my full input data.
+It may be possible to optimize this further, but that might require the use of <strong>igraph</strong>, which is written in C, rather than a base R solution.</p>
+</div>
+</div>
+<div id="day13" class="section level2">
+<h2>Day 13 - <a href="https://adventofcode.com/2021/day/13">Transparent Origami</a></h2>
+<div id="folding-paper" class="section level3">
+<h3>Folding paper</h3>
+<p>The hardest bit about this puzzle is reading in the data, since we have two different data structures in the same file.</p>
+<p>The neatest way of doing this is to find the separator (a blank line) in the middle of the file, then read through the parts of the file before and after this separately.
+Since there’s only one file to read, you could of course just inspect it in a text editor and find out this line number by hand.
+But here’s a programmatic method.</p>
+<pre class="r"><code>n &lt;- which(readLines(&#39;input.txt&#39;) == &#39;&#39;)
+paper &lt;- read.table(&#39;input.txt&#39;, sep = &#39;,&#39;, nrows = n - 1,
+                    col.names = c(&#39;x&#39;, &#39;y&#39;))
+folds &lt;- read.table(&#39;input.txt&#39;, sep = &#39;=&#39;, skip = n)</code></pre>
+<p>Next, we need a function that’ll fold the paper in half once.
+My initial solution, which works perfectly well, is to convert the <code>x</code> and <code>y</code> coordinates to a matrix representation, then simply update the matrix using subset operations.</p>
+<pre class="r"><code>mat &lt;- with(paper, matrix(0, max(x) + 1, max(y) + 1))
+mat[data.matrix(paper) + 1] &lt;- 1</code></pre>
+<p>Watch out for R’s <a href="https://selbydavid.com/2021/12/06/indexing/">one-based indexing</a>.
+We want to fold along the coordinate <code>f</code>, which is at index <code>f + 1</code>, and so the indices either side are <code>f</code> and <code>f + 2</code>.</p>
+<pre class="r"><code>fold_once &lt;- function(x, dir, f) {
+  if (dir == &#39;fold along y&#39;) {
+    x[, 1:f] | x[, ncol(x):(f + 2)]
+  } else {
+    x[1:f, ] | x[nrow(x):(f + 2), ]
+  }
+}</code></pre>
+<p>At this point you might notice that the paper is always being folded exactly in half every time.
+So the value after the <code>=</code> in the input is actually redundant; it’s always the middle of the matrix.
+For instance, in the example data, the matrix has dimension 15×11 and we fold along <span class="math inline">\(y=7\)</span> (i.e. index 8), which is half of 15.
+The next instruction <span class="math inline">\(x=5\)</span> (index 6) is half of the other dimension.</p>
+<p>From here, loop over the directions and then plot the final matrix using <code>image()</code>.</p>
+</div>
+<div id="tidy-origami" class="section level3">
+<h3>Tidy origami</h3>
+<p>Why do they give us the values to <code>fold along</code> if it’s always the middle value?
+Because it’s not actually very efficient to store these sparse coordinates in a matrix.
+Instead, recognize, as pointed out by <a href="https://twitter.com/_Riinu_/status/1470320577340755972">Riinu Pius</a> and <a href="https://twitter.com/antoine_fabri/status/1470294716000485376">Antoine Fabri</a>, that you can just keep the coordinates in a long format and fold them as follows:</p>
+<pre class="r"><code>fold_once &lt;- function(x, d, f) {
+  x[, d] &lt;- ifelse(x[, d] &gt;= f, 2 * f - x[, d], x[, d])
+  x[!duplicated(x), ]
+}</code></pre>
+<p>Then loop over all the instructions with:</p>
+<pre class="r"><code>fold_paper &lt;- function(x, folds, n = nrow(folds)) {
+  for (i in 1:n)
+    x &lt;- fold_once(x, folds[i, 1], folds[i, 2])
+  x
+}</code></pre>
+<p>And finally you can plot the result using <strong>ggplot2</strong>.</p>
+<pre class="r"><code>library(adventofcode2021)
+input &lt;- read_origami(input_file(13))
+input$n &lt;- nrow(input[[2]])
+folded &lt;- do.call(fold_paper, input)
+
+library(ggplot2)
+ggplot(folded) +
+  aes(x, y) +
+  geom_tile(fill = &#39;#f5c966&#39;) +
+  coord_fixed() +
+  scale_y_reverse() +
+  theme_void()</code></pre>
+<p><img src="https://selbydavid.com/post/2021-12-01-advent_files/figure-html/day13-1.png" width="576" /></p>
+</div>
+</div>
+<div id="day14" class="section level2">
+<h2>Day 14 - <a href="https://adventofcode.com/2021/day/14">Extended Polymerization</a></h2>
+<div id="inserting-letters" class="section level3">
+<h3>Inserting letters</h3>
+<p>The initial approach to this problem is to perform the insertions and build up an ever-lengthening string.
+There might be a way to do this using regular expressions, but I used an approach based on table joins.</p>
+<p>First, read in the data:</p>
+<pre class="r"><code>template &lt;- strsplit(readLines(&#39;input.txt&#39;, n = 1), &#39;&#39;)[[1]]
+template &lt;- data.frame(first = head(template, -1),
+                       second = tail(template, -1))
+rules &lt;- read.table(&#39;input.txt&#39;, skip = 1)
+rules &lt;- data.frame(first  = substr(rules[, 1], 1, 1),
+                    second = substr(rules[, 1], 2, 2),
+                    insert = rules[, 3])</code></pre>
+<p>This should give you two data frames that look something like this:</p>
+<pre><code>  first second
+1     N      N
+2     N      C
+3     C      B
+
+   first second insert
+1      C      H      B
+2      H      H      N
+3      C      B      H
+4      N      H      C
+5      H      B      C
+6      H      C      B
+7      H      N      C
+8      N      N      C
+9      B      H      H
+10     N      C      B
+11     N      B      B
+12     B      N      B
+13     B      B      N
+14     B      C      B
+15     C      C      N
+16     C      N      C</code></pre>
+<p>From here, the method is straightforward.
+Join the <code>template</code> with the <code>rules</code> and produce a new <code>template</code> comprised of the pairs <code>first -&gt; insert</code> and <code>insert -&gt; second</code>.</p>
+<pre class="r"><code>template &lt;- with(merge(template, rules),
+                 data.frame(first = c(first, insert),
+                            second = c(insert, second)))</code></pre>
+<p>Repeat this process the required number of times and we will have a data frame containing all the pairs of letters.</p>
+<p>There’s a problem, though: <code>merge()</code> does not preserve row order, so we’ve lost track of which letters are the first and the last in the sequence.
+This means counting up the letters in either column <code>first</code> or <code>second</code> is going to undercount by 1.
+We could just refer back to the original input, since the first and last letters won’t change.</p>
+<p>However, there’s another neat solution, which takes advantage of the fact that all the middle characters will appear in both columns, but the first and last values, if different, will appear an odd number of times.</p>
+<pre class="r"><code>counts &lt;- (table(unlist(template)) + 1) %/% 2</code></pre>
+<p>From here, the difference between the minimum and maximum counts is given by:</p>
+<pre class="r"><code>diff(range(counts))</code></pre>
+</div>
+<div id="scalable-insertion" class="section level3">
+<h3>Scalable insertion</h3>
+<p>The above approach works for part one, but once we increase the iteration count to 40, the data frame or string representation is far too long to store in memory.
+It simply doesn’t scale.</p>
+<p>Rather than keep the entire sequence and then count up the letters at the end, we can instead store pair frequencies.
+To do this, we can call <code>dplyr::count()</code> or use a base R approach.</p>
+<p>Add a frequency column to the original data frame:</p>
+<pre class="r"><code>template &lt;- data.frame(first  = head(template, -1),
+                       second = tail(template, -1),
+                       n = 1)</code></pre>
+<p>or if you want to aggregate on initialization, you could use:</p>
+<pre class="r"><code>template &lt;- as.data.frame(table(template), stringsAsFactors = FALSE)</code></pre>
+<p>Then after each round of insertions, <code>aggregate()</code> the counts:</p>
+<pre class="r"><code>data &lt;- with(merge(template, rules),
+             data.frame(first = c(first, insert),
+                        second = c(insert, second)))
+template &lt;- aggregate(n ~ first + second, data, sum)</code></pre>
+<p>Finally, the total letter counts are given by:</p>
+<pre class="r"><code>tab &lt;- xtabs(n ~ first + second, template)
+(rowSums(tab) + colSums(tab) + 1) %/% 2</code></pre>
+</div>
+</div>
+<div id="day15" class="section level2">
+<h2>Day 15 - <a href="https://adventofcode.com/2021/day/15">Chiton</a></h2>
+<p>The answer is <a href="https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm">Dijkstra’s algorithm</a>, whether you’re aware of it or not.
+That is, the problem is a weighted, directed graph and you’ve been tasked with finding the shortest path between two points.</p>
+<p>You could write your own implementation in R, but it’ll be slow, so I am going to use the off-the-shelf solution in the <strong>igraph</strong> package.
+The hardest task is converting from a matrix into a 2-dimensional lattice graph.</p>
+<pre class="r"><code>lattice_from_matrix &lt;- function(m) {
+  edges &lt;- data.frame(node1 = c(which(row(m) &lt; nrow(m)),
+                                which(col(m) &lt; ncol(m))),
+                      node2 = c(which(row(m) &gt; 1),
+                                which(col(m) &gt; 1)))
+  edges &lt;- rbind(edges, setNames(edges, c(&#39;node2&#39;, &#39;node1&#39;)))
+  edges$weight &lt;- m[edges$node2]
+  igraph::graph_from_data_frame(edges)
+}</code></pre>
+<p>Then, just let the algorithm do the work.</p>
+<pre class="r"><code>lowest_total_risk &lt;- function(g) {
+  as.vector(igraph::distances(g, v = 1, to = igraph::vcount(g),
+                              mode = &#39;out&#39;, algorithm = &#39;dijkstra&#39;))
+}</code></pre>
+<p>For part two, we need to tile the input and then rerun the code again.</p>
+<pre class="r"><code>tile_matrix &lt;- function(m, times = 5) {
+  m &lt;- Reduce(cbind, lapply(seq_len(times) - 1, &#39;+&#39;, m))
+  m &lt;- Reduce(rbind, lapply(seq_len(times) - 1, &#39;+&#39;, m))
+  m[m &gt; 9] &lt;- m[m &gt; 9] %% 10 + 1
+  m
+}</code></pre>
+<p>The final search takes about 0.8 seconds, which is faster than any base-R Dijkstra loop would be.</p>
+</div>
+<div id="day16" class="section level2">
+<h2>Day 16 - <a href="https://adventofcode.com/2021/day/15">Packet Decoder</a></h2>
+<div id="versions" class="section level3">
+<h3>Versions</h3>
+<p>This puzzle takes a long time to read.
+The solution involves recursive functions that read through the packets and subpackets in turn.
+My approach takes the bits and throws them away as they are processed, until there are none left (or, for sub-packets, if we have finished parsing the requisite number).</p>
+<p>We are working between bases here, so you want a couple of utility functions to convert to and from integers.</p>
+<pre class="r"><code>to_bits &lt;- function(x) {
+  ints &lt;- strtoi(strsplit(x, &#39;&#39;)[[1]], 16)
+  bits &lt;- sapply(ints, \(n) tail(rev(as.numeric(intToBits(n))), 4))
+  as.vector(bits)
+}</code></pre>
+<p>Unfortunately, <code>strtoi</code> is not your friend for the binary-to-integer conversion, because it will almost surely silently introduce integer overflow on your main input data.
+Here’s one I prepared earlier that uses floating point numbers so it won’t overflow.</p>
+<pre class="r"><code>binary_to_int &lt;- function(x) {
+  sum(x * 2 ^ rev(seq_along(x) - 1))
+}</code></pre>
+<p>Now here’s the main recursion.</p>
+<pre class="r"><code>packet_versions &lt;- function(bits, depth = 0, rem_subs = Inf, eval = FALSE) {
+  acc &lt;- 0
+  while (any(bits &gt; 0) &amp; rem_subs &gt; 0) {
+    rem_subs &lt;- rem_subs - 1
+    version &lt;- binary_to_int(bits[1:3])
+    acc &lt;- acc + version
+    type &lt;- binary_to_int(bits[4:6])
+    bits &lt;- tail(bits, -6)
+    if (type == 4) { # literal value
+      n_groups &lt;- which.min(bits[seq(1, length(bits), 5)])
+      sub &lt;- head(bits, n_groups * 5)
+      sub &lt;- sub[(seq_along(sub) - 1) %% 5 &gt; 0]
+      # literal_value &lt;- binary_to_int(sub)
+      bits &lt;- tail(bits, -n_groups * 5)
+      next
+    }
+    # Operator mode:
+    lentype &lt;- bits[1]
+    bits &lt;- bits[-1]
+    if (lentype == 0) {
+      sub_length &lt;- binary_to_int(bits[1:15])
+      bits &lt;- tail(bits, -15)
+      sub  &lt;- head(bits, sub_length)
+      acc &lt;- acc + packet_versions(sub, depth + 1)[[&#39;acc&#39;]]
+      bits &lt;- tail(bits, -sub_length)
+    } else {
+      n_subs &lt;- binary_to_int(bits[1:11])
+      bits &lt;- tail(bits, -11)
+      sub_result &lt;- packet_versions(bits, depth + 1, n_subs)
+      acc &lt;- acc + sub_result[[&#39;acc&#39;]]
+      bits &lt;- tail(bits, sub_result[[&#39;length&#39;]])
+    }
+  }
+  if (depth)
+    acc &lt;- c(acc = acc, length = length(bits))
+  acc
+}</code></pre>
+<p>Be careful with length type ID 1, because you need to save the number of bits you’ve parsed and then send this number back to the main function.
+Similarly, it’s a good idea to keep track of how deep in the recursion you are at any given time.</p>
+</div>
+<div id="evaluation" class="section level3">
+<h3>Evaluation</h3>
+<p>The second part is tricky. I decided to adapt my function from part one to generate syntactically-valid R expressions, so that final step is simply evaluating machine-generated code.</p>
+<pre class="r"><code>packet_decode &lt;- function(bits, depth = 0, rem_subs = Inf) {
+  acc &lt;- NULL
+  while (any(bits &gt; 0) &amp; rem_subs &gt; 0) {
+    rem_subs &lt;- rem_subs - 1
+    type &lt;- binary_to_int(bits[4:6])
+    bits &lt;- tail(bits, -6)
+    op &lt;- c(&#39;sum&#39;, &#39;prod&#39;, &#39;min&#39;, &#39;max&#39;, &#39;c&#39;, &#39;`&gt;`&#39;, &#39;`&lt;`&#39;, &#39;`==`&#39;)[type + 1]
+    if (type == 4) { # literal value
+      n_groups &lt;- which.min(bits[seq(1, length(bits), 5)])
+      sub &lt;- head(bits, n_groups * 5)
+      sub &lt;- sub[(seq_along(sub) - 1) %% 5 &gt; 0]
+      literal_value &lt;- binary_to_int(sub)
+      acc$expr &lt;- c(acc$expr, literal_value)
+      bits &lt;- tail(bits, -n_groups * 5)
+      next
+    }
+    # Operator mode:
+    lentype &lt;- bits[1]
+    bits &lt;- bits[-1]
+    if (lentype == 0) {
+      sub_length &lt;- binary_to_int(bits[1:15])
+      bits &lt;- tail(bits, -15)
+      sub  &lt;- head(bits, sub_length)
+      sub_result &lt;- packet_decode(sub, depth + 1)
+      subexpr &lt;- c(op, sub_result[[&#39;expr&#39;]])
+      acc$expr &lt;- c(acc$expr, list(subexpr))
+      bits &lt;- tail(bits, -sub_length)
+    } else {
+      n_subs &lt;- binary_to_int(bits[1:11])
+      bits &lt;- tail(bits, -11)
+      sub_result &lt;- packet_decode(bits, depth + 1, n_subs)
+      subexpr &lt;- c(op, sub_result[[&#39;expr&#39;]])
+      acc$expr &lt;- c(acc$expr, list(subexpr))
+      bits &lt;- tail(bits, sub_result[[&#39;length&#39;]])
+    }
+  }
+  if (depth)
+    acc$length &lt;- length(bits)
+  acc
+}</code></pre>
+<p>The structure of the function is essentially the same, and the result is a deeply nested list representing the hierarchical tree of expressions.
+From here we want to convert it from a tree into some code, and the function <code>combine_expr</code> does this for us:</p>
+<pre class="r"><code>combine_expr &lt;- function(node, eval = FALSE) {
+  if (length(node) == 1)
+    return(node)
+  expr &lt;- sprintf(&#39;%s(%s)&#39;, node[1], paste(node[-1], collapse = &#39;, &#39;))
+  if (!eval)
+    return(expr)
+  eval(str2expression(expr))
+}</code></pre>
+<p>However, it will only work on leaves of the tree.
+How can we correctly operate on the entire tree and turn it into a single expression?
+That requires more recursion.
+Annoyingly, the function <code>rapply</code> doesn’t quite do what’s needed, so we introduce yet another function, called <code>packet_parse</code>:</p>
+<pre class="r"><code>packet_parse &lt;- function(tree, eval = FALSE) {
+  if (!is.list(tree))
+    return(combine_expr(tree, eval))
+  expr &lt;- packet_parse(unlist(lapply(tree, packet_parse, eval), use.names = F))
+  if (eval &amp; is.character(expr))
+    return(eval(parse(text = expr)))
+  expr
+}</code></pre>
+<p>You can choose to view the expression, or evaluate it.
+Here is my final expression generated by <code>packet_parse</code>:</p>
+<pre class="r"><code>sum(prod(425542, `&lt;`(247, 247)), sum(121, 21236), prod(`&gt;`(sum(11, 12, 11), sum(7, 10, 7)), 32566), prod(`&lt;`(sum(8, 7, 15), sum(6, 11, 10)), 4507180), min(prod(prod(sum(prod(max(prod(min(prod(min(prod(max(sum(sum(max(sum(sum(min(prod(prod(130)))))))))))))))))))), 139930778832, prod(`&gt;`(52, 667118), 10), 602147, max(62199), prod(14849899, `&lt;`(11716, 26963)), prod(4083, `&gt;`(135, 135)), prod(135, 217, 224), 73, prod(sum(13, 4, 9), sum(12, 15, 7), sum(13, 10, 9)), min(194), prod(182, 197, 136, 2, 242), prod(226, 142, 34, 124), max(4025, 186042), min(30059, 126119002), min(9, 260, 162), prod(`&lt;`(4, 4), 28699), prod(1945, `==`(1714, 1714)), prod(7, `&lt;`(1545, 108)), sum(12), prod(200, `&gt;`(31050, 655605)), 3154, prod(3, `&lt;`(64896, 116)), 3055, prod(13), min(48082, 226938, 1175, 68077774919), sum(66, 15, 181, 1380642642, 11831587), prod(241, 59), prod(150, `&gt;`(2742, 113)), 37007908601, max(52444, 11, 13008816, 2935), 20723, 8, prod(5, `&gt;`(6241732, 759708)), sum(prod(15, 7, 4), prod(14, 2, 12), prod(13, 6, 6)), sum(2877, 229333, 655820, 1020971), sum(39581, 2, 14), max(982557, 44, 31), 68, prod(`==`(11530, 3492), 41177), prod(`==`(236, 918711093), 3937), max(903466, 228, 6, 25989131, 4028), 229, min(299875, 10969849, 11481, 2281, 13), prod(55300721, `&gt;`(63, 63)), prod(244, `&gt;`(sum(7, 13, 7), sum(12, 5, 14))), prod(4494263, `==`(sum(4, 15, 4), sum(3, 3, 14))), prod(`&lt;`(45, 3307915), 58514), prod(3596530693, `&lt;`(sum(3, 12, 4), sum(9, 11, 2))))</code></pre>
+<p>Which yields the answer <code>184487454837</code> when evaluated.</p>
+</div>
+</div>
+<div id="day17" class="section level2">
+<h2>Day 17 - <a href="https://adventofcode.com/2021/day/15">Trick Shot</a></h2>
+<p>A little bit of secondary-school mathematics can help your search for the highest trajectory, and for the total number of trajectories.
+Key is that the <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> movements are essentially independent.</p>
+<p>Remember the formula
+<span class="math display">\[
+v = u + at
+\]</span>
+gives velocity <span class="math inline">\(v\)</span> at time <span class="math inline">\(t\)</span> for initial velocity <span class="math inline">\(u\)</span> and average acceleration <span class="math inline">\(a\)</span>.
+How long does it take to reach the peak?
+Rearranging and plugging in values:
+<span class="math display">\[t = \frac{v - u} a = \frac{0 - u}{-1} = u,\]</span>
+which tells us that the probe launched with vertical velocity <span class="math inline">\(u\)</span> <em>always</em> reaches its peak at time <span class="math inline">\(t = u\)</span> (except if pointed downwards: then its highest point is the launch position 0).
+At that time, the sum of the arithmetic progression is
+<span class="math display">\[
+x = \frac{t}2 \Bigl(2u + (t - 1)a\Bigr) = u^2 + \frac{u - u^2}2 = \frac{u(u+1)}{2},
+\]</span>
+for any launch velocity <span class="math inline">\(u\)</span>.
+Hence, the peak of the curve is always <span class="math inline">\(\max\{0, u_y(u_y + 1) / 2\}\)</span> where <span class="math inline">\(u_y\)</span> is the vertical component of <span class="math inline">\(u\)</span>.</p>
+<p>Other insights to narrow the search space:</p>
+<ul>
+<li><p>At time <span class="math inline">\(t\)</span>, the probe is at position <span class="math display">\[x = \frac{t}2\left(2u - 1+t)\right)\]</span> (using the formula above), so there is no need to loop through successive time points.</p></li>
+<li><p>Rearrange that formula to get the time it takes for a probe with initial velocity <span class="math inline">\(u\)</span> to reach point <span class="math inline">\(x\)</span>: <span class="math display">\[t = \frac12\left(\sqrt{4u^2+4u-8x+1} + 2u + 1\right).\]</span></p></li>
+<li><p>The maximum horizontal velocity <span class="math inline">\(u_x\)</span> is equal to the right-most edge of the target area. Any faster and the probe will immediately overshoot.</p></li>
+<li><p>It takes <span class="math inline">\(t = u_x(u_x+1)/2\)</span> time points for the probe to be slowed down by drag to zero horizontal velocity. This gives us a lower bound <span class="math display">\[u_x &gt; \frac12 \left(\sqrt{8x_1+1} - 1\right),\]</span> because if the initial velocity is any less than this then the probe will never reach the left edge of the target area.</p></li>
+</ul>
+<p>In the end I didn’t use all these facts, because a ‘brute force’ type search over several points seems to be fast enough and less fiddly to get the formulae right.
+But it could certainly be faster if using these points.</p>
+<pre class="r"><code>search_trajectories &lt;- function(target, trick = TRUE) {
+  max_x &lt;- target[&#39;x2&#39;]
+  min_x &lt;- ceiling((sqrt(8 * target[&#39;x1&#39;] + 1) - 1) / 2)
+  max_y &lt;- -target[&#39;y1&#39;] - 1
+  min_y &lt;- target[&#39;y1&#39;]
+  n &lt;- 0
+  for (y in max_y:min_y) {
+    end_time &lt;- time_to_reach(y, target[&#39;y1&#39;]) - y
+    y_seq &lt;- -cumsum(-y:end_time)
+    if (min(y_seq) &gt; target[&#39;y1&#39;])
+      warning(&#39;sequence too short for y = &#39;, y)
+    for (x in max_x:min_x) {
+      x_seq &lt;- cumsum(x:0)
+      if (x &lt; end_time + y) {
+        x_seq &lt;- c(x_seq, rep(x_seq[x], end_time + y - x))
+      } else x_seq &lt;- head(x_seq, end_time + y + 1)
+      if (any(x_seq &gt;= target[&#39;x1&#39;] &amp; x_seq &lt;= target[&#39;x2&#39;] &amp;
+              y_seq &gt;= target[&#39;y1&#39;] &amp; y_seq &lt;= target[&#39;y2&#39;])) {
+        if (trick)
+          return(y * (y + 1) / 2)
+        n &lt;- n + 1
+      }
+    }
+  }
+  n
+}</code></pre>
+<p>In principle—though I couldn’t quite get it to work—we could avoid the loops by calculating the times it takes the probe’s <span class="math inline">\(y\)</span>-position to reach the top/bottom of the target area, using the <code>time_to_reach</code> formula.
+Then plug those times into the position formula to see if the <span class="math inline">\(x\)</span>-coordinate is also within the target area at those times.
+If so, then it hits the target.</p>
+<pre class="r"><code>position &lt;- function(u, t) {
+  t / 2 * (2 * u + (t - 1) * -1)
+}
+
+time_to_reach &lt;- function(u, x) {
+  round(1/2 * (sqrt(4 * u^2 + 4 * u - 8 * x) + 2 * u + 1))
+}</code></pre>
+</div>
+<div id="day18" class="section level2">
+<h2>Day 18 - <a href="https://adventofcode.com/2021/day/18">Snailfish</a></h2>
+<div id="reduction" class="section level3">
+<h3>Reduction</h3>
+<p>I decided (for better or for worse) to convert the square brackets into <code>list(...)</code> expressions, then parse the input as nested lists.</p>
+<pre class="r"><code>read_sf &lt;- function(input) {
+    out &lt;- lapply(input, function(string) {
+        expr &lt;- gsub(&#39;\\]&#39;, &#39;)&#39;, gsub(&#39;\\[&#39;, &#39;list(&#39;, string))
+        eval(parse(text = expr))
+    })
+    if (length(out) == 1) return(unlist(out, FALSE)) else out
+}</code></pre>
+<p>Then we need to perform the reductions on our list structures.
+Splitting is easy, but it’s important that we split only the first node we find and then stop.
+I used a counter called <code>done</code> to ensure the <code>rapply</code> loop terminates early.</p>
+<pre class="r"><code>sf_split &lt;- function(lst) {
+    done &lt;- FALSE
+    rapply(lst, \(n) {
+        if (n &lt;= 9 | done) return(n)
+        done &lt;&lt;- TRUE
+        list(floor(n / 2), ceiling(n / 2))
+    }, how = &#39;replace&#39;)
+}</code></pre>
+<p>To explode, it’s a bit trickier because you need several nodes to interact with one another.
+I wrote some recursive functions to find the depth of the list, to mark the appropriate node with an <code>NA</code> and then to replace it.</p>
+<p>I also discovered the <code>relist</code> function, which makes it possible to flatten a list, do some vector operations (handy for getting the indices just before and after our exploded pair) and then return the data to the original nested structure.</p>
+<pre class="r"><code>depths &lt;- function(lst, depth = 0) {
+    if (!is.list(lst)) return(depth)
+    unlist(sapply(lst, depths, depth + 1))
+}
+
+replaceNA &lt;- function(lst, replacement) {
+    if (all(is.na(lst))) return(replacement)
+    if (!is.list(lst)) return(lst)
+    lapply(lst, replaceNA, replacement)
+}
+
+sf_explode &lt;- function(lst) {
+    i &lt;- which(depths(lst) &gt; 4)
+    L &lt;- i[1]; R &lt;- i[2]
+    x &lt;- unlist(lst)
+    if (L &gt; 1)
+        x[L - 1] &lt;- x[L - 1] + x[L]
+    if (R &lt; length(x))
+        x[R + 1] &lt;- x[R] + x[R + 1]
+    x[c(L, R)] &lt;- NA
+    replaceNA(relist(x, lst), 0)
+}</code></pre>
+<p>Then we put it all together as reduce operations.</p>
+<pre class="r"><code>sf_reduce &lt;- function(lst) {
+    Reduce(\(a, b) list(sf_reduce1(a), b), lst) |&gt; sf_reduce1()
+}
+
+sf_reduce1 &lt;- function(lst) {
+    if (max(depths(lst)) &gt; 4) lst &lt;- Recall(sf_explode(lst))
+    if (any(unlist(lst) &gt; 9)) lst &lt;- Recall(sf_split(lst))
+    lst
+}</code></pre>
+<p>If you try to reduce the whole list in one operation, you’ll definitely get a stack overflow with the larger input datasets.
+Thus it’s important to reduce from the left until it’s as simple as possible, then combine it with the next line.</p>
+<p>My code is quite slow; it might be more sensible to rewrite this as a <code>repeat</code> loop rather than doing all this recursion.</p>
+<p>Finally, calculate the magnitude.</p>
+<pre class="r"><code>magnitude &lt;- function(lst) {
+    if (!is.list(lst)) return(lst)
+    Reduce(\(a, b) 3 * magnitude(a) + 2 * magnitude(b), lst)
+}</code></pre>
+</div>
+<div id="pairs" class="section level3">
+<h3>Pairs</h3>
+<p>There might be a clever way of finding the biggest pair but I use brute force:</p>
+<pre class="r"><code>combos &lt;- t(combn(length(input), 2))
+combos &lt;- rbind(combos, combos[, 2:1])
+magnitudes &lt;- apply(combos, 1, \(i) magnitude(sf_reduce(input[i])))
+max(magnitudes)</code></pre>
+</div>
+</div>
+<div id="day19" class="section level2">
+<h2>Day 19 - <a href="https://adventofcode.com/2021/day/19">Beacon Scanner</a></h2>
+<div id="transformers" class="section level3">
+<h3>Transformers</h3>
+<p>This was the hardest problem yet.
+There were a few ideas I had about how to solve the problem quickly, possibly without even having to find any of the actual coordinates.
+However, I could not work out how to implement them in the end and resorted to the ‘slow’ way: iterating through the scanners one by one and trying the rotations and reflections in turn until they fit into place.</p>
+<p>One key insight is that pairwise Euclidean distances <em>within</em> a scanner’s beacons are invariant to translations and rotations.
+Thus, if we compute within-scanner distance matrix for each one, we know that adjacent scanners must have at least <span class="math inline">\(12 * (12 - 1) / 2 = 66\)</span> distance pairs in common.
+This is a good way to set up the initial search strategy.</p>
+<p><a href="https://twitter.com/drob/status/1472748122275291137">David Robinson</a> offers a neat solution which finds the rotations and reflections mathematically, rather than by trial and error.</p>
+<p>The clever solution, which I suspect I had been looking for but never quite reached, is to think like a statistician should, and <a href="https://twitter.com/mccorvie/status/1472684849123102720">find the transformations using linear regression</a>.
+Thanks to Ryan McCorvie.</p>
+<p>Whatever method you go for, read in the data, with judicious handling of <code>NA</code>s to divide up the scanners.</p>
+<pre class="r"><code>read_scanners &lt;- function(file) {
+  input &lt;- read.csv(file, header = FALSE, col.names = c(&#39;x&#39;, &#39;y&#39;, &#39;z&#39;))
+  input$scanner &lt;- cumsum(is.na(input$z))
+  type.convert(na.omit(input), as.is = TRUE)
+}</code></pre>
+<p>Here is an initial solution, partly inspired by <a href="https://twitter.com/ashbaldry_/status/1472566622535798785">Ashley Baldry</a>.
+Generate copies of every scanner’s beacons in the various orientations.
+There are supposed to be 24 different transformations but I ended up with 48.</p>
+<pre class="r"><code>orientate_scanners &lt;- function(input) {
+  mirror &lt;- expand.grid(x = c(1, -1), y = c(1, -1), z = c(1, -1))
+  rotate &lt;- expand.grid(x = 1:3, y = 1:3, z = 1:3)
+  rotate &lt;- rotate[apply(rotate, 1, \(x) length(unique(x)) == 3), ]
+  lapply(split(input, input$scanner), function(s) {
+    s &lt;- as.matrix(s)[, 1:3]
+    apply(rotate, 1, \(r) s[, r], simplify = F) |&gt;
+      lapply(\(m) apply(mirror, 1, \(r) sweep(m, 2, r, &#39;*&#39;), simplify = F)) |&gt;
+      unlist(recursive = F, use.names = F)
+  })
+}</code></pre>
+<p>Then loop through the scanners and keep rotating them until the <em>between-scanner</em> distance matrix contains ≥12 common distances, implying that the beacons are in the right orientation and just need translating (by this distance).</p>
+<pre class="r"><code>locate_scanners &lt;- function(input) {
+  scanners &lt;- orientate_scanners(input)
+  scanner_coords &lt;- rep(0, 3)
+  beacons &lt;- scanners[[1]][[1]]
+  scanners &lt;- scanners[-1]
+  while (length(scanners)) {
+    for (scanner in scanners) {
+      done &lt;- FALSE
+      for (orientation in scanner) {
+        dtbl &lt;- table(dist2(orientation, beacons))
+        if (any(dtbl &gt;= 12)) {
+          done &lt;- TRUE
+          break
+        }
+      }
+      if (!done) next
+      scanners &lt;- setdiff(scanners, list(scanner))
+      trans &lt;- names(dtbl)[dtbl &gt;= 12]
+      trans &lt;- scan(textConnection(trans), quiet = TRUE)
+      scanner_coords &lt;- rbind(scanner_coords, trans)
+      beacons &lt;- unique(rbind(beacons, sweep(orientation, 2, trans, &#39;+&#39;)))
+    }
+  }
+  list(beacons = beacons, scanners = scanner_coords)
+}</code></pre>
+<p>The helper function <code>dist2</code> stores the multi-dimensional pairwise distances as a string, and the most common one is then parsed back into a 3-vector using <code>scan</code>.</p>
+<pre class="r"><code>dist2 &lt;- function(X, Y) {
+  apply(X, 1, \(x) apply(Y, 1, \(y) paste(y - x, collapse = &#39; &#39;)))
+}</code></pre>
+</div>
+<div id="linear-regression" class="section level3">
+<h3>Linear regression</h3>
+<p>It’s not particularly satisfactory having a solution that takes over 10 seconds to run for part one, and systematically checking every rotation and reflection seems rather too much like brute force.</p>
+<p>The next day, I refactored Ryan McCorvie’s linear regression solution as follows.</p>
+<pre class="r"><code>read_scanners &lt;- function(file) {
+  input &lt;- read.csv(file, header = FALSE, col.names = c(&#39;x&#39;, &#39;y&#39;, &#39;z&#39;))
+  split(input, cumsum(is.na(input$z))) |&gt;
+    lapply(&#39;[&#39;, -1, ) |&gt;
+    lapply(type.convert, as.is = TRUE)
+}
+scanners &lt;- read_scanners(input_file(19))
+
+# Compute pairwise distances among beacons *within* each scanner.
+distances &lt;- lapply(scanners, dist)
+
+# How many such distances does each pair of scanners have in common?
+similarity &lt;- combn(distances, 2, \(x) Reduce(intersect, x), simplify = F)
+
+# Using this information, which scanners appear to overlap?
+overlaps &lt;- lengths(similarity) &gt;= 12 * (12 - 1) / 2
+
+# Just keep those pairs.
+similarity &lt;- similarity[overlaps &gt; 0]
+
+# But it helps if we can remember which they are.
+pairs &lt;- t(combn(length(scanners), 2)[, overlaps &gt; 0])
+
+# Match up those beacons that two scanners have in common.
+match_beacons &lt;- function(s1, s2) {
+  m1 &lt;- as.matrix(distances[[s1]])
+  m2 &lt;- as.matrix(distances[[s2]])
+  matching &lt;- c()
+  for (j1 in 1:ncol(m1)) {
+    done &lt;- FALSE
+    for (j2 in 1:ncol(m2)) {
+      if (length(intersect(m1[, j1], m2[, j2])) &gt;= 12) {
+        matching &lt;- rbind(matching, cbind(s1 = j1, s2 = j2))
+        done &lt;- TRUE
+        break
+      }
+    }
+    if (done) next
+  }
+  matching
+}
+
+# For two scanners, how can we orientate the 2nd to match the 1st?
+align_scanners &lt;- function(s1, s2) {
+  match &lt;- match_beacons(s1, s2)
+
+  # Time for a bit of linear regression!
+  LHS &lt;- scanners[[s1]][match[, &#39;s1&#39;], , drop = F]
+  RHS &lt;- scanners[[s2]][match[, &#39;s2&#39;], , drop = F]
+  lm_x &lt;- lm(LHS$x ~ x + y + z, RHS)
+  lm_y &lt;- lm(LHS$y ~ x + y + z, RHS)
+  lm_z &lt;- lm(LHS$z ~ x + y + z, RHS)
+  
+  # The predictions gives the beacon coordinates.
+  beacon_coords &lt;- as.data.frame(apply(cbind(
+    x = predict(lm_x, scanners[[s2]]),
+    y = predict(lm_y, scanners[[s2]]),
+    z = predict(lm_z, scanners[[s2]])), 2, round))
+
+  # The model intercept is the translation / the scanner position!
+  scanner_coords &lt;- apply(cbind(x = coef(lm_x)[1],
+                                y = coef(lm_y)[1],
+                                z = coef(lm_z)[1]), 2, round)
+
+  # Globally update
+  scanners[[s2]] &lt;&lt;- beacon_coords
+  beacons &lt;&lt;- unique(rbind(beacons, beacon_coords))
+  scanner_locations &lt;&lt;- rbind(scanner_locations, scanner_coords)
+}
+
+# Do the search.
+found &lt;- 1
+to_find &lt;- 2:length(scanners)
+scanner_locations &lt;- c(0, 0, 0)
+beacons &lt;- scanners[[1]]
+while (length(to_find)) {
+  overlaps_with_found &lt;- pairs[xor(pairs[, 1] %in% found,
+                                   pairs[, 2] %in% found), , drop = F]
+  for (i in 1:nrow(overlaps_with_found)) {
+    # Let s1 be the already-aligned scanner.
+    s1 &lt;- intersect(overlaps_with_found[i, ], found)
+    if (length(s1) &gt; 1) next
+    s2 &lt;- setdiff(overlaps_with_found[i, ], s1)
+    message(&#39;Joining &#39;, s1, &#39; and &#39;, s2)
+    align_scanners(s1, s2)
+    found &lt;- c(found, s2)
+    to_find &lt;- setdiff(to_find, found)
+  }
+}</code></pre>
+<p>As well as being elegant, it’s also <em>far</em> quicker than my initial approach.
+You can see <a href="https://github.com/mccorvie/advent-of-code-2021/blob/main/Dec%2019%20Beacon%20Scanner.R">Ryan’s original code on GitHub</a>.</p>
+</div>
+<div id="manhattan-distance" class="section level3">
+<h3>Manhattan distance</h3>
+<p>Part two, assuming you’ve been keeping track of the scanner locations or translations, is a one-liner.
+Distance matrices are a built-in feature of R!</p>
+<pre class="r"><code>max(dist(result$scanners, &#39;manhattan&#39;))</code></pre>
+</div>
+</div>
+<div id="day20" class="section level2">
+<h2>Day 20 - <a href="https://adventofcode.com/2021/day/20">Trench Map</a></h2>
+<p>My test-driven development strategy was caught out here because there are some key qualities of the test dataset that are not found in any of the examples given in the puzzle description.</p>
+<p>Eric repeatedly emphasizes that the image space is meant to be <em>infinite</em>, but it’s easy to overlook this and assume it just means the output image will be larger in size than the input image, possibly with coordinate indices below zero.</p>
+<p>Firstly, read in the data.</p>
+<pre class="r"><code>read_pixels &lt;- function(file) {
+  input &lt;- readLines(file)
+  algorithm &lt;- strsplit(input[1], &#39;&#39;)[[1]] == &#39;#&#39;
+  img &lt;- do.call(rbind, strsplit(tail(input, -2), &#39;&#39;)) == &#39;#&#39;
+  list(image = img, algorithm = algorithm)
+}</code></pre>
+<p>This produces a logical matrix as the input image and a logical vector (of length 512) for the algorithm.
+Next, we need a way of finding the codes from each pixel’s neighbours.
+Here is my neat vectorized solution.</p>
+<pre class="r"><code>binary_neighbours_to_int &lt;- function(x, pad = 0) {
+    I &lt;- nrow(x)
+    J &lt;- ncol(x)
+    . &lt;- pad
+    2^8 * rbind(., cbind(., x[-I, -J])) +    # NW
+      2^7 * rbind(., x[-I, ]) +              # N
+      2^6 * rbind(., cbind(x[-I, -1], .)) +  # NE
+      2^5 * cbind(., x[, -J]) +              # W
+      2^4 * x +                              # .
+      2^3 * cbind(x[, -1], .) +              # E
+      2^2 * rbind(cbind(., x[-1, -J]), .) +  # SW
+      2^1 * rbind(x[-1, ], .) +              # S
+      2^0 * rbind(cbind(x[-1, -1], .), .)    # SE
+}</code></pre>
+<p>Now we need to run the algorithm itself.
+At this point you’ll come up against something that’s easy to overlook: the two end bits of the algorithm.
+In the example data, <code>algorithm[1]</code> is equal to zero, so any isolated dark pixels (without any neighbours) that would have a neighbour-sum of zero remain dark.</p>
+<p>However, in the test dataset, we have <code>algorithm[1] = 1</code>, which means any empty areas are completely filled (on odd iterations).
+Combine this with the fact that <code>algorithm[512] = 0</code>, which switches those pixels off again on every second step.</p>
+<p>In fact, it’s not possible for anybody’s puzzle input to have both end bits equal to 1, because then the number of light pixels would be infinite after every single image enhancement step.</p>
+<p>How do we use this information?
+By padding out the image area with the appropriate values—1s or 0s—to model the interaction of the borders of the ‘interesting’ part of the image with the surrounding infinite canvas.
+There’s no need to count up the pixels we can’t see (since there are infinitely many of them), but we need to anticipate new ones joining the image as it grows.</p>
+<pre class="r"><code>enhance_image &lt;- function(image, algorithm, n = 1) {
+  . &lt;- algorithm[1]
+  for (i in 1:n) {
+    if (algorithm[1]) . &lt;- !.
+    image &lt;- b &lt;- binary_neighbours_to_int(
+      cbind(., ., rbind(., ., image, ., .), ., .), pad = .)
+    image[] &lt;- algorithm[b + 1]
+  }
+  image
+}</code></pre>
+<p>The argument <code>pad</code> (which in the main function is abbreviated to <code>.</code> for readability) alternates between <code>0</code> and <code>1</code> each step, if (and only if) the first bit of <code>algorithm</code> is equal to 1, which triggers this switching behaviour.</p>
+<p>It might seem like a lot of matrix operations but <code>enhance_image()</code> completes all 50 steps in less than 200 milliseconds.</p>
+<p>The final answer is just the <code>sum()</code> of the output image.</p>
+</div>
+<div id="day21" class="section level2">
+<h2>Day 21 - <a href="https://adventofcode.com/2021/day/21">Dirac Dice</a></h2>
+<div id="deterministic-dice" class="section level3">
+<h3>Deterministic dice</h3>
+<p>For part one, we simply have to play the game.
+Just write a <code>while</code> or <code>repeat</code> loop to keep going until someone achieves a score of 1000.
+The following code is more verbose than it needs to be:</p>
+<pre class="r"><code>deterministic_dice &lt;- function(player1, player2) {
+  score1 &lt;- score2 &lt;- nrolls &lt;- 0
+  dice &lt;- 1:3
+  repeat {
+    player1 &lt;- (player1 + sum(dice) - 1) %% 10 + 1
+    score1 &lt;- score1 + player1
+    nrolls &lt;- nrolls + 3
+    if (score1 &gt;= 1000) break
+
+    player2 &lt;- (player2 + sum(dice + 3) - 1) %% 10 + 1
+    score2 &lt;- score2 + player2
+    nrolls &lt;- nrolls + 3
+    if (score2 &gt;= 1000) break
+
+    dice &lt;- (dice + 6 - 1) %% 100 + 1
+  }
+  prod(nrolls, min(score1, score2))
+}</code></pre>
+</div>
+<div id="quantum-states" class="section level3">
+<h3>Quantum states</h3>
+<p>Part two calls for recursion, and with some optimization if you want your code to run in any reasonable time frame.
+This means that at every opportunity, if there is room to ignore or delete universes that are redundant, we should do so.</p>
+<p>Each player is still rolling the die three times, but there are only 7 possible unique sums of the values 1, 2 and 3:</p>
+<pre class="r"><code>rolls &lt;- table(rowSums(expand.grid(1:3, 1:3, 1:3)))
+rolls &lt;- mapply(c, sum = as.numeric(names(rolls)), n = rolls, SIMPLIFY = F)</code></pre>
+<p>Then, at each set of rolls, we recursively count up the number of wins associated with each player for the sum of those rolls.
+We only need one function to do this: for player 2’s wins, we can just swap the players and accumulated scores around and pretend that player 2 is now player 1.</p>
+<pre class="r"><code>dirac_dice &lt;- function(player1, player2) {
+  count_wins &lt;- memoise::memoise(
+    function(player1, player2, score1, score2) {
+      Reduce(
+        \(wins, roll) {
+          player1 &lt;- (player1 + roll[&#39;sum&#39;] - 1) %% 10 + 1
+          score1 &lt;- score1 + player1
+          if (score1 &gt;= 21) {
+            return(wins + c(roll[&#39;n&#39;], 0))
+          } else
+            wins + roll[&#39;n&#39;] *
+            rev(count_wins(player2, player1, score2, score1))
+        },
+        rolls,
+        init = c(w1 = 0, w2 = 0))
+    })
+  max(count_wins(player1, player2, 0, 0))
+}</code></pre>
+<p>To avoid revisiting universes, some caching is useful, so we can look up the value of any function call that has already been made.
+You could store and look up these results in a named vector, or you could do it the lazy way like I did and use the package <strong>memoise</strong>, which simply does this for you behind the scenes.</p>
+<p>My code takes about two minutes to run for part two.
+Not quick, but R isn’t very fast at recursive function calls.</p>
+</div>
+</div>
+<div id="day22" class="section level2">
+<h2>Day 22 - <a href="https://adventofcode.com/2021/day/22">Reactor Reboot</a></h2>
+<p>On day 22, it’s pretty obvious from the outset that the ‘obvious’ solution to part one—explicitly keeping track of all the cubes—is not going to work at all when the problem scales up for part two.</p>
+<p>I won’t even bother to show the ‘slow’ method here, and we can focus on the scalable solution.
+Rather than look after one row for every cube (or at least every switched-on cube) in the reactor, we need to store the boundaries of the cuboids only, in a similar format to how they are given in the input.</p>
+<p>The tricky part here is that the union or difference of two overlapping cuboids (or more generally, 3-dimensional intervals) cannot, in general be described as two cuboids: the new shape is non-convex.</p>
+<p>What we need to do is partition the two input cuboids into a several smaller non-overlapping ones, and then do the union operation (making sure not to double-count the intersection) or the set-difference operation (subtracting the intersection from the first cuboid).</p>
+<p>For example, consider, in two dimensions, two cuboids <code>A</code> and <code>B</code>:</p>
+<pre><code> ________           ____             ___              ____           ___
+| A   __|____      | A1|   ____     |__| } A2        | A1|   ____   |__| A3  ___
+|____|__|   |  =   |___|  | B1|  +  |__| } }      =  |___|  | B1|    ___    |__| C
+     |____B_|             |___|     |__|   } B2             |___|   |__| B3
+</code></pre>
+<p>I decided to use object-orientated programming for this, through the <strong>R6</strong> package.
+This allows me to define a new <code>Cuboid</code> class, with fields describing the <code>x</code>, <code>y</code> and <code>z</code> ranges, and to write methods to—if an instance of a cuboid is overlapping with another—divide the two into a set of non-overlapping ones to perform the necessary set operations.</p>
+<pre class="r"><code>Cuboid &lt;- R6::R6Class(&#39;Cuboid&#39;,
+    public = list(
+        x = NULL, y = NULL, z = NULL,
+        initialize = function(x, y, z) {
+            self$x &lt;- x
+            self$y &lt;- y
+            self$z &lt;- z
+        },
+        volume = function() {
+            (diff(self$x) + 1) *
+            (diff(self$y) + 1) *
+            (diff(self$z) + 1)
+        },
+        cubes = function() { # for debugging purposes
+            expand.grid(self$x[1]:self$x[2],
+                        self$y[1]:self$y[2],
+                        self$z[1]:self$z[2])
+        },
+        is_overlapping = function(that) {
+            is_overlapping(self$x, that$x) &amp;&amp;
+            is_overlapping(self$y, that$y) &amp;&amp;
+            is_overlapping(self$z, that$z)
+        },
+        remove = function(that) {
+            stopifnot(is.R6(that))
+            if (!self$is_overlapping(that))
+              return(list(self))
+            x &lt;- self$x
+            y &lt;- self$y
+            z &lt;- self$z
+            olx &lt;- interval_intersect(x, that$x)
+            oly &lt;- interval_intersect(y, that$y)
+            setdiff &lt;- list(
+                if (that$x[1] &gt; x[1])
+                    Cuboid$new(c(x[1], that$x[1] - 1), y, z),
+                if (that$y[1] &gt; y[1])
+                    Cuboid$new(olx, c(y[1], that$y[1] - 1), z),
+                if (that$y[2] &lt; y[2])
+                    Cuboid$new(olx, c(that$y[2] + 1, y[2]), z),
+                if (that$z[1] &gt; z[1])
+                    Cuboid$new(olx, oly, c(z[1], that$z[1] - 1)),
+                if (that$z[2] &lt; z[2])
+                    Cuboid$new(olx, oly, c(that$z[2] + 1, z[2])),
+                if (that$x[2] &lt; x[2])
+                    Cuboid$new(c(that$x[2] + 1, x[2]), y, z)
+            )
+            setdiff[lengths(setdiff) &gt; 0]
+        }
+    )
+)</code></pre>
+<p>We only need a <code>remove()</code> method, because to get the union of two cuboids <code>A</code> and <code>B</code>, we can remove <code>B</code> from <code>A</code>, then add <code>B</code> again and the intersection will only be counted once.</p>
+<p>Then our data import functions are:</p>
+<pre class="r"><code>read_cubes &lt;- function(file) {
+    input &lt;- gsub(&quot;[xyz]=&quot;, &quot;&quot;, readLines(file))
+    input &lt;- strsplit(input, &quot;[ ,]|\\.{2}&quot;)
+    out &lt;- type.convert(as.data.frame(do.call(rbind, input)), as.is = TRUE)
+    setNames(out, c(&quot;mode&quot;, &quot;x1&quot;, &quot;x2&quot;, &quot;y1&quot;, &quot;y2&quot;, &quot;z1&quot;, &quot;z2&quot;))
+}
+
+cuboid_list &lt;- function(reactor) {
+    # Generate list of R6 &#39;Cuboid&#39; class objects.
+    cuboids &lt;- apply(reactor[, -1], 1, \(i)
+        list(set = list(Cuboid$new(i[c(&#39;x1&#39;, &#39;x2&#39;)],
+                                   i[c(&#39;y1&#39;, &#39;y2&#39;)],
+                                   i[c(&#39;z1&#39;, &#39;z2&#39;)]))),
+                                   simplify = FALSE)
+    # Label with the modes.
+    mapply(c, cuboids, reactor$mode, SIMPLIFY = FALSE)
+}</code></pre>
+<p>And, with the help of a few utilities:</p>
+<pre class="r"><code>cuboid_setdiff &lt;- function(set, x) {
+  unlist(lapply(set, \(y) y$remove(x)))
+}
+
+interval_intersect &lt;- function(a, b) {
+    c(max(a[1], b[1]), min(a[2], b[2]))
+}
+
+is_overlapping &lt;- function(a, b) {
+    a[1] &lt;= b[2] &amp;&amp; a[2] &gt;= b[1]
+}</code></pre>
+<p>We can then call our main function:</p>
+<pre class="r"><code>reboot_reactor &lt;- function(reactor, init = FALSE) {
+    if (init)
+      reactor &lt;- reactor[abs(reactor$x1) &lt;= 50 &amp;
+                         abs(reactor$x2) &lt;= 50, ]
+    cuboids &lt;- cuboid_list(reactor)
+    rebooted &lt;-
+        Reduce(cuboids, f = \(a, b) {
+               setdiff &lt;- cuboid_setdiff(a$set, b$set[[1]])
+               if (b[[2]] == &#39;off&#39;)
+                   return(list(set = setdiff))
+               list(set = union(setdiff, b$set))
+        })
+    sum(sapply(rebooted$set, \(x) x$volume()))
+}</code></pre>
+<p>This is surprisingly quick, at least by R standards.</p>
+</div>
+<div id="day23" class="section level2">
+<h2>Day 23 - <a href="https://adventofcode.com/2021/day/23">Amphipod</a></h2>
+<p>Day 23 was where everything went a bit off the rails, because many people in the AoC community were able to solve the puzzle by hand without any coding.
+However, some starting positions were harder to solve than others, and some people (including me) are simply not very good at puzzles like this.</p>
+<p>At that point it’s slightly dispiriting when, if you look online for hints, you don’t find any because everyone just says they solved theirs by hand.
+It also, arguably, departs from a test-driven development paradigm and the idea that solutions are scalable and applicable to any input dataset.</p>
+<p>Long story short: I couldn’t solve mine by hand initially and so had to write some code!</p>
+<p>The complete program is quite long as it includes lots of tedious stuff like defining the distances between all the points on the grid and all the pathways along hallways from one amphipod room to another.
+You can <a href="https://github.com/Selbosh/adventofcode2021/blob/main/R/day23.R">read it in full on GitHub</a>.</p>
+<p>As yesterday, I employed R6 classes to store the states, and as on the day before, used a form of caching to get rid of previously-visited or suboptimal states.
+Specifically, each state describes the positions of all the amphipods, and at each step we explore all the possible states you could go to from here, and their associated costs.</p>
+<p>Here is the main loop:</p>
+<pre class="r"><code>min_amphipod_energy &lt;- function(start) {
+  states &lt;- list(start)
+  best_score &lt;- Inf
+  while (length(states)) {
+    new_states &lt;- list()
+    for (state in states) {
+      if (is.finite(best_score))
+        message(&#39;Best score: &#39;, best_score)
+      for (move in valid_moves(state)) {
+        if (move$finished) {
+          best_score &lt;- min(best_score, move$score)
+        } else if (move$score &lt; best_score) {
+          if (move$key %in% names(new_states)) {
+            old_score &lt;- new_states[[move$key]]$score
+            if (old_score &gt; move$score)
+              new_states[[move$key]]$score &lt;- move$score
+          } else new_states[[move$key]] &lt;- move
+        }
+      }
+    }
+    message(&#39;Exploring &#39;, length(new_states), &#39; new states&#39;)
+    states &lt;- new_states
+  }
+  best_score
+}</code></pre>
+<p>This relies on my custom <code>State</code> class:</p>
+<pre class="r"><code>State &lt;- R6::R6Class(
+  &#39;State&#39;,
+  public = list(
+    rooms = NULL,     # named vector, A1, A2, B1, B2, C1, C2, D1, D2
+    hallways = NULL,  # vector of length 7. Unnamed but order is important.
+    score = NULL,
+    finished = NULL,
+    key = NULL,
+    initialize = function(rooms, hallways = NULL, score = 0) {
+      self$rooms &lt;- rooms
+      self$hallways &lt;- if(!is.null(hallways)) hallways else rep(&#39;.&#39;, 7)
+      self$score &lt;- score
+      self$finished &lt;- all(self$hallways == &#39;.&#39;) &amp;&amp;
+        all(self$rooms == rep(LETTERS[1:4], each = length(rooms) / 4))
+      self$key = paste(c(hallways, rooms), collapse = &#39;,&#39;)
+    },
+    move = function(from, to, from_hallway, score) {
+      rooms &lt;- self$rooms
+      hallways &lt;- self$hallways
+      if (from_hallway) {
+        rooms[to] &lt;- hallways[from]
+        hallways[from] &lt;- &#39;.&#39;
+      } else {
+        hallways[to] &lt;- rooms[from]
+        rooms[from] &lt;- &#39;.&#39;
+      }
+      State$new(rooms, hallways, score)
+    })
+)</code></pre>
+<p>And the bulk of the code is in the method that enumerates all the possible valid moves from any given starting position.</p>
+<pre class="r"><code>valid_moves &lt;- function(state) {
+  room_depth &lt;- length(state$rooms) / 4
+  if (room_depth == 4)
+    distance &lt;- distance2
+  moves &lt;- NULL
+  for (i in seq_along(state$hallways)) {
+    amphipod &lt;- state$hallways[i]
+    # If this spot is empty, nothing to move.
+    if (amphipod == &#39;.&#39;)
+      next
+    dest &lt;- paste0(amphipod, seq_len(room_depth))
+    # If destination room contains other, different amphipods.
+    if (any(setdiff(LETTERS[1:4], amphipod) %in% state$rooms[dest]))
+      next
+    # If any hallway between here and destination is blocked.
+    path &lt;- hallway_paths[[i]][[amphipod]]
+    if (any(state$hallways[path] != &#39;.&#39;))
+      next
+    # Move to the deepest available space in destination room.
+    dest &lt;- dest[max(which(state$rooms[dest] == &#39;.&#39;))]
+    score &lt;- state$score + distance[i, dest] * move_cost[amphipod]
+    moves &lt;- c(moves, state$move(from = i,
+                                 to = dest,
+                                 from_hallway = TRUE,
+                                 score = score))
+  }
+  for (i in seq_along(state$rooms)) {
+    amphipod &lt;- state$rooms[i]
+    room_cell &lt;- names(amphipod)
+    room &lt;- substring(room_cell, 1, 1)
+    pos_in_room &lt;- as.integer(substring(room_cell, 2, 2))
+    # If this spot is empty, nothing to move.
+    if (amphipod == &#39;.&#39;)
+      next
+    # Can&#39;t leave this room if our exit is blocked by another amphipod.
+    if (pos_in_room &gt; 1 &amp;&amp; state$rooms[i - 1] != &#39;.&#39;)
+      next
+    # No point in leaving destination room except to let other types out.
+    if (room == amphipod &amp;&amp;
+        all(state$rooms[paste0(room, pos_in_room:room_depth)] == amphipod))
+      next
+    # Which hallway tile should we move to?
+    empty_hallways &lt;- which(state$hallways == &#39;.&#39;)
+    for (h in empty_hallways) {
+      if (all(hallway_paths[[h]][[room]] %in% empty_hallways)) { # not blocked
+        score &lt;- state$score + distance[h, room_cell] * move_cost[amphipod]
+        moves &lt;- c(moves, state$move(from = i,
+                                     to = h,
+                                     from_hallway = FALSE,
+                                     score = score))
+      }
+    }
+  }
+  moves[order(sapply(moves, \(s) s$score))]
+}</code></pre>
+<p>Final solution runs in about two minutes, for both parts.
+The code above works for both, with a slight tweak to the definitions of the starting position and of the <code>distance</code> matrix for part two.</p>
+</div>
+<div id="day24" class="section level2">
+<h2>Day 24 - <a href="https://adventofcode.com/2021/day/24">Arithmetic Logic Unit</a></h2>
+<p>You can’t brute-force your way out of this one simply by parsing the code into R syntax and evaluating it for all the <span class="math inline">\(9^{14}\)</span> different input permutations.</p>
+<p>This was another puzzle I didn’t really like, because you can’t solve it through test-driven development (except to check the validity of your final answer).
+Essentially, the whole puzzle is in the <code>input.txt</code> file rather than the instructions on the web site.
+It’s also not immediately obvious what your input dataset has in common with other people’s, so the definition of a ‘general purpose’ solution becomes quite nebulous.</p>
+<p>Peek at the <code>input.txt</code> file and work backwards from the bottom.</p>
+<pre><code>mul y 0
+add y w
+add y 5
+mul y x
+add z y</code></pre>
+<p>Here the value <code>+5</code> on the middle line will probably be different for your input (call it <span class="math inline">\(\delta y\)</span>), but everything else should be about the same.</p>
+<p>For the programme to be valid, the final value assigned to <code>z</code> must be equal to zero.
+We have <span class="math inline">\(z_\text{end} \leftarrow z + y = 0\)</span>.
+The line <code>mul y 0</code> resets <code>y</code> to zero (irrespective of its previous value) so the final equation can be rewritten as
+<span class="math display">\[z + (w + 5)x = 0.\]</span>
+Browse through the rest of the programme and you should soon infer the following key points.</p>
+<ul>
+<li>The code is split into 14 chunks of equal length.</li>
+<li>Each starts with <code>w</code> being assigned an input value.</li>
+<li>The variable <code>w</code> is never manipulated apart from this.</li>
+<li>The symbols <code>x</code> and <code>y</code> are auxiliary variables.</li>
+<li>The variable <code>z</code> represents a <a href="https://en.wikipedia.org/wiki/Stack_(abstract_data_type)">stack</a>, which is “popped” every time we see <code>z div 26</code> and is “pushed” by a value of <code>y</code> each time we see <code>add z y</code>. Exactly one of these operations happens per chunk.</li>
+</ul>
+<p>Now, refer to the equation above.
+Since <code>w</code> is equal to an input digit, we have <span class="math inline">\(1 \leq w \leq 9\)</span>, therefore the expression inside the brackets is strictly positive and the equation can <em>only</em> hold when <span class="math inline">\(x = 0\)</span>.</p>
+<p>So what is <span class="math inline">\(x\)</span>?
+Work a bit further back through the code to the start of chunk 14 and we see:</p>
+<pre><code>inp w
+mul x 0    # reset memory of x
+add x z
+mod x 26   # stack.pop()
+div z 26
+add x -11  # dx &lt;- -11
+eql x w    # stack.pop() - 11 == input
+eql x 0    # stack.pop() - 11 != input</code></pre>
+<p>Remember we need <span class="math inline">\(x = 0\)</span> at the final line, so the final expression needs to be <code>FALSE</code>.
+In other words, the penultimate expression must be <code>TRUE</code>: the top value of the stack, minus 11 (<span class="math inline">\(\delta x\)</span>), is equal to the most recent input value (<code>w</code>).
+<span class="math display">\[\text{stack}_1 = w - \delta x\]</span></p>
+<p>So what is the top value of the stack?
+At the end of the previous (<span class="math inline">\(i-1\)</span>st) chunk:</p>
+<pre><code>mul y 0    # reset memory of y
+add y w    # y &lt;- input
+add y 8    # input(i-1) + 8
+mul y x    # (x is 0 or 1 at this stage)
+add z y    # push input(i-1) + 8 onto the stack</code></pre>
+<p>The value 8 corresponds to <span class="math inline">\(\delta y\)</span> but for the previous chunk; let’s call it <span class="math inline">\(\delta y_{i-1} = 8\)</span>.
+Putting it all together, we get</p>
+<p><span class="math display">\[w_{i-1} + \delta y_{i-1} = w_{i} - \delta x_1.\]</span>
+where <span class="math inline">\(i\)</span> is the current chunk where the stack is being popped, and <span class="math inline">\((i-1)\)</span> represents the last time that something was added to the stack (which could be several chunks before).</p>
+<p>Our code, then, just has to pick input values that satisfy these pairs of equations, for each pair of chunks, while maximizing or minimizing the 14-digit input number.</p>
+<pre class="r"><code>read_alu &lt;- function(file) {
+    instr &lt;- read.table(file, fill = NA,
+                        col.names = c(&#39;op&#39;, &#39;lhs&#39;, &#39;val&#39;), row.names = NULL)
+    instr$op &lt;- sub(&#39;mul&#39;, &#39;*&#39;, instr$op)
+    instr$op &lt;- sub(&#39;add&#39;, &#39;+&#39;, instr$op)
+    instr$op &lt;- sub(&#39;eql&#39;, &#39;==&#39;, instr$op)
+    instr$op &lt;- sub(&#39;div&#39;, &#39;%/%&#39;, instr$op)
+    instr$op &lt;- sub(&#39;mod&#39;, &#39;%%&#39;, instr$op)
+    instr$rhs &lt;- ifelse(instr$op == &#39;inp&#39;, &#39;&#39;, instr$lhs)
+    instr$op &lt;- sub(&#39;inp&#39;, &#39;inputs[1]; inputs &lt;- inputs[-1]&#39;, instr$op)
+    instr$expr &lt;- with(instr, paste(lhs, &#39;&lt;-&#39;, rhs, op, val))
+    instr$chunk &lt;- cumsum(instr$val == &#39;&#39;)
+    instr
+}
+
+alu_model_number &lt;- function(instructions, minimize = FALSE) {
+  digits &lt;- integer(14)
+  chunks &lt;- split(instructions, instructions$chunk)
+  z_stack &lt;- c()
+  for (i in seq_along(chunks)) {
+    dx &lt;- as.integer(chunks[[i]]$val[6])  # where x + val
+    dy &lt;- as.integer(chunks[[i]]$val[16]) # where y + val (&amp; val != 25)
+    pop &lt;- chunks[[i]]$val[5] == 26 # z %% val
+    if (!pop) { # &#39;Push&#39; (append) a value onto the stack.
+      z_stack &lt;- c(list(c(dy = dy, pushed = i)), z_stack)
+    } else { # &#39;Pop&#39; (extract) the last value from the stack.
+      dy &lt;- z_stack[[1]][&#39;dy&#39;]
+      pushed &lt;- z_stack[[1]][&#39;pushed&#39;]
+      z_stack &lt;- z_stack[-1]
+      w &lt;- (1:9)[(1:9 + dx + dy) %in% 1:9]
+      w &lt;- if (minimize) min(w) else max(w)
+      digits[pushed] &lt;- w
+      digits[i] &lt;- w + dx + dy
+    }
+  }
+  paste(digits, collapse = &#39;&#39;)
+}</code></pre>
+<p>You can check your working <a href="https://github.com/Selbosh/adventofcode2021/blob/main/tests/testthat/test-day24.R">with a unit test</a> that simply evaluates the ALU code with the input values:</p>
+<pre class="r"><code>alu &lt;- read_alu(input_file(24))
+model_number &lt;- alu_model_number(alu)
+inputs &lt;- as.numeric(strsplit(model_number, &#39;&#39;)[[1]])
+w &lt;- x &lt;- y &lt;- z &lt;- 0
+eval(str2expression(alu$expr))
+expect_equal(z, 0)</code></pre>
+</div>
+<div id="day25" class="section level2">
+<h2>Day 25 - <a href="https://adventofcode.com/2021/day/25">Sea Cucumber</a></h2>
+<p>We finish on a relatively easy one.
+Using a similar style to earlier puzzles, we can find the neighbours in a grid through clever use of <code>rbind()</code> and <code>cbind()</code>.
+It’s easy to adapt so that one side of the map wraps around to the other.</p>
+<pre class="r"><code>move_cucumbers &lt;- function(cucumbers) {
+  old &lt;- cucumbers
+  i &lt;- 0
+  repeat {
+    new &lt;- move_cucumbers_once(old)
+    i &lt;- i + 1
+    if (identical(new, old))
+      break
+    old &lt;- new
+  }
+  return(i)
+}
+
+move_cucumbers_once &lt;- function(x) {
+  # First move west to east.
+  next_state &lt;- x
+  west  &lt;- cbind(x[, ncol(x)], x[, -ncol(x)])
+  east  &lt;- cbind(x[, -1], x[, 1])
+  # Create an empty spot as cucumbers leave it.
+  next_state[x == &#39;&gt;&#39; &amp; east == &#39;.&#39;] &lt;- &#39;.&#39;
+  # Occupy the empty spot as cucumbers enter it.
+  next_state[x == &#39;.&#39; &amp; west == &#39;&gt;&#39;] &lt;- &#39;&gt;&#39;
+
+  # Now move north to south.
+  x &lt;- next_state
+  north &lt;- rbind(x[nrow(x), ], x[-nrow(x), ])
+  south &lt;- rbind(x[-1, ], x[1, ])
+  next_state[x == &#39;v&#39; &amp; south == &#39;.&#39;] &lt;- &#39;.&#39;
+  next_state[x == &#39;.&#39; &amp; north == &#39;v&#39;] &lt;- &#39;v&#39;
+
+  return(next_state)
+}</code></pre>
+<p>There is no part two for day 25: the second star is awarded for completing all of the other stars.</p>
+</div>
+
+    </section>
+    
+			<section class="comments">
+				<script src="https://utteranc.es/client.js"
+          repo="Selbosh/selbosh.github.io"
+          issue-term="title"
+          label="comments 💬"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+        </script>
+			</section>
+		
+  </article>
+</main>
+
+      <footer id="footer">
+        
+        <a href="#">
+          <img src="https://selbydavid.com/img/logo.svg"
+               width="60"
+               height=""
+               alt="Return to top"
+               title="Return to top">
+        </a>
+        
+        © 2016–21 David Selby | <a href='https://github.com/Selbosh/hugo-tea'>Hugo Tea Theme</a>
+      </footer>
+    
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script src="//yihui.org/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-11136457-6', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+  </body>
+</html>
+

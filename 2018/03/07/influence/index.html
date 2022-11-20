@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="author" content="David Selby">
+
+  
+
+
+<title>Exploring influence in networks &middot; Tea &amp; Stats</title>
+<meta property="og:title" content="Exploring influence in networks" />
+<meta property="og:description" content="I have just published an interactive graphic showing the effect of ranking scientific communities with pairwise comparison models. The visualisation is an interactive version of my (award-winning) useR!2017 poster, Ranking influential communities in networks.
+You can see how academic journals have been grouped into communities based on their citation behaviour, and notice the relative ranking within and between fields. Occasionally journals don&rsquo;t do so well within their field but are influential outside it, and vice versa." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://selbydavid.com/2018/03/07/influence/" />
+<meta property="og:image" content="https://selbydavid.com/img/2018/influence.png" />
+<meta property="article:published_time" content="2018-03-07T15:00:00+00:00" />
+<meta property="article:modified_time" content="2018-03-07T15:00:00+00:00" />
+
+
+<meta itemprop="name" content="Exploring influence in networks">
+<meta itemprop="description" content="I have just published an interactive graphic showing the effect of ranking scientific communities with pairwise comparison models. The visualisation is an interactive version of my (award-winning) useR!2017 poster, Ranking influential communities in networks.
+You can see how academic journals have been grouped into communities based on their citation behaviour, and notice the relative ranking within and between fields. Occasionally journals don&rsquo;t do so well within their field but are influential outside it, and vice versa.">
+<meta itemprop="datePublished" content="2018-03-07T15:00:00+00:00" />
+<meta itemprop="dateModified" content="2018-03-07T15:00:00+00:00" />
+<meta itemprop="wordCount" content="229">
+<meta itemprop="image" content="https://selbydavid.com/img/2018/influence.png">
+
+
+
+<meta itemprop="keywords" content="" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://selbydavid.com/img/2018/influence.png"/>
+
+<meta name="twitter:title" content="Exploring influence in networks"/>
+<meta name="twitter:description" content="I have just published an interactive graphic showing the effect of ranking scientific communities with pairwise comparison models. The visualisation is an interactive version of my (award-winning) useR!2017 poster, Ranking influential communities in networks.
+You can see how academic journals have been grouped into communities based on their citation behaviour, and notice the relative ranking within and between fields. Occasionally journals don&rsquo;t do so well within their field but are influential outside it, and vice versa."/>
+<meta name="twitter:site" content="@TeaStats"/>
+
+
+
+  
+    <meta property="article:author" content="https://www.facebook.com/Selbosh" />
+    <meta property="article:publisher" content="https://www.facebook.com/Selbosh" />
+  
+  
+    <meta name="twitter:creator" content="@TeaStats"/>
+  
+
+
+<meta name="theme" content="hugo-tea">
+<meta name="generator" content="Hugo 0.79.1" />
+
+
+
+<link rel="shortcut icon" href="https://selbydavid.com/favicon.ico">
+
+
+
+<link rel="stylesheet" href="https://selbydavid.com/css/main.css" media="all">
+
+<script src="https://use.fontawesome.com/269c7751ba.js"></script>
+
+  </head>
+  <body>
+      
+        <header id="masthead">
+          <img src="https://selbydavid.com/img/logo.svg"
+               width="120"
+               height=""
+               alt="Tea and Stats">
+          <h1><a href="https://selbydavid.com/">Tea &amp; Stats</a></h1>
+          <aside>Data science with David Selby</aside>
+          <nav>
+  <ul>
+    
+      <li><a href="https://selbydavid.com/about/">About</a></li>
+    
+    
+    <li>
+      <a href="https://facebook.com/Selbosh">
+        <i class="fa fa-facebook"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://github.com/Selbosh">
+        <i class="fa fa-github"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://linkedin.com/in/daselby">
+        <i class="fa fa-linkedin"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://twitter.com/TeaStats">
+        <i class="fa fa-twitter"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+
+        </header>
+
+
+<main role="main">
+  <article class="single">
+    <header><h2>Exploring influence in networks</h2></header>
+    
+    <footer>
+      <time datetime="2018-03-07 15:00:00 &#43;0000">
+         7 March 2018
+      </time>
+    </footer>
+    
+    <section>
+    <p>I have just published an <a href="http://selbydavid.com/influence/">interactive graphic</a> showing the effect of ranking scientific communities with pairwise comparison models.
+The visualisation is an interactive version of my (award-winning) <em>useR!2017</em> poster, <a href="http://selbydavid.com/2017/06/29/user2017/">Ranking influential communities in networks</a>.</p>
+<p>You can see how academic journals have been grouped into communities based on their citation behaviour, and notice the relative ranking within and between fields.
+Occasionally journals don&rsquo;t do so well within their field but are influential outside it, and vice versa.
+<a href="http://selbydavid.com/influence/">Have an explore</a> and see how your favourite fields/journals fare!</p>
+<p>Some interesting feedback so far from domain experts:</p>
+<ul>
+<li>agronomy, or soil science, is split in two, with Brazilian journals (in Portuguese) appearing insular and cut off from the rest of the network.</li>
+<li>archaeology doesn&rsquo;t form a single field&mdash;rather it is two distinct sub-fields, with US-style anthropological archaeology falling under social sciences, whereas osteoarchaeology (digging up bones and stuff) lives under geosciences.</li>
+</ul>
+<p>Other observations:</p>
+<ul>
+<li>statistics is great</li>
+<li>nobody understands particle physics</li>
+<li>the data, which are from 2015, also effectively &lsquo;predict&rsquo; <a href="https://springerplus.springeropen.com/"><em>SpringerPlus</em></a> closing down in 2016</li>
+<li>Stata is used mainly by non-statisticians</li>
+</ul>
+<p>The analysis was done using R and the visualisation created using D3.</p>
+<ul>
+<li><a href="http://selbydavid.com/influence/analysis.html">Analysis</a></li>
+<li><a href="http://selbydavid.com/influence/influence.js">D3 code</a></li>
+</ul>
+<p>I am not very good at coming up with names for algorithmically-generated fields, so if you can think of more appropriate labels for communities, do let me know.
+Feedback is very welcome!</p>
+<p><a href="http://selbydavid.com/influence/">Click here</a> to view the visualisation.</p>
+
+    </section>
+    
+			<section class="comments">
+				<script src="https://utteranc.es/client.js"
+          repo="Selbosh/selbosh.github.io"
+          issue-term="title"
+          label="comments 💬"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+        </script>
+			</section>
+		
+  </article>
+</main>
+
+      <footer id="footer">
+        
+        <a href="#">
+          <img src="https://selbydavid.com/img/logo.svg"
+               width="60"
+               height=""
+               alt="Return to top"
+               title="Return to top">
+        </a>
+        
+        © 2016–21 David Selby | <a href='https://github.com/Selbosh/hugo-tea'>Hugo Tea Theme</a>
+      </footer>
+    
+    
+
+    
+
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-11136457-6', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+  </body>
+</html>
+

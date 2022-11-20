@@ -1,0 +1,30 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Tea &amp; Stats</title>
+    <link>https://selbydavid.com/</link>
+    <description>Tea, statistics and t-statistics: a data science blog by David Selby.</description>
+		<atom:author>
+			<atom:name>David Selby</atom:name>
+			<atom:uri>https://selbydavid.com</atom:uri>
+		</atom:author>
+		<image>
+		    <link>https://selbydavid.com/</link>
+		    <title>Tea &amp; Stats</title>
+		    <url>https://selbydavid.com/logo.png</url>
+		</image>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-GB</language>
+    <lastBuildDate>Sun, 20 Nov 2022 22:15:00 +0100</lastBuildDate>
+    <atom:link href="https://selbydavid.com/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Posts</title>
+      <link>https://selbydavid.com/post/</link>
+      <pubDate>Sun, 20 Nov 2022 22:15:00 +0100</pubDate>
+      
+      <guid>https://selbydavid.com/post/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
