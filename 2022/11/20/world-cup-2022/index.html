@@ -12,7 +12,7 @@
 
 <title>World Cup 2022 predictions &middot; Tea &amp; Stats</title>
 <meta property="og:title" content="World Cup 2022 predictions" />
-<meta property="og:description" content="Sports prediction has exploded in the last couple of decades with entire journals, conferences and books devoted to it.
+<meta property="og:description" content="Sports prediction has exploded in the last couple of decades with entire journals (e.g. 1, 2, 3), conferences and books devoted to it.
 Much of this focuses on utilising ever-greater amounts of data, with soccer, for example, now providing sub-second ball and player tracking data.
 But sometimes it is nice to try to do more with less.
 Here we (Ian Hamilton, Stefan Stein and David Selby) describe a method that we applied to predict the results (indeed all possible match outcomes) of the Euro 2020 football tournament, that took just 120 data points and two linear regressions, yet managed to beat the market over the course of the tournament (based on the accumulated log-loss of match outcomes against predictions taken from the market odds immediately prior to the match)." />
@@ -24,13 +24,13 @@ Here we (Ian Hamilton, Stefan Stein and David Selby) describe a method that we a
 
 
 <meta itemprop="name" content="World Cup 2022 predictions">
-<meta itemprop="description" content="Sports prediction has exploded in the last couple of decades with entire journals, conferences and books devoted to it.
+<meta itemprop="description" content="Sports prediction has exploded in the last couple of decades with entire journals (e.g. 1, 2, 3), conferences and books devoted to it.
 Much of this focuses on utilising ever-greater amounts of data, with soccer, for example, now providing sub-second ball and player tracking data.
 But sometimes it is nice to try to do more with less.
 Here we (Ian Hamilton, Stefan Stein and David Selby) describe a method that we applied to predict the results (indeed all possible match outcomes) of the Euro 2020 football tournament, that took just 120 data points and two linear regressions, yet managed to beat the market over the course of the tournament (based on the accumulated log-loss of match outcomes against predictions taken from the market odds immediately prior to the match).">
 <meta itemprop="datePublished" content="2022-11-20T22:15:00+01:00" />
 <meta itemprop="dateModified" content="2022-11-20T22:15:00+01:00" />
-<meta itemprop="wordCount" content="1781">
+<meta itemprop="wordCount" content="1785">
 <meta itemprop="image" content="https://selbydavid.com/img/2022/knockout_stage.png">
 
 
@@ -41,7 +41,7 @@ Here we (Ian Hamilton, Stefan Stein and David Selby) describe a method that we a
 <meta name="twitter:image" content="https://selbydavid.com/img/2022/knockout_stage.png"/>
 
 <meta name="twitter:title" content="World Cup 2022 predictions"/>
-<meta name="twitter:description" content="Sports prediction has exploded in the last couple of decades with entire journals, conferences and books devoted to it.
+<meta name="twitter:description" content="Sports prediction has exploded in the last couple of decades with entire journals (e.g. 1, 2, 3), conferences and books devoted to it.
 Much of this focuses on utilising ever-greater amounts of data, with soccer, for example, now providing sub-second ball and player tracking data.
 But sometimes it is nice to try to do more with less.
 Here we (Ian Hamilton, Stefan Stein and David Selby) describe a method that we applied to predict the results (indeed all possible match outcomes) of the Euro 2020 football tournament, that took just 120 data points and two linear regressions, yet managed to beat the market over the course of the tournament (based on the accumulated log-loss of match outcomes against predictions taken from the market odds immediately prior to the match)."/>
@@ -128,7 +128,7 @@ Here we (Ian Hamilton, Stefan Stein and David Selby) describe a method that we a
     </footer>
     
     <section>
-    <p>Sports prediction has exploded in the last couple of decades with entire <a href="https://journalofsportsanalytics.com/">journals</a>, <a href="https://www.nessis.org">conferences</a> and books devoted to it.</p>
+    <p>Sports prediction has exploded in the last couple of decades with entire journals (e.g. <a href="https://journalofsportsanalytics.com/" title="Journal of Sports Analytics">1</a>, <a href="https://www.degruyter.com/journal/key/jqas/html?lang=en" title="Journal of Quantitative Analysis in Sports">2</a>, <a href="https://www.tandfonline.com/journals/rpan20" title="International Journal of Performance Analysis in Sport">3</a>), conferences and books devoted to it.</p>
 <p>Much of this focuses on utilising ever-greater amounts of data, with soccer, for example, now providing sub-second ball and player tracking data.</p>
 <p>But sometimes it is nice to try to do more with less.</p>
 <p>Here we (<strong>Ian Hamilton</strong>, <strong>Stefan Stein</strong> and <strong>David Selby</strong>) describe a method that we applied to predict the results (indeed all possible match outcomes) of the Euro 2020 football tournament, that took just 120 data points and two linear regressions, yet managed to beat the market over the course of the tournament (based on the accumulated log-loss of match outcomes against predictions taken from the market odds immediately prior to the match).</p>
@@ -141,7 +141,7 @@ Betting markets on major tournaments are highly liquid and their prices readily 
 They therefore provide excellent data for us to work from. But our aim here is to predict the outcome of all possible matches including those that might occur in the later rounds based on what we know pre-tournament.</p>
 <p>There are, of course, no available odds to those KO matches pre-tournament because no-one knows what they will be.
 So how can we use what we do know to construct those probabilities?</p>
-<p>We begin by taking a foundational model in Sports statistics (and the model that formed the basis of the PhDs of two of the authors of this blog).
+<p>We begin by taking a foundational model in Sports statistics (and the model that formed the basis of the PhDs of two of the authors of this blog post).
 First described by <a href="https://doi.org/10.1007/BF01180541" title="Die Berechnung der Turnier-Ergebnisse als ein Maximumproblem der Wahrscheinlichkeitsrechnung">Ernst Zermelo in 1929</a>, he made the crucial error of publishing the relevant article in German, allowing two upstart Americans to <a href="https://doi.org/10.2307/2334029">nab the glory nearly a quarter of a century later</a> and have the model named after them.
 Thus it is known now as the <a href="https://en.wikipedia.org/wiki/Bradley%E2%80%93Terry_model">Bradley&ndash;Terry model</a>.
 It expresses the probability that a team $i$ beats a team $j$ as
@@ -154,7 +154,7 @@ $$
 $$
 where $\lambda_i = \log (\pi_i)$.</p>
 <p>The Bradley&ndash;Terry model has some appealing statistical features, such as being the unique model for which the number of wins for each team is a sufficient statistic for the strength parameters (consistent with round robin ranking), and being the entropy and likelihood maximising model subject to the (highly plausible) constraint that the expected number of wins for a team given the matches observed is equal to the actual wins observed.
-As Stob (<a href="https://doi.org/10.1080/00029890.1984.11971405" title="A supplement to 'A Mathematician's Guide to Popular Sports'">1984</a>) put it, &ldquo;What sort of a claim is it that a team solely on the basis of the results should have expected to win more games than they did?&rdquo;
+As <a href="https://doi.org/10.1080/00029890.1984.11971405" title="A supplement to 'A Mathematician's Guide to Popular Sports'">Stob (1984)</a> put it, &ldquo;What sort of a claim is it that a team solely on the basis of the results should have expected to win more games than they did?&rdquo;
 This might be seen as failing to appreciate the bias present from finite observations.
 Nevertheless, it reflects the intuitive appeal of the condition.</p>
 <p>Typically the Bradley&ndash;Terry model is applied to a set of results, for the purpose of prediction or ranking.
@@ -169,7 +169,7 @@ where $c_{ij}$ is the number of times $i$ beats $j$ and $m_{ij}= c_{ij}+c_{ji}$ 
 <li>market prices are likely to be more informative;</li>
 <li>this doesn&rsquo;t account for draws.</li>
 </ol>
-<p>Addressing the last of these first, the model was extended to account for draws by Davidson (<a href="https://doi.org/10.2307/2283595" title="On Extending the Bradley-Terry Model to Accommodate Ties in Paired Comparison Experiments">1970</a>), and later <a href="https://alt3.uk/">by David Firth</a> to take account of the standard football point scheme of three for a win, one for a draw, to give,
+<p>Addressing the last of these first, the model was extended to account for draws by <a href="https://doi.org/10.2307/2283595" title="On Extending the Bradley-Terry Model to Accommodate Ties in Paired Comparison Experiments">Davidson (1970)</a>, and later <a href="https://alt3.uk/">by David Firth</a> to take account of the standard football point scheme of three for a win, one for a draw, to give,
 $$
 \mathbb{P}(i \text{ beats } j) = \frac{\pi_i}{\pi_i + \pi_j + \nu(\pi_i \pi_j)^{\frac{1}{3}}},
 $$
@@ -198,7 +198,7 @@ and both these odds &mdash; outright winner and reaching the final &mdash; are a
 $$ \log \left(\frac{p_{io}}{p_{oi}}\right) = \lambda_i - \lambda_o = \log\gamma_{G(i)} + r_i - \lambda_o, $$
 and we can estimate $\log\gamma_{G(i)}$ and $\lambda_o$ through linear regression.</p>
 <p>One thing to look out for here is that some of these odds are very large and not well-calibrated.
-For example, according to oddschecker.com the odds of Qatar winning the tournament are 500/1 and the odds of them reaching the final are 500/1, so conditional on them reaching the final the market says they have a 100% chance of winning!
+For example, according to <a href="https://oddschecker.com">oddschecker.com</a> the odds of Qatar winning the tournament are 500/1 and the odds of them reaching the final are 500/1, so conditional on them reaching the final the market says they have a 100% chance of winning!
 This is clearly nonsense, and is due to the fact that for the more unlikely winning teams, these odds are not well-calibrated and so should be discarded.
 Exactly which ones to discard is a matter of judgement.
 For Euro 2022 we arbitrarily excluded teams where the outright win odds were greater than 100/1.</p>
@@ -216,7 +216,7 @@ Here are the empirical probabilities of winning the tournament.
 Our method only gives match outcomes (win, lose, draw), so where teams were tied on points in a group, we used a procedure whereby with 50% probability the tied teams were ranked in order of their strength parameters and with 50% probability they were ranked randomly.</p>
 <p><img src="https://selbydavid.com/img/2022/probability_of_winning_truncated.png" alt="Empirical probabilities of winning the tournament"></p>
 <p>Brazil is clearly the favourite with a 37.9% chance of taking home the Cup, followed by Argentina, with a 24.8% chance
-Both of them are far ahead of the third- (France, 6.2%) and fourth- (England, 5.8%) ranked teams.</p>
+Both of them are far ahead of the third-ranked (France, 6.2%) and fourth-ranked (England, 5.8%) teams.</p>
 <p>Looking at the results of the simulation runs, we also extracted the &ldquo;dominant path&rdquo; most likely to lead to Brazil&rsquo;s victory.
 Without further ado, here are our headline predictions:</p>
 <p><img src="https://selbydavid.com/img/2022/knockout_stage.png" alt="Headline predictions"></p>

@@ -23,7 +23,7 @@
       <pubDate>Sun, 20 Nov 2022 22:15:00 +0100</pubDate>
       
       <guid>https://selbydavid.com/2022/11/20/world-cup-2022/</guid>
-      <description>&lt;p&gt;Sports prediction has exploded in the last couple of decades with entire &lt;a href=&#34;https://journalofsportsanalytics.com/&#34;&gt;journals&lt;/a&gt;, &lt;a href=&#34;https://www.nessis.org&#34;&gt;conferences&lt;/a&gt; and books devoted to it.&lt;/p&gt;
+      <description>&lt;p&gt;Sports prediction has exploded in the last couple of decades with entire journals (e.g. &lt;a href=&#34;https://journalofsportsanalytics.com/&#34; title=&#34;Journal of Sports Analytics&#34;&gt;1&lt;/a&gt;, &lt;a href=&#34;https://www.degruyter.com/journal/key/jqas/html?lang=en&#34; title=&#34;Journal of Quantitative Analysis in Sports&#34;&gt;2&lt;/a&gt;, &lt;a href=&#34;https://www.tandfonline.com/journals/rpan20&#34; title=&#34;International Journal of Performance Analysis in Sport&#34;&gt;3&lt;/a&gt;), conferences and books devoted to it.&lt;/p&gt;
 &lt;p&gt;Much of this focuses on utilising ever-greater amounts of data, with soccer, for example, now providing sub-second ball and player tracking data.&lt;/p&gt;
 &lt;p&gt;But sometimes it is nice to try to do more with less.&lt;/p&gt;
 &lt;p&gt;Here we (&lt;strong&gt;Ian Hamilton&lt;/strong&gt;, &lt;strong&gt;Stefan Stein&lt;/strong&gt; and &lt;strong&gt;David Selby&lt;/strong&gt;) describe a method that we applied to predict the results (indeed all possible match outcomes) of the Euro 2020 football tournament, that took just 120 data points and two linear regressions, yet managed to beat the market over the course of the tournament (based on the accumulated log-loss of match outcomes against predictions taken from the market odds immediately prior to the match).&lt;/p&gt;
@@ -36,7 +36,7 @@ Betting markets on major tournaments are highly liquid and their prices readily 
 They therefore provide excellent data for us to work from. But our aim here is to predict the outcome of all possible matches including those that might occur in the later rounds based on what we know pre-tournament.&lt;/p&gt;
 &lt;p&gt;There are, of course, no available odds to those KO matches pre-tournament because no-one knows what they will be.
 So how can we use what we do know to construct those probabilities?&lt;/p&gt;
-&lt;p&gt;We begin by taking a foundational model in Sports statistics (and the model that formed the basis of the PhDs of two of the authors of this blog).
+&lt;p&gt;We begin by taking a foundational model in Sports statistics (and the model that formed the basis of the PhDs of two of the authors of this blog post).
 First described by &lt;a href=&#34;https://doi.org/10.1007/BF01180541&#34; title=&#34;Die Berechnung der Turnier-Ergebnisse als ein Maximumproblem der Wahrscheinlichkeitsrechnung&#34;&gt;Ernst Zermelo in 1929&lt;/a&gt;, he made the crucial error of publishing the relevant article in German, allowing two upstart Americans to &lt;a href=&#34;https://doi.org/10.2307/2334029&#34;&gt;nab the glory nearly a quarter of a century later&lt;/a&gt; and have the model named after them.
 Thus it is known now as the &lt;a href=&#34;https://en.wikipedia.org/wiki/Bradley%E2%80%93Terry_model&#34;&gt;Bradley&amp;ndash;Terry model&lt;/a&gt;.
 It expresses the probability that a team $i$ beats a team $j$ as
@@ -49,7 +49,7 @@ $$
 $$
 where $\lambda_i = \log (\pi_i)$.&lt;/p&gt;
 &lt;p&gt;The Bradley&amp;ndash;Terry model has some appealing statistical features, such as being the unique model for which the number of wins for each team is a sufficient statistic for the strength parameters (consistent with round robin ranking), and being the entropy and likelihood maximising model subject to the (highly plausible) constraint that the expected number of wins for a team given the matches observed is equal to the actual wins observed.
-As Stob (&lt;a href=&#34;https://doi.org/10.1080/00029890.1984.11971405&#34; title=&#34;A supplement to &#39;A Mathematician&#39;s Guide to Popular Sports&#39;&#34;&gt;1984&lt;/a&gt;) put it, &amp;ldquo;What sort of a claim is it that a team solely on the basis of the results should have expected to win more games than they did?&amp;rdquo;
+As &lt;a href=&#34;https://doi.org/10.1080/00029890.1984.11971405&#34; title=&#34;A supplement to &#39;A Mathematician&#39;s Guide to Popular Sports&#39;&#34;&gt;Stob (1984)&lt;/a&gt; put it, &amp;ldquo;What sort of a claim is it that a team solely on the basis of the results should have expected to win more games than they did?&amp;rdquo;
 This might be seen as failing to appreciate the bias present from finite observations.
 Nevertheless, it reflects the intuitive appeal of the condition.&lt;/p&gt;
 &lt;p&gt;Typically the Bradley&amp;ndash;Terry model is applied to a set of results, for the purpose of prediction or ranking.
@@ -64,7 +64,7 @@ where $c_{ij}$ is the number of times $i$ beats $j$ and $m_{ij}= c_{ij}+c_{ji}$ 
 &lt;li&gt;market prices are likely to be more informative;&lt;/li&gt;
 &lt;li&gt;this doesn&amp;rsquo;t account for draws.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;Addressing the last of these first, the model was extended to account for draws by Davidson (&lt;a href=&#34;https://doi.org/10.2307/2283595&#34; title=&#34;On Extending the Bradley-Terry Model to Accommodate Ties in Paired Comparison Experiments&#34;&gt;1970&lt;/a&gt;), and later &lt;a href=&#34;https://alt3.uk/&#34;&gt;by David Firth&lt;/a&gt; to take account of the standard football point scheme of three for a win, one for a draw, to give,
+&lt;p&gt;Addressing the last of these first, the model was extended to account for draws by &lt;a href=&#34;https://doi.org/10.2307/2283595&#34; title=&#34;On Extending the Bradley-Terry Model to Accommodate Ties in Paired Comparison Experiments&#34;&gt;Davidson (1970)&lt;/a&gt;, and later &lt;a href=&#34;https://alt3.uk/&#34;&gt;by David Firth&lt;/a&gt; to take account of the standard football point scheme of three for a win, one for a draw, to give,
 $$
 \mathbb{P}(i \text{ beats } j) = \frac{\pi_i}{\pi_i + \pi_j + \nu(\pi_i \pi_j)^{\frac{1}{3}}},
 $$
@@ -93,7 +93,7 @@ and both these odds &amp;mdash; outright winner and reaching the final &amp;mdas
 $$ \log \left(\frac{p_{io}}{p_{oi}}\right) = \lambda_i - \lambda_o = \log\gamma_{G(i)} + r_i - \lambda_o, $$
 and we can estimate $\log\gamma_{G(i)}$ and $\lambda_o$ through linear regression.&lt;/p&gt;
 &lt;p&gt;One thing to look out for here is that some of these odds are very large and not well-calibrated.
-For example, according to oddschecker.com the odds of Qatar winning the tournament are 500/1 and the odds of them reaching the final are 500/1, so conditional on them reaching the final the market says they have a 100% chance of winning!
+For example, according to &lt;a href=&#34;https://oddschecker.com&#34;&gt;oddschecker.com&lt;/a&gt; the odds of Qatar winning the tournament are 500/1 and the odds of them reaching the final are 500/1, so conditional on them reaching the final the market says they have a 100% chance of winning!
 This is clearly nonsense, and is due to the fact that for the more unlikely winning teams, these odds are not well-calibrated and so should be discarded.
 Exactly which ones to discard is a matter of judgement.
 For Euro 2022 we arbitrarily excluded teams where the outright win odds were greater than 100/1.&lt;/p&gt;
@@ -111,7 +111,7 @@ Here are the empirical probabilities of winning the tournament.
 Our method only gives match outcomes (win, lose, draw), so where teams were tied on points in a group, we used a procedure whereby with 50% probability the tied teams were ranked in order of their strength parameters and with 50% probability they were ranked randomly.&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2022/probability_of_winning_truncated.png&#34; alt=&#34;Empirical probabilities of winning the tournament&#34;&gt;&lt;/p&gt;
 &lt;p&gt;Brazil is clearly the favourite with a 37.9% chance of taking home the Cup, followed by Argentina, with a 24.8% chance
-Both of them are far ahead of the third- (France, 6.2%) and fourth- (England, 5.8%) ranked teams.&lt;/p&gt;
+Both of them are far ahead of the third-ranked (France, 6.2%) and fourth-ranked (England, 5.8%) teams.&lt;/p&gt;
 &lt;p&gt;Looking at the results of the simulation runs, we also extracted the &amp;ldquo;dominant path&amp;rdquo; most likely to lead to Brazil&amp;rsquo;s victory.
 Without further ado, here are our headline predictions:&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2022/knockout_stage.png&#34; alt=&#34;Headline predictions&#34;&gt;&lt;/p&gt;
