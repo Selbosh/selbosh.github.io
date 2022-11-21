@@ -23,22 +23,22 @@
       <pubDate>Sun, 20 Nov 2022 22:15:00 +0100</pubDate>
       
       <guid>https://selbydavid.com/2022/11/20/world-cup-2022/</guid>
-      <description>&lt;p&gt;Sports prediction has exploded in the last couple of decades with entire journals, conferences and books devoted to it.
-Much of this focuses on utilising ever-greater amounts of data, with soccer, for example, now providing sub-second ball and player tracking data.
-But sometimes it is nice to try to do more with less.
-Here we (Ian Hamilton, Stefan Stein and David Selby) describe a method that we applied to predict the results (indeed all possible match outcomes) of the Euro 2020 football tournament, that took just 120 data points and two linear regressions, yet managed to beat the market over the course of the tournament (based on the accumulated log-loss of match outcomes against predictions taken from the market odds immediately prior to the match).&lt;/p&gt;
+      <description>&lt;p&gt;Sports prediction has exploded in the last couple of decades with entire &lt;a href=&#34;https://journalofsportsanalytics.com/&#34;&gt;journals&lt;/a&gt;, &lt;a href=&#34;https://www.nessis.org&#34;&gt;conferences&lt;/a&gt; and books devoted to it.&lt;/p&gt;
+&lt;p&gt;Much of this focuses on utilising ever-greater amounts of data, with soccer, for example, now providing sub-second ball and player tracking data.&lt;/p&gt;
+&lt;p&gt;But sometimes it is nice to try to do more with less.&lt;/p&gt;
+&lt;p&gt;Here we (&lt;strong&gt;Ian Hamilton&lt;/strong&gt;, &lt;strong&gt;Stefan Stein&lt;/strong&gt; and &lt;strong&gt;David Selby&lt;/strong&gt;) describe a method that we applied to predict the results (indeed all possible match outcomes) of the Euro 2020 football tournament, that took just 120 data points and two linear regressions, yet managed to beat the market over the course of the tournament (based on the accumulated log-loss of match outcomes against predictions taken from the market odds immediately prior to the match).&lt;/p&gt;
 &lt;p&gt;All data analysts know the well-worn phrase: &amp;ldquo;garbage in, garbage out&amp;rdquo;.
 The corollary to this though is that when you have good data then it is easier to make good inferences.
-When one is considering predictions, what data would one most want?
-One great form of data would be to have the predictions of a bunch of sophisticated data analysts and to be able to take some kind of conviction-weighted poll of those predictions.
+When one is considering predictions, what data would one most want?&lt;/p&gt;
+&lt;p&gt;One great form of data would be to have the predictions of a bunch of sophisticated data analysts and to be able to take some kind of conviction-weighted poll of those predictions.
 Fortunately (at least in some economists&#39; imaginations) that is exactly what a market provides (we&amp;rsquo;re not entirely convinced by this, a point to which we will return). 
 Betting markets on major tournaments are highly liquid and their prices readily accessible.
-They therefore provide excellent data for us to work from. But our aim here is to predict the outcome of all possible matches including those that might occur in the later rounds based on what we know pre-tournament.
-There are, of course no available odds to those KO matches pre-tournament because no-one knows what they will be.
+They therefore provide excellent data for us to work from. But our aim here is to predict the outcome of all possible matches including those that might occur in the later rounds based on what we know pre-tournament.&lt;/p&gt;
+&lt;p&gt;There are, of course, no available odds to those KO matches pre-tournament because no-one knows what they will be.
 So how can we use what we do know to construct those probabilities?&lt;/p&gt;
 &lt;p&gt;We begin by taking a foundational model in Sports statistics (and the model that formed the basis of the PhDs of two of the authors of this blog).
-First described by Ernst Zermelo in 1929, he made the crucial error of publishing the relevant article in German, allowing two upstart Americans to nab the glory nearly a quarter of a century later and have the model named after them.
-Thus it is known now as the Bradley&amp;ndash;Terry model.
+First described by &lt;a href=&#34;https://doi.org/10.1007/BF01180541&#34; title=&#34;Die Berechnung der Turnier-Ergebnisse als ein Maximumproblem der Wahrscheinlichkeitsrechnung&#34;&gt;Ernst Zermelo in 1929&lt;/a&gt;, he made the crucial error of publishing the relevant article in German, allowing two upstart Americans to &lt;a href=&#34;https://doi.org/10.2307/2334029&#34;&gt;nab the glory nearly a quarter of a century later&lt;/a&gt; and have the model named after them.
+Thus it is known now as the &lt;a href=&#34;https://en.wikipedia.org/wiki/Bradley%E2%80%93Terry_model&#34;&gt;Bradley&amp;ndash;Terry model&lt;/a&gt;.
 It expresses the probability that a team $i$ beats a team $j$ as
 $$
 p_{ij} = \frac{\pi_i}{\pi_i + \pi_j},
@@ -48,8 +48,8 @@ $$
 \text{logit}(p_{ij}) = \lambda_i - \lambda_j,
 $$
 where $\lambda_i = \log (\pi_i)$.&lt;/p&gt;
-&lt;p&gt;The Bradley&amp;ndash;Terry model has some appealing statistical features such as being the unique model for which the number of wins for each team is a sufficient statistic for the strength parameters (consistent with round robin ranking), and being the entropy and likelihood maximising model subject to the (highly plausible) constraint that the expected number of wins for a team given the matches observed is equal to the actual wins observed.
-As Stob (1984) put it, &amp;ldquo;What sort of a claim is it that a team solely on the basis of the results should have expected to win more games than they did?&amp;rdquo;
+&lt;p&gt;The Bradley&amp;ndash;Terry model has some appealing statistical features, such as being the unique model for which the number of wins for each team is a sufficient statistic for the strength parameters (consistent with round robin ranking), and being the entropy and likelihood maximising model subject to the (highly plausible) constraint that the expected number of wins for a team given the matches observed is equal to the actual wins observed.
+As Stob (&lt;a href=&#34;https://doi.org/10.1080/00029890.1984.11971405&#34; title=&#34;A supplement to &#39;A Mathematician&#39;s Guide to Popular Sports&#39;&#34;&gt;1984&lt;/a&gt;) put it, &amp;ldquo;What sort of a claim is it that a team solely on the basis of the results should have expected to win more games than they did?&amp;rdquo;
 This might be seen as failing to appreciate the bias present from finite observations.
 Nevertheless, it reflects the intuitive appeal of the condition.&lt;/p&gt;
 &lt;p&gt;Typically the Bradley&amp;ndash;Terry model is applied to a set of results, for the purpose of prediction or ranking.
@@ -64,7 +64,7 @@ where $c_{ij}$ is the number of times $i$ beats $j$ and $m_{ij}= c_{ij}+c_{ji}$ 
 &lt;li&gt;market prices are likely to be more informative;&lt;/li&gt;
 &lt;li&gt;this doesn&amp;rsquo;t account for draws.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;Addressing the last of these first, the model was extended to account for draws by Davidson (1970), and later by David Firth to take account of the standard football point scheme of three for a win, one for a draw, to give,
+&lt;p&gt;Addressing the last of these first, the model was extended to account for draws by Davidson (&lt;a href=&#34;https://doi.org/10.2307/2283595&#34; title=&#34;On Extending the Bradley-Terry Model to Accommodate Ties in Paired Comparison Experiments&#34;&gt;1970&lt;/a&gt;), and later &lt;a href=&#34;https://alt3.uk/&#34;&gt;by David Firth&lt;/a&gt; to take account of the standard football point scheme of three for a win, one for a draw, to give,
 $$
 \mathbb{P}(i \text{ beats } j) = \frac{\pi_i}{\pi_i + \pi_j + \nu(\pi_i \pi_j)^{\frac{1}{3}}},
 $$
@@ -99,22 +99,36 @@ Exactly which ones to discard is a matter of judgement.
 For Euro 2022 we arbitrarily excluded teams where the outright win odds were greater than 100/1.&lt;/p&gt;
 &lt;p&gt;For the World Cup we graphed $\log \left(\mathbb{P} \left[i \text{ winning tournament} \mid i \text{ reaches final} \right] \right)$ against $\log\left (\mathbb{P}\left[i \text{ winning tournament}\right] \right)$ and excluded at the point where a consistent relationship seemed to start to break down.
 For the World Cup we have included up to and including Denmark, the tenth ranked team, with a probability of winning the tournament of 30/1.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2022/probability_of_winning.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2022/probs_plot.png&#34; alt=&#34;Conditional probabilities of winning the tournament&#34;&gt;&lt;/p&gt;
 &lt;p&gt;Now we can calculate the strengths of each team
 $$ \pi_i = \gamma_{G(i)} s_i, $$
 and apply these through the Bradley-Terry model to predict the KO match results by applying
 $$ p_{ij} = \frac{\pi_i}{\pi_i + \pi_j}. $$&lt;/p&gt;
-&lt;p&gt;So what do we find, well here are our headline predictions:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2022/knockout_stage.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Using this method, we have determined a strength parameter for each team that can then be used to simulate the outcome of each match.
+We were keen to produce a route-to-the-final map, like the one in &lt;a href=&#34;https://www.youtube.com/watch?v=KjISuZ5o06Q&#34;&gt;the presentation that inspired us to write this post&lt;/a&gt; (well worth a watch).&lt;/p&gt;
+&lt;p&gt;To get a better idea of how these probabilities play out, we simulated 10,000 runs of the World Cup with them.
+Here are the empirical probabilities of winning the tournament.
+Our method only gives match outcomes (win, lose, draw), so where teams were tied on points in a group, we used a procedure whereby with 50% probability the tied teams were ranked in order of their strength parameters and with 50% probability they were ranked randomly.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2022/probability_of_winning_truncated.png&#34; alt=&#34;Empirical probabilities of winning the tournament&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Brazil is clearly the favourite with a 37.9% chance of taking home the Cup, followed by Argentina, with a 24.8% chance
+Both of them are far ahead of the third- (France, 6.2%) and fourth- (England, 5.8%) ranked teams.&lt;/p&gt;
+&lt;p&gt;Looking at the results of the simulation runs, we also extracted the &amp;ldquo;dominant path&amp;rdquo; most likely to lead to Brazil&amp;rsquo;s victory.
+Without further ado, here are our headline predictions:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://selbydavid.com/img/2022/knockout_stage.png&#34; alt=&#34;Headline predictions&#34;&gt;&lt;/p&gt;
 &lt;p&gt;As with any model, there are limitations.
 It is obviously (and unapologetically) a bit crude. For example, we are calibrating the strengths based on data for the 90-minute match results and applying them to the outcomes of KO matches, potentially after extra-time or penalties for example.
 We are also trusting betting odds to represent neutral value with the marginal price-maker being an informed individual, but betting is often a pursuit of the heart as much as the head and the notably different betting proclivity in different countries might suggest that some teams odds are likely to be skewed by this more than others.&lt;/p&gt;
 &lt;p&gt;But given these limitations, it is perhaps remarkable that when applied to Euro 2020 it outperformed the market (if taking the odds immediately prior to each match). Three possible explanations are:&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;we just got lucky;&lt;/li&gt;
-&lt;li&gt;betting markets overweight in-tournament performance in their odds creation;&lt;/li&gt;
-&lt;li&gt;England&amp;rsquo;s (surprising?) run to the final meant that the pre-tournament odds that (perhaps) featured a lot of heart-based backing were supportive of the success of our scheme.&lt;/li&gt;
+&lt;li&gt;betting markets overweight in-tournament performance in their odds creation. In most football prediction, analysts have huge amounts of data off which to work with clubs playing dozens of competitive matches each season. In the international arena, teams play fewer matches against opposition of more varied quality and in more varied situations of competitiveness (qualifying matches vs friendlies vs tournament etc.), so perhaps their methods are not so well-calibrated to this sparser data scenario;&lt;/li&gt;
+&lt;li&gt;the equal strength final opposition assumption is a strong one that boosts the probability of well-favoured teams winning, and it happened to be that well-favoured teams did well in Euro 2020;&lt;/li&gt;
+&lt;li&gt;England&amp;rsquo;s (surprising?) run to the final meant that the pre-tournament odds that (perhaps) featured a lot of heart-based backing (in possibly the biggest sports betting market in Europe) were supportive of the success of our scheme.&lt;/li&gt;
 &lt;/ol&gt;
+&lt;p&gt;We would be inclined to think that some combination of the last two of these explanations are most likely, but another piece of evidence comes from other predictions for that tournament.&lt;/p&gt;
+&lt;p&gt;Our prediction work was done as part of the  &lt;a href=&#34;https://github.com/mberk/rss-euro-2020-prediction-competition&#34;&gt;RSS Euro 2020 prediction competition&lt;/a&gt;.
+We came second, but the winner had a &lt;a href=&#34;https://journals.plos.org/plosone/article/authors?id=10.1371/journal.pone.0268511&#34;&gt;completely different method based on previous match outcomes&lt;/a&gt; and produced very similar performance to us, also beating the market, with the same being true of the third-placed entrant, who took a different approach again.&lt;/p&gt;
+&lt;p&gt;It&amp;rsquo;s possible that all our approaches overly-favoured favourites and that was how we came to be ranked highest.
+Alternatively, perhaps markets do over-react to in-tournament performance compared to pre-tournament assessments.&lt;/p&gt;
 &lt;p&gt;For more information and the full table of outcome predictions, check out the &lt;a href=&#34;https://github.com/stefan-stein/world-cup-2022&#34;&gt;GitHub repository&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
