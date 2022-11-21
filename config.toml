@@ -32,7 +32,7 @@ pygmentsCodeFences = false # Disable Chroma highlighter; it conflicts with hljs
   # Enable Font Awesome social icons.
   # Go to http://fontawesome.io/get-started/
   # and enter the ".js" URL you are sent in the embed code via e-mail
-  fontawesome = "https://use.fontawesome.com/269c7751ba.js"
+  fontawesome = "https://kit.fontawesome.com/b3477b76a8.js"
   
   # GitHub repository for utteranc.es
   githubRepo = "Selbosh/selbosh.github.io"

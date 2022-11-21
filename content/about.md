@@ -40,6 +40,12 @@ I am enthusiastic about [R](https://www.r-project.org/) and helped organise [War
   <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
   </span>
 </a>
+<a href="https://vis.social/@TeaStats" title="Mastodon">
+  <span class="fa-stack fa-lg">
+  <i class="fa fa-circle fa-stack-2x"></i>
+  <i class="fa fa-brands fa-mastodon fa-stack-1x fa-inverse"></i>
+  </span>
+</a>
 <a href="https://www.research.manchester.ac.uk/portal/en/researchers/david-selby(3ea65643-2b3b-48ed-ad3c-8fa73fe36e0d).html" title="Academic page">
   <span class="fa-stack fa-lg">
   <i class="fa fa-circle fa-stack-2x"></i>
