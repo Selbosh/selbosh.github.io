@@ -20,7 +20,7 @@ pygmentsCodeFences = false # Disable Chroma highlighter; it conflicts with hljs
 	url = "https://selbydavid.com"
 
 [social]
-	twitter 		= "TeaStats"
+	bluesky 		= "davidselby.bsky.social"
 	facebook 		= "Selbosh"
 	github 			= "Selbosh"
   linkedin 		= "daselby"
