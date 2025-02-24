@@ -1,0 +1,3 @@
+[submodule "themes/hugo-tea"]
+	path = themes/hugo-tea
+	url = git@github.com:Selbosh/hugo-tea.git
