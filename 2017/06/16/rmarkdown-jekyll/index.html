@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="author" content="David Selby">
+
+  
+
+
+<title>Deploying an R Markdown Jekyll site to GitHub Pages &middot; Tea &amp; Stats</title>
+<meta property="og:title" content="Deploying an R Markdown Jekyll site to GitHub Pages" />
+<meta property="og:description" content="GitHub Pages&#39; built-in Jekyll support makes it very easy for techie types to deploy static web sites. Simply push your plain text Markdown content to a repository and the server-side Jekyll engine will render it for the web.
+Markdown is good, but R Markdown is even better, assuming we ever want to write anything involving plots or data analysis. How can we write and edit blog posts in R Markdown and serve them on GitHub Pages without having to build everything locally?" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://selbydavid.com/2017/06/16/rmarkdown-jekyll/" />
+<meta property="article:published_time" content="2017-06-16T12:00:00+01:00" />
+<meta property="article:modified_time" content="2017-06-16T12:00:00+01:00" />
+
+
+<meta itemprop="name" content="Deploying an R Markdown Jekyll site to GitHub Pages">
+<meta itemprop="description" content="GitHub Pages&#39; built-in Jekyll support makes it very easy for techie types to deploy static web sites. Simply push your plain text Markdown content to a repository and the server-side Jekyll engine will render it for the web.
+Markdown is good, but R Markdown is even better, assuming we ever want to write anything involving plots or data analysis. How can we write and edit blog posts in R Markdown and serve them on GitHub Pages without having to build everything locally?">
+<meta itemprop="datePublished" content="2017-06-16T12:00:00+01:00" />
+<meta itemprop="dateModified" content="2017-06-16T12:00:00+01:00" />
+<meta itemprop="wordCount" content="1339">
+
+
+
+<meta itemprop="keywords" content="" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Deploying an R Markdown Jekyll site to GitHub Pages"/>
+<meta name="twitter:description" content="GitHub Pages&#39; built-in Jekyll support makes it very easy for techie types to deploy static web sites. Simply push your plain text Markdown content to a repository and the server-side Jekyll engine will render it for the web.
+Markdown is good, but R Markdown is even better, assuming we ever want to write anything involving plots or data analysis. How can we write and edit blog posts in R Markdown and serve them on GitHub Pages without having to build everything locally?"/>
+
+
+
+  
+    <meta property="article:author" content="https://www.facebook.com/Selbosh" />
+    <meta property="article:publisher" content="https://www.facebook.com/Selbosh" />
+  
+  
+
+
+<meta name="theme" content="hugo-tea">
+<meta name="generator" content="Hugo 0.79.1" />
+
+
+
+<link rel="shortcut icon" href="https://selbydavid.com/favicon.ico">
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="https://selbydavid.com/css/main.css" media="all">
+
+<script src="https://kit.fontawesome.com/b3477b76a8.js"></script>
+
+  </head>
+  <body>
+      
+        <header id="masthead">
+          <img src="https://selbydavid.com/img/logo.svg"
+               width="120"
+               height=""
+               alt="Tea and Stats">
+          <h1><a href="https://selbydavid.com/">Tea &amp; Stats</a></h1>
+          <aside>Data science with David Selby</aside>
+          <nav>
+  <ul>
+    
+      <li><a href="https://selbydavid.com/about/">About</a></li>
+    
+    
+    <li>
+      <a href="https://facebook.com/Selbosh">
+        <i class="fa fa-facebook"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://github.com/Selbosh">
+        <i class="fa fa-github"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://linkedin.com/in/daselby">
+        <i class="fa fa-linkedin"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://bsky.app/profile/davidselby.bsky.social">
+        <i class="fa-brands fa-bluesky"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+
+        </header>
+
+
+<main role="main">
+  <article class="single">
+    <header><h2>Deploying an R Markdown Jekyll site to GitHub Pages</h2></header>
+    
+    <footer>
+      <time datetime="2017-06-16 12:00:00 &#43;0100">
+        16 June 2017
+      </time>
+    </footer>
+    
+    <section>
+    <p>GitHub Pages' built-in <a href="https://jekyllrb.com/">Jekyll</a> support makes it very easy for techie types to deploy static web sites.
+Simply push your plain text Markdown content to a repository and the server-side Jekyll engine will render it for the web.</p>
+<p>Markdown is good, but <a href="http://rmarkdown.rstudio.com/">R Markdown</a> is even better, assuming we ever want to write anything involving plots or data analysis.
+How can we write and edit blog posts in R Markdown and serve them on GitHub Pages without having to build everything locally?</p>
+<p>In this post I will explain how you can use <a href="https://travis-ci.org/">Travis CI</a> to knit R Markdown posts and deploy them to a GitHub Pages Jekyll site.</p>
+<p>Yihui Xie<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> has added Jekyll support to the <a href="https://cran.rstudio.com/web/packages/servr/index.html">servr</a> package and published a <a href="https://jekyll.yihui.name/2014/09/jekyll-with-knitr.html">blog post</a> and <a href="https://github.com/yihui/knitr-jekyll" title="knitr-jekyll">GitHub repository</a> demonstrating how to use <code>servr::jekyll</code> to serve a Jekyll site locally with R Markdown.</p>
+<p>This is a nice, but incomplete solution, because it means we can only really write and edit posts from computers on which R, servr and Jekyll are installed.
+Jekyll is written in Ruby, which can be a pain to install on Windows and fiddly to configure for GitHub Pages.</p>
+<p>Ideally, we want to be able to maintain our web site from anywhere we have access to a web browser, just as we would a WordPress or Blogger site.</p>
+<p>What we are going to do instead is knit our R Markdown posts in the cloud, which automatically pushes the resulting plain Markdown files and images to GitHub, where they will be served by Jekyll like a regular site.</p>
+<p>For reference, I have created a <a href="https://github.com/Selbosh/jekyll-rmd">minimal working repository</a>.</p>
+<h2 id="linking-github-to-travis">Linking GitHub to Travis</h2>
+<p>If you have not already done so, set up a <a href="https://help.github.com/articles/about-github-pages-and-jekyll/">regular GitHub Pages Jekyll site</a>.
+There are plenty of good guides for this on the web, so I won&rsquo;t go into the details here.</p>
+<p>Once that is all working smoothly, sign up for a free <a href="https://travis-ci.org/">Travis CI</a> account.
+Travis is a service designed to run unit tests on software packages so that bugs are not introduced during development.
+However, rather than running tests on software, we are going to be using Travis&rsquo;s infrastructure to build our web site for us.</p>
+<p>In the Travis &lsquo;Accounts&rsquo; screen, look for your site&rsquo;s repository and switch it on (green tick).
+It doesn&rsquo;t actually do anything just yet, but now Travis knows to watch for future commits to this repo.</p>
+<p>You will also need to <a href="https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/">generate a personal access token</a> on GitHub, which grants Travis permission to push to your branch. Copy it to your clipboard.</p>
+<p>Back on Travis, on the settings page for your branch, create an Environment Variable with name <code>GITHUB_PAT</code> and paste the personal access token into the Value field.</p>
+<h2 id="configuring-the-travis-build">Configuring the Travis build</h2>
+<p>Travis is <a href="https://docs.travis-ci.com/user/customizing-the-build">controlled by a file</a> called <code>.travis.yml</code> that lives in the root of your Git repository.
+As a baseline, I recommend creating a file that contains the following configuration.</p>
+<pre><code class="language-yaml">language: r
+cache: packages
+pandoc_version: 1.17.2
+
+branches:
+  only: source
+
+script:
+  - Rscript -e 'servr:::knit_maybe(c(&quot;.&quot;, &quot;_source&quot;, &quot;_posts&quot;), c(&quot;.&quot;, &quot;_posts&quot;, &quot;_posts&quot;), &quot;build.R&quot;, &quot;jekyll&quot;)'
+  
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_PAT
+  on:
+    branch: source
+  target_branch: master
+</code></pre>
+<p>Let&rsquo;s walk through this, line by line. The first two lines are:</p>
+<pre><code class="language-yaml">language: r
+cache: packages
+</code></pre>
+<p>Since we will be knitting R Markdown files into Markdown, we want Travis to have a copy of R installed. <a href="https://docs.travis-ci.com/user/languages/r/">R is natively supported in Travis</a> thanks to work by the community.</p>
+<p>A Travis R build comes with pandoc and LaTeX, ostensibly for building R package documentation. To generate standalone R Markdown documents or web sites with Travis, you need to hoodwink the system into thinking it is building a real R package.</p>
+<p>The most minimal R package comprises a single file, called <code>DESCRIPTION</code>. More on that <a href="#r-files">below</a>.</p>
+<pre><code class="language-yaml">pandoc_version: 1.17.2
+</code></pre>
+<p>Pandoc is a key piece of software that R Markdown uses to convert documents between various formats.
+By default, Travis seems to use an old version of pandoc (1.15 or so), which can cause unexpected errors when trying to render R Markdown documents.
+At the time of writing 1.17.2 seems to be the recommended version of pandoc for R Markdown, though I expect <a href="http://pandoc.org/releases.html">newer releases</a> should be fine, too.</p>
+<pre><code class="language-yaml">branches:
+  only: source
+</code></pre>
+<p>Choose the branch of your repository to which you will submit your code.
+For a personal site&mdash;i.e. <code>username.github.io</code>&mdash;GitHub says the final rendered web site files have to be on the <code>master</code> branch, so we want to push our source code somewhere else.
+I have opted to use a branch called <code>source</code> but you can use whatever you like.</p>
+<p>Whenever you push commits to the <code>source</code> branch, Travis will notice and start a build.
+The output will then be deployed to another branch.
+We choose <code>only: source</code> so that Travis doesn&rsquo;t trigger itself when it pushes your site to the <code>master</code> branch, otherwise we would get an endless feedback loop.</p>
+<pre><code class="language-yaml">script:
+  - Rscript -e 'servr:::knit_maybe(c(&quot;.&quot;, &quot;_source&quot;, &quot;_posts&quot;), c(&quot;.&quot;, &quot;_posts&quot;, &quot;_posts&quot;), &quot;build.R&quot;, &quot;jekyll&quot;)'
+</code></pre>
+<p>When you push a new commit to the repository, the script above looks for <code>.Rmd</code> files, converts them into <code>.md</code> files and puts them in the root directory (in the case of R Markdown pages) or the <code>_posts</code> directory in the case of R Markdown blog posts.</p>
+<p>Why not use <code>servr::jekyll(serve = TRUE)</code>? Because that command requires Jekyll to be installed&mdash;not available on Travis&rsquo;s R environment&mdash;and we aren&rsquo;t interested in building the whole site with Jekyll on Travis anyway.
+All we want is plain Markdown files and images, which GitHub Pages' own Jekyll engine will build into an HTML site for us.</p>
+<pre><code class="language-yaml">deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_PAT
+  on:
+    branch: source
+  target_branch: master
+</code></pre>
+<p>Once the site is built, it needs to be published or <code>deploy</code>ed somewhere.
+The line <code>provider: pages</code> means we take advantage of <a href="https://docs.travis-ci.com/user/deployment/pages/">Travis&rsquo;s native GitHub Pages support</a> and don&rsquo;t have to write our own shell script to run all the complicated git commands.</p>
+<p>Skipping cleanup means Travis doesn&rsquo;t delete everything it builds, which you might want when testing an R package, but not when building a web site.</p>
+<p>The GitHub personal access token gives Travis permission to push to your repository.
+Make sure the variable name (after the <code>$</code> sign) matches the one you set in Travis settings.</p>
+<p>The last few lines specify Travis should look for your source code (R Markdown and Markdown files) and where to deploy the generated Markdown files.
+If you are working on a <a href="https://help.github.com/articles/user-organization-and-project-pages/">Project page rather than a User page</a>, then you probably want to change the settings to the following.</p>
+<pre><code class="language-yaml">  on:
+    branch: master
+  target_branch: gh-pages
+</code></pre>
+<h2 id="description-file">DESCRIPTION file</h2>
+<p>To convince Travis it is building a valid R package, include a <code>DESCRIPTION</code> file in the root directory of the repository with the following contents.</p>
+<pre><code class="language-yaml">Package: placeholder
+Title: Does not matter.
+Version: 0.0.1
+Imports: servr, rmarkdown
+</code></pre>
+<p>The <code>Package</code>, <code>Title</code> and <code>Version</code> are arbitrary, but <code>Imports</code> describes which R packages should be installed when building your site.
+You need servr and rmarkdown at least.
+If R code chunks in your blog posts make use of other R packages, you might want to include those here as well.</p>
+<h2 id="buildr">build.R</h2>
+<p><a href="https://github.com/Selbosh/jekyll-rmd/blob/master/build.R">This file</a> is called on your R Markdown files.
+It knits them to Markdown and makes sure plots get saved to the right directory.</p>
+<h2 id="push-a-new-post">Push a new post</h2>
+<p>When you next push a commit to the <code>on</code> branch of your GitHub repository, Travis will start building and deploying your site. If it fails, you&rsquo;ll receive an email about it and can have a look through the logs to find out why.</p>
+<p>You should now have a system that automagically renders and deploys your R Markdown posts every time you push them to your site&rsquo;s GitHub repository.
+If anything is unclear, have a look at my <a href="https://github.com/Selbosh/jekyll-rmd">minimal working repository</a> or <a href="https://github.com/Selbosh/old-jekyll">a real example</a>.</p>
+<p>If you found this helpful or have any comments or questions, feel free to <a href="https://selbydavid.com/about">get in touch</a>.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>Yihui has since turned his attention to the <a href="https://bookdown.org/yihui/blogdown/">blogdown</a> package, which is much more fleshed-out project based on the Hugo static site generator&mdash;a rival to Jekyll. (I will explain how to set up blogdown with Travis in a future post.) <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+
+    </section>
+    
+			<section class="comments">
+				<script src="https://utteranc.es/client.js"
+          repo="Selbosh/selbosh.github.io"
+          issue-term="title"
+          label="comments 💬"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+        </script>
+			</section>
+		
+  </article>
+</main>
+
+      <footer id="footer">
+        
+        <a href="#">
+          <img src="https://selbydavid.com/img/logo.svg"
+               width="60"
+               height=""
+               alt="Return to top"
+               title="Return to top">
+        </a>
+        
+        © 2016–25 David Selby | <a href='https://github.com/Selbosh/hugo-tea'>Hugo Tea Theme</a>
+      </footer>
+    
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script src="//yihui.org/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-11136457-6', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+  </body>
+</html>
+

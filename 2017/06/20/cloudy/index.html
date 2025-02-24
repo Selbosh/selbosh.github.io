@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="author" content="David Selby">
+
+  
+
+
+<title>Cloudy with a chance of engagement &middot; Tea &amp; Stats</title>
+<meta property="og:title" content="Cloudy with a chance of engagement" />
+<meta property="og:description" content="Last summer I took part in an internship with the fledgling Alan Turing Institute at the British Library in London. My group helped analyse data from Cloudy with a Chance of Pain, a citizen science project that uses smartphone app data to model the relationship between weather and joint pain.
+A robust statistical model relies on a steady stream of self-reported pain data from each participant. Naturally, the actual data available was nothing like that." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://selbydavid.com/2017/06/20/cloudy/" />
+<meta property="og:image" content="https://selbydavid.com/img/2017/cloudy.png" />
+<meta property="article:published_time" content="2017-06-20T12:30:00+01:00" />
+<meta property="article:modified_time" content="2017-06-20T12:30:00+01:00" />
+
+
+<meta itemprop="name" content="Cloudy with a chance of engagement">
+<meta itemprop="description" content="Last summer I took part in an internship with the fledgling Alan Turing Institute at the British Library in London. My group helped analyse data from Cloudy with a Chance of Pain, a citizen science project that uses smartphone app data to model the relationship between weather and joint pain.
+A robust statistical model relies on a steady stream of self-reported pain data from each participant. Naturally, the actual data available was nothing like that.">
+<meta itemprop="datePublished" content="2017-06-20T12:30:00+01:00" />
+<meta itemprop="dateModified" content="2017-06-20T12:30:00+01:00" />
+<meta itemprop="wordCount" content="318">
+<meta itemprop="image" content="https://selbydavid.com/img/2017/cloudy.png">
+
+
+
+<meta itemprop="keywords" content="" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://selbydavid.com/img/2017/cloudy.png"/>
+
+<meta name="twitter:title" content="Cloudy with a chance of engagement"/>
+<meta name="twitter:description" content="Last summer I took part in an internship with the fledgling Alan Turing Institute at the British Library in London. My group helped analyse data from Cloudy with a Chance of Pain, a citizen science project that uses smartphone app data to model the relationship between weather and joint pain.
+A robust statistical model relies on a steady stream of self-reported pain data from each participant. Naturally, the actual data available was nothing like that."/>
+
+
+
+  
+    <meta property="article:author" content="https://www.facebook.com/Selbosh" />
+    <meta property="article:publisher" content="https://www.facebook.com/Selbosh" />
+  
+  
+
+
+<meta name="theme" content="hugo-tea">
+<meta name="generator" content="Hugo 0.79.1" />
+
+
+
+<link rel="shortcut icon" href="https://selbydavid.com/favicon.ico">
+
+
+
+<link rel="stylesheet" href="https://selbydavid.com/css/main.css" media="all">
+
+<script src="https://kit.fontawesome.com/b3477b76a8.js"></script>
+
+  </head>
+  <body>
+      
+        <header id="masthead">
+          <img src="https://selbydavid.com/img/logo.svg"
+               width="120"
+               height=""
+               alt="Tea and Stats">
+          <h1><a href="https://selbydavid.com/">Tea &amp; Stats</a></h1>
+          <aside>Data science with David Selby</aside>
+          <nav>
+  <ul>
+    
+      <li><a href="https://selbydavid.com/about/">About</a></li>
+    
+    
+    <li>
+      <a href="https://facebook.com/Selbosh">
+        <i class="fa fa-facebook"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://github.com/Selbosh">
+        <i class="fa fa-github"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://linkedin.com/in/daselby">
+        <i class="fa fa-linkedin"></i>
+        
+      </a>
+    </li>
+    <li>
+      <a href="https://bsky.app/profile/davidselby.bsky.social">
+        <i class="fa-brands fa-bluesky"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+
+        </header>
+
+
+<main role="main">
+  <article class="single">
+    <header><h2>Cloudy with a chance of engagement</h2></header>
+    
+    <footer>
+      <time datetime="2017-06-20 12:30:00 &#43;0100">
+        20 June 2017
+      </time>
+    </footer>
+    
+    <section>
+    <p>Last summer I took part in an internship with the fledgling <a href="https://www.turing.ac.uk/">Alan Turing Institute</a> at the British Library in London.
+My group helped analyse data from <a href="https://www.cloudywithachanceofpain.com/">Cloudy with a Chance of Pain</a>, a citizen science project that uses smartphone app data to model the relationship between weather and joint pain.</p>
+<p>A robust statistical model relies on a steady stream of self-reported pain data from each participant.
+Naturally, the actual data available was nothing like that.
+It looked more like this:</p>
+<p><img src="https://selbydavid.com/img/2017/cloudy-data.png" alt="Sequences of data entry" title="Each dot is a day a participant provided data"></p>
+<p>Unlike in a traditional epidemiological study, people could join at any time.
+Some reported data every day, some every couple of days, some had one week on, one week off, while others would lose interest after a few months, after a few weeks or even after the first day.</p>
+<p>To avoid selection bias in a subsequent analysis, we needed to understand the behaviour of these participants.
+Why do some people drop out? Why do some people give more data than others?</p>
+<p>Some accepted measures of &lsquo;engagement&rsquo; in longitudinal studies might include counting people who provided data after a particular date, or the proportion of people who used the app on more than <em>x</em>% of days.
+These thresholds are often arbitrary and can quickly lead us down a <a href="http://www.stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf">garden of forking paths</a>, where we (consciously or subconsciously) choose values that return the result we want.</p>
+<p>Instead, we went for a more automated approach that clustered user data using a mixture of <a href="https://en.wikipedia.org/wiki/Hidden_Markov_model">hidden Markov models</a>.
+At any time, an app user could be in one of three states: high engagement, low engagement or disengagement.
+Each user is clustered according to their probability of switching between these states, allowing us to compare and contrast highly-engaged users with &lsquo;tourists&rsquo;.</p>
+<p>An article I wrote about this project was recently published in <a href="https://www.significancemagazine.com/"><em>Significance</em></a>, the magazine of the Royal Statistical Society and American Statistical Association.
+For more details on what we did, <a href="http://onlinelibrary.wiley.com/doi/10.1111/j.1740-9713.2017.01013.x/abstract">read the article</a>.</p>
+<p><a href="http://onlinelibrary.wiley.com/doi/10.1111/j.1740-9713.2017.01013.x/abstract"><img src="https://selbydavid.com/img/2017/cloudy.png" alt=""></a></p>
+
+    </section>
+    
+			<section class="comments">
+				<script src="https://utteranc.es/client.js"
+          repo="Selbosh/selbosh.github.io"
+          issue-term="title"
+          label="comments 💬"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+        </script>
+			</section>
+		
+  </article>
+</main>
+
+      <footer id="footer">
+        
+        <a href="#">
+          <img src="https://selbydavid.com/img/logo.svg"
+               width="60"
+               height=""
+               alt="Return to top"
+               title="Return to top">
+        </a>
+        
+        © 2016–25 David Selby | <a href='https://github.com/Selbosh/hugo-tea'>Hugo Tea Theme</a>
+      </footer>
+    
+    
+
+    
+
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-11136457-6', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+  </body>
+</html>
+
