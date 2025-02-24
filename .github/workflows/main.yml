@@ -26,7 +26,7 @@ jobs:
         shell: Rscript {0}
         
       - name: Cache R packages 
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
@@ -42,7 +42,7 @@ jobs:
         run: Rscript -e "blogdown::build_site()"
         
       - name: Upload built site files as artifact  
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: public
           path: public/
@@ -62,7 +62,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Download built site files as artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: public # Artifact name
           path: public # Destination path
