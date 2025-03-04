@@ -1,0 +1,59 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>R on Tea &amp; Stats</title>
+    <link>https://selbydavid.com/tags/r/</link>
+    <description>Tea, statistics and t-statistics: a data science blog by David Selby.</description>
+		<atom:author>
+			<atom:name>David Selby</atom:name>
+			<atom:uri>https://selbydavid.com</atom:uri>
+		</atom:author>
+		<image>
+		    <link>https://selbydavid.com/tags/r/</link>
+		    <title>Tea &amp; Stats</title>
+		    <url>https://selbydavid.com/logo.png</url>
+		</image>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-GB</language>
+    <lastBuildDate>Tue, 04 Mar 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://selbydavid.com/tags/r/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Turning over a new leaf</title>
+      <link>https://selbydavid.com/2025/03/04/overleaf/</link>
+      <pubDate>Tue, 04 Mar 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://selbydavid.com/2025/03/04/overleaf/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://www.overleaf.com/&#34;&gt;Overleaf&lt;/a&gt;, formerly known as Share$\LaTeX$, is the go-to collaborative document editor for many researchers, who have taken advantage of its free tier.
+It&amp;rsquo;s a web-based editor that compiles $\LaTeX$ documents in real time, with several word-processor-like features like commenting, tracked changes and a GUI.
+However, the company has made collaboration a paid feature, meaning you either need to pay for a premium membership or find an alternative if you want to continue editing academic papers with your colleagues in real time.&lt;/p&gt;
+&lt;p&gt;Despite having enjoyed access to an institutional subscription to Overleaf Premium for some time, I find this a great opportunity to explore alternatives.&lt;/p&gt;
+&lt;h2 id=&#34;collaborative-markdown-editing&#34;&gt;Collaborative Markdown editing&lt;/h2&gt;
+&lt;p&gt;If you have read &lt;a href=&#34;https://selbydavid.com/&#34;&gt;other posts on this blog&lt;/a&gt;, you&amp;rsquo;ll be aware that I am a fan of literate programming using Markdown. This blog, many of &lt;a href=&#34;https://scholar.google.com/citations?user=e7e8nfUAAAAJ&amp;amp;hl=en&#34;&gt;my papers&lt;/a&gt; and &lt;a href=&#34;http://webcat.warwick.ac.uk/record=b3690782&#34;&gt;my PhD thesis&lt;/a&gt; are all written in R Markdown, which integrates text and generation of plots and tables for truly reproducible writing.
+&lt;a href=&#34;https://quarto.org/&#34;&gt;Quarto&lt;/a&gt;, R Markdown&amp;rsquo;s less R-centric spiritual successor, integrates a few popular extensions to provide better native support for things like equation cross-referencing and writing books.&lt;/p&gt;
+&lt;p&gt;One of the biggest weaknesses of (R) Markdown is its lack of a simple collaborative editing feature to rival Overleaf. Although &lt;a href=&#34;https://www.overleaf.com/learn/latex/Knitr&#34;&gt;Overleaf does support &lt;strong&gt;knitr&lt;/strong&gt;&lt;/a&gt;, you still have to write in $\LaTeX$ syntax, which is less intuitive than Markdown and offers fewer output formats.
+Some niche solutions exist, such as &lt;a href=&#34;https://bookdown.org/yihui/rmarkdown-cookbook/google-drive.html&#34;&gt;&lt;strong&gt;trackdown&lt;/strong&gt;&lt;/a&gt;, which lets you do tracked changes via Google Drive, &lt;del&gt;RStudio&lt;/del&gt; &lt;a href=&#34;https://posit.cloud/&#34;&gt;Posit Cloud&lt;/a&gt;, which has a free tier allowing one shared space with up to five collaborators, and one or two experimental online R Markdown editors that I can no longer find.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://sharelatex-wiki-cdn-671420.c.cdn77.org/learn-scripts/images/3/39/KnitrDemo3.png&#34; alt=&#34;Knitr in Overleaf&#34; title=&#34;knitr in Overleaf&#34;&gt;&lt;/p&gt;
+&lt;p&gt;The &amp;lsquo;proper&amp;rsquo; solution is of course to use a shared Git repository, but although this is apparently even how &lt;a href=&#34;https://github.com/overleaf/overleaf/issues/10&#34;&gt;Overleaf works behind the scenes&lt;/a&gt;, it&amp;rsquo;s not quite as instant or accessible as editing a Word or Overleaf document online, and it doesn&amp;rsquo;t run your code or render the output automatically.&lt;/p&gt;
+&lt;h2 id=&#34;visual-studio-code-live-share&#34;&gt;Visual Studio Code Live Share&lt;/h2&gt;
+&lt;p&gt;However, &lt;a href=&#34;https://code.visualstudio.com/&#34;&gt;Visual Studio Code&lt;/a&gt; has a few handy features that makes it a promising alternative.
+As well as being able to &lt;a href=&#34;https://code.visualstudio.com/docs/remote/wsl&#34;&gt;edit files on WSL&lt;/a&gt; and &lt;a href=&#34;https://code.visualstudio.com/docs/remote/ssh&#34;&gt;on remote servers&lt;/a&gt;, there are countless extensions for &lt;a href=&#34;https://code.visualstudio.com/docs/languages/r&#34;&gt;linting R code&lt;/a&gt;, &lt;a href=&#34;https://marketplace.visualstudio.com/items?itemName=mechatroner.rainbow-csv&#34;&gt;highlighting columns in CSV files&lt;/a&gt; and &lt;a href=&#34;https://code.visualstudio.com/docs/copilot/overview&#34;&gt;AI integration with GitHub Copilot&lt;/a&gt;.
+Obviously you can therefore write your R Markdown and Quarto documents in VS Code, just as you might have done using RStudio.
+But the real killer feature is the &lt;a href=&#34;https://visualstudio.microsoft.com/services/live-share/&#34;&gt;Live Share extension&lt;/a&gt;, which lets you share a workspace with others, who can edit the same files in real time, with syntax highlighting and code completion.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://visualstudio.microsoft.com/wp-content/uploads/2023/01/v2-Edit-Comp_FINAL-optimized750-1.gif&#34; alt=&#34;Visual Studio Live Share&#34; title=&#34;Visual Studio Live Share&#34;&gt;&lt;/p&gt;
+&lt;p&gt;This means collaborators can edit the same document in real time, with one author hosting the live session and nobody else needing to install all the same dependencies or have access to datasets on their own machines.
+When the host saves the document at the end of the session, it can then be committed to Git or your shared repository as normal, without conflicts.
+And rather than the Google Docs and Overleaf chat functions, which I don&amp;rsquo;t believe anybody on the history of this Earth has ever used, you can communicate using your usual medium, be it Teams, Slack, WhatsApp etc.&lt;/p&gt;
+&lt;h2 id=&#34;github-actions&#34;&gt;GitHub Actions&lt;/h2&gt;
+&lt;p&gt;The obvious limitation here is that at least one user has to be hosting a Live Share session from a computer with all relevant dependencies for rendering the document.
+The other half of the solution is &lt;a href=&#34;https://github.com/features/actions&#34;&gt;GitHub Actions&lt;/a&gt; (or your favourite equivalent continuous integration tool).
+On committing to your repository, a script will run on a virtual machine to compile the document and save the results as an &amp;lsquo;artifact&amp;rsquo;.
+This can then be downloaded like a software release or committed back into a branch of the repository.
+It is not quite instantaneous, and can require a bit a TLC to keep it running, but means you can edit text and commit from anywhere.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/quarto-dev/quarto-actions&#34;&gt;Quarto provides several GitHub Actions&lt;/a&gt; for rendering and publishing projects, and &lt;a href=&#34;https://github.com/r-lib/actions/blob/v2-branch/examples/render-rmarkdown.yaml&#34;&gt;the same are available for R Markdown&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;putting-it-all-together&#34;&gt;Putting it all together&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;Coming soon: along with a bonus post on reproducible collaborative poster presentations.&lt;/em&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
