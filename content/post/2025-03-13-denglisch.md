@@ -1,61 +1,65 @@
 ---
 title: Learning to Denglisch
-date: '2025-03-14T09:00:00+01:00'
+date: '2025-03-13T15:00:00+01:00'
 slug: denglisch
-draft: true
-images: []
+images: ['https://images.unsplash.com/photo-1535016120720-40c646be5580?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 'https://images.unsplash.com/photo-1608531428470-4471739c4359?q=80&w=1727&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D']
 ---
 
-The Germans are so good at speaking English that they use many words even native English speakers struggle to understand.
+At the railway station, a lost-looking US soldier asked me if I spoke English.
+Do I? At times it feels like it, but the Germans keep me guessing.
 
-Denglisch          | What Germans mean               | What Anglophones hear
--------------------|---------------------------------|---------------
-das Public Viewing | an open-air screening           | a wake (at a funeral)
-das Body           | a babygrow or bodysuit          | a corpse
-die Bodybag        | a messenger bag                 | a bag for corpses
-das Shooting       | a photoshoot                    | somebody getting shot
-der Beamer         | a projector                     | a BMW
-das Gymnasium      | a grammar school                | a gym
-Home-Office        | working from home               | the interior ministry
-das Fitnessstudio  | a gymnasium                     | 
-das Handy          | mobile phone                    |
-das Smoking        | a tuxedo jacket                 | maybe a velvet smoking jacket
-Oldtimer           | classic car                     |
-Notebook           | a laptop computer               | a notepad
-Mail               | an E-Mail                       | a letter by post
-Handy              | a mobile telephone              | *adj.* useful
+Since moving to Germany, I have been continually tested on the true meanings of English words.
+Here are a few examples.
 
-Some more where it just doesn't mean anything in English:
+## Denglisch
 
-Term        | Definition
-------------|--------------------------------
-Fully       | a full-suspension mountain bike
-Highboard   | a sideboard, but taller, maybe a drinks cabinet
-Pullunder   | sleeveness jumper or sweater vest (US)
-Wellness    | a spa
-Jobticket   | a subsidized public transport season ticket
-Partnerlook | a couple wearing matching outfits
+It turns out I'd been using these words wrong all along.
 
-There is also a special category of terms where German use an English word and English speakers use a German word for the same concept.
+Denglisch            | German meaning                        | to Anglophones
+---------------------|---------------------------------------|---------------
+*der Body*           | a babygrow or bodysuit                | a corpse
+*die Bodybag*        | a messenger bag                       | a bag for corpses
+*das Public Viewing* | an open-air screening | showing a corpse at a wake
+*das Shooting*       | a photoshoot                          | somebody getting shot
+*der Beamer*         | a projector                           | a BMW
+*das Gymnasium*      | a grammar school                      | a gym
+*Homeoffice*         | remote working from home              | the interior ministry
+*das Handy*          | a mobile phone                          | useful
+*der Smoking*        | a dinner jacket                       | a smoking jacket
+*der Oldtimer*       | classic car                           | old person
+*das Notebook*       | a laptop computer                     | a notepad
+*die Mail*           | an Email                              | snail mail
 
-English  | German    
-----------|---------
-abseiling | Canyoning?
+![Ein Beamer](https://images.unsplash.com/photo-1535016120720-40c646be5580?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D "ein Beamer")
 
+## Scheinanglizismus
 
-## False friends
+I am grateful to German speakers for teaching me these words, which I would never have learnt otherwise.
 
-* *aktuell* sounds like *actual* but it means current. Only coincides in certain cases: e.g. "the money I actually have in my account"
+Pseudo-anglicism        | German definition
+------------------------|--------------------------------
+*Fully*                 | a full-suspension mountain bike
+*Highboard*             | a tall sideboard, a drinks cabinet
+*Jobticket*             | a subsidized transport pass
+*Kicker*                | table football
+*Lowboard*              | a low sideboard, a media cabinet
+*Partnerlook*           | a couple wearing matching outfits
+*Pullunder*             | a sleeveless cardigan or sweater vest (US)
+*eine suggestive Frage* | I don't live here, I'm just visiting
+*Wellness*              | a spa
 
+![Ein Fully](https://images.unsplash.com/photo-1608531428470-4471739c4359?q=80&w=1727&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D "ein Fully")
 
+<!--
+## Miscellaneous
 
-English terms that only Germans understand:
+- I'd probably say *rucksack* over *backpack*.
+- A *dachshund* is *ein Dackel*.
+- Nobody every says *auf wiedersehen*.
+- 
+-->
 
-
-
-
-
-
+I might update this list as I encounter more.
 
 
 
