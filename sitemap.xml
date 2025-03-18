@@ -18,12 +18,12 @@
   </url>
   
   <url>
-    <loc>https://selbydavid.com/tags/r/</loc>
+    <loc>https://selbydavid.com/categories/</loc>
     <lastmod>2025-03-04T15:00:00+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://selbydavid.com/tags/</loc>
+    <loc>https://selbydavid.com/categories/r/</loc>
     <lastmod>2025-03-04T15:00:00+01:00</lastmod>
   </url>
   
@@ -43,17 +43,7 @@
   </url>
   
   <url>
-    <loc>https://selbydavid.com/categories/</loc>
-    <lastmod>2021-12-06T10:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://selbydavid.com/2021/12/06/indexing/</loc>
-    <lastmod>2021-12-06T10:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://selbydavid.com/categories/r/</loc>
     <lastmod>2021-12-06T10:00:00+00:00</lastmod>
   </url>
   
@@ -199,6 +189,10 @@
   
   <url>
     <loc>https://selbydavid.com/about/</loc>
+  </url>
+  
+  <url>
+    <loc>https://selbydavid.com/tags/</loc>
   </url>
   
 </urlset>
