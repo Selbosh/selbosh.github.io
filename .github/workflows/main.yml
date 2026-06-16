@@ -28,7 +28,7 @@ jobs:
         run: Rscript -e "blogdown::install_hugo('0.79.1')"
         
       - name: Render site
-        run: Rscript -e "blogdown::build_site(build_rmd = 'new_and_changed')"
+        run: Rscript -e "blogdown::build_site()"
         
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4 # Updated to v4
