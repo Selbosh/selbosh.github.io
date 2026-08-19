@@ -25,7 +25,7 @@ This isn't about shaming people who use ChatGPT, or about learning to pass off m
 Rather, as generative AI pollutes the Internet with bland writing, we don't want to pick up any bad habits.
 
 'Bad' writing is, of course, subjective, so this guide is opinionated.
-This post was inspired by the Wikipedia guide on [Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing).
+This post was inspired by the Wikipedia guide on [Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) and draws on the [compendium of Tropes](https://tropes.fyi/tropes-md?via=selbydavid) collected by Ossama Chaib and the source of Simon Willison's [LLM cliché highlighter](https://tools.simonwillison.net/llm-cliche-highlighter) tool.
 
 ## How to sound like a language model
 
@@ -51,8 +51,8 @@ Samuel Johnson put it best:
 > Read over your compositions, and wherever you meet with a passage which you think is particularly fine, strike it out.
 
 One of the more famous AI tropes is: **'It's not _X_, it's _Y_!'**
-Years ago we used to mock Kickstarter campaigns for phrasing like this: 'It's not just a toothbrush, it's your friend!'
-But this contrastive framing is back with a vengeance and is one of the more famous tells of AI-generated copy.
+Years ago we used to mock Kickstarter campaigns for phrasing like this: 'It's not just a toothbrush, it's your friend!' and it was later popularised by TV adverts for M&S Food.
+This contrastive framing or 'negative parallelism' is back with a vengeance and is one of the more famous tells of AI-generated copy.
 It might sound like a clever rhetorical device, a balanced presentation of competing viewpoints or an interesting paradox, but more likely it's just an unnecessarily longwinded way of writing 'and' to describe two non-conflicting characteristics of a subject. 'It's not just a blog post, it's online!'
 
 A variation on this is **'While _X_, also _Y_'**; ostensibly for weighing up pros and cons, but in practice one of the points is just ballast. 
@@ -63,13 +63,15 @@ This is like going to a job interview and saying your weaknesses are: 'While a p
 
 > While informative, this strategy [citation] has clear limitations...
 
-Writing that a cited work is 'informative' is akin to writing 'I enjoyed the experiment' to pad out the evaluation section in your school science report.
-But today's machine learning models have even more advanced ways of filling the page.
+This is blatant padding. It would surely be bold to call cited work _uninformative_!
+Today's models have even more advanced ways of filling the page.
 If you want to add some redundant and superficial analysis to an existing sentence, add a comma and a **present participle ('-ing')** and you can have a vague discussion about anything... _underscoring the utility of LLMs in padding your word count_. For example:
 
 > [citation], slowly contributing to a growing body of deep learning methods...
 
 > Overall, success depended on [x], [y], and [z], highlighting the need for cross-domain evaluation.
+
+![Plot of instances of while-comma](#)
 
 Pursuit of comprehensive answers yields sentences that are trying to do too many things at once. This makes it harder to separate out the introduction, background, methodology, results and conclusion sections of a technical report, except with (over)-use of headers.
 
