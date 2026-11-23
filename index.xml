@@ -7605,7 +7605,7 @@ text = laply(data, function(t) t$getText())
 &lt;p&gt;Originally from North Yorkshire, I aim to maintain a reliable supply of Yorkshire Tea.
 I am enthusiastic about &lt;a href=&#34;https://www.r-project.org/&#34;&gt;R&lt;/a&gt; and helped organise &lt;a href=&#34;http://warwick.ac.uk/wrug&#34;&gt;Warwick R User Group&lt;/a&gt; as well as the &lt;a href=&#34;https://personalpages.manchester.ac.uk/staff/david.selby/rthritis.html&#34;&gt;R-thritis Statistical Computing Group&lt;/a&gt;.&lt;/p&gt;
 &lt;p style=&#34;text-align: center;&#34;&gt;
-&lt;a href=&#39;mailto:selby@informatik.uni-kl.de&#39; title=&#34;E-mail me&#34;&gt;
+&lt;a href=&#39;mailto:david.selby@dfki.de&#39; title=&#34;E-mail me&#34;&gt;
   &lt;span class=&#34;fa-stack fa-lg&#34;&gt;
   &lt;i class=&#34;fa fa-circle fa-stack-2x&#34;&gt;&lt;/i&gt;
   &lt;i class=&#34;fa fa-envelope fa-stack-1x fa-inverse&#34;&gt;&lt;/i&gt;
