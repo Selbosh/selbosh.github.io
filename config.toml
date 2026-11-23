@@ -14,6 +14,12 @@ pygmentsCodeFences = false # Disable Chroma highlighter; it conflicts with hljs
 [[menu.main]]
   name = "About"
   url = "/about/"
+  weight = 1
+
+[[menu.main]]
+  name = "Food blog"
+  url = "https://britishfood.blog/"
+  weight = 2
 
 [author]
 	name = "David Selby"
