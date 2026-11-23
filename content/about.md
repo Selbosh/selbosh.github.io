@@ -10,7 +10,7 @@ Originally from North Yorkshire, I aim to maintain a reliable supply of Yorkshir
 I am enthusiastic about [R](https://www.r-project.org/) and helped organise [Warwick R User Group](http://warwick.ac.uk/wrug) as well as the [R-thritis Statistical Computing Group](https://personalpages.manchester.ac.uk/staff/david.selby/rthritis.html).
 
 <p style="text-align: center;">
-<a href='mailto:selby@informatik.uni-kl.de' title="E-mail me">
+<a href='mailto:david.selby@dfki.de' title="E-mail me">
   <span class="fa-stack fa-lg">
   <i class="fa fa-circle fa-stack-2x"></i>
   <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
